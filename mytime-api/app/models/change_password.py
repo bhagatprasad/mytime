@@ -1,5 +1,5 @@
-from app.models.reset_password import ResetPasswordModel
+from app.models.reset_password import ResetPassword
 
 
-class ChangePasswordModel(ResetPasswordModel):
+class ChangePassword(ResetPassword):
     pass

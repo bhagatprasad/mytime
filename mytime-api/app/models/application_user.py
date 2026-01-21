@@ -1,23 +1,13 @@
-from sqlalchemy import Column, BigInteger, Text
-from app.core.database import Base
+from pydantic import BaseModel
+from typing import Optional
 
+class ApplicationUser(BaseModel):
+    id: Optional[int] = None
 
-class ApplicationUser(Base):
-    __tablename__ = "ApplicationUser"
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
 
-    Id = Column(BigInteger, primary_key=True, index=True)
-
-    FirstName = Column(Text, nullable=True)
-    LastName = Column(Text, nullable=True)
-    Email = Column(Text, nullable=True)
-    Phone = Column(Text, nullable=True)
-
-    DepartmentId = Column(BigInteger, nullable=True)
-    RoleId = Column(BigInteger, nullable=True)
-
-    def __repr__(self):
-        return (
-            f"<ApplicationUser("
-            f"Id={self.Id}, "
-            f"Email='{self.Email}')>"
-        )
+    department_id: Optional[int] = None
+    role_id: Optional[int] = None
