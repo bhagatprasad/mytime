@@ -1,52 +1,218 @@
+# auth_router.py
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from datetime import timedelta
-from app.core.security import create_access_token, decode_token
-from app.core.config import settings
+from typing import Dict, Any
+import logging
+from sqlalchemy.orm import Session
+from app.core.database import get_db
+from app.models.application_user import ApplicationUser
+from app.models.auth_response import AuthResponse
+from app.models.change_password import ChangePassword
+from app.models.reset_password import ResetPassword
+from app.models.user_authentication import UserAuthentication
+from app.services.auth_service import AuthService
 
-router = APIRouter(prefix="/auth", tags=["authentication"])
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth/token")
 
-# Mock user for demo (replace with database)
-fake_users_db = {
-    "admin": {
-        "username": "admin",
-        "full_name": "Administrator",
-        "email": "admin@example.com",
-        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",  # "secret"
-        "disabled": False,
+logger = logging.getLogger(__name__)
+
+# Create router
+router = APIRouter(
+    prefix="/api/auth",
+    tags=["authentication"],
+    responses={
+        400: {"description": "Bad Request"},
+        401: {"description": "Unauthorized"},
+        500: {"description": "Internal Server Error"}
     }
-}
+)
 
-@router.post("/token")
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    # For demo - in production, validate against database
-    user = fake_users_db.get(form_data.username)
-    if not user or form_data.password != "secret":  # Replace with proper password check
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    
-    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user["username"]}, expires_delta=access_token_expires
-    )
-    
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-        "expires_in": access_token_expires.total_seconds()
-    }
+# Configuration
+USED_GENERATES_TOKEN_KEY = "your-secret-key-change-in-production"
 
-@router.get("/verify")
-async def verify_token(token: str = Depends(oauth2_scheme)):
-    payload = decode_token(token)
-    if payload is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token",
-            headers={"WWW-Authenticate": "Bearer"},
+# Dependency for AuthService
+def get_auth_service(db: Session = Depends(get_db)) -> AuthService:
+    return AuthService(USED_GENERATES_TOKEN_KEY, db)
+
+@router.post(
+    "/AuthenticateUser",
+    response_model=AuthResponse,
+    summary="Authenticate User",
+    description="Authenticate user with username and password"
+)
+def authenticate_user(
+    user_auth: UserAuthentication,
+    auth_service: AuthService = Depends(get_auth_service)
+):
+    """
+    Authenticate user with username and password.
+    Returns JWT token if authentication is successful.
+    """
+    try:
+        response = auth_service.authenticate_user(
+            user_auth.username, 
+            user_auth.password
         )
-    return {"valid": True, "username": payload.get("sub")}
+        
+        # Check authentication result
+        if not response.valid_user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+        
+        if not response.valid_password:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid password"
+            )
+        
+        if not response.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="User account is not active"
+            )
+        
+        return response
+        
+    except HTTPException:
+        raise
+    except Exception as ex:
+        logger.error(f"Authentication error: {str(ex)}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Authentication failed: {str(ex)}"
+        )
+
+@router.post(
+    "/GenarateUserClaims",
+    response_model=ApplicationUser,
+    summary="Generate User Claims",
+    description="Generate user claims from JWT token"
+)
+def generate_user_claims(
+    auth_response: AuthResponse,
+    auth_service: AuthService = Depends(get_auth_service)
+):
+    """
+    Generate user claims from JWT token.
+    Validates the token and returns user information.
+    """
+    try:
+        response = auth_service.generate_user_claims(auth_response)
+        
+        if not response:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found or token is invalid"
+            )
+        
+        return response
+        
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    except Exception as ex:
+        logger.error(f"Generate claims error: {str(ex)}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to generate user claims: {str(ex)}"
+        )
+
+@router.get(
+    "/ForgotPasswordAsync/{user_name}",
+    response_model=ApplicationUser,
+    summary="Forgot Password",
+    description="Initiate password reset process"
+)
+def forgot_password_async(
+    user_name: str,
+    auth_service: AuthService = Depends(get_auth_service)
+):
+    """
+    Forgot password endpoint.
+    Returns user information if user exists and is active.
+    """
+    try:
+        response = auth_service.forgot_password(user_name)
+        
+        if not response:
+            # Return empty response instead of 404 for security
+            return ApplicationUser(id=0)
+        
+        return response
+        
+    except Exception as ex:
+        logger.error(f"Forgot password error: {str(ex)}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to process forgot password: {str(ex)}"
+        )
+
+@router.post(
+    "/ResetPasswordAsync",
+    response_model=Dict[str, Any],
+    summary="Reset Password",
+    description="Reset user password"
+)
+def reset_password_async(
+    reset_password: ResetPassword,
+    auth_service: AuthService = Depends(get_auth_service)
+):
+    """
+    Reset user password.
+    Requires user ID and new password.
+    """
+    try:
+        success = auth_service.reset_password_async(reset_password)
+        
+        if not success:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Failed to reset password. User may not exist."
+            )
+        
+        return {"success": True, "message": "Password reset successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as ex:
+        logger.error(f"Reset password error: {str(ex)}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to reset password: {str(ex)}"
+        )
+
+@router.post(
+    "/ChangePasswordAsync",
+    response_model=Dict[str, Any],
+    summary="Change Password",
+    description="Change user password with old password verification"
+)
+def change_password_async(
+    change_password: ChangePassword,
+    auth_service: AuthService = Depends(get_auth_service)
+):
+    """
+    Change user password.
+    Requires username, old password, and new password.
+    """
+    try:
+        success = auth_service.change_password_async(change_password)
+        
+        if not success:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Failed to change password. Invalid old password or user not found."
+            )
+        
+        return {"success": True, "message": "Password changed successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as ex:
+        logger.error(f"Change password error: {str(ex)}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to change password: {str(ex)}"
+        )

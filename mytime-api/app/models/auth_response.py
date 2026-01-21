@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 
-class AuthResponseModel(BaseModel):
+class AuthResponse(BaseModel):
     jwt_token: Optional[str] = None
     valid_user: bool = False
     valid_password: bool = False
