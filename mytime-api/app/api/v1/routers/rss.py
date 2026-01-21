@@ -3,7 +3,7 @@ import feedparser
 from typing import List, Dict
 from app.core.config import settings
 
-router = APIRouter(prefix="/rss", tags=["RSS"])
+router = APIRouter()
 
 @router.get("/")
 def list_sources():

@@ -5,21 +5,137 @@ import jwt
 import logging
 from sqlalchemy.orm import Session
 from sqlalchemy import text
-import hashlib
-import base64
-from app.models.application_user import ApplicationUser
 from app.models.auth_response import AuthResponse
 from app.models.change_password import ChangePassword
 from app.models.reset_password import ResetPassword
 from app.schemas.user_schemas import UserResponse
 from app.utils.hash_salt import HashSalt
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
 class AuthService:
     def __init__(self, used_generates_token_key: str, db: Session):
-        self.used_generates_token_key = used_generates_token_key
+        self.used_generates_token_key = settings.SECRET_KEY
         self.db = db
+    
+    def get_user_by_username(self, username: str) -> Optional[Dict[str, Any]]:
+        """
+        Get user by username from database
+        Used by get_current_user dependency
+        """
+        try:
+            logger.info(f"🔍 Looking for user by username: {username}")
+            
+            # Query user from database
+            query = text("""
+                SELECT TOP 1 * FROM [user] 
+                WHERE LOWER(Email) = LOWER(:username)
+            """)
+            
+            result = self.db.execute(query, {"username": username.strip()})
+            db_user = result.fetchone()
+            
+            if not db_user:
+                logger.warning(f"❌ User not found with email: {username}")
+                return None
+            
+            # Convert to dictionary
+            user_dict = {}
+            if hasattr(db_user, '_mapping'):
+                user_dict = dict(db_user._mapping)
+            elif hasattr(db_user, '_asdict'):
+                user_dict = db_user._asdict()
+            
+            logger.info(f"📋 User columns found: {list(user_dict.keys())}")
+            
+            # Helper function to get column value
+            def get_col_value(col_variations):
+                for col in col_variations:
+                    if col in user_dict:
+                        return user_dict[col]
+                    # Case-insensitive search
+                    for key in user_dict.keys():
+                        if isinstance(key, str) and key.lower() == col.lower():
+                            return user_dict[key]
+                return None
+            
+            # Extract user information
+            user_id = get_col_value(['Id', 'id', 'UserID', 'userid', 'User_Id', 'user_id'])
+            email = get_col_value(['Email', 'email'])
+            is_active = get_col_value(['IsActive', 'isactive', 'Is_Active', 'is_active', 'Active', 'active'])
+            
+            # Handle is_active - default to True if None
+            if is_active is None:
+                is_active_value = True
+            else:
+                # Convert to boolean if it's string or integer
+                if isinstance(is_active, str):
+                    is_active_value = is_active.lower() in ['true', '1', 'yes', 'y']
+                elif isinstance(is_active, int):
+                    is_active_value = bool(is_active)
+                else:
+                    is_active_value = bool(is_active)
+            
+            user_info = {
+                "id": user_id,
+                "username": username,
+                "email": email,
+                "first_name": get_col_value(['FirstName', 'firstname', 'First_Name', 'first_name', 'FName', 'fname']),
+                "last_name": get_col_value(['LastName', 'lastname', 'Last_Name', 'last_name', 'LName', 'lname']),
+                "is_active": is_active_value,
+                "roles": self._get_user_roles(user_id) if user_id else [],  # Get roles from database
+                "department_id": get_col_value(['DepartmentId', 'departmentid', 'Department_Id', 'department_id', 'DeptID', 'deptid']),
+                "role_id": get_col_value(['RoleId', 'roleid', 'Role_Id', 'role_id', 'RoleID', 'roleid'])
+            }
+            
+            logger.info(f"✅ Found user: ID={user_info['id']}, Email={user_info['email']}, Active={user_info['is_active']}")
+            
+            return user_info
+            
+        except Exception as e:
+            logger.error(f"💥 Error getting user {username}: {str(e)}", exc_info=True)
+            return None
+    
+    def _get_user_roles(self, user_id: int) -> list:
+        """Get user roles from database"""
+        try:
+            # Assuming you have a user_roles table or roles in user table
+            # Adjust this based on your database schema
+            query = text("""
+                SELECT r.RoleName FROM [role] r
+                INNER JOIN [user] u ON u.RoleId = r.Id
+                WHERE u.Id = :user_id
+            """)
+            
+            result = self.db.execute(query, {"user_id": user_id})
+            roles = [row[0] for row in result.fetchall() if row[0]]
+            
+            # If no specific roles found, return default
+            if not roles:
+                # Check if user has a role_id
+                query = text("SELECT RoleId FROM [user] WHERE Id = :user_id")
+                result = self.db.execute(query, {"user_id": user_id})
+                role_row = result.fetchone()
+                
+                if role_row and role_row[0]:
+                    # Map role_id to role name
+                    role_mapping = {
+                        1: "admin",
+                        2: "manager",
+                        3: "user",
+                        4: "supervisor"
+                        # Add more mappings as needed
+                    }
+                    role_id = role_row[0]
+                    role_name = role_mapping.get(role_id, f"role_{role_id}")
+                    roles = [role_name]
+            
+            return roles
+            
+        except Exception as e:
+            logger.error(f"Error getting roles for user {user_id}: {e}")
+            return ["user"]  # Default role
     
     def authenticate_user(self, username: str, password: str) -> AuthResponse:
         """Authenticate user with username and password"""

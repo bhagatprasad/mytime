@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, status
 from app.schemas.llm_schemas import LLMRequest, LLMResponse
 from app.services.llm_service import LLMService
 
-router = APIRouter(prefix="/llm", tags=["LLM"])
+router = APIRouter()
 
 @router.post("/chat", response_model=LLMResponse)
 async def chat(request: LLMRequest):

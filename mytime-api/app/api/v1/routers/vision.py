@@ -1,7 +1,7 @@
 from fastapi import APIRouter, File, UploadFile, HTTPException
 from app.services.vision_service import VisionService
 
-router = APIRouter(prefix="/vision", tags=["Vision"])
+router = APIRouter()
 
 @router.post("/analyze")
 async def analyze_image(file: UploadFile = File(...)):
