@@ -1,23 +1,31 @@
 # FastAPI Core
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
+gunicorn==21.2.0
 
 # Database
 sqlalchemy==2.0.23
 pyodbc==5.0.1
-alembic==1.12.1
 
-# Basic AI
+# Authentication & Security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+
+# Configuration
+pydantic==2.5.3
+pydantic-settings==2.1.0
+python-dotenv==1.0.0
+
+# AI/ML
 openai==1.6.1
 langchain==0.0.340
 
 # Utilities
-python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
-pydantic==2.5.3
-pydantic-settings==2.1.0  # ← ADD THIS LINE
-python-dotenv==1.0.0
-
-# Development
 httpx==0.25.1
 requests==2.31.0
+feedparser==6.0.10
+redis==5.0.1
+
+# HTTP Client
+aiohttp==3.9.1

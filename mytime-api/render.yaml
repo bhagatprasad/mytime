@@ -1,0 +1,57 @@
+services:
+  - type: web
+    name: mytime-fastapi
+    env: python
+    region: singapore  # Better for Asian traffic
+    plan: free
+    branch: main
+    rootDir: .
+    
+    # Build commands
+    buildCommand: |
+      echo "🐍 Installing Python dependencies..."
+      pip install --upgrade pip
+      pip install -r requirements.txt
+      
+      # Install ODBC Driver for SQL Server (required for pyodbc)
+      apt-get update && apt-get install -y g++ unixodbc-dev
+      curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+      curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list
+      apt-get update
+      ACCEPT_EULA=Y apt-get install -y msodbcsql17
+      
+      echo "✅ Dependencies installed"
+    
+    # Start command - FIXED: use gunicorn for production
+    startCommand: gunicorn app.main:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+    
+    # Environment variables
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: "false"
+      - key: PROJECT_NAME
+        value: "MyTime - AI Integration API"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_ORIGINS
+        value: |
+          [
+            "https://mytime-fastapi.onrender.com",
+            "http://localhost:3000", 
+            "http://localhost:4200",
+            "http://localhost:8000"
+          ]
+      - key: DATABASE_URL
+        sync: false  # You'll set this manually
+      - key: OPENAI_API_KEY
+        sync: false
+    
+    # Health check endpoint
+    healthCheckPath: /health
+    
+    # Auto-deploy on Git push
+    autoDeploy: true
