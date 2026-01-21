@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     DATABASE_ECHO_SQL: bool = False
     
     # ============ SECURITY ============
-    SECRET_KEY: str = "your-secret-key-here-change-in-production-32-characters-long"
+    SECRET_KEY: str = "I9JohndoejanemariasmithBobsanchezcharliedavidson"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7

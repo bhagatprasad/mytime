@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-router = APIRouter(prefix="/embeddings", tags=["Embeddings"])
+router = APIRouter()
 
 @router.post("/")
 async def create_embeddings(text: str):

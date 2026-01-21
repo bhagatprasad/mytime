@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 # Create router
 router = APIRouter(
-    prefix="/api/auth",
+    prefix="/auth",
     tags=["authentication"],
     responses={
         400: {"description": "Bad Request"},

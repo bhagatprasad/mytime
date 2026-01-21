@@ -1,6 +1,6 @@
 from fastapi import APIRouter, File, UploadFile, HTTPException
 
-router = APIRouter(prefix="/audio", tags=["Audio"])
+router = APIRouter()
 
 @router.post("/speech-to-text")
 async def speech_to_text(file: UploadFile = File(...)):
