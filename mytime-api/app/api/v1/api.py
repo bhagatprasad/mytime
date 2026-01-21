@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from app.api.v1.routers import (
-    llm, vision, audio, embeddings, rss, roles
+    llm, vision, audio, embeddings, rss, roles,user
 )
 
 api_router = APIRouter()
@@ -12,3 +12,4 @@ api_router.include_router(audio.router)
 api_router.include_router(embeddings.router)
 api_router.include_router(rss.router)
 api_router.include_router(roles.router)
+api_router.include_router(user.router)
