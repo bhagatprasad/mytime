@@ -1,17 +1,17 @@
 services:
   - type: web
-    name: mytime-api  # Changed from mytime-fastapi
+    name: mytime-api
     env: python
     region: singapore
     plan: free
     branch: main
-    rootDir: .
+    rootDir: mytime-api  # CRITICAL FIX: Your API is in mytime-api folder
     
-    # Build commands
+    # Build commands - USING POETRY (since you have pyproject.toml)
     buildCommand: |
-      echo "🐍 Installing Python dependencies..."
+      echo "🐍 Installing Poetry and dependencies..."
       pip install --upgrade pip
-      pip install -r requirements.txt
+      pip install poetry
       
       # Install ODBC Driver for SQL Server (required for pyodbc)
       apt-get update && apt-get install -y g++ unixodbc-dev
@@ -20,15 +20,19 @@ services:
       apt-get update
       ACCEPT_EULA=Y apt-get install -y msodbcsql17
       
+      # Install dependencies with Poetry
+      poetry install --without dev
+      
       echo "✅ Dependencies installed"
     
-    # Start command - FIXED: use gunicorn for production
-    startCommand: gunicorn app.main:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+    # Start command - Adjusted for Poetry
+    startCommand: |
+      cd mytime-api && poetry run gunicorn app.main:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
     
     # Environment variables
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.0
+        value: 3.11.0  # Match your pyproject.toml Python version
       - key: ENVIRONMENT
         value: production
       - key: DEBUG
@@ -40,15 +44,18 @@ services:
       - key: ALLOWED_ORIGINS
         value: |
           [
-            "https://mytime-api.onrender.com",  # Updated URL
+            "https://mytime-api.onrender.com",
             "http://localhost:3000", 
             "http://localhost:4200",
             "http://localhost:8000"
           ]
       - key: DATABASE_URL
-        sync: false  # You'll set this manually
+        sync: false
       - key: OPENAI_API_KEY
         sync: false
+      # Add PYTHONPATH if needed
+      - key: PYTHONPATH
+        value: "/opt/render/project/src/mytime-api"
     
     # Health check endpoint
     healthCheckPath: /health
