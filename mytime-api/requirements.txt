@@ -1,3 +1,8 @@
+# ============================================
+# MyTime API - FINAL WORKING VERSION
+# FastAPI + SQL Server + AI
+# ============================================
+
 # FastAPI Framework
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
@@ -14,9 +19,9 @@ python-multipart==0.0.6
 pycryptodome==3.20.0
 bcrypt==4.1.2
 
-# Configuration - USE THESE VERSIONS (Pre-built wheels available)
+# Configuration - CORRECT VERSIONS
 pydantic==2.5.3
-pydantic-core==2.14.5
+pydantic-core==2.14.6  # CORRECT: pydantic 2.5.3 needs 2.14.6
 pydantic-settings==2.1.0
 python-dotenv==1.0.0
 
