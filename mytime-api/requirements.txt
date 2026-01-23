@@ -17,15 +17,14 @@ pydantic==2.5.3
 pydantic-settings==2.1.0
 python-dotenv==1.0.0
 
-# AI/ML - REMOVE langchain for now
+# AI/ML
 openai==1.6.1
-# langchain==0.0.340  # REMOVE THIS LINE
 
 # Utilities
 httpx==0.25.1
 requests==2.31.0
 feedparser==6.0.10
-redis==5.0.1
+# REMOVED: redis==5.0.1
 
 # HTTP Client
 aiohttp==3.9.1
