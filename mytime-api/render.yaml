@@ -4,24 +4,24 @@ services:
     env: python
     region: singapore
     plan: free
+    branch: main
     rootDir: mytime-api
     
+    # Build commands - SPECIAL FIX FOR RUST
     buildCommand: |
-      echo "🚀 Setting up build environment..."
+      echo "🚀 Starting deployment with Rust workaround..."
       
-      # Set environment to avoid Rust issues
-      export CARGO_NET_GIT_FETCH_WITH_CLI=true
-      export PIP_NO_BINARY=""
-      
-      # Install ONLY system dependencies we need
+      # 1. Install system dependencies first
       apt-get update
       apt-get install -y \
         g++ \
         unixodbc-dev \
         curl \
-        gnupg
+        gnupg \
+        libssl-dev \
+        libffi-dev
       
-      # Install ODBC driver
+      # 2. Install Microsoft ODBC Driver
       curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
       curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list
       apt-get update
@@ -29,38 +29,60 @@ services:
       
       echo "🐍 Installing Python packages..."
       
-      # Upgrade pip with specific settings
-      pip install --upgrade "pip<24"  # Older pip version
+      # 3. Upgrade pip
+      pip install --upgrade pip setuptools wheel
       
-      # Install packages WITHOUT wheels that need Rust
-      # First install packages that DON'T need Rust
+      # 4. Install packages in specific order to avoid Rust
       pip install fastapi==0.104.1
       pip install uvicorn[standard]==0.24.0
       pip install gunicorn==21.2.0
+      pip install sqlalchemy==2.0.23
+      pip install pyodbc==5.0.1
       pip install pydantic==2.5.3
       pip install pydantic-settings==2.1.0
       pip install python-dotenv==1.0.0
-      pip install sqlalchemy==2.0.23
-      pip install pyodbc==5.0.1
-      pip install python-jose==3.3.0
-      pip install passlib[bcrypt]==1.7.4
+      pip install python-multipart==0.0.6
       pip install openai==1.6.1
       pip install httpx==0.25.1
       pip install requests==2.31.0
       
-      # SKIP problematic packages for now
-      # pip install feedparser==6.0.10
-      # pip install aiohttp==3.9.1
+      # 5. Install auth packages WITHOUT Rust dependencies
+      pip install python-jose==3.3.0
+      pip install passlib==1.7.4  # No [bcrypt]
+      pip install pycryptodome==3.20.0  # For JWT without Rust
       
-      echo "✅ Build completed!"
+      echo "✅ All packages installed successfully!"
     
-    startCommand: gunicorn app.main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+    # Start command - KEEP AS IS
+    startCommand: gunicorn app.main:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
     
+    # Environment variables - KEEP AS IS
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.0  # Use 3.11, not 3.13
-      - key: MATURIN_PEP517_ARGS
-        value: "--no-sdist --no-wheel"
+        value: 3.11.0
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: "false"
+      - key: PROJECT_NAME
+        value: "MyTime - AI Integration API"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_ORIGINS
+        value: |
+          [
+            "https://mytime-api.onrender.com",
+            "http://localhost:3000", 
+            "http://localhost:4200",
+            "http://localhost:8000"
+          ]
+      - key: DATABASE_URL
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
     
+    # Health check endpoint - KEEP AS IS
     healthCheckPath: /health
+    
+    # Auto-deploy on Git push - KEEP AS IS
     autoDeploy: true
