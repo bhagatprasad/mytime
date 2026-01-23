@@ -1,6 +1,6 @@
+--only-binary :all:
 # ============================================
-# MyTime API - FINAL WORKING VERSION
-# FastAPI + SQL Server + AI
+# MyTime API - RENDER COMPATIBLE VERSION
 # ============================================
 
 # FastAPI Framework
@@ -12,16 +12,16 @@ gunicorn==21.2.0
 sqlalchemy==1.4.51
 pyodbc==5.0.1
 
-# Authentication & Security
-python-jose[cryptography]==3.3.0
+# Authentication & Security - YOU'RE ALREADY USING PyJWT!
+pyjwt==2.8.0                    # Confirm this is in requirements.txt
 passlib[bcrypt]==1.7.4
 python-multipart==0.0.6
 pycryptodome==3.20.0
 bcrypt==4.1.2
 
-# Configuration - CORRECT VERSIONS
+# Configuration
 pydantic==2.5.3
-pydantic-core==2.14.6  # CORRECT: pydantic 2.5.3 needs 2.14.6
+pydantic-core==2.14.6
 pydantic-settings==2.1.0
 python-dotenv==1.0.0
 
