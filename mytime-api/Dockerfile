@@ -1,20 +1,21 @@
-app = "mytime-api"  # Should match your app name
+FROM python:3.11-slim
 
-[build]
-  dockerfile = "Dockerfile"
+# Install SQL Server ODBC driver and dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    gnupg \
+    unixodbc \
+    unixodbc-dev \
+    && curl -sSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+    && curl -sSL https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+    && apt-get update \
+    && ACCEPT_EULA=Y apt-get install -y msodbcsql18 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-[env]
-  PORT = "8080"
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
 
-[http_service]
-  internal_port = 8080
-  force_https = true
-  auto_stop_machines = true
-  auto_start_machines = true
-  min_machines_running = 0
-
-[[http_service.checks]]
-  interval = "10s"
-  timeout = "2s"
-  method = "GET"
-  path = "/"
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
