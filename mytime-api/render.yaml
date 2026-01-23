@@ -5,60 +5,49 @@ services:
     region: singapore
     plan: free
     branch: main
-    rootDir: mytime-api  # CRITICAL FIX: Your API is in mytime-api folder
+    rootDir: mytime-api
     
-    # Build commands - USING POETRY (since you have pyproject.toml)
+    # FIXED Build commands
     buildCommand: |
-      echo "🐍 Installing Poetry and dependencies..."
-      pip install --upgrade pip
-      pip install poetry
+      echo "🐍 Starting build process..."
       
-      # Install ODBC Driver for SQL Server (required for pyodbc)
-      apt-get update && apt-get install -y g++ unixodbc-dev
+      # Install system dependencies FIRST
+      apt-get update
+      apt-get install -y \
+        build-essential \
+        libssl-dev \
+        libffi-dev \
+        python3-dev \
+        g++ \
+        unixodbc-dev \
+        curl \
+        gnupg
+      
+      # Install Microsoft ODBC driver
       curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
       curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list
       apt-get update
       ACCEPT_EULA=Y apt-get install -y msodbcsql17
       
-      # Install dependencies with Poetry
-      poetry install --without dev
+      echo "🐍 Installing Python dependencies..."
       
-      echo "✅ Dependencies installed"
+      # Upgrade pip
+      pip install --upgrade pip
+      
+      # Install Python packages using pip (NOT poetry)
+      pip install -r requirements.txt
+      
+      echo "✅ Dependencies installed successfully!"
     
-    # Start command - Adjusted for Poetry
-    startCommand: |
-      cd mytime-api && poetry run gunicorn app.main:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+    # SIMPLIFIED Start command
+    startCommand: gunicorn app.main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
     
     # Environment variables
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.0  # Match your pyproject.toml Python version
-      - key: ENVIRONMENT
-        value: production
-      - key: DEBUG
-        value: "false"
-      - key: PROJECT_NAME
-        value: "MyTime - AI Integration API"
-      - key: SECRET_KEY
-        generateValue: true
-      - key: ALLOWED_ORIGINS
-        value: |
-          [
-            "https://mytime-api.onrender.com",
-            "http://localhost:3000", 
-            "http://localhost:4200",
-            "http://localhost:8000"
-          ]
-      - key: DATABASE_URL
-        sync: false
-      - key: OPENAI_API_KEY
-        sync: false
-      # Add PYTHONPATH if needed
-      - key: PYTHONPATH
-        value: "/opt/render/project/src/mytime-api"
+        value: 3.11.0
+      - key: PORT
+        value: 10000
     
-    # Health check endpoint
     healthCheckPath: /health
-    
-    # Auto-deploy on Git push
     autoDeploy: true

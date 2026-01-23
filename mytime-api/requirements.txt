@@ -7,8 +7,8 @@ gunicorn==21.2.0
 sqlalchemy==2.0.23
 pyodbc==5.0.1
 
-# Authentication & Security
-python-jose[cryptography]==3.3.0
+# Authentication & Security - REMOVE cryptography
+python-jose==3.3.0  # REMOVE [cryptography]
 passlib[bcrypt]==1.7.4
 python-multipart==0.0.6
 
