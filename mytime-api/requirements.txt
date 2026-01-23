@@ -8,9 +8,9 @@ fastapi==0.104.1
 uvicorn[standard]==0.24.0
 gunicorn==21.2.0
 
-# SQL Server Database - UPDATED
+# SQL Server Database
 sqlalchemy==2.0.23
-pyodbc==5.2.0  # Changed from 5.0.1 to 5.2.0
+pyodbc==5.2.0
 
 # Authentication & Security
 pyjwt==2.8.0
@@ -19,9 +19,9 @@ python-multipart==0.0.6
 pycryptodome==3.20.0
 bcrypt==4.1.2
 
-# Configuration
+# Configuration - UPDATED PYDANTIC VERSIONS
 pydantic==2.5.3
-pydantic-core==2.14.6
+pydantic-core==2.41.5  # Changed from 2.14.6 to 2.41.5
 pydantic-settings==2.1.0
 python-dotenv==1.0.0
 
