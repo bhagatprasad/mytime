@@ -26,3 +26,4 @@ requests==2.31.0
 
 # Optional: Add this for JWT (replaces cryptography)
 pycryptodome==3.20.0
+"pycryptodome==3.20.0" 
