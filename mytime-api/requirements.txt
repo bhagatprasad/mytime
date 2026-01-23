@@ -20,11 +20,10 @@ python-dotenv==1.0.0
 # AI/ML
 openai==1.6.1
 
-# Utilities
+# Utilities - REMOVE feedparser for now
 httpx==0.25.1
 requests==2.31.0
-feedparser==6.0.10
-# REMOVED: redis==5.0.1
+# REMOVED: feedparser==6.0.10
 
-# HTTP Client
-aiohttp==3.9.1
+# HTTP Client - REMOVE aiohttp for now
+# REMOVED: aiohttp==3.9.1
