@@ -4,14 +4,16 @@ services:
     env: python
     region: singapore
     plan: free
-    branch: main
     rootDir: mytime-api
     
-    # FIXED Build commands
     buildCommand: |
-      echo "🐍 Starting build process..."
+      echo "🚀 Starting build process..."
       
-      # Install system dependencies FIRST
+      # Set environment variables for Rust
+      export CARGO_HOME=/tmp/cargo
+      export RUSTUP_HOME=/tmp/rustup
+      
+      # Install system dependencies
       apt-get update
       apt-get install -y \
         build-essential \
@@ -21,7 +23,8 @@ services:
         g++ \
         unixodbc-dev \
         curl \
-        gnupg
+        gnupg \
+        pkg-config
       
       # Install Microsoft ODBC driver
       curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
@@ -32,22 +35,37 @@ services:
       echo "🐍 Installing Python dependencies..."
       
       # Upgrade pip
-      pip install --upgrade pip
+      pip install --upgrade pip setuptools wheel
       
-      # Install Python packages using pip (NOT poetry)
-      pip install -r requirements.txt
+      # Install packages one by one to identify the problematic one
+      pip install fastapi==0.104.1
+      pip install uvicorn[standard]==0.24.0
+      pip install gunicorn==21.2.0
+      pip install sqlalchemy==2.0.23
+      pip install pyodbc==5.0.1
+      pip install python-jose==3.3.0
+      pip install passlib[bcrypt]==1.7.4
+      pip install pydantic==2.5.3
+      pip install pydantic-settings==2.1.0
+      pip install openai==1.6.1
+      # SKIP langchain for now: pip install langchain==0.0.340
+      pip install httpx==0.25.1
+      pip install requests==2.31.0
+      pip install feedparser==6.0.10
+      pip install redis==5.0.1
+      pip install aiohttp==3.9.1
       
-      echo "✅ Dependencies installed successfully!"
+      echo "✅ Build completed successfully!"
     
-    # SIMPLIFIED Start command
     startCommand: gunicorn app.main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
     
-    # Environment variables
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
       - key: PORT
         value: 10000
+      - key: CRYPTOGRAPHY_DONT_BUILD_RUST
+        value: "1"
     
     healthCheckPath: /health
     autoDeploy: true
