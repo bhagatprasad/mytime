@@ -19,17 +19,17 @@ python-multipart==0.0.6
 pycryptodome==3.20.0
 bcrypt==4.1.2
 
-# Configuration - MATCHING VERSIONS
-pydantic==2.6.4        # Updated to match available core
-pydantic-core==2.20.1  # Compatible with pydantic 2.6.4
-pydantic-settings==2.2.1
+# Configuration - UPDATED PYDANTIC VERSIONS
+pydantic==2.5.3
+pydantic-core==2.41.5  # Changed from 2.14.6 to 2.41.5
+pydantic-settings==2.1.0
 python-dotenv==1.0.0
 
 # AI/ML Integration
 openai==1.6.1
 
 # HTTP & Networking
-httpx==0.26.0
+httpx==0.25.1
 requests==2.31.0
 
 # Development & Type Support
