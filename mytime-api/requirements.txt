@@ -1,29 +1,31 @@
-# FastAPI Core - KEEP AS IS
+# FastAPI Core
 fastapi==0.104.1
-uvicorn[standard]==0.24.0
+uvicorn[standard]==0.25.0
 gunicorn==21.2.0
 
-# Database - KEEP AS IS
-sqlalchemy==2.0.23
-pyodbc==5.0.1
+# Database
+sqlalchemy==1.4.51
+pyodbc==5.1.0
 
-# Authentication & Security - MODIFY THIS
-python-jose==3.3.0  # Keep but will use different backend
-passlib==1.7.4      # Remove [bcrypt] - use plain passlib
+# Authentication & Security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
 python-multipart==0.0.6
+pycryptodome==3.20.0
+bcrypt==4.1.2
 
-# Configuration - KEEP AS IS
+# Configuration
 pydantic==2.5.3
 pydantic-settings==2.1.0
 python-dotenv==1.0.0
 
-# AI/ML - KEEP AS IS
+# AI/ML
 openai==1.6.1
 
-# Utilities - KEEP AS IS
-httpx==0.25.1
+# Utilities
+httpx==0.26.0
 requests==2.31.0
 
-# Optional: Add this for JWT (replaces cryptography)
-pycryptodome==3.20.0
-"pycryptodome==3.20.0" 
+# Optional
+alembic==1.13.1
+typing-extensions==4.12.0  # Updated from 4.9.0 to 4.12.0
