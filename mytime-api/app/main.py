@@ -1,4 +1,4 @@
-# app/main.py - CORRECTED VERSION
+# app/main.py - WITH AUTH MIDDLEWARE
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
@@ -7,6 +7,9 @@ import os
 
 # Import settings
 from app.core.config import settings
+
+# Import middleware
+from app.api.middleware import AuthHeaderMiddleware
 
 # Configure logging
 logging.basicConfig(
@@ -25,7 +28,8 @@ app = FastAPI(
     openapi_url="/openapi.json" if settings.is_development else None
 )
 
-# Configure CORS - Fix for list parsing
+# ========== ADD MIDDLEWARE ==========
+# 1. CORS Middleware
 cors_origins = settings.ALLOWED_ORIGINS
 if isinstance(cors_origins, str):
     # Handle string from environment variable
@@ -39,7 +43,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Add trusted host middleware for production
+# 2. Auth Header Middleware (ADD THIS!)
+app.add_middleware(AuthHeaderMiddleware)
+
+# 3. Trusted Host Middleware (for production)
 if settings.is_production:
     app.add_middleware(
         TrustedHostMiddleware,
@@ -136,6 +143,16 @@ async def startup_event():
 @app.get("/direct-test")
 async def direct_test():
     return {"message": "Direct test endpoint", "api_status": "Check /api/v1/test"}
+
+# ========== DEBUG AUTH ENDPOINT ==========
+@app.get("/debug/auth-test")
+async def debug_auth():
+    """Debug endpoint to test middleware"""
+    return {
+        "message": "Auth middleware test",
+        "middleware": "AuthHeaderMiddleware is active",
+        "check_auth": "Use /api/v1/protected-test for auth test"
+    }
 
 # ========== MAIN EXECUTION ==========
 if __name__ == "__main__":
