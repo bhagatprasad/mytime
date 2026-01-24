@@ -1,21 +1,21 @@
 FROM python:3.11-slim
 
-# Install SQL Server ODBC driver and dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    gnupg \
-    unixodbc \
-    unixodbc-dev \
-    && curl -sSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
-    && curl -sSL https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list \
-    && apt-get update \
-    && ACCEPT_EULA=Y apt-get install -y msodbcsql18 \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# 1. Install SQL Server ODBC driver
+RUN apt-get update && \
+    apt-get install -y curl gnupg && \
+    curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
+    curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
+    apt-get update && \
+    ACCEPT_EULA=Y apt-get install -y msodbcsql18 unixodbc-dev && \
+    apt-get clean
 
+# 2. Install Python packages
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+
+# 3. Copy application code
 COPY . .
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# 4. Start the application
+CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
