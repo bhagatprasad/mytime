@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text  # ← ADDED 'text' here
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from app.core.config import settings
@@ -46,7 +46,7 @@ def test_connection() -> bool:
         return False
     try:
         with engine.connect() as conn:
-            conn.execute("SELECT 1")
+            conn.execute(text("SELECT 1"))  # ← FIXED: Added text() wrapper
         return True
     except Exception as e:
         logger.error(f"Database connection test failed: {e}")
