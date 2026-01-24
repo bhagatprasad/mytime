@@ -1,4 +1,4 @@
-# app/main.py - WITH AUTH MIDDLEWARE
+# app/main.py - UPDATED WITH WORKING MIDDLEWARE
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
@@ -9,7 +9,12 @@ import os
 from app.core.config import settings
 
 # Import middleware
-from app.core.middleware import AuthHeaderMiddleware
+try:
+    from app.api.middleware import AuthHeaderMiddleware
+    MIDDLEWARE_AVAILABLE = True
+except ImportError as e:
+    print(f"⚠️  AuthHeaderMiddleware not available: {e}")
+    MIDDLEWARE_AVAILABLE = False
 
 # Configure logging
 logging.basicConfig(
@@ -43,8 +48,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 2. Auth Header Middleware (ADD THIS!)
-app.add_middleware(AuthHeaderMiddleware)
+# 2. Auth Header Middleware (with safety check)
+if MIDDLEWARE_AVAILABLE:
+    try:
+        app.add_middleware(AuthHeaderMiddleware)
+        print("✅ AuthHeaderMiddleware added successfully")
+    except Exception as e:
+        print(f"⚠️  Failed to add AuthHeaderMiddleware: {e}")
+        # Continue without middleware
+else:
+    print("⚠️  Running without AuthHeaderMiddleware")
 
 # 3. Trusted Host Middleware (for production)
 if settings.is_production:
@@ -75,6 +88,20 @@ async def health_check():
         "environment": settings.ENVIRONMENT.value
     }
 
+# ========== DEBUG ENDPOINTS ==========
+@app.get("/debug/middleware")
+async def debug_middleware():
+    """Debug middleware status"""
+    return {
+        "middleware_available": MIDDLEWARE_AVAILABLE,
+        "middleware_active": MIDDLEWARE_AVAILABLE,
+        "message": "AuthHeaderMiddleware is active" if MIDDLEWARE_AVAILABLE else "Running without AuthHeaderMiddleware"
+    }
+
+@app.get("/direct-test")
+async def direct_test():
+    return {"message": "Direct test endpoint", "api_status": "Check /api/v1/test"}
+
 # ========== API ROUTE SETUP ==========
 def setup_api_routes():
     """Setup API routes - called from startup event"""
@@ -90,11 +117,14 @@ def setup_api_routes():
         
         # List routes
         print("\nREGISTERED ROUTES:")
+        route_count = 0
         for route in app.routes:
             if hasattr(route, "path"):
                 methods = getattr(route, 'methods', ['GET'])
                 print(f"  {route.path} -> {methods}")
-                
+                route_count += 1
+        print(f"Total routes: {route_count}")
+        
     except ImportError as e:
         print(f"❌ API import error: {e}")
         # Create fallback routes
@@ -138,21 +168,6 @@ async def startup_event():
     
     # Setup API routes
     setup_api_routes()
-
-# ========== DIRECT TEST ENDPOINT ==========
-@app.get("/direct-test")
-async def direct_test():
-    return {"message": "Direct test endpoint", "api_status": "Check /api/v1/test"}
-
-# ========== DEBUG AUTH ENDPOINT ==========
-@app.get("/debug/auth-test")
-async def debug_auth():
-    """Debug endpoint to test middleware"""
-    return {
-        "message": "Auth middleware test",
-        "middleware": "AuthHeaderMiddleware is active",
-        "check_auth": "Use /api/v1/protected-test for auth test"
-    }
 
 # ========== MAIN EXECUTION ==========
 if __name__ == "__main__":

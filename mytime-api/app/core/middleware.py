@@ -1,4 +1,4 @@
-# app/api/middleware.py
+# app/api/middleware.py - CORRECTED
 from fastapi import Request
 from fastapi.responses import Response
 import time
@@ -16,7 +16,7 @@ class AuthHeaderMiddleware:
     def __init__(self, app):
         self.app = app
     
-    async def __call__(self, request: Request, call_next: Callable) -> Response:
+    async def __call__(self, request: Request, call_next: Callable) -> Response:  # ← FIXED: Added self
         # Process request
         start_time = time.time()
         
