@@ -9,7 +9,7 @@ import os
 from app.core.config import settings
 
 # Import middleware
-from app.api.middleware import AuthHeaderMiddleware
+from app.core.middleware import AuthHeaderMiddleware
 
 # Configure logging
 logging.basicConfig(
