@@ -16,4 +16,4 @@ httpx
 requests
 typing-extensions
 alembic
-feedparser  # ← ADD THIS LINE
+feedparser

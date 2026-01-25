@@ -10,7 +10,7 @@ from app.core.config import settings
 
 # Import middleware
 try:
-    from app.api.middleware import AuthHeaderMiddleware
+    from app.core.middleware import AuthHeaderMiddleware
     MIDDLEWARE_AVAILABLE = True
 except ImportError as e:
     print(f"⚠️  AuthHeaderMiddleware not available: {e}")
