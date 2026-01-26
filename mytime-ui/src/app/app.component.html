@@ -1,18 +1,52 @@
 <div class="container-scroller">
-  <app-header></app-header>
 
-  <div class="container-fluid page-body-wrapper">
-    <app-sidebar></app-sidebar>
+  <ng-container *ngIf="userContext$ | async as ctx">
 
-    <div class="main-panel">
-      <div class="content-wrapper">
-        <app-title></app-title>
+    <!-- AUTHENTICATED LAYOUT -->
+    <ng-container *ngIf="ctx.isAuthenticated; else loginLayout">
 
-        <!-- Routed pages render here -->
-        <router-outlet></router-outlet>
+      <app-header></app-header>
+
+      <div class="container-fluid page-body-wrapper">
+
+        <app-sidebar></app-sidebar>
+
+        <div class="main-panel">
+          <div class="content-wrapper">
+
+            <app-title></app-title>
+            <router-outlet></router-outlet>
+
+          </div>
+
+          <app-footer></app-footer>
+        </div>
+
       </div>
 
-      <app-footer></app-footer>
-    </div>
-  </div>
+    </ng-container>
+
+    <!-- LOGIN LAYOUT -->
+    <ng-template #loginLayout>
+      <div class="container-fluid page-body-wrapper full-page-wrapper">
+        <div class="content-wrapper-full d-flex align-items-stretch auth auth-img-bg">
+          <div class="row flex-grow w-100">
+
+            <div class="col-lg-6 d-flex align-items-center justify-content-center">
+              <router-outlet></router-outlet>
+            </div>
+
+            <div class="col-lg-6 login-half-bg d-flex flex-row">
+              <p class="text-white font-weight-medium text-center flex-grow align-self-end">
+                Copyright © 2020 All rights reserved.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </ng-template>
+
+  </ng-container>
+
 </div>

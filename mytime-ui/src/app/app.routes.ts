@@ -1,10 +1,55 @@
 import { Routes } from '@angular/router';
-import { UserDashbaordComponent } from './dashbaord/user-dashbaord.component';
-import { AdminDashbaordComponent } from './dashbaord/admin-dashbaord.component';
+import { UserGuard } from './common/gurds/user.guard';
+import { AdminGuard } from './common/gurds/admin.guard';
+
+// Guards
+
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'adminbaord', pathMatch: 'full' },
-    { path: 'userbaord', component: UserDashbaordComponent },
-    { path: 'adminbaord', component: AdminDashbaordComponent },
-    { path: '**', redirectTo: 'adminbaord' }
+    // ========== GROUP 1: PUBLIC ROUTES ==========
+    {
+        path: 'login',
+        loadComponent: () => import('./common/components/login.component').then(m => m.LoginComponent)
+    },
+    {
+        path: 'user',
+        canActivate: [UserGuard],
+        children: [
+            {
+                path: 'dashboard',
+                loadComponent: () => import('./dashbaord/user-dashbaord.component').then(m => m.UserDashbaordComponent)
+            },
+            {
+                path: '',
+                redirectTo: 'dashboard',
+                pathMatch: 'full'
+            }
+        ]
+    },
+
+    // ========== GROUP 3: ADMIN ROUTES ==========
+    {
+        path: 'admin',
+        canActivate: [AdminGuard],
+        children: [
+            {
+                path: 'dashboard',
+                loadComponent: () => import('./dashbaord/admin-dashbaord.component').then(m => m.AdminDashbaordComponent)
+            },
+            {
+                path: '',
+                redirectTo: 'dashboard',
+                pathMatch: 'full'
+            }
+        ]
+    },
+    {
+        path: '',
+        redirectTo: 'login',
+        pathMatch: 'full'
+    },
+    {
+        path: '**',
+        redirectTo: 'login'
+    }
 ];
