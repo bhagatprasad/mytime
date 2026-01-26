@@ -1,6 +1,6 @@
 export const environment = {
     production: false,
-    baseUrl: 'https://mytime-docker.onrender.com/api',
+    baseUrl: 'https://mytime-docker.onrender.com/api/v1',
     UrlConstants: {
         Authenticate: 'Account/AuthenticateUserAsync',
         VerifyAccesToken: 'Account/VerifyAccesToken',

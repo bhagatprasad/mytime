@@ -11,8 +11,8 @@ import { ApiService } from './api.service';
 
 @Injectable({ providedIn: 'root' })
 export class AccountService implements OnDestroy {
-    private readonly authEndpoint = `${environment.baseUrl}/v1/auth/AuthenticateUser`;
-    private readonly claimsEndpoint = `${environment.baseUrl}/v1/auth/GenerateUserClaims`;
+    private readonly authEndpoint = 'auth/AuthenticateUser';
+    private readonly claimsEndpoint = 'auth/GenerateUserClaims';
     
     // Role constants based on your data
     private readonly ROLE_IDS = {
