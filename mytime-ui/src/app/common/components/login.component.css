@@ -1,0 +1,117 @@
+:root {
+  --white: #ffffff;
+  --input-placeholder-color: #6c757d;
+  --border-color: #ced4da;
+  --secondary-color: #6c757d;
+  --default-font-size: 0.875rem;
+}
+
+/* Auth */
+
+.auth .login-half-bg {
+  background: url("/assets/images/auth/login-bg.jpg") !important;
+  background-size: cover  !important;
+}
+
+.auth .register-half-bg {
+  background: url("/assets/images/auth/register-bg.jpg")  !important;
+  background-size: cover  !important;
+}
+
+.auth.lock-full-bg {
+  background: url("/assets/images/auth/lockscreen-bg.jpg")  !important;
+  background-size: cover  !important;
+}
+
+
+.auth .lock-profile-img {
+  width: 90px  !important;
+  height: 90px  !important;
+  border-radius: 100%  !important;
+}
+
+.auth .auth-form-light {
+  background: var(--white)  !important;
+}
+
+.auth .auth-form-light select {
+  color: var(--input-placeholder-color)  !important;
+}
+
+.auth .auth-form-light .input-group .form-control:focus,
+.auth .auth-form-light .input-group .form-control:active {
+  border-color: var(--border-color)  !important;
+}
+
+.auth .auth-form-transparent {
+  background: transparent !important;
+}
+
+.auth .auth-form-transparent .form-control,
+.auth .auth-form-transparent .input-group-text {
+  border-color: var(--secondary-color) !important;
+}
+
+.auth .auth-form-transparent .form-control:focus,
+.auth .auth-form-transparent .form-control:active,
+.auth .auth-form-transparent .input-group-text:focus,
+.auth .auth-form-transparent .input-group-text:active {
+  border-color: var(--secondary-color) !important;
+}
+
+.auth .auth-form-transparent select {
+  outline-color: var(--secondary-color) !important;
+}
+
+.auth.auth-img-bg {
+  padding: 0  !important;
+}
+
+@media (min-width: 768px) {
+  .auth.auth-img-bg .auth-form-transparent {
+    width: 55% !important;
+    margin: auto !important; 
+  }
+}
+
+.auth .brand-logo {
+  margin-bottom: 2rem  !important;
+}
+
+.auth .brand-logo img {
+  width: 115px  !important;
+}
+
+.auth form .form-group {
+  margin-bottom: 1.5rem  !important;
+}
+
+.auth form .form-group label {
+  font-size: 0.8125rem  !important; 
+}
+
+.auth form .form-group .form-control {
+  background: transparent  !important;
+  border-radius: 0  !important;
+  font-size: 0.9375rem  !important;
+}
+
+.auth form .auth-form-btn {
+  height: 50px  !important;
+  line-height: 1.5  !important;
+}
+
+.auth form .auth-link {
+  font-size: var(--default-font-size)  !important;
+}
+
+.auth form .auth-link:hover {
+  color: initial  !important;
+}
+app-login{
+    width: 100% !important;
+}
+
+:host {
+  display: contents;
+}
