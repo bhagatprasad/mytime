@@ -6,11 +6,12 @@ import { AccountService } from '../services/account.service';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { TogglePasswordDirective } from '../directives/toggle-password.directive';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,TogglePasswordDirective],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
