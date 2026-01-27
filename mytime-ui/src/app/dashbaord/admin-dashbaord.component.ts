@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LoaderService } from '../common/services/loader.service';
+import { NotifyService } from '../common/services/notify.service';
 
 @Component({
   selector: 'app-admin-dashbaord',
@@ -9,7 +10,9 @@ import { LoaderService } from '../common/services/loader.service';
   styleUrl: './admin-dashbaord.component.css'
 })
 export class AdminDashbaordComponent implements OnInit {
-  constructor(private loader: LoaderService) {
+  constructor(private loader: LoaderService,
+    private notify: NotifyService
+  ) {
 
   }
   ngOnInit(): void {
@@ -20,6 +23,7 @@ export class AdminDashbaordComponent implements OnInit {
     console.log("hello");
     setTimeout(() => {
       this.loader.hide();
+      this.notify.showSuccess("Hiiii");
     }, 200000);
   }
 }
