@@ -11,7 +11,7 @@ import { TogglePasswordDirective } from '../directives/toggle-password.directive
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule,TogglePasswordDirective],
+  imports: [CommonModule, ReactiveFormsModule, TogglePasswordDirective],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -55,7 +55,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.errorMessage = '';
 
     const credentials = {
-      userName: this.loginForm.get('username')?.value,
+      username: this.loginForm.get('username')?.value,
       password: this.loginForm.get('password')?.value
     };
 
@@ -67,7 +67,8 @@ export class LoginComponent implements OnInit, OnDestroy {
           if (!success) {
             this.errorMessage = 'Invalid username or password';
           }
-          // Navigation is handled in AccountService.redirectBasedOnRole()
+          if (success)
+            this.accountService.redirectBasedOnRole();
         },
         error: (error) => {
           this.isLoading = false;

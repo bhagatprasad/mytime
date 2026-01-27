@@ -5,5 +5,5 @@ export interface ApplicationUser {
     lastName?: string;             // string? in C#
     email?: string;                // string? in C#
     phone?: string;                // string? in C#
-    roleId?: string;               // Guid? in C#
+    roleId?: number;               // Guid? in C#
 }
