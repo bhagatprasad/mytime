@@ -25195,3 +25195,33 @@ dl li {
 }
 
 /*# sourceMappingURL=maps/style.css.map */
+
+/* Custom Toastr Styles */
+.toast-success {
+  background-color: #28a745 !important;
+}
+
+.toast-error {
+  background-color: #dc3545 !important;
+}
+
+.toast-warning {
+  background-color: #ffc107 !important;
+  color: #212529 !important;
+}
+
+.toast-info {
+  background-color: #17a2b8 !important;
+}
+
+/* Make it work on mobile */
+@media (max-width: 767px) {
+  #toast-container {
+    min-width: 90%;
+    margin-left: 5%;
+  }
+  
+  #toast-container > div {
+    width: 100%;
+  }
+}

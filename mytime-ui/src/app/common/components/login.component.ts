@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TogglePasswordDirective } from '../../common/directives/toggle-password.directive';
+import { NotifyService } from '../services/notify.service';
 
 @Component({
   selector: 'app-login',
@@ -33,7 +34,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     public loaderService: LoaderService,
     private fb: FormBuilder,
     private router: Router,
-    @Inject(PLATFORM_ID) platformId: Object
+    @Inject(PLATFORM_ID) platformId: Object,
+    private toster: NotifyService
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
 
@@ -62,6 +64,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       }
     }
     this.loaderService.hide();
+    this.toster.showSuccess("shhi");
   }
 
   ngOnDestroy(): void {
@@ -73,6 +76,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (this.loginForm.invalid) {
       this.markFormGroupTouched(this.loginForm);
       this.errorMessage = 'Please fill in all required fields correctly';
+      this.toster.showError("Please fill in all required fields correctly");
       return;
     }
 
@@ -107,6 +111,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             this.loginForm.get('password')?.reset();
             // Add shake animation
             this.shakeForm();
+            this.toster.showError("Invalid username or password");
           }
           if (success) {
             this.accountService.redirectBasedOnRole();
@@ -116,6 +121,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.loaderService.hide();
           this.errorMessage = this.getErrorMessage(error);
           console.error('Login error:', error);
+          this.toster.showError(error.errorMessage);
           // Clear password field for security
           this.loginForm.get('password')?.reset();
           this.shakeForm();
