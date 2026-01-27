@@ -1,0 +1,19 @@
+
+.sidebar {
+    min-height: calc(100vh - 60px);
+    background: #ec37fc;
+    font-family: "Karla", sans-serif;
+    font-weight: normal;
+    padding: 0;
+    padding-top: 25px !important;
+    width: 240px;
+    z-index: 11;
+    transition: width 0.25s ease, background 0.25s ease;
+    -webkit-transition: width 0.25s ease, background 0.25s ease;
+    -moz-transition: width 0.25s ease, background 0.25s ease;
+    -ms-transition: width 0.25s ease, background 0.25s ease;
+    box-shadow: 6px 16px 31px -18px #b7bcd1;
+    -webkit-box-shadow: 6px 16px 31px -18px #b7bcd1;
+    -moz-box-shadow: 6px 16px 31px -18px #b7bcd1;
+    -ms-box-shadow: 6px 16px 31px -18px #b7bcd1;
+}

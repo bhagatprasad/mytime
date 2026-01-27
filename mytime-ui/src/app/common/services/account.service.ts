@@ -1,7 +1,7 @@
 import { Injectable, PLATFORM_ID, Inject, OnDestroy } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { filter, distinctUntilChanged, takeUntil, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from '../../../environment';
 import { AuthResponse } from '../models/auth-response';
@@ -12,23 +12,23 @@ import { ApiService } from './api.service';
 @Injectable({ providedIn: 'root' })
 export class AccountService implements OnDestroy {
     private readonly authEndpoint = 'auth/AuthenticateUser';
-    private readonly claimsEndpoint = 'auth/GenerateUserClaims';
-    
+    private readonly claimsEndpoint = 'auth/GenarateUserClaims';
+
     // Role constants based on your data
     private readonly ROLE_IDS = {
-        ADMINISTRATOR: '1000',
-        ADMIN: '1001',
-        USER: '1002' // Assuming regular users have roleId 1002
+        ADMINISTRATOR: 1000,
+        ADMIN: 1001,
+        USER: 1002 // Assuming regular users have roleId 1002
     };
-    
+
     private authenticationState = new BehaviorSubject<boolean | null>(null);
     private isBrowser: boolean;
     private inactivityTimer: any;
     private readonly INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes
     private destroy$ = new Subject<void>();
-    
-    // Add redirectUrl property
-    public redirectUrl: string = '/app-user-dashboard'; // Default redirect
+
+    // Add redirectUrl property with proper type
+    public redirectUrl: string | null = null; // Start with null
 
     // Public observable (using $ naming convention)
     authenticationState$ = this.authenticationState.asObservable().pipe(
@@ -84,17 +84,21 @@ export class AccountService implements OnDestroy {
             return;
         }
 
-        // Check if there's a stored redirect URL
-        if (this.redirectUrl && this.redirectUrl !== '/app-user-dashboard') {
+        // First, check if there's a stored redirect URL that's not a default route
+        if (this.redirectUrl &&
+            this.redirectUrl !== '/user/dashboard' &&
+            this.redirectUrl !== '/admin/dashboard' &&
+            this.redirectUrl !== '/app-user-dashboard') {
             const redirectTo = this.redirectUrl;
-            this.redirectUrl = '/app-user-dashboard'; // Reset to default
+            this.clearRedirectUrl(); // Clear after use
             this.router.navigateByUrl(redirectTo);
             return;
         }
 
         // Otherwise, redirect based on role
         const isAdmin = this.isAdmin(user);
-        const redirectRoute = isAdmin ? '/app-admin-dashboard' : '/app-user-dashboard';
+        const redirectRoute = isAdmin ? '/admin/dashboard' : '/user/dashboard';
+        this.clearRedirectUrl(); // Clear after use
         this.router.navigate([redirectRoute]);
     }
 
@@ -140,17 +144,17 @@ export class AccountService implements OnDestroy {
     isAdmin(user?: ApplicationUser): boolean {
         const currentUser = user || this.getCurrentUser();
         if (!currentUser || !currentUser.roleId) return false;
-        
+
         // Check if roleId is Administrator (1000) or Admin (1001)
-        return currentUser.roleId === this.ROLE_IDS.ADMINISTRATOR || 
-               currentUser.roleId === this.ROLE_IDS.ADMIN;
+        return currentUser.roleId === this.ROLE_IDS.ADMINISTRATOR ||
+            currentUser.roleId === this.ROLE_IDS.ADMIN;
     }
 
     // Check if user is Administrator specifically
     isAdministrator(user?: ApplicationUser): boolean {
         const currentUser = user || this.getCurrentUser();
         if (!currentUser || !currentUser.roleId) return false;
-        
+
         return currentUser.roleId === this.ROLE_IDS.ADMINISTRATOR;
     }
 
@@ -158,12 +162,12 @@ export class AccountService implements OnDestroy {
     isRegularAdmin(user?: ApplicationUser): boolean {
         const currentUser = user || this.getCurrentUser();
         if (!currentUser || !currentUser.roleId) return false;
-        
+
         return currentUser.roleId === this.ROLE_IDS.ADMIN;
     }
 
     // Check if user has specific role
-    hasRole(roleId: string): boolean {
+    hasRole(roleId: number): boolean {
         const user = this.getCurrentUser();
         return user?.roleId === roleId;
     }
@@ -172,8 +176,8 @@ export class AccountService implements OnDestroy {
     getUserRoleName(user?: ApplicationUser): string {
         const currentUser = user || this.getCurrentUser();
         if (!currentUser?.roleId) return 'user';
-        
-        switch(currentUser.roleId) {
+
+        switch (currentUser.roleId) {
             case this.ROLE_IDS.ADMINISTRATOR:
                 return 'administrator';
             case this.ROLE_IDS.ADMIN:
@@ -218,7 +222,18 @@ export class AccountService implements OnDestroy {
     }
 
     generateUserClaims(authResponse: AuthResponse): Observable<ApplicationUser> {
-        return this.apiService.send<ApplicationUser>('POST', this.claimsEndpoint, authResponse);
+        return this.apiService.send<any>('POST', this.claimsEndpoint, authResponse).pipe(
+            map(data => {
+                return {
+                    id: data.id?.toString(), 
+                    fullName: `${data.first_name || ''} ${data.last_name || ''}`.trim(),
+                    firstName: data.first_name,
+                    lastName: data.last_name,
+                    email: data.email,
+                    phone: data.phone,
+                    roleId: data.role_id  // Map role_id to role_Id (number)
+                } as ApplicationUser;
+            }));
     }
 
     // Login process
@@ -228,7 +243,7 @@ export class AccountService implements OnDestroy {
                 next: (authResponse) => {
                     this.generateUserClaims(authResponse).subscribe({
                         next: (user) => {
-                            this.storeUserSession(user, authResponse.jwtToken);
+                            this.storeUserSession(user, authResponse.jwt_token);
                             observer.next(true);
                             observer.complete();
                         },
@@ -251,11 +266,11 @@ export class AccountService implements OnDestroy {
     storeUserSession(user: ApplicationUser, token: string): void {
         this.setLocalStorageItem('ApplicationUser', JSON.stringify(user));
         this.setLocalStorageItem('AccessToken', token);
-        
+
         this.authenticationState.next(true);
         this.resetInactivityTimer();
 
-        // Redirect based on user role
+        // Redirect based on user role or stored redirect URL
         this.redirectBasedOnRole();
     }
 
@@ -264,9 +279,7 @@ export class AccountService implements OnDestroy {
         this.removeLocalStorageItem('AccessToken');
         this.authenticationState.next(false);
         this.clearInactivityTimer();
-        
-        // Reset redirect URL on logout
-        this.redirectUrl = '/app-user-dashboard';
+        this.clearRedirectUrl();
 
         // Navigate to login only if not already there
         if (this.isBrowser && !this.router.url.includes('/login')) {
@@ -287,9 +300,17 @@ export class AccountService implements OnDestroy {
     getAccessToken(): string | null {
         return this.getLocalStorageItem('AccessToken');
     }
-    
-    // Helper method to clear redirect URL
+
+    // Helper method to clear redirect URL - set to null instead of a default
     clearRedirectUrl(): void {
-        this.redirectUrl = '/app-user-dashboard';
+        this.redirectUrl = null;
+    }
+
+    // Helper method to get the default dashboard based on role
+    getDefaultDashboard(): string {
+        const user = this.getCurrentUser();
+        if (!user) return '/login';
+
+        return this.isAdmin(user) ? '/admin/dashboard' : '/user/dashboard';
     }
 }
