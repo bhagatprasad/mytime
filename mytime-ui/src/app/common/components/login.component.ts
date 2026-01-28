@@ -64,7 +64,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       }
     }
     this.loaderService.hide();
-    this.toster.showSuccess("shhi");
   }
 
   ngOnDestroy(): void {

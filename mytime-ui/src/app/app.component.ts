@@ -57,12 +57,6 @@ export class AppComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // Show loader in main panel while loading app
-    this.loaderService.show();
-    
-    // Hide after 1.5 seconds
-    setTimeout(() => {
-      this.loaderService.hide();
-    }, 1500);
+   
   }
 }
