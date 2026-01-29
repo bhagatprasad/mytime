@@ -8,18 +8,8 @@ import { SidebarComponent } from './layout/sidebar.component';
 import { FooterComponent } from './layout/footer.component';
 import { TitleComponent } from './layout/title.component';
 import { AccountService } from './common/services/account.service';
-import { LoaderService } from './common/services/loader.service'; // Add this
-import { ApplicationUser } from './common/models/application-user';
 import { PanelLoaderComponent } from './common/components/loader.component';
 
-interface UserContext {
-  isAuthenticated: boolean | null;
-  user: ApplicationUser | null;
-  isAdmin: boolean;
-  isAdministrator: boolean;
-  isRegularAdmin: boolean;
-  userRoleName: string;
-}
 
 @Component({
   selector: 'app-root',
@@ -36,7 +26,10 @@ interface UserContext {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
+
+   constructor(private accountService: AccountService) { }
+
   userContext$ = this.accountService.authenticationState$.pipe(
     map(isAuthenticated => {
       const user = isAuthenticated ? this.accountService.getCurrentUser() : null;
@@ -50,13 +43,4 @@ export class AppComponent implements OnInit {
       };
     })
   );
-
-  constructor(
-    private accountService: AccountService,
-    private loaderService: LoaderService
-  ) { }
-
-  ngOnInit() {
-   
-  }
 }

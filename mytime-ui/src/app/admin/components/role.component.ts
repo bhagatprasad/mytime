@@ -15,6 +15,7 @@ import {
 import { RoleService } from '../services/role.service';
 import { Role } from '../models/role';
 import { ToastrService } from 'ngx-toastr';
+import { LoaderService } from '../../common/services/loader.service';
 
 // Register AG Grid modules
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -115,7 +116,6 @@ export class RoleComponent implements OnInit, OnDestroy {
     }
   ];
 
-  // Mobile Columns (Simplified view)
   mobileColumnDefs: ColDef[] = [
     {
       field: 'Name',
@@ -130,13 +130,6 @@ export class RoleComponent implements OnInit, OnDestroy {
       cellClass: 'text-center'
     },
     {
-      field: 'IsActive',
-      headerName: 'Status',
-      width: 100,
-      cellRenderer: this.mobileStatusRenderer.bind(this),
-      cellClass: this.statusCellClass.bind(this)
-    },
-    {
       field: 'Actions',
       headerName: '',
       width: 80,
@@ -147,10 +140,8 @@ export class RoleComponent implements OnInit, OnDestroy {
     }
   ];
 
-  // Current columns based on screen size
   columnDefs: ColDef[] = [];
 
-  // Default column definitions
   defaultColDef: ColDef = {
     flex: 1,
     minWidth: 100,
@@ -160,7 +151,6 @@ export class RoleComponent implements OnInit, OnDestroy {
     floatingFilter: false
   };
 
-  // Grid options
   gridOptions: GridOptions = {
     pagination: true,
     paginationPageSize: 10,
@@ -172,23 +162,20 @@ export class RoleComponent implements OnInit, OnDestroy {
     domLayout: 'autoHeight'
   };
 
-  // Row Data from API
   rowData: Role[] = [];
 
-  // Loading state
   isLoading: boolean = false;
 
   constructor(
     private roleService: RoleService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private loader: LoaderService
   ) { }
 
   ngOnInit(): void {
     this.checkScreenSize();
     this.setupResponsiveColumns();
     this.loadRoleData();
-
-    // Listen for window resize
     window.addEventListener('resize', this.onResize.bind(this));
   }
 
@@ -196,7 +183,6 @@ export class RoleComponent implements OnInit, OnDestroy {
     window.removeEventListener('resize', this.onResize.bind(this));
   }
 
-  // Check screen size
   @HostListener('window:resize', ['$event'])
   onResize(event: any): void {
     this.checkScreenSize();
@@ -206,7 +192,6 @@ export class RoleComponent implements OnInit, OnDestroy {
     const wasMobile = this.isMobile;
     this.isMobile = window.innerWidth < 768;
 
-    // Only update if screen size category changed
     if (wasMobile !== this.isMobile) {
       this.setupResponsiveColumns();
     }
@@ -214,16 +199,12 @@ export class RoleComponent implements OnInit, OnDestroy {
 
   private setupResponsiveColumns(): void {
     if (this.isMobile) {
-      // Mobile: Show simplified columns
       this.columnDefs = [...this.mobileColumnDefs];
       this.gridOptions.domLayout = 'autoHeight';
     } else {
-      // Desktop: Show all columns
       this.columnDefs = [...this.desktopColumnDefs];
       this.gridOptions.domLayout = 'normal';
     }
-
-    // Update grid if API exists
     if (this.gridApi) {
       this.refreshGridColumns();
     }
@@ -231,31 +212,21 @@ export class RoleComponent implements OnInit, OnDestroy {
 
   private refreshGridColumns(): void {
     if (!this.gridApi) return;
-
-    // Create new reference for column definitions
     const newColumnDefs = JSON.parse(JSON.stringify(this.columnDefs));
-    //this.gridApi.setColumnDefs(newColumnDefs);
-
-    // Refresh grid
     setTimeout(() => {
       this.gridApi.refreshHeader();
       this.gridApi.sizeColumnsToFit();
     }, 100);
   }
 
-  // Load data from service
   loadRoleData(): void {
-    this.isLoading = true;
+    this.loader.show();
 
     this.roleService.getRoleListAsync().subscribe({
       next: (roles: Role[]) => {
         this.rowData = roles;
-        this.isLoading = false;
-
-        // Show success message
+        this.loader.hide();
         this.toastr.success(`${roles.length} roles loaded successfully`, 'Success');
-
-        // Refresh grid if API is available
         if (this.gridApi) {
           setTimeout(() => {
             this.gridApi.sizeColumnsToFit();
@@ -264,85 +235,20 @@ export class RoleComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error loading roles:', error);
-        this.isLoading = false;
-        this.toastr.error('Failed to load roles', 'Error');
+        this.loader.hide();
 
-        // Show mock data for testing if API fails
-        this.loadMockData();
+        this.toastr.error('Failed to load roles', 'Error');
       }
     });
   }
 
-  // Mock data for testing
-  private loadMockData(): void {
-    const mockRoles: Role[] = [
-      {
-        Id: 1,
-        Name: 'Administrator',
-        Code: 'ADMIN',
-        IsActive: true,
-        CreatedBy: 1,
-        CreatedOn: new Date('2023-01-15'),
-        ModifiedBy: 1,
-        ModifiedOn: new Date('2023-06-20')
-      },
-      {
-        Id: 2,
-        Name: 'Manager',
-        Code: 'MGR',
-        IsActive: true,
-        CreatedBy: 1,
-        CreatedOn: new Date('2023-02-10'),
-        ModifiedBy: 2,
-        ModifiedOn: new Date('2023-05-15')
-      },
-      {
-        Id: 3,
-        Name: 'Supervisor',
-        Code: 'SUP',
-        IsActive: true,
-        CreatedBy: 2,
-        CreatedOn: new Date('2023-03-05'),
-        ModifiedBy: 2,
-        ModifiedOn: new Date('2023-04-10')
-      },
-      {
-        Id: 4,
-        Name: 'User',
-        Code: 'USER',
-        IsActive: true,
-        CreatedBy: 1,
-        CreatedOn: new Date('2023-01-20'),
-        ModifiedBy: 3,
-        ModifiedOn: new Date('2023-03-25')
-      },
-      {
-        Id: 5,
-        Name: 'Guest',
-        Code: 'GUEST',
-        IsActive: false,
-        CreatedBy: 1,
-        CreatedOn: new Date('2023-02-28'),
-        ModifiedBy: 1,
-        ModifiedOn: new Date('2023-06-15')
-      }
-    ];
-
-    this.rowData = mockRoles;
-    this.toastr.info('Showing mock data for demonstration', 'Info');
-  }
-
-  // Grid ready event
   onGridReady(params: GridReadyEvent): void {
     this.gridApi = params.api;
-
-    // Adjust column sizes after data is loaded
     setTimeout(() => {
       this.gridApi.sizeColumnsToFit();
     }, 300);
   }
 
-  // Cell Renderers
   nameRenderer(params: ICellRendererParams): string {
     return `
       <div class="role-name-cell">
@@ -411,7 +317,7 @@ export class RoleComponent implements OnInit, OnDestroy {
     return isActive ? 'status-active' : 'status-inactive';
   }
 
-  // Date formatter
+
   dateFormatter(params: ValueFormatterParams): string {
     if (!params.value) return 'N/A';
 
@@ -424,57 +330,29 @@ export class RoleComponent implements OnInit, OnDestroy {
       day: 'numeric'
     });
   }
-  // Export to CSV
-  exportToCSV(): void {
-    if (this.gridApi) {
-      this.gridApi.exportDataAsCsv({
-        fileName: `roles_${new Date().toISOString().split('T')[0]}.csv`,
-        processCellCallback: (params) => {
-          // Format dates for CSV export
-          if (params.column.getColDef().field === 'CreatedOn' || 
-              params.column.getColDef().field === 'ModifiedOn') {
-            if (params.value) {
-              return this.dateFormatter({ value: params.value } as ValueFormatterParams);
-            }
-          }
-          if (params.column.getColDef().field === 'IsActive') {
-            return params.value ? 'Active' : 'Inactive';
-          }
-          return params.value;
-        }
-      });
-      this.toastr.success('Data exported to CSV successfully', 'Export Complete');
-    }
-  }
 
-  // Refresh data
   refreshData(): void {
     this.loadRoleData();
   }
 
-  // Add new role
   addNewRole(): void {
     this.toastr.info('Add new role functionality will be implemented', 'Coming Soon');
-    // TODO: Implement modal/dialog for adding new role
     console.log('Add new role clicked');
   }
 
-  // Get selected rows count
+
   getSelectedRowsCount(): number {
     return this.gridApi?.getSelectedRows()?.length || 0;
   }
 
-  // Get total rows count
   getTotalRowsCount(): number {
     return this.rowData.length;
   }
 
-  // Get active roles count
   getActiveRolesCount(): number {
     return this.rowData.filter(role => role.IsActive).length;
   }
 
-  // Get inactive roles count
   getInactiveRolesCount(): number {
     return this.rowData.filter(role => !role.IsActive).length;
   }

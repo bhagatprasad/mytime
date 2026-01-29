@@ -220,6 +220,7 @@ h5 {
 /* Grid container */
 .ag-grid-container {
   padding: 0;
+  overflow: auto;
 }
 
 .ag-grid-container ag-grid-angular {
