@@ -2,11 +2,7 @@ import { Routes } from '@angular/router';
 import { UserGuard } from './common/gurds/user.guard';
 import { AdminGuard } from './common/gurds/admin.guard';
 
-// Guards
-
-
 export const routes: Routes = [
-    // ========== GROUP 1: PUBLIC ROUTES ==========
     {
         path: 'login',
         loadComponent: () => import('./common/components/login.component').then(m => m.LoginComponent)
@@ -26,8 +22,6 @@ export const routes: Routes = [
             }
         ]
     },
-
-    // ========== GROUP 3: ADMIN ROUTES ==========
     {
         path: 'admin',
         canActivate: [AdminGuard],
