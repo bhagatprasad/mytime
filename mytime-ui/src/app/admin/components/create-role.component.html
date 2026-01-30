@@ -1,27 +1,49 @@
+<!-- Overlay -->
 <div class="sidebar-overlay" *ngIf="isVisible" (click)="close()"></div>
+
+<!-- Sidebar -->
 <div class="sidebar" [class.visible]="isVisible">
-    <div class="sidebar-header">
-        <h5 class="sidebar-title">{{ role?.Id ? 'Edit Role' : 'Add Role' }}</h5>
-        <button type="button" class="close" (click)="close()" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="sidebar-body">
-        <form [formGroup]="roleForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="roleForm" (ngSubmit)="onSubmit()">
+        <div class="sidebar-header">
+            <h5 class="sidebar-title">{{ role?.Id ? 'Edit Role' : 'Add Role' }}</h5>
+            <button type="button" class="close" (click)="close()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="sidebar-body">
             <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" class="form-control" id="name" formControlName="name"
-                    placeholder="Enter  name">
+                <label for="Name">Role Name</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-account-circle-outline"></i>
+                        </span>
+                    </div>
+                    <input type="text" class="form-control" id="Name" formControlName="Name"
+                        placeholder="Enter role name">
+                </div>
             </div>
+
             <div class="form-group">
-                <label for="code">Code</label>
-                <input type="text" class="form-control" id="code" formControlName="code"
-                    placeholder="Enter code">
+                <label for="Code">Role Code</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-code-tags"></i>
+                        </span>
+                    </div>
+                    <input type="text" class="form-control" id="Code" formControlName="Code"
+                        placeholder="Enter role code">
+                </div>
             </div>
-            
-            <div class="sidebar-footer">
-                <button type="submit" class="btn btn-primary">{{ role?.Id ? 'Update' : 'Save' }}</button>
-            </div>
-        </form>
-    </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <button type="submit" class="btn btn-primary">
+                <i class="mdi" [class.mdi-content-save]="!role?.Id" [class.mdi-update]="role?.Id"></i>
+                {{ role?.Id ? 'Update' : 'Save' }}
+            </button>
+        </div>
+    </form>
 </div>

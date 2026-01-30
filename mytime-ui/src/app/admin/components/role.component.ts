@@ -16,6 +16,10 @@ import { RoleService } from '../services/role.service';
 import { Role } from '../models/role';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from '../../common/services/loader.service';
+import { CreateRoleComponent } from './create-role.component';
+import { AuditFieldsService } from '../../common/services/auditfields.service';
+import { ActionsRendererComponent } from '../../common/components/actions-renderer.component';
+import { MobileActionsRendererComponent } from '../../common/components/mobile-actions-renderer.component';
 
 // Register AG Grid modules
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -23,7 +27,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
   selector: 'app-role',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, DatePipe, FormsModule],
+  imports: [CommonModule, AgGridAngular, DatePipe, FormsModule, CreateRoleComponent],
   templateUrl: './role.component.html',
   styleUrls: ['./role.component.css']
 })
@@ -111,7 +115,11 @@ export class RoleComponent implements OnInit, OnDestroy {
       width: 120,
       sortable: false,
       filter: false,
-      cellRenderer: this.actionsRenderer.bind(this),
+      cellRenderer: ActionsRendererComponent,
+      cellRendererParams: {
+        onEditClick: (data: any) => this.requestRoleProcess(data),
+        onDeleteClick: (data: any) => this.deleteRole(data)
+      },
       cellClass: 'text-center'
     }
   ];
@@ -135,7 +143,10 @@ export class RoleComponent implements OnInit, OnDestroy {
       width: 80,
       sortable: false,
       filter: false,
-      cellRenderer: this.mobileActionsRenderer.bind(this),
+      cellRenderer: MobileActionsRendererComponent,
+      cellRendererParams: {
+        onEditClick: (data: any) => this.requestRoleProcess(data)
+      },
       cellClass: 'text-center'
     }
   ];
@@ -166,10 +177,14 @@ export class RoleComponent implements OnInit, OnDestroy {
 
   isLoading: boolean = false;
 
+  showSidebar: boolean = false;
+  selectedRole: Role | null = null;
+
   constructor(
     private roleService: RoleService,
     private toastr: ToastrService,
-    private loader: LoaderService
+    private loader: LoaderService,
+    private audit: AuditFieldsService
   ) { }
 
   ngOnInit(): void {
@@ -292,7 +307,7 @@ export class RoleComponent implements OnInit, OnDestroy {
   actionsRenderer(params: ICellRendererParams): string {
     return `
       <div class="d-flex justify-content-center gap-1">
-        <button class="btn btn-sm btn-outline-primary" title="Edit">
+        <button class="btn btn-sm btn-outline-primary" title="Edit" (click)="requestRoleProcess(params.data)">
           <i class="mdi mdi-pencil"></i>
         </button>
         <button class="btn btn-sm btn-outline-danger" title="Delete">
@@ -355,5 +370,38 @@ export class RoleComponent implements OnInit, OnDestroy {
 
   getInactiveRolesCount(): number {
     return this.rowData.filter(role => !role.IsActive).length;
+  }
+  deleteRole(role:Role):void{
+    console.log(JSON.stringify(role));
+  }
+
+  requestRoleProcess(role: Role): void {
+    this.selectedRole = role;
+    this.showSidebar=true;
+  }
+  openAddEditRole(): void {
+    this.selectedRole = null;
+    this.showSidebar = true;
+  }
+  onSaveRole(role: Role): void {
+    this.loader.show();
+    var _role = this.audit.appendAuditFields(role);
+    console.log("we have receved role data " + JSON.stringify(role));
+    this.roleService.saveRoleAsync(_role).subscribe(
+      reponse => {
+        if (reponse) {
+          this.toastr.success("Role processed succeessfully");
+          this.showSidebar = false;
+          this.refreshData();
+        }
+      }, error => {
+        this.toastr.error("something went wrong , please check and resubmit");
+        this.showSidebar = true;
+        this.loader.hide();
+      });
+
+  }
+  onCloseSidebar(): void {
+    this.showSidebar = false;
   }
 }

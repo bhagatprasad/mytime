@@ -16,4 +16,8 @@ export class RoleService {
         return this.apiService.send<Role[]>("GET", environment.UrlConstants.Role.GetRoleListAsync);
     }
 
+    saveRoleAsync(role: Role): Observable<any> {
+        return this.apiService.send<any>("POST", environment.UrlConstants.Role.InsertOrUpdateRoleAsync, role);
+    }
+
 }

@@ -24,7 +24,7 @@
                 <!-- Add Button -->
                 <button 
                   class="btn btn-primary btn-sm d-flex align-items-center"
-                  (click)="addNewRole()"
+                  (click)="openAddEditRole()"
                   title="Add new role"
                 >
                   <i class="mdi mdi-plus me-1"></i>
@@ -79,6 +79,8 @@
               </small>
             </div>
           </div>
+
+          <app-create-role [isVisible]="showSidebar" [role]="selectedRole"  (closeSidebar)="onCloseSidebar()" (saveRole)="onSaveRole($event)"></app-create-role>
         </div>
       </div>
     </div>

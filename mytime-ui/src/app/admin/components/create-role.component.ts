@@ -38,9 +38,8 @@ export class CreateRoleComponent implements OnChanges {
 
   constructor(private fb: FormBuilder, private datePipe: DatePipe) {
     this.roleForm = this.fb.group({
-      name: ['', Validators.required],
-      code: ['', Validators.required],
-      isActive: [true]
+      Name: ['', Validators.required],
+      Code: ['', Validators.required]
     });
   }
 
@@ -56,14 +55,17 @@ export class CreateRoleComponent implements OnChanges {
     console.log('Patching form with:', formattedData);
     this.roleForm.patchValue(formattedData);
   }
-  
+
   onSubmit(): void {
     if (this.roleForm.valid) {
       const roleData: Role = {
         ...this.roleForm.value,
-        roleId: this.role?.Id || 0,
+        Id: this.role?.Id || 0,
       };
       this.saveRole.emit(roleData);
     }
+  }
+ close(): void {
+    this.closeSidebar.emit();
   }
 }
