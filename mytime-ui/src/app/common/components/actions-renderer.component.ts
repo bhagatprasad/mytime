@@ -6,14 +6,17 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
   selector: 'app-actions-renderer',
   template: `
     <div class="d-flex justify-content-center gap-1">
-      <button class="btn btn-sm btn-outline-primary" title="Edit" (click)="onEditClick($event)">
-        <i class="mdi mdi-pencil"></i>
+      <button class="btn btn-sm btn-info btn-edit" title="Edit" (click)="onEditClick($event)">
+        <i class="icon-cog"></i> Edit
       </button>
-      <button class="btn btn-sm btn-outline-danger" title="Delete" (click)="onDeleteClick($event)">
-        <i class="mdi mdi-delete"></i>
+      <button class="btn btn-sm btn-danger btn-delete" title="Delete" (click)="onDeleteClick($event)">
+        <i class="icon-disc"></i> Delete
       </button>
     </div>
-  `
+  `,
+  styleUrls: [
+    './actions-renderer.component.css'
+  ]
 })
 export class ActionsRendererComponent implements ICellRendererAngularComp {
   private params: any;
@@ -23,7 +26,8 @@ export class ActionsRendererComponent implements ICellRendererAngularComp {
   }
 
   refresh(params: any): boolean {
-    return false;
+    this.params = params;
+    return true;
   }
 
   onEditClick(event: MouseEvent): void {
