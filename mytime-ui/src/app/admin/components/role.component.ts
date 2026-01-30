@@ -53,7 +53,7 @@ export class RoleComponent implements OnInit, OnDestroy {
     {
       field: 'Name',
       headerName: 'Role Name',
-      width: 200,
+      width: 120,
       filter: 'agTextColumnFilter',
       sortable: true,
       cellRenderer: this.nameRenderer.bind(this)
@@ -69,7 +69,7 @@ export class RoleComponent implements OnInit, OnDestroy {
     {
       field: 'IsActive',
       headerName: 'Status',
-      width: 100,
+      width: 120,
       filter: 'agTextColumnFilter',
       sortable: true,
       cellRenderer: this.statusRenderer.bind(this),
@@ -86,7 +86,7 @@ export class RoleComponent implements OnInit, OnDestroy {
     {
       field: 'CreatedOn',
       headerName: 'Created Date',
-      width: 150,
+      width: 120,
       filter: 'agDateColumnFilter',
       sortable: true,
       valueFormatter: this.dateFormatter.bind(this),
@@ -103,7 +103,7 @@ export class RoleComponent implements OnInit, OnDestroy {
     {
       field: 'ModifiedOn',
       headerName: 'Last Modified',
-      width: 150,
+      width: 120,
       filter: 'agDateColumnFilter',
       sortable: true,
       valueFormatter: this.dateFormatter.bind(this),
@@ -112,7 +112,7 @@ export class RoleComponent implements OnInit, OnDestroy {
     {
       field: 'Actions',
       headerName: 'Actions',
-      width: 120,
+      width: 150,
       sortable: false,
       filter: false,
       cellRenderer: ActionsRendererComponent,
@@ -241,7 +241,6 @@ export class RoleComponent implements OnInit, OnDestroy {
       next: (roles: Role[]) => {
         this.rowData = roles;
         this.loader.hide();
-        this.toastr.success(`${roles.length} roles loaded successfully`, 'Success');
         if (this.gridApi) {
           setTimeout(() => {
             this.gridApi.sizeColumnsToFit();

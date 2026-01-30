@@ -1,8 +1,8 @@
-<nav class="sidebar sidebar-offcanvas sidebar-class" id="sidebar">
+<nav class="sidebar sidebar-offcanvas" id="sidebar">
   
   <div class="user-profile" *ngIf="userContext$ | async as ctx">
     <div class="user-image">
-      <img src="assets/images/faces/face28.png">
+      <img src="assets/images/faces/face28.png" alt="User">
     </div>
 
     <div class="user-name">
@@ -25,3 +25,6 @@
   </app-user-sidebar>
 
 </nav>
+
+<!-- Mobile overlay (only shows on mobile when sidebar is open) -->
+<div class="sidebar-overlay" (click)="closeSidebarOnMobile()"></div>
