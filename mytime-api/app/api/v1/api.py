@@ -20,7 +20,7 @@ except ImportError as e:
 
 # Import routers
 try:
-    from app.api.v1.routers import auth, user, roles, llm, vision, audio, embeddings, rss, country
+    from app.api.v1.routers import auth, user, roles, llm, vision, audio, embeddings, rss, country,state,city,designation,department,document_type,holiday_calendar
     print("✅ All routers imported")
 except ImportError as e:
     print(f"❌ Router import error: {e}")
@@ -40,6 +40,12 @@ except ImportError as e:
     embeddings = DummyRouter()
     rss = DummyRouter()
     country = DummyRouter()
+    state = DummyRouter()
+    city = DummyRouter()
+    department = DummyRouter()
+    designation = DummyRouter()
+    document_type = DummyRouter()
+    holiday_calendar = DummyRouter()
 
 # Create main router
 api_router = APIRouter()
@@ -60,16 +66,46 @@ if HAS_AUTH:
     
     countries_protected = APIRouter(dependencies=[Depends(get_current_user)])
     countries_protected.include_router(country.router)
+
+    states_protected = APIRouter(dependencies=[Depends(get_current_user)])
+    states_protected.include_router(state.router)
+
+    cities_protected = APIRouter(dependencies=[Depends(get_current_user)])
+    cities_protected.include_router(city.router)
+
+    department_protected = APIRouter(dependencies=[Depends(get_current_user)])
+    department_protected.include_router(department.router)
+
+    designation_protected = APIRouter(dependencies=[Depends(get_current_user)])
+    designation_protected.include_router(designation.router)
+
+    documenttype_protected = APIRouter(dependencies=[Depends(get_current_user)])
+    documenttype_protected.include_router(document_type.router)
+
+    holiydacallender_protected = APIRouter(dependencies=[Depends(get_current_user)])
+    holiydacallender_protected.include_router(holiday_calendar.router)
     
     # Include protected routes
     api_router.include_router(users_protected, prefix="/users", tags=["users"])
     api_router.include_router(roles_protected, prefix="/roles", tags=["roles"])
     api_router.include_router(countries_protected, prefix="/countries", tags=["countries"])
+    api_router.include_router(states_protected, prefix="/states", tags=["states"])
+    api_router.include_router(countries_protected, prefix="/cities", tags=["cities"])
+    api_router.include_router(department_protected, prefix="/departments", tags=["departments"])
+    api_router.include_router(designation_protected, prefix="/designations", tags=["designations"])
+    api_router.include_router(documenttype_protected, prefix="/documenttypes", tags=["documenttypes"])
+    api_router.include_router(holiydacallender_protected, prefix="/holiydacallender", tags=["holiydacallender"])
 else:
     # Development mode - include without auth
     api_router.include_router(user.router, prefix="/users", tags=["users"])
     api_router.include_router(roles.router, prefix="/roles", tags=["roles"])
     api_router.include_router(country.router, prefix="/countries", tags=["countries"])
+    api_router.include_router(state.router, prefix="/states", tags=["states"])
+    api_router.include_router(city.router, prefix="/cities", tags=["cities"])
+    api_router.include_router(department.router, prefix="/departments", tags=["departments"])
+    api_router.include_router(designation.router, prefix="/designations", tags=["designations"])
+    api_router.include_router(document_type.router, prefix="/documenttypes", tags=["documenttypes"])
+    api_router.include_router(holiday_calendar.router, prefix="/holiydacallender", tags=["holiydacallender"])
 
 # AI routes - decide if these should be public or protected
 # For now, making them public for development

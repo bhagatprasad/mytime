@@ -9,8 +9,6 @@ class Country(Base):
 
     Name = Column(Text, nullable=True)
     Code = Column(Text, nullable=True)
-
-    # Common fields (from Common base class)
     CreatedOn = Column(DateTime(timezone=True), server_default=func.now())
     CreatedBy = Column(BigInteger, nullable=True)
 
