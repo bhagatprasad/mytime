@@ -1,67 +1,91 @@
 <ul class="nav">
-          <li class="nav-item">
-            <a class="nav-link" href="index.html">
-              <i class="icon-box menu-icon"></i>
-              <span class="menu-title">Dashboard</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-              <i class="icon-disc menu-icon"></i>
-              <span class="menu-title">UI Elements</span>
-              <i class="menu-arrow"></i>
-            </a>
-            <div class="collapse" id="ui-basic">
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">Buttons</a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/ui-features/typography.html">Typography</a></li>
-              </ul>
-            </div>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="pages/forms/basic_elements.html">
-              <i class="icon-file menu-icon"></i>
-              <span class="menu-title">Form elements</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="pages/charts/chartjs.html">
-              <i class="icon-pie-graph menu-icon"></i>
-              <span class="menu-title">Charts</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="pages/tables/basic-table.html">
-              <i class="icon-command menu-icon"></i>
-              <span class="menu-title">Tables</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="pages/icons/feather-icons.html">
-              <i class="icon-help menu-icon"></i>
-              <span class="menu-title">Icons</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
-              <i class="icon-head menu-icon"></i>
-              <span class="menu-title">User Pages</span>
-              <i class="menu-arrow"></i>
-            </a>
-            <div class="collapse" id="auth">
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/login.html"> Login </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/login-2.html"> Login 2 </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/register.html"> Register </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/register-2.html"> Register 2 </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/lock-screen.html"> Lockscreen </a></li>
-              </ul>
-            </div>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="docs/documentation.html">
-              <i class="icon-book menu-icon"></i>
-              <span class="menu-title">Documentation</span>
-            </a>
-          </li>
-        </ul>
+  <li class="nav-item">
+    <a class="nav-link" routerLink="/admin/dashboard">
+      <i class="mdi mdi-view-dashboard menu-icon"></i>
+      <span class="menu-title">Dashboard</span>
+    </a>
+  </li>
+  
+  <!-- Core Management -->
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="collapse" href="#core" aria-expanded="false" aria-controls="core">
+      <i class="icon-disc menu-icon"></i>
+      <span class="menu-title">Core Management</span>
+      <i class="mdi mdi-chevron-down menu-arrow"></i>
+    </a>
+    <div class="collapse" id="core">
+      <ul class="nav flex-column sub-menu">
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/countries"><i class="mdi mdi-flag-outline mr-2"></i> Countries</a></li>
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/states"><i class="mdi mdi-map-outline mr-2"></i> States</a></li>
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/cities"><i class="mdi mdi-city-variant-outline mr-2"></i> Cities</a></li>
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/departments"><i class="mdi mdi-office-building-outline mr-2"></i> Departments</a></li>
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/designations"><i class="mdi mdi-badge-account-outline mr-2"></i> Designations</a></li>
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/roles"><i class="mdi mdi-shield-account-outline mr-2"></i> Roles</a></li>
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/documenttypes"><i class="mdi mdi-file-document-outline mr-2"></i> Document Types</a></li>
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/holydaycallenders"><i class="mdi mdi-calendar-blank-outline mr-2"></i> Holiday Calendar</a></li>
+      </ul>
+    </div>
+  </li>
+  
+  <!-- User Management -->
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="collapse" href="#user" aria-expanded="false" aria-controls="user">
+      <i class="mdi mdi-account-group-outline menu-icon"></i>
+      <span class="menu-title">User Management</span>
+      <i class="mdi mdi-chevron-down menu-arrow"></i>
+    </a>
+    <div class="collapse" id="user">
+      <ul class="nav flex-column sub-menu">
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/users"><i class="mdi mdi-account-multiple-outline mr-2"></i> All Users</a></li>
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/user-access"><i class="mdi mdi-account-key-outline mr-2"></i> User Access</a></li>
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/user-permissions"><i class="mdi mdi-lock-outline mr-2"></i> Permissions</a></li>
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/user-activities"><i class="mdi mdi-history mr-2"></i> User Activities</a></li>
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/profile"><i class="mdi mdi-account-circle-outline mr-2"></i> My Profile</a></li>
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/change-password"><i class="mdi mdi-key-change mr-2"></i> Change Password</a></li>
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/reset-password"><i class="mdi mdi-key-remove mr-2"></i> Reset Password</a></li>
+      </ul>
+    </div>
+  </li>
+  
+  <!-- Time Sheet Management -->
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="collapse" href="#timesheet" aria-expanded="false" aria-controls="timesheet">
+      <i class="mdi mdi-clock-outline menu-icon"></i>
+      <span class="menu-title">Time Management</span>
+      <i class="mdi mdi-chevron-down menu-arrow"></i>
+    </a>
+    <div class="collapse" id="timesheet">
+      <ul class="nav flex-column sub-menu">
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/task-code"><i class="mdi mdi-code-braces mr-2"></i> Task Codes</a></li>
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/task-item"><i class="mdi mdi-format-list-checkbox mr-2"></i> Task Items</a></li>
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/timesheet-manager"><i class="mdi mdi-calendar-check-outline mr-2"></i> Timesheet Manager</a></li>
+      </ul>
+    </div>
+  </li>
+  
+  <!-- Salary Management -->
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="collapse" href="#salary" aria-expanded="false" aria-controls="salary">
+      <i class="mdi mdi-cash-multiple menu-icon"></i>
+      <span class="menu-title">Salary & Payments</span>
+      <i class="mdi mdi-chevron-down menu-arrow"></i>
+    </a>
+    <div class="collapse" id="salary">
+      <ul class="nav flex-column sub-menu">
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/salary-structure"><i class="mdi mdi-chart-pie mr-2"></i> Salary Structure</a></li>
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/monthly-salary"><i class="mdi mdi-calendar-month-outline mr-2"></i> Monthly Salary</a></li>
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/payslips"><i class="mdi mdi-file-document-edit-outline mr-2"></i> Payslips</a></li>
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/payment-method"><i class="mdi mdi-credit-card-outline mr-2"></i> Payment Methods</a></li>
+        <li class="nav-item"> <a class="nav-link" routerLink="/admin/tuition-fee"><i class="mdi mdi-school-outline mr-2"></i> Tuition Fee</a></li>
+      </ul>
+    </div>
+  </li>
+  
+  <!-- Logout -->
+  <li class="nav-item logout-item">
+    <a class="nav-link logout-btn" (click)="logout()">
+      <i class="mdi mdi-logout menu-icon"></i>
+      <span class="menu-title font-weight-bold">Logout</span>
+    </a>
+  </li>
+</ul>

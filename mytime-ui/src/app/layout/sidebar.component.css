@@ -1,7 +1,7 @@
 
 .sidebar {
     min-height: calc(100vh - 60px);
-    background: #ec37fc;
+    background: #001737;
     font-family: "Karla", sans-serif;
     font-weight: normal;
     padding: 0;
@@ -16,4 +16,15 @@
     -webkit-box-shadow: 6px 16px 31px -18px #b7bcd1;
     -moz-box-shadow: 6px 16px 31px -18px #b7bcd1;
     -ms-box-shadow: 6px 16px 31px -18px #b7bcd1;
+}
+
+.sidebar .nav:not(.sub-menu) > .nav-item:hover > .nav-link {
+    background: rgba(255, 255, 255, 0.4);
+    color: #fff !important;
+    border-radius: 4px;
+    border-top: 1px solid #001737 !important;
+}
+
+.sidebar .nav .nav-item:first-child .nav-link {
+    border-top: 1px solid #001737 !important;
 }
