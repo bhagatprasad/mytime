@@ -2,160 +2,150 @@ export const environment = {
     production: false,
     baseUrl: 'https://mytime-docker.onrender.com/api/v1',
     UrlConstants: {
-        Authenticate: 'Account/AuthenticateUserAsync',
-        VerifyAccesToken: 'Account/VerifyAccesToken',
-        ActivateOrInActivateUserAsync: 'Account/ActivateOrInActivateUserAsync',
-        ResetPasswordAsync: 'Account/ResetPasswordAsync',
-        ForgotPasswordAsync: 'Account/ForgotPasswordAsync',
-        GenerateUserCliams: 'Account/GenarateUserClaimsAsync',
+        // Authentication endpoints
+        Authenticate: 'auth/AuthenticateUser',
+        GenerateUserClaims: 'auth/GenarateUserClaims',
+        ForgotPasswordAsync: 'auth/ForgotPasswordAsync',
+        ResetPasswordAsync: 'auth/ResetPasswordAsync',
+        ChangePasswordAsync: 'auth/ChangePasswordAsync',
+
+        // User endpoints
+        Users: {
+            GetUsers: 'users/',
+            GetUserById: 'users',
+            RegisterUser: 'users/'
+        },
+
+        // Role endpoints
         Role: {
             GetRoleListAsync: 'roles/fetchAllRoles',
-            GetRoleAsync:'roles/fetchRole',
-            InsertOrUpdateRoleAsync:'roles/InsertOrUpdateRole'
-        }
-    },
-    Messages: {
-        InvalidPassword: "Authentication Failed due to Invalid Password ,Please enter correct password and try again",
-        InValidUserName: "Authentication Failed due to Invalid UserName ,Please enter correct username and try again",
-        UserWasBlocked: "User Was blocked",
-        SomethingwentWrong: "Something went wrong,Please try after sometime"
-    },
-    Titles: {
-        InvalidPassword: "Wrong/Invalid Password",
-        InValidUserName: "Worng/Invalid Username",
-        UserWasBlocked: "User blocked",
-        SomethingWentWrong: "Something Went wrong"
-    },
-    ErrorCodes: {
-        EC1001: 1001,
-        EC1002: 1002,
-        EC1003: 1003,
-        EC1004: 1004
-    },
-    AppConstants: {
-        Roles: {
-            DigitalSalesMarketing: "Digital Sales Marketing",
-            ProductManager: "Product Manager",
-            CustomerServiceRepresentative: "Customer Service Representative",
-            Customer: "Customer",
-            Developer: "Developer",
-            EcommerceManager: "E-commerce Manager",
-            WebDeveloper: "Web Developer",
-            OperationManager: "Operation Manager",
-            GraphicDesigner: "Graphic Designer",
-            DataAnalyst: "Data Analyst",
-            FashionDesigner: "Fashion Designer",
-            Administrator: "Administrator",
-            SoftwareEngineer: "Software Engineer",
-            User: "User",
-            Executive: "Executive",
-            Seller: "Seller",
+            GetRoleAsync: 'roles/fetchRole',
+            InsertOrUpdateRoleAsync: 'roles/InsertOrUpdateRole',
+            DeleteRoleAsync: 'roles/DeleteRole'
         },
-        departments: {
-            Sales: "Sales",
+
+        // Country endpoints
+        Country: {
+            GetCountry: 'countries/fetchCountry',
+            GetAllCountries: 'countries/fetchAllCountries',
+            GetActiveCountries: 'countries/fetchActiveCountries',
+            GetCountries: 'countries/getCountries',
+            CheckCountryExists: 'countries/checkCountryExists',
+            GetCountryByCode: 'countries/getCountryByCode',
+            InsertOrUpdateCountry: 'countries/InsertOrUpdateCountry',
+            DeleteCountry: 'countries/DeleteCountry',
+            CreateCountry: 'countries/create',
+            UpdateCountry: 'countries/update',
+            ToggleActiveStatus: 'countries/toggleActiveStatus',
+            SearchCountries: 'countries/searchCountries',
+            GetCountriesByIds: 'countries/getCountriesByIds'
         },
-        FashionDesignerType: {
-            ReadyToWear: "Ready-to-wear",
-            EconomyFashion: "Economy fashion",
-            HauteCouture: "Haute couture",
-            TextileDesigner: "Textile Designer",
-            FootwearDesigners: "Footwear designers",
-            GraphicDesigner: "Graphic Designer",
-            AccessoryDesigner: "Accessory designer",
-            AthleticWear: "Athletic wear",
-            FastFashion: "Fast fashion",
-            MassMarketDesigners: "Mass market designers",
-            KidswearDesigners: "Kidswear designers",
-            FashionMarketer: "Fashion marketer",
-            FashionWriter: "Fashion writer",
-            LimitedEdition: "Limited edition",
-            Merchandiser: "Merchandiser",
-            SpecializedAreasOfFashionDesign: "Specialized areas of fashion design",
-            Shirts: "Shirts",
-            Jeans: "Jeans",
-            Swimwear: "Swimwear",
-            Sleepwear: "Sleepwear",
-            Sportswear: "Sportswear",
-            Jumpsuits: "Jumpsuits",
-            Blazers: "Blazers",
-            Jackets: "Jackets",
-            Shoes: "Shoes",
-            MensDresses: "Men's Dresses",
-            WomensDresses: "Women's Dresses",
-            BabysDresses: "Baby's Dresses",
+
+        // State endpoints
+        State: {
+            GetState: 'states/fetchState',
+            GetAllStates: 'states/fetchAllStates',
+            GetStates: 'states/getStates',
+            InsertOrUpdateState: 'states/InsertOrUpdateState',
+            DeleteState: 'states/DeleteState',
+            CheckStateExists: 'states/checkStateExists',
+            GetStatesByCountry: 'states/getStatesByCountry',
+            GetStatesByCountryCode: 'states/getStatesByCountryCode',
+            GetStateByCode: 'states/getStateByCode',
+            ToggleActiveStatus: 'states/toggleActiveStatus',
+            CreateState: 'states/create',
+            UpdateState: 'states/update'
         },
-        Countries: {
-            Afghanistan: "Afghanistan",
-            Albania: "Albania",
-            Algeria: "Algeria",
-            Argentina: "Argentina",
-            Australia: "Australia",
-            Bangladesh: "Bangladesh",
-            "USA": "United States of America",
-            India: "India",
-            Pakistan: "Pakistan",
-            "People Republic of China": "People Republic of China",
-            Singapore: "Singapore",
-            Dubai: "Dubai",
-            SaudiArabia: "Saudi Arabia",
-            Bangkok: "Bangkok",
+
+        // City endpoints
+        City: {
+            GetCity: 'cities/fetchCity',
+            GetCityWithRelations: 'cities/fetchCityWithRelations',
+            GetAllCities: 'cities/fetchAllCities',
+            GetActiveCities: 'cities/fetchActiveCities',
+            GetCities: 'cities/getCities',
+            InsertOrUpdateCity: 'cities/InsertOrUpdateCity',
+            DeleteCity: 'cities/DeleteCity',
+            CheckCityExists: 'cities/checkCityExists',
+            GetCitiesByCountry: 'cities/getCitiesByCountry',
+            GetCitiesByState: 'cities/getCitiesByState',
+            GetCitiesByCountryAndState: 'cities/getCitiesByCountryAndState',
+            GetCityByCode: 'cities/getCityByCode',
+            ToggleActiveStatus: 'cities/toggleActiveStatus',
+            CreateCity: 'cities/create',
+            UpdateCity: 'cities/update',
+            SearchCities: 'cities/searchCities'
         },
-        States: {
-            TELANGANA: "Telangana",
-            ANDHRAPRADESH: "Andhra Pradesh",
-            KARNATAKA: "Karnataka",
-            MAHARASTRA: "Maharashtra",
-            UTTERPRADESH: "Uttar Pradesh",
-            MADYAPRADESH: "Madhya Pradesh",
-            TAMILNADU: "Tamil Nadu",
-            KERALA: "Kerala",
-            GOA: "Goa",
-            ORISSA: "Odisha",
-            PANJAB: "Punjab",
-            SINDHU: "Sindh",
-            Alabama: "Alabama",
-            Alaska: "Alaska",
-            Arizona: "Arizona",
-            Arkansas: "Arkansas",
-            California: "California",
-            Colorado: "Colorado",
-            Connecticut: "Connecticut",
-            HARYANA: "Haryana",
-            JAMMUKASHMIR: "Jammu & Kashmir",
-            Srinagar: "Srinagar",
+
+        // Department endpoints
+        Department: {
+            GetDepartment: 'departments/fetchDepartment',
+            GetAllDepartments: 'departments/fetchAllDepartments',
+            GetActiveDepartments: 'departments/fetchActiveDepartments',
+            GetDepartments: 'departments/getDepartments',
+            CheckDepartmentExists: 'departments/checkDepartmentExists',
+            GetDepartmentByCode: 'departments/getDepartmentByCode',
+            InsertOrUpdateDepartment: 'departments/InsertOrUpdateDepartment',
+            DeleteDepartment: 'departments/DeleteDepartment',
+            CreateDepartment: 'departments/create',
+            UpdateDepartment: 'departments/update',
+            ToggleActiveStatus: 'departments/toggleActiveStatus',
+            SearchDepartments: 'departments/searchDepartments',
+            GetDepartmentsByIds: 'departments/getDepartmentsByIds'
         },
-        Cities: {
-            HYDERABAD: "Hyderabad",
-            WARANGAL: "Warangal",
-            KARIMNAGAR: "Karimnagar",
-            KHAMMAM: "Khammam",
-            NIZAMABAD: "Nizamabad",
-            MEDAK: "Medak",
-            AMARAVATHI: "Amaravathi",
-            VISHAKAPATNAM: "Vishakapatnam",
-            THIRUPATHI: "Thirupathi",
-            VijayaWada: "Vijayawada",
-            California: "California",
-            Bhadrachalam: "Bhadrachalam",
-            Hanmakonda: "Hanmakonda",
-            BhadraChalam1: "BhadraChalam1",
-            BCM: "BCM",
-            Venkatapuram: "Venkatapuram",
-            vpm: "vpm",
+
+        // Designation endpoints
+        Designation: {
+            GetDesignation: 'designations/fetchDesignation',
+            GetAllDesignations: 'designations/fetchAllDesignations',
+            GetActiveDesignations: 'designations/fetchActiveDesignations',
+            GetDesignations: 'designations/getDesignations',
+            CheckDesignationExists: 'designations/checkDesignationExists',
+            GetDesignationByCode: 'designations/getDesignationByCode',
+            InsertOrUpdateDesignation: 'designations/InsertOrUpdateDesignation',
+            DeleteDesignation: 'designations/DeleteDesignation',
+            CreateDesignation: 'designations/create',
+            UpdateDesignation: 'designations/update',
+            ToggleActiveStatus: 'designations/toggleActiveStatus',
+            SearchDesignations: 'designations/searchDesignations',
+            GetDesignationsByIds: 'designations/getDesignationsByIds'
         },
-        Status: {
-            "New": "New",
-            "Created": "Created"
+
+        // DocumentType endpoints
+        DocumentType: {
+            GetDocumentType: 'documenttypes/fetchDocumentType',
+            GetAllDocumentTypes: 'documenttypes/fetchAllDocumentTypes',
+            GetActiveDocumentTypes: 'documenttypes/fetchActiveDocumentTypes',
+            GetDocumentTypes: 'documenttypes/getDocumentTypes',
+            CheckDocumentTypeExists: 'documenttypes/checkDocumentTypeExists',
+            InsertOrUpdateDocumentType: 'documenttypes/InsertOrUpdateDocumentType',
+            DeleteDocumentType: 'documenttypes/DeleteDocumentType',
+            CreateDocumentType: 'documenttypes/create',
+            UpdateDocumentType: 'documenttypes/update',
+            ToggleActiveStatus: 'documenttypes/toggleActiveStatus',
+            SearchDocumentTypes: 'documenttypes/searchDocumentTypes',
+            GetDocumentTypesByIds: 'documenttypes/getDocumentTypesByIds'
         },
-        Braintree: {
-            environment: 'braintree.Environment.Sandbox',
-            merchantId: 'q577ct9g9qyq8jt7',
-            publicKey: 'bdgysbrrb98f7kb7',
-            privateKey: '11568834eefc8a3448a59ac682a34a63',
-        },
-        ImageBlob: {
-            APIURL: "https://api.imgbb.com/1/upload",
-            KEY: "9b568bf6699a4ee6502356e0797c48b1"
+
+        // HolidayCalendar endpoints
+        HolidayCalendar: {
+            GetHolidayCalendar: 'holiydacallender/fetchHolidayCalendar',
+            GetAllHolidayCalendars: 'holiydacallender/fetchAllHolidayCalendars',
+            GetActiveHolidayCalendars: 'holiydacallender/fetchActiveHolidayCalendars',
+            GetHolidayCalendars: 'holiydacallender/getHolidayCalendars',
+            CheckHolidayCalendarExists: 'holiydacallender/checkHolidayCalendarExists',
+            GetHolidaysByYear: 'holiydacallender/getHolidaysByYear',
+            GetHolidaysByDateRange: 'holiydacallender/getHolidaysByDateRange',
+            GetHolidaysByMonth: 'holiydacallender/getHolidaysByMonth',
+            GetUpcomingHolidays: 'holiydacallender/getUpcomingHolidays',
+            IsHoliday: 'holiydacallender/isHoliday',
+            InsertOrUpdateHolidayCalendar: 'holiydacallender/InsertOrUpdateHolidayCalendar',
+            DeleteHolidayCalendar: 'holiydacallender/DeleteHolidayCalendar',
+            CreateHolidayCalendar: 'holiydacallender/create',
+            UpdateHolidayCalendar: 'holiydacallender/update',
+            ToggleActiveStatus: 'holiydacallender/toggleActiveStatus',
+            SearchHolidayCalendars: 'holiydacallender/searchHolidayCalendars',
+            GetHolidayCalendarsByIds: 'holiydacallender/getHolidayCalendarsByIds'
         }
     }
 };

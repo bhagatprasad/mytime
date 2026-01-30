@@ -1,0 +1,6 @@
+.sidebar {
+    background: #001737 !important;
+    min-height: calc(100vh - 60px) !important;
+    font-family: "Karla", sans-serif !important;
+    font-weight: normal !important;
+}
