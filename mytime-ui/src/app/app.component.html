@@ -2,14 +2,25 @@
 
   <ng-container *ngIf="userContext$ | async as ctx">
 
+    <!-- LOADING STATE -->
+    <ng-container *ngIf="ctx.isLoading">
+      <div class="container-fluid page-body-wrapper full-page-wrapper">
+        <div class="content-wrapper-full d-flex align-items-center justify-content-center">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
     <!-- AUTHENTICATED LAYOUT -->
-    <ng-container *ngIf="ctx.isAuthenticated; else loginLayout">
+    <ng-container *ngIf="!ctx.isLoading && ctx.isAuthenticated">
 
       <app-header></app-header>
 
       <div class="container-fluid page-body-wrapper">
 
-         <app-sidebar></app-sidebar>
+        <app-sidebar></app-sidebar>
 
         <div class="main-panel">
           <!-- Panel Loader - will appear only inside main-panel -->
@@ -17,7 +28,6 @@
 
           <div class="content-wrapper">
             <router-outlet></router-outlet>
-
           </div>
 
           <app-footer></app-footer>
@@ -28,7 +38,7 @@
     </ng-container>
 
     <!-- LOGIN LAYOUT -->
-    <ng-template #loginLayout>
+    <ng-container *ngIf="!ctx.isLoading && !ctx.isAuthenticated">
       <div class="container-fluid page-body-wrapper full-page-wrapper">
         <div class="content-wrapper-full d-flex align-items-stretch auth auth-img-bg">
           <app-panel-loader></app-panel-loader>
@@ -47,7 +57,7 @@
           </div>
         </div>
       </div>
-    </ng-template>
+    </ng-container>
 
   </ng-container>
 

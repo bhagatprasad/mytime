@@ -1,7 +1,7 @@
 import { Injectable, PLATFORM_ID, Inject, OnDestroy } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, distinctUntilChanged, takeUntil, map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
+import { filter, distinctUntilChanged, takeUntil, map, delay, take } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from '../../../environment';
 import { AuthResponse } from '../models/auth-response';
@@ -27,14 +27,24 @@ export class AccountService implements OnDestroy {
     private readonly INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes
     private destroy$ = new Subject<void>();
 
-    // Add redirectUrl property with proper type
-    public redirectUrl: string | null = null; // Start with null
+    // Add a loading state to track initialization
+    private initialized = new BehaviorSubject<boolean>(false);
 
-    // Public observable (using $ naming convention)
+    // Public observable (using $ naming convention) - include loading state
     authenticationState$ = this.authenticationState.asObservable().pipe(
-        filter(state => state !== null),
         distinctUntilChanged()
     );
+
+    // Public observable that includes loading state
+    authStatus$ = this.authenticationState$.pipe(
+        map(state => ({
+            isAuthenticated: state,
+            isLoading: state === null
+        }))
+    );
+
+    // Add redirectUrl property with proper type
+    public redirectUrl: string | null = null; // Start with null
 
     constructor(
         private apiService: ApiService,
@@ -55,21 +65,26 @@ export class AccountService implements OnDestroy {
     private initializeAuthState(): void {
         if (!this.isBrowser) {
             this.authenticationState.next(false);
+            this.initialized.next(true);
             return;
         }
 
-        // Check authentication status
-        const isAuth = this.isAuthenticated();
-        this.authenticationState.next(isAuth);
+        // Use a small delay to ensure localStorage is checked properly
+        setTimeout(() => {
+            // Check authentication status
+            const isAuth = this.isAuthenticated();
+            this.authenticationState.next(isAuth);
+            this.initialized.next(true);
 
-        // Auto-redirect if authenticated and on login page
-        if (isAuth && this.isLoginPage()) {
-            this.redirectBasedOnRole();
-        }
+            // Auto-redirect if authenticated and on login page
+            if (isAuth && this.isLoginPage()) {
+                this.redirectBasedOnRole();
+            }
 
-        if (isAuth) {
-            this.resetInactivityTimer();
-        }
+            if (isAuth) {
+                this.resetInactivityTimer();
+            }
+        }, 50); // Small delay to ensure DOM is ready
     }
 
     private isLoginPage(): boolean {
@@ -312,5 +327,13 @@ export class AccountService implements OnDestroy {
         if (!user) return '/login';
 
         return this.isAdmin(user) ? '/admin/dashboard' : '/user/dashboard';
+    }
+
+    // New method to wait for initialization
+    waitForInitialization(): Observable<boolean> {
+        return this.initialized.asObservable().pipe(
+            filter(init => init === true),
+            take(1)
+        );
     }
 }

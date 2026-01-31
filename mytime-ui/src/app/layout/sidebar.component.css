@@ -1,6 +1,6 @@
 /* sidebar.component.css */
 .sidebar {
-    min-height: calc(100vh - 60px);
+    min-height: calc(100vh - 0px);
     background: #001737;
     font-family: "Karla", sans-serif;
     font-weight: normal;
