@@ -303,29 +303,6 @@ export class RoleComponent implements OnInit, OnDestroy {
     return `<span class="badge bg-${statusClass}">${statusText}</span>`;
   }
 
-  actionsRenderer(params: ICellRendererParams): string {
-    return `
-      <div class="d-flex justify-content-center gap-1">
-        <button class="btn btn-sm btn-outline-primary" title="Edit" (click)="requestRoleProcess(params.data)">
-          <i class="mdi mdi-pencil"></i>
-        </button>
-        <button class="btn btn-sm btn-outline-danger" title="Delete">
-          <i class="mdi mdi-delete"></i>
-        </button>
-      </div>
-    `;
-  }
-
-  mobileActionsRenderer(params: ICellRendererParams): string {
-    return `
-      <div class="d-flex justify-content-center">
-        <button class="btn btn-sm btn-outline-primary" title="Edit">
-          <i class="mdi mdi-dots-horizontal"></i>
-        </button>
-      </div>
-    `;
-  }
-
   statusCellClass(params: any): string {
     const isActive = params.value;
     return isActive ? 'status-active' : 'status-inactive';

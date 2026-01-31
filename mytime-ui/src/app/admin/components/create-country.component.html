@@ -1,1 +1,61 @@
-<p>create-country works!</p>
+<!-- Overlay -->
+<div class="sidebar-overlay" *ngIf="isVisible" (click)="close()"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" [class.visible]="isVisible">
+    <form [formGroup]="countryForm" (ngSubmit)="onSubmit()">
+        <div class="sidebar-header">
+            <!-- Fixed the duplicate "Country Country" text -->
+            <h5 class="sidebar-title">{{ country?.Id ? 'Edit Country' : 'Create Country' }}</h5>
+            <button type="button" class="close" (click)="close()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="sidebar-body">
+            <div class="form-group">
+                <label for="Name">Country Name</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-earth"></i> <!-- Changed icon to be more appropriate -->
+                        </span>
+                    </div>
+                    <input type="text" class="form-control" id="Name" formControlName="Name"
+                        placeholder="Enter country name">
+                    <!-- Added validation message -->
+                    <div *ngIf="countryForm.get('Name')?.invalid && countryForm.get('Name')?.touched" 
+                         class="text-danger small mt-1">
+                        Country name is required
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="Code">Country Code</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-code-tags"></i>
+                        </span>
+                    </div>
+                    <input type="text" class="form-control" id="Code" formControlName="Code"
+                        placeholder="Enter country code (e.g., US)">
+                    <!-- Added validation message -->
+                    <div *ngIf="countryForm.get('Code')?.invalid && countryForm.get('Code')?.touched" 
+                         class="text-danger small mt-1">
+                        Country code is required
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <button type="submit" class="btn btn-primary" [disabled]="countryForm.invalid">
+                <i class="mdi" [class.mdi-content-save]="!country?.Id" [class.mdi-pencil]="country?.Id"></i>
+                {{ country?.Id ? 'Update' : 'Save' }}
+            </button>
+            <button type="button" class="btn btn-secondary ml-2" (click)="close()">Cancel</button>
+        </div>
+    </form>
+</div>
