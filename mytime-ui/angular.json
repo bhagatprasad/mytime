@@ -58,7 +58,9 @@
               "src/assets/vendors/font-awesome/css/font-awesome.min.css",
               "src/assets/vendors/jquery-bar-rating/fontawesome-stars-o.css",
               "src/assets/vendors/jquery-bar-rating/fontawesome-stars.css",
-              "src/assets/css/style.css"
+              "src/assets/css/style.css",
+              "src/assets/css/ag-grid.css",
+              "src/assets/css/sidebar.css"
             ],
             "scripts": [
               "src/assets/vendors/base/vendor.bundle.base.js",
@@ -138,7 +140,9 @@
               "src/assets/vendors/font-awesome/css/font-awesome.min.css",
               "src/assets/vendors/jquery-bar-rating/fontawesome-stars-o.css",
               "src/assets/vendors/jquery-bar-rating/fontawesome-stars.css",
-              "src/assets/css/style.css"
+              "src/assets/css/style.css",
+              "src/assets/css/ag-grid.css",
+              "src/assets/css/sidebar.css"
             ],
             "scripts": [
               "src/assets/vendors/base/vendor.bundle.base.js",
