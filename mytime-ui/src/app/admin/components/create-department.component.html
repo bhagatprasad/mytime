@@ -1,1 +1,90 @@
-<p>create-department works!</p>
+<!-- Overlay -->
+<div class="sidebar-overlay" *ngIf="isVisible" (click)="close()"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" [class.visible]="isVisible">
+    <form [formGroup]="departmentForm" (ngSubmit)="onSubmit()">
+        <div class="sidebar-header">
+            <h5 class="sidebar-title">{{ department?.DepartmentId ? 'Edit Department' : 'Create Department' }}</h5>
+            <button type="button" class="close" (click)="close()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="sidebar-body">
+            <div class="form-group">
+                <label for="Name">Department Name</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-office-building"></i> <!-- Changed icon to department building -->
+                        </span>
+                    </div>
+                    <input type="text" class="form-control" id="Name" formControlName="Name"
+                        placeholder="Enter department name">
+                    <div *ngIf="departmentForm.get('Name')?.invalid && departmentForm.get('Name')?.touched" 
+                         class="text-danger small mt-1">
+                        <span *ngIf="departmentForm.get('Name')?.errors?.['required']">
+                            Department name is required
+                        </span>
+                        <span *ngIf="departmentForm.get('Name')?.errors?.['maxlength']">
+                            Department name must be less than 100 characters
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="Code">Department Code</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-code-tags"></i>
+                        </span>
+                    </div>
+                    <input type="text" class="form-control" id="Code" formControlName="Code"
+                        placeholder="Enter department code">
+                    <div *ngIf="departmentForm.get('Code')?.invalid && departmentForm.get('Code')?.touched" 
+                         class="text-danger small mt-1">
+                        <span *ngIf="departmentForm.get('Code')?.errors?.['required']">
+                            Department code is required
+                        </span>
+                        <span *ngIf="departmentForm.get('Code')?.errors?.['maxlength']">
+                            Department code must be less than 10 characters
+                        </span>
+                    </div>
+                </div>
+            </div>
+             
+            <div class="form-group">
+                <label for="Description">Description</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-text"></i> <!-- Changed to text icon -->
+                        </span>
+                    </div>
+                    <input type="text" class="form-control" id="Description" formControlName="Description"
+                        placeholder="Enter department description">
+                    <div *ngIf="departmentForm.get('Description')?.invalid && departmentForm.get('Description')?.touched" 
+                         class="text-danger small mt-1">
+                        <span *ngIf="departmentForm.get('Description')?.errors?.['required']">
+                            Department description is required
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <button type="submit" class="btn btn-primary" [disabled]="departmentForm.invalid">
+                <i class="mdi" 
+                   [class.mdi-content-save]="!department?.DepartmentId" 
+                   [class.mdi-pencil]="department?.DepartmentId">
+                </i>
+                {{ department?.DepartmentId ? 'Update' : 'Save' }}
+            </button>
+            <button type="button" class="btn btn-secondary ml-2" (click)="close()">Cancel</button>
+        </div>
+    </form>
+</div>
