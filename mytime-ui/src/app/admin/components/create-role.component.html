@@ -23,6 +23,16 @@
                     <input type="text" class="form-control" id="Name" formControlName="Name"
                         placeholder="Enter role name">
                 </div>
+                <!-- Validation messages for Name field -->
+                <div *ngIf="roleForm.get('Name')?.invalid && roleForm.get('Name')?.touched" 
+                     class="text-danger small mt-1">
+                    <span *ngIf="roleForm.get('Name')?.errors?.['required']">
+                        Role name is required
+                    </span>
+                    <span *ngIf="roleForm.get('Name')?.errors?.['maxlength']">
+                        Role name cannot exceed {{ roleForm.get('Name')?.errors?.['maxlength']?.requiredLength }} characters
+                    </span>
+                </div>
             </div>
 
             <div class="form-group">
@@ -36,14 +46,28 @@
                     <input type="text" class="form-control" id="Code" formControlName="Code"
                         placeholder="Enter role code">
                 </div>
+                <!-- Validation messages for Code field -->
+                <div *ngIf="roleForm.get('Code')?.invalid && roleForm.get('Code')?.touched" 
+                     class="text-danger small mt-1">
+                    <span *ngIf="roleForm.get('Code')?.errors?.['required']">
+                        Role code is required
+                    </span>
+                    <span *ngIf="roleForm.get('Code')?.errors?.['maxlength']">
+                        Role code cannot exceed {{ roleForm.get('Code')?.errors?.['maxlength']?.requiredLength }} characters
+                    </span>
+                    <span *ngIf="roleForm.get('Code')?.errors?.['pattern']">
+                        Role code should contain only letters, numbers, and underscores
+                    </span>
+                </div>
             </div>
         </div>
         
         <div class="sidebar-footer">
-            <button type="submit" class="btn btn-primary">
-                <i class="mdi" [class.mdi-content-save]="!role?.Id" [class.mdi-update]="role?.Id"></i>
+            <button type="submit" class="btn btn-primary" [disabled]="roleForm.invalid || roleForm.pristine">
+                <i class="mdi" [class.mdi-content-save]="!role?.Id" [class.mdi-pencil]="role?.Id"></i>
                 {{ role?.Id ? 'Update' : 'Save' }}
             </button>
+            <button type="button" class="btn btn-secondary ml-2" (click)="close()">Cancel</button>
         </div>
     </form>
 </div>
