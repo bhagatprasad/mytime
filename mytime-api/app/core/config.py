@@ -1,5 +1,6 @@
+from pydantic import field_validator
 from pydantic_settings import BaseSettings
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, Union
 from enum import Enum
 import json
 import os
@@ -17,14 +18,8 @@ class Settings(BaseSettings):
     VERSION: str = "1.0.0"
     API_V1_STR: str = "/api/v1"
     
-    # CORS - Handle both list and JSON string
-    ALLOWED_ORIGINS: List[str] = [
-        "http://localhost:4200",
-        "http://127.0.0.1:4200",
-        "http://localhost:3000",
-        "http://localhost:8080",
-        "http://localhost:8000"
-    ]
+    # CORS - Define as Union type to accept both string and list
+    ALLOWED_ORIGINS: Union[str, List[str]] = "http://localhost:4200,http://127.0.0.1:4200,http://localhost:3000,http://localhost:8080,http://localhost:8000"
     
     # ============ DATABASE ============
     DATABASE_URL: Optional[str] = None  # Set via environment variable
@@ -54,11 +49,7 @@ class Settings(BaseSettings):
     GOOGLE_AI_MODEL: str = "gemini-pro"
     
     # ============ RSS FEEDS ============
-    BUSINESS_RSS_FEEDS: Dict[str, str] = {
-        "economictimes": "https://economictimes.indiatimes.com/rssfeedsdefault.cms",
-        "mint": "https://www.livemint.com/rss/companies",
-        "business_standard": "https://www.business-standard.com/rss/home_page_top_stories.rss",
-    }
+    BUSINESS_RSS_FEEDS: Union[str, Dict[str, str]] = '{"economictimes":"https://economictimes.indiatimes.com/rssfeedsdefault.cms","mint":"https://www.livemint.com/rss/companies","business_standard":"https://www.business-standard.com/rss/home_page_top_stories.rss"}'
     
     # ============ FEATURE FLAGS ============
     ENABLE_AI_ANALYSIS: bool = True
@@ -83,20 +74,54 @@ class Settings(BaseSettings):
     def is_testing(self) -> bool:
         return self.ENVIRONMENT == Environment.TESTING
     
-    # Custom validator for ALLOWED_ORIGINS
+    @property
+    def cors_origins(self) -> List[str]:
+        """Parse ALLOWED_ORIGINS into a list"""
+        if isinstance(self.ALLOWED_ORIGINS, list):
+            return self.ALLOWED_ORIGINS
+        
+        if isinstance(self.ALLOWED_ORIGINS, str):
+            origins_str = self.ALLOWED_ORIGINS.strip()
+            
+            # Handle empty string
+            if not origins_str:
+                return ["*"] if self.is_development else []
+            
+            # Try to parse as JSON
+            if origins_str.startswith("[") and origins_str.endswith("]"):
+                try:
+                    return json.loads(origins_str)
+                except json.JSONDecodeError:
+                    pass
+            
+            # Parse as comma-separated string
+            origins = []
+            for origin in origins_str.split(','):
+                origin = origin.strip()
+                # Remove quotes if present
+                origin = origin.strip('"').strip("'").strip()
+                if origin and origin not in origins:
+                    origins.append(origin)
+            return origins
+        
+        return ["*"] if self.is_development else []
+    
+    @field_validator('ALLOWED_ORIGINS', mode='before')
     @classmethod
-    def parse_allowed_origins(cls, v: Any) -> List[str]:
+    def validate_allowed_origins(cls, v: Any) -> Any:
+        """Convert list to string if needed"""
         if isinstance(v, list):
-            return v
-        elif isinstance(v, str):
-            try:
-                # Try to parse as JSON
-                return json.loads(v)
-            except json.JSONDecodeError:
-                # Parse as comma-separated string
-                return [origin.strip() for origin in v.strip("[]").replace('"', '').replace("'", "").split(",")]
-        return []
-
+            return ','.join(v)
+        return v
+    
+    @field_validator('BUSINESS_RSS_FEEDS', mode='before')
+    @classmethod
+    def validate_rss_feeds(cls, v: Any) -> Any:
+        """Convert dict to JSON string if needed"""
+        if isinstance(v, dict):
+            return json.dumps(v)
+        return v
+    
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
