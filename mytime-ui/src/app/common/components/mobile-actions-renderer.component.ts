@@ -5,14 +5,13 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
   selector: 'app-mobile-actions-renderer',
   template: `
     <div class="d-flex justify-content-center mobile-actions-wrapper">
-      <button 
-        class="btn btn-primary btn-sm d-flex align-items-center mobile-edit-btn"
+      <a 
+        class="d-flex align-items-center"
         (click)="onEdit()"
         [attr.title]="'Edit ' + (params?.data?.name || params?.data?.title || 'item')"
       >
         <i class="mdi mdi-pencil me-1"></i>
-        <span>Edit</span>
-      </button>
+      </a>
     </div>
   `,
   styles: [`
