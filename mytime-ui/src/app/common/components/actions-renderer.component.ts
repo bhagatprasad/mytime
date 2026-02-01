@@ -6,12 +6,11 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
   selector: 'app-actions-renderer',
   template: `
     <div class="d-flex justify-content-center gap-1">
-      <button class="btn btn-sm btn-info btn-edit" title="Edit" (click)="onEditClick($event)">
-        <i class="icon-cog"></i> Edit
-      </button>
-      <button class="btn btn-sm btn-danger btn-delete" title="Delete" (click)="onDeleteClick($event)">
-        <i class="icon-disc"></i> Delete
-      </button>
+      <a class="btn-edit" title="Edit" (click)="onEditClick($event)">
+        <i class="mdi mdi-pencil"></i>
+      </a>
+      <a class="btn-delete" title="Delete" (click)="onDeleteClick($event)">
+        <i class="mdi mdi-delete-circle"></i> </a>
     </div>
   `,
   styleUrls: [
