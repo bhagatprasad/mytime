@@ -13,7 +13,7 @@
                 Country Management
               </h5>
               <span class="badge bg-light text-dark ms-3">
-                <span class="text-primary fw-bold">{{ getTotalRowsCount() }}</span> roles
+                <span class="text-primary fw-bold">{{ getTotalRowsCount() }}</span>
               </span>
             </div>
 
@@ -22,14 +22,13 @@
               <!-- Action Buttons -->
               <div class="d-flex gap-2 ms-3">
                 <!-- Add Button -->
-                <button 
-                  class="btn btn-primary btn-sm d-flex align-items-center"
+                <a 
+                  class="d-flex align-items-center"
                   (click)="openAddEditCountry()"
                   title="Add new country"
                 >
-                  <i class="mdi mdi-plus me-1"></i>
-                  <span>Add Country</span>
-                </button>
+                  <i class="mdi mdi-plus-circle-outline me-1"></i>
+              </a>
               </div>
             </div>
           </div>
