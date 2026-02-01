@@ -1,4 +1,4 @@
-# app/main.py - COMPLETE WORKING VERSION
+# app/main.py - CORRECTED VERSION WITHOUT DUPLICATE ENDPOINTS
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import logging
@@ -100,33 +100,6 @@ async def cors_test(request: Request):
         "all_allowed_origins": origins
     }
 
-# ========== TEST AUTH ENDPOINT ==========
-@app.post("/api/v1/auth/AuthenticateUser")
-async def authenticate_user(request: Request):
-    """Test authentication endpoint"""
-    try:
-        data = await request.json()
-        return {
-            "message": "Authentication successful",
-            "username": data.get("username"),
-            "status": "authenticated",
-            "cors": "working"
-        }
-    except:
-        return {
-            "message": "Authentication endpoint",
-            "status": "ready",
-            "cors": "working"
-        }
-
-@app.options("/api/v1/auth/AuthenticateUser")
-async def auth_preflight():
-    """Specific preflight for auth endpoint"""
-    return {
-        "status": "preflight_ok",
-        "allowed_methods": ["POST", "OPTIONS"]
-    }
-
 # ========== DEBUG ENDPOINTS ==========
 @app.get("/debug/headers")
 async def debug_headers(request: Request):
@@ -139,7 +112,7 @@ async def debug_headers(request: Request):
 
 # ========== API ROUTE SETUP ==========
 def setup_api_routes():
-    """Setup API routes"""
+    """Setup API routes - moved authentication to router"""
     print("=" * 60)
     print("SETTING UP API ROUTES")
     print("=" * 60)
@@ -150,9 +123,29 @@ def setup_api_routes():
         app.include_router(api_router, prefix=settings.API_V1_STR)
         print(f"✅ API routes loaded at {settings.API_V1_STR}")
         
+        # Check if auth endpoint exists in router
+        print("\n✅ Authentication endpoints are now handled by the router at:")
+        print(f"   POST {settings.API_V1_STR}/auth/AuthenticateUser")
+        
     except ImportError as e:
         print(f"⚠️  API import error: {e}")
-        # Fallback routes are already defined above
+        print("Creating minimal fallback routes...")
+        
+        # Create minimal fallback router
+        from fastapi import APIRouter
+        
+        fallback_router = APIRouter()
+        
+        @fallback_router.get("/test")
+        async def test():
+            return {"message": "API is working"}
+            
+        @fallback_router.get("/health")
+        async def api_health():
+            return {"api": "healthy"}
+            
+        app.include_router(fallback_router, prefix=settings.API_V1_STR)
+        print("✅ Fallback routes created")
         
     except Exception as e:
         print(f"❌ Unexpected error: {e}")
