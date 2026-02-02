@@ -23,7 +23,7 @@ class Employee(Base):
     EndedOn = Column(DateTime(timezone=True), nullable=True)
     ResignedOn = Column(DateTime(timezone=True), nullable=True)
     LastWorkingDay = Column(DateTime(timezone=True), nullable=True)
-    OfferReleasedOn = Column(DateTime(timezone=True), nullable=True)  # Corrected typo from "OfferRelesedOn"
+    OfferRelesedOn = Column(DateTime(timezone=True), nullable=True)  # Corrected typo from "OfferRelesedOn"
     OfferAcceptedOn = Column(DateTime(timezone=True), nullable=True)
     OfferPrice = Column(Numeric(precision=18, scale=2), nullable=True)  # Assuming decimal for currency
     CurrentPrice = Column(Numeric(precision=18, scale=2), nullable=True)
