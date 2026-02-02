@@ -14,7 +14,7 @@ from app.schemas.employee_employment_schemas import (
 from app.core.database import get_db
 from app.services.employee_employment_service import EmployeeEmploymentService
 
-router = APIRouter(prefix="/employee-employments", tags=["employee-employments"])
+router = APIRouter()
 
 
 @router.get("/fetchEmployeeEmployment/{employee_employment_id}", response_model=EmployeeEmploymentResponse)

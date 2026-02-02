@@ -13,7 +13,7 @@ from app.schemas.employee_emergency_contact_schemas import (
 from app.core.database import get_db
 from app.services.employee_emergency_contact_service import EmployeeEmergencyContactService
 
-router = APIRouter(prefix="/employee-emergency-contacts", tags=["employee-emergency-contacts"])
+router = APIRouter()
 
 
 @router.get("/fetchEmployeeEmergencyContact/{employee_emergency_contact_id}", response_model=EmployeeEmergencyContactResponse)
