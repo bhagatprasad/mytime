@@ -1,0 +1,30 @@
+export interface Employee {
+  EmployeeId: number;
+  EmployeeCode?: string | null;
+  FirstName?: string | null;
+  LastName?: string | null;
+  FatherName?: string | null;
+  MotherName?: string | null;
+  Gender?: string | null;
+  DateOfBirth?: string | null;
+  Email?: string | null;
+  Phone?: string | null;
+  UserId?: number | null;
+  RoleId?: number | null;
+  DepartmentId?: number | null;
+  DesignationId?: number | null;
+  StartedOn?: string | null;
+  EndedOn?: string | null;
+  ResignedOn?: string | null;
+  LastWorkingDay?: string | null;
+  OfferReleasedOn?: string | null;
+  OfferAcceptedOn?: string | null;
+  OfferPrice?: number | null;
+  CurrentPrice?: number | null;
+  JoiningBonus?: number | null;
+  CreatedBy?: number | null;
+  CreatedOn?: string | null;
+  ModifiedBy?: number | null;
+  ModifiedOn?: string | null;
+  IsActive?: boolean | null;
+}

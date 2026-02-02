@@ -146,6 +146,194 @@ export const environment = {
             ToggleActiveStatus: 'holiydacallender/toggleActiveStatus',
             SearchHolidayCalendars: 'holiydacallender/searchHolidayCalendars',
             GetHolidayCalendarsByIds: 'holiydacallender/getHolidayCalendarsByIds'
+        },
+        // Employee endpoints
+        Employee: {
+            // GET endpoints
+            GetEmployee: 'employee/fetchEmployee',
+            GetEmployeeByCode: 'employee/fetchEmployeeByCode',
+            GetEmployeeByEmail: 'employee/fetchEmployeeByEmail',
+            GetEmployeeByUserId: 'employee/fetchEmployeeByUserId',
+            GetAllEmployees: 'employee/fetchAllEmployees',
+            GetEmployees: 'employee/getEmployees',
+            CheckEmployeeExists: 'employee/checkEmployeeExists',
+            GetEmployeesByDepartment: 'employee/getEmployeesByDepartment',
+            GetEmployeesByDesignation: 'employee/getEmployeesByDesignation',
+            GetEmployeeStatistics: 'employee/employeeStatistics',
+            GetActiveEmployees: 'employee/activeEmployees',
+            ExportEmployees: 'employee/exportEmployees',
+
+            // POST endpoints
+            InsertOrUpdateEmployee: 'employee/InsertOrUpdateEmployee',
+            SearchEmployees: 'employee/searchEmployees',
+            CreateEmployee: 'employee/create',
+            BulkUpdateDepartment: 'employee/bulkUpdateDepartment',
+
+            // PUT endpoint
+            UpdateEmployee: 'employee/update',
+
+            // DELETE endpoints
+            DeleteEmployee: 'employee/DeleteEmployee',
+            SoftDeleteEmployee: 'employee/SoftDeleteEmployee',
+
+            // PATCH endpoint
+            UpdateActiveStatus: 'employee/updateActiveStatus'
+        },
+
+        // EmployeeAddress endpoints
+        EmployeeAddress: {
+            // GET endpoints
+            GetEmployeeAddress: 'employeeaddress/fetchEmployeeAddress',
+            GetAddressesByEmployee: 'employeeaddress/fetchAddressesByEmployee',
+            GetActiveAddressesByEmployee: 'employeeaddress/fetchActiveAddressesByEmployee',
+            GetAllEmployeeAddresses: 'employeeaddress/fetchAllEmployeeAddresses',
+            GetEmployeeAddresses: 'employeeaddress/getEmployeeAddresses',
+            CheckEmployeeAddressExists: 'employeeaddress/checkEmployeeAddressExists',
+            GetPrimaryAddress: 'employeeaddress/getPrimaryAddress',
+
+            // POST endpoints
+            InsertOrUpdateEmployeeAddress: 'employeeaddress/InsertOrUpdateEmployeeAddress',
+            CreateBulkAddresses: 'employeeaddress/createBulkAddresses',
+            CreateEmployeeAddress: 'employeeaddress/create',
+            SearchEmployeeAddresses: 'employeeaddress/searchEmployeeAddresses',
+
+            // PUT endpoint
+            UpdateEmployeeAddress: 'employeeaddress/update',
+
+            // DELETE endpoint
+            DeleteEmployeeAddress: 'employeeaddress/DeleteEmployeeAddress',
+
+            // PATCH endpoints
+            SoftDeleteEmployeeAddress: 'employeeaddress/SoftDeleteEmployeeAddress',
+            SetPrimaryAddress: 'employeeaddress/setPrimaryAddress'
+        },
+
+        // EmployeeEducation endpoints
+        EmployeeEducation: {
+            // GET endpoints
+            GetEmployeeEducation: 'employeeeducation/fetchEmployeeEducation',
+            GetEducationsByEmployee: 'employeeeducation/fetchEducationsByEmployee',
+            GetActiveEducationsByEmployee: 'employeeeducation/fetchActiveEducationsByEmployee',
+            GetHighestEducationByEmployee: 'employeeeducation/fetchHighestEducationByEmployee',
+            GetAllEmployeeEducations: 'employeeeducation/fetchAllEmployeeEducations',
+            GetEmployeeEducations: 'employeeeducation/getEmployeeEducations',
+            CheckEmployeeEducationExists: 'employeeeducation/checkEmployeeEducationExists',
+            GetEmployeeEducationSummary: 'employeeeducation/getEmployeeEducationSummary',
+            GetEducationStatistics: 'employeeeducation/educationStatistics',
+            SearchByDegree: 'employeeeducation/searchByDegree',
+            SearchByInstitution: 'employeeeducation/searchByInstitution',
+
+            // POST endpoints
+            InsertOrUpdateEmployeeEducation: 'employeeeducation/InsertOrUpdateEmployeeEducation',
+            CreateBulkEducations: 'employeeeducation/createBulkEducations',
+            CreateEmployeeEducation: 'employeeeducation/create',
+            SearchEmployeeEducations: 'employeeeducation/searchEmployeeEducations',
+
+            // PUT endpoint
+            UpdateEmployeeEducation: 'employeeeducation/update',
+
+            // DELETE endpoint
+            DeleteEmployeeEducation: 'employeeeducation/DeleteEmployeeEducation',
+
+            // PATCH endpoint
+            SoftDeleteEmployeeEducation: 'employeeeducation/SoftDeleteEmployeeEducation'
+        },
+
+        // EmployeeEmployment endpoints
+        EmployeeEmployment: {
+            // GET endpoints
+            GetEmployeeEmployment: 'employeeemployment/fetchEmployeeEmployment',
+            GetEmploymentsByEmployee: 'employeeemployment/fetchEmploymentsByEmployee',
+            GetActiveEmploymentsByEmployee: 'employeeemployment/fetchActiveEmploymentsByEmployee',
+            GetLatestEmploymentByEmployee: 'employeeemployment/fetchLatestEmploymentByEmployee',
+            GetAllEmployeeEmployments: 'employeeemployment/fetchAllEmployeeEmployments',
+            GetEmployeeEmployments: 'employeeemployment/getEmployeeEmployments',
+            CheckEmployeeEmploymentExists: 'employeeemployment/checkEmployeeEmploymentExists',
+            GetEmployeeEmploymentSummary: 'employeeemployment/getEmployeeEmploymentSummary',
+            GetEmploymentStatistics: 'employeeemployment/employmentStatistics',
+            SearchByCompany: 'employeeemployment/searchByCompany',
+            SearchByDesignation: 'employeeemployment/searchByDesignation',
+            GetEmployeesByPreviousCompany: 'employeeemployment/employeesByPreviousCompany',
+            CalculateTotalExperience: 'employeeemployment/calculateTotalExperience',
+
+            // POST endpoints
+            InsertOrUpdateEmployeeEmployment: 'employeeemployment/InsertOrUpdateEmployeeEmployment',
+            CreateBulkEmployments: 'employeeemployment/createBulkEmployments',
+            CreateEmployeeEmployment: 'employeeemployment/create',
+            SearchEmployeeEmployments: 'employeeemployment/searchEmployeeEmployments',
+
+            // PUT endpoint
+            UpdateEmployeeEmployment: 'employeeemployment/update',
+
+            // DELETE endpoint
+            DeleteEmployeeEmployment: 'employeeemployment/DeleteEmployeeEmployment',
+
+            // PATCH endpoint
+            SoftDeleteEmployeeEmployment: 'employeeemployment/SoftDeleteEmployeeEmployment'
+        },
+
+        // EmployeeEmergencyContact endpoints
+        EmployeeEmergencyContact: {
+            // GET endpoints
+            GetEmployeeEmergencyContact: 'employeeemergencycontact/fetchEmployeeEmergencyContact',
+            GetContactsByEmployee: 'employeeemergencycontact/fetchContactsByEmployee',
+            GetActiveContactsByEmployee: 'employeeemergencycontact/fetchActiveContactsByEmployee',
+            GetPrimaryEmergencyContact: 'employeeemergencycontact/fetchPrimaryEmergencyContact',
+            GetAllEmployeeEmergencyContacts: 'employeeemergencycontact/fetchAllEmployeeEmergencyContacts',
+            GetEmployeeEmergencyContacts: 'employeeemergencycontact/getEmployeeEmergencyContacts',
+            CheckEmployeeEmergencyContactExists: 'employeeemergencycontact/checkEmployeeEmergencyContactExists',
+            GetEmployeeEmergencyContactsSummary: 'employeeemergencycontact/getEmployeeEmergencyContactsSummary',
+            GetEmergencyContactStatistics: 'employeeemergencycontact/emergencyContactStatistics',
+            SearchByRelation: 'employeeemergencycontact/searchByRelation',
+            GetEmployeesWithoutEmergencyContacts: 'employeeemergencycontact/employeesWithoutEmergencyContacts',
+
+            // POST endpoints
+            InsertOrUpdateEmployeeEmergencyContact: 'employeeemergencycontact/InsertOrUpdateEmployeeEmergencyContact',
+            CreateBulkEmergencyContacts: 'employeeemergencycontact/createBulkEmergencyContacts',
+            CreateEmployeeEmergencyContact: 'employeeemergencycontact/create',
+            SearchEmployeeEmergencyContacts: 'employeeemergencycontact/searchEmployeeEmergencyContacts',
+
+            // PUT endpoint
+            UpdateEmployeeEmergencyContact: 'employeeemergencycontact/update',
+
+            // DELETE endpoint
+            DeleteEmployeeEmergencyContact: 'employeeemergencycontact/DeleteEmployeeEmergencyContact',
+
+            // PATCH endpoints
+            SoftDeleteEmployeeEmergencyContact: 'employeeemergencycontact/SoftDeleteEmployeeEmergencyContact',
+            SetAsPrimaryContact: 'employeeemergencycontact/setAsPrimaryContact'
+        },
+
+        // EmployeeSalaryStructure endpoints
+        EmployeeSalaryStructure: {
+            // GET endpoints
+            GetEmployeeSalaryStructure: 'employeesalarystructure/fetchEmployeeSalaryStructure',
+            GetSalaryStructureByEmployee: 'employeesalarystructure/fetchSalaryStructureByEmployee',
+            GetAllSalaryStructuresByEmployee: 'employeesalarystructure/fetchAllSalaryStructuresByEmployee',
+            GetActiveSalaryStructures: 'employeesalarystructure/fetchActiveSalaryStructures',
+            GetAllEmployeeSalaryStructures: 'employeesalarystructure/fetchAllEmployeeSalaryStructures',
+            GetEmployeeSalaryStructures: 'employeesalarystructure/getEmployeeSalaryStructures',
+            CheckEmployeeSalaryStructureExists: 'employeesalarystructure/checkEmployeeSalaryStructureExists',
+            GetSalaryBreakdown: 'employeesalarystructure/getSalaryBreakdown',
+            GetSalaryStatistics: 'employeesalarystructure/salaryStatistics',
+            GetSalaryComparisonReport: 'employeesalarystructure/salaryComparisonReport',
+            GetEmployeesWithoutSalaryStructure: 'employeesalarystructure/employeesWithoutSalaryStructure',
+            CalculateNetSalary: 'employeesalarystructure/calculateNetSalary',
+            GetPayrollSummary: 'employeesalarystructure/payrollSummary',
+
+            // POST endpoints
+            InsertOrUpdateEmployeeSalaryStructure: 'employeesalarystructure/InsertOrUpdateEmployeeSalaryStructure',
+            CreateEmployeeSalaryStructure: 'employeesalarystructure/create',
+            SearchEmployeeSalaryStructures: 'employeesalarystructure/searchEmployeeSalaryStructures',
+
+            // PUT endpoint
+            UpdateEmployeeSalaryStructure: 'employeesalarystructure/update',
+
+            // DELETE endpoint
+            DeleteEmployeeSalaryStructure: 'employeesalarystructure/DeleteEmployeeSalaryStructure',
+
+            // PATCH endpoint
+            SoftDeleteEmployeeSalaryStructure: 'employeesalarystructure/SoftDeleteEmployeeSalaryStructure'
         }
     }
 };

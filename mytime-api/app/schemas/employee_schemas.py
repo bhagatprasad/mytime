@@ -23,7 +23,7 @@ class EmployeeBase(BaseModel):
     EndedOn: Optional[datetime] = Field(None, description="Employment end date")
     ResignedOn: Optional[datetime] = Field(None, description="Resignation date")
     LastWorkingDay: Optional[datetime] = Field(None, description="Last working day")
-    OfferReleasedOn: Optional[datetime] = Field(None, description="Date when offer was released")
+    OfferRelesedOn: Optional[datetime] = Field(None, description="Date when offer was released")
     OfferAcceptedOn: Optional[datetime] = Field(None, description="Date when offer was accepted")
     
     # Use plain Decimal with field_validator approach (simpler)
@@ -57,7 +57,7 @@ class EmployeeUpdate(BaseModel):
     EndedOn: Optional[datetime] = Field(None, description="Employment end date")
     ResignedOn: Optional[datetime] = Field(None, description="Resignation date")
     LastWorkingDay: Optional[datetime] = Field(None, description="Last working day")
-    OfferReleasedOn: Optional[datetime] = Field(None, description="Date when offer was released")
+    OfferRelesedOn: Optional[datetime] = Field(None, description="Date when offer was released")
     OfferAcceptedOn: Optional[datetime] = Field(None, description="Date when offer was accepted")
     
     # Use plain Decimal for update
@@ -88,7 +88,7 @@ class EmployeeResponse(BaseModel):
     EndedOn: Optional[datetime] = None
     ResignedOn: Optional[datetime] = None
     LastWorkingDay: Optional[datetime] = None
-    OfferReleasedOn: Optional[datetime] = None
+    OfferRelesedOn: Optional[datetime] = None
     OfferAcceptedOn: Optional[datetime] = None
     OfferPrice: Optional[Decimal] = None
     CurrentPrice: Optional[Decimal] = None
