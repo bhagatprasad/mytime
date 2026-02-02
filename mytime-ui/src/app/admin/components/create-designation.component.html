@@ -1,1 +1,72 @@
-<p>create-designation works!</p>
+<div class="sidebar-overlay" *ngIf="isVisible" (click)="close()"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" [class.visible]="isVisible">
+    <form [formGroup]="roleForm" (ngSubmit)="onSubmit()">
+        <div class="sidebar-header">
+            <h5 class="sidebar-title">{{ designation?.DesignationId ? 'Edit Designation' : 'Add Designation' }}</h5>
+            <button type="button" class="close" (click)="close()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="sidebar-body">
+            <div class="form-group">
+                <label for="Name">Designation Name</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-account-circle-outline"></i>
+                        </span>
+                    </div>
+                    <input type="text" class="form-control" id="Name" formControlName="Name"
+                        placeholder="Enter designation name">
+                </div>
+                <!-- Validation messages for Name field -->
+                <div *ngIf="roleForm.get('Name')?.invalid && roleForm.get('Name')?.touched" 
+                     class="text-danger small mt-1">
+                    <span *ngIf="roleForm.get('Name')?.errors?.['required']">
+                        Designation name is required
+                    </span>
+                    <span *ngIf="roleForm.get('Name')?.errors?.['maxlength']">
+                        Designation name cannot exceed {{ roleForm.get('Name')?.errors?.['maxlength']?.requiredLength }} characters
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="Code">Designation Code</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-code-tags"></i>
+                        </span>
+                    </div>
+                    <input type="text" class="form-control" id="Code" formControlName="Code"
+                        placeholder="Enter designation code">
+                </div>
+                <!-- Validation messages for Code field -->
+                <div *ngIf="roleForm.get('Code')?.invalid && roleForm.get('Code')?.touched" 
+                     class="text-danger small mt-1">
+                    <span *ngIf="roleForm.get('Code')?.errors?.['required']">
+                        Designation code is required
+                    </span>
+                    <span *ngIf="roleForm.get('Code')?.errors?.['maxlength']">
+                        Designation code cannot exceed {{ roleForm.get('Code')?.errors?.['maxlength']?.requiredLength }} characters
+                    </span>
+                    <span *ngIf="roleForm.get('Code')?.errors?.['pattern']">
+                        Designation code should contain only letters, numbers, and underscores
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <button type="submit" class="btn btn-primary" [disabled]="roleForm.invalid || roleForm.pristine">
+                <i class="mdi" [class.mdi-content-save]="!designation?.DesignationId" [class.mdi-pencil]="designation?.DesignationId"></i>
+                {{ designation?.DesignationId ? 'Update' : 'Save' }}
+            </button>
+            <button type="button" class="btn btn-secondary ml-2" (click)="close()">Cancel</button>
+        </div>
+    </form>
+</div>
