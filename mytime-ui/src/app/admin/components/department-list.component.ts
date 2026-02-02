@@ -32,8 +32,8 @@ export class DepartmentListComponent implements OnInit, OnDestroy {
 
   deparmtnets: Department[] = [];
 
-
   columnDefs: ColDef[] = [];
+
 
   defaultColDef: ColDef = {
     flex: 1,
@@ -339,3 +339,4 @@ export class DepartmentListComponent implements OnInit, OnDestroy {
   }
 
 }
+

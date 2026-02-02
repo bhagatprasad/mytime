@@ -19,7 +19,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
   selector: 'app-designation-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, DatePipe, FormsModule , CreateDesignationComponent],
+  imports: [CommonModule, AgGridAngular, DatePipe, FormsModule, CreateDesignationComponent],
   templateUrl: './designation-list.component.html',
   styleUrl: './designation-list.component.css'
 })
@@ -353,31 +353,53 @@ export class DesignationListComponent implements OnInit {
   }
 
   onSaveDesignation(des: Designation): void {
-  this.loader.show();
-  const _des = this.audit.appendAuditFields(des);
+    this.loader.show();
+    const _des = this.audit.appendAuditFields(des);
 
-  console.log("Received designation:", _des);
+    console.log("Received designation:", _des);
 
-  this.designationService.insertOrUpdateDesignation(_des).subscribe(
-    response => {
-      this.loader.hide();   // ✅ add this
+    this.designationService.insertOrUpdateDesignation(_des).subscribe(
+      response => {
+        this.loader.hide();   // ✅ add this
 
-      if (response) {
-        this.toastr.success("Designation processed successfully");
-        this.showSidebar = false;
-        this.refreshData();
+        if (response) {
+          this.toastr.success("Designation processed successfully");
+          this.showSidebar = false;
+          this.refreshData();
+        }
+      },
+      error => {
+        this.loader.hide();   // already here
+        console.error(error);
+        this.toastr.error("Something went wrong, please check and resubmit");
+        this.showSidebar = true;
       }
-    },
-    error => {
-      this.loader.hide();   // already here
-      console.error(error);
-      this.toastr.error("Something went wrong, please check and resubmit");
-      this.showSidebar = true;
-    }
-  );
-}
+    );
+  }
   onCloseSidebar(): void {
     this.showSidebar = false;
+  }
+
+  showDeletePopup = false;
+
+  deleteId: number | null = null;
+
+  openDeletePopup(id: number) {
+    this.deleteId = id;
+    this.showDeletePopup = true;
+  }
+  closePopup() {
+    this.showDeletePopup = false;
+    this.deleteId = null;
+  }
+  confirmDelete() {
+    if (!this.deleteId) return;
+
+    this.designationService.deleteDesignationAsync(this.deleteId)
+      .subscribe(() => {
+        this.refreshData(); // refresh list
+        this.showDeletePopup = false;
+      });
   }
 }
 

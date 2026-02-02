@@ -22,4 +22,8 @@ export class DesignationService {
         return this.apiService.send<Designation>("POST", environment.UrlConstants.Designation.InsertOrUpdateDesignation, des);
     }
 
+    deleteDesignationAsync(Id: number): Observable<Designation[]> {
+            return this.apiService.send<Designation[]>("DELETE", `${environment.UrlConstants.City.GetCitiesByCountry}?DesignationId=${Id}`);
+        }
+
 }
