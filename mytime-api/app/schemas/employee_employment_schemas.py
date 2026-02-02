@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, ConfigDict, EmailStr
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Dict, Optional, List
 from datetime import datetime
 
@@ -13,7 +13,7 @@ class EmployeeEmploymentBase(BaseModel):
     EndedOn: Optional[datetime] = Field(None, description="Employment end date")
     Reason: Optional[str] = Field(None, max_length=1000, description="Reason for leaving")
     ReportingManager: Optional[str] = Field(None, max_length=255, description="Reporting manager name")
-    HREmail: Optional[EmailStr] = Field(None, description="HR email at previous company")
+    HREmail: Optional[str] = Field(None, description="HR email at previous company")
     Reference: Optional[str] = Field(None, max_length=1000, description="Reference details")
 
 
@@ -32,7 +32,7 @@ class EmployeeEmploymentUpdate(BaseModel):
     EndedOn: Optional[datetime] = Field(None, description="Employment end date")
     Reason: Optional[str] = Field(None, max_length=1000, description="Reason for leaving")
     ReportingManager: Optional[str] = Field(None, max_length=255, description="Reporting manager name")
-    HREmail: Optional[EmailStr] = Field(None, description="HR email at previous company")
+    HREmail: Optional[str] = Field(None, description="HR email at previous company")
     Reference: Optional[str] = Field(None, max_length=1000, description="Reference details")
     ModifiedBy: Optional[int] = Field(None, description="User ID who last modified the record")
     IsActive: Optional[bool] = Field(None, description="Whether the employment record is active")

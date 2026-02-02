@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, ConfigDict, EmailStr
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, List
 from datetime import datetime
 
@@ -9,7 +9,7 @@ class EmployeeEmergencyContactBase(BaseModel):
     Name: str = Field(..., max_length=255, description="Emergency contact name")
     Relation: str = Field(..., max_length=100, description="Relationship to employee")
     Phone: str = Field(..., max_length=20, description="Emergency phone number")
-    Email: Optional[EmailStr] = Field(None, description="Emergency email address")
+    Email: Optional[str] = Field(None, description="Emergency email address")
     Address: Optional[str] = Field(None, max_length=500, description="Emergency contact address")
 
 
@@ -24,7 +24,7 @@ class EmployeeEmergencyContactUpdate(BaseModel):
     Name: Optional[str] = Field(None, max_length=255, description="Emergency contact name")
     Relation: Optional[str] = Field(None, max_length=100, description="Relationship to employee")
     Phone: Optional[str] = Field(None, max_length=20, description="Emergency phone number")
-    Email: Optional[EmailStr] = Field(None, description="Emergency email address")
+    Email: Optional[str] = Field(None, description="Emergency email address")
     Address: Optional[str] = Field(None, max_length=500, description="Emergency contact address")
     ModifiedBy: Optional[int] = Field(None, description="User ID who last modified the record")
     IsActive: Optional[bool] = Field(None, description="Whether the emergency contact is active")

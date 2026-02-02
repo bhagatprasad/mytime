@@ -12,7 +12,7 @@ from app.schemas.employee_address_schemas import (
 from app.core.database import get_db
 from app.services.employee_address_service import EmployeeAddressService
 
-router = APIRouter(prefix="/employee-addresses", tags=["employee-addresses"])
+router = APIRouter()
 
 
 @router.get("/fetchEmployeeAddress/{employee_address_id}", response_model=EmployeeAddressResponse)

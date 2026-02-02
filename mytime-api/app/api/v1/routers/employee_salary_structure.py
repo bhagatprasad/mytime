@@ -15,7 +15,7 @@ from app.schemas.employee_salary_structure_schemas import (
 from app.core.database import get_db
 from app.services.employee_salary_structure_service import EmployeeSalaryStructureService
 
-router = APIRouter(prefix="/employee-salary-structures", tags=["employee-salary-structures"])
+router = APIRouter()
 
 
 @router.get("/fetchEmployeeSalaryStructure/{employee_salary_structure_id}", response_model=EmployeeSalaryStructureResponse)

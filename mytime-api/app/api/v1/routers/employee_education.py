@@ -14,7 +14,7 @@ from app.schemas.employee_education_schemas import (
 from app.core.database import get_db
 from app.services.employee_education_service import EmployeeEducationService
 
-router = APIRouter(prefix="/employee-educations", tags=["employee-educations"])
+router = APIRouter()
 
 
 @router.get("/fetchEmployeeEducation/{employee_education_id}", response_model=EmployeeEducationResponse)

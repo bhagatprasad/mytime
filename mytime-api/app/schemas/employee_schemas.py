@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, ConfigDict, EmailStr
+from pydantic import BaseModel, Field, ConfigDict, condecimal
 from typing import Optional, List
 from datetime import datetime
 from decimal import Decimal
@@ -13,7 +13,7 @@ class EmployeeBase(BaseModel):
     MotherName: Optional[str] = Field(None, max_length=255, description="Mother's name")
     Gender: Optional[str] = Field(None, max_length=10, description="Gender (Male/Female/Other)")
     DateOfBirth: Optional[datetime] = Field(None, description="Date of birth")
-    Email: Optional[EmailStr] = Field(None, description="Email address")
+    Email: Optional[str] = Field(None, description="Email address")
     Phone: Optional[str] = Field(None, max_length=20, description="Phone number")
     UserId: Optional[int] = Field(None, description="Associated user ID")
     RoleId: Optional[int] = Field(None, description="Role ID")
@@ -25,9 +25,17 @@ class EmployeeBase(BaseModel):
     LastWorkingDay: Optional[datetime] = Field(None, description="Last working day")
     OfferReleasedOn: Optional[datetime] = Field(None, description="Date when offer was released")
     OfferAcceptedOn: Optional[datetime] = Field(None, description="Date when offer was accepted")
-    OfferPrice: Optional[Decimal] = Field(None, max_digits=18, decimal_places=2, description="Offer price/salary")
-    CurrentPrice: Optional[Decimal] = Field(None, max_digits=18, decimal_places=2, description="Current salary")
-    JoiningBonus: Optional[Decimal] = Field(None, max_digits=18, decimal_places=2, description="Joining bonus amount")
+    
+    # Corrected: Use condecimal instead of max_digits/decimal_places in Field()
+    OfferPrice: Optional[condecimal] = Field(
+        None, description="Offer price/salary"
+    )
+    CurrentPrice: Optional[condecimal] = Field(
+        None, description="Current salary"
+    )
+    JoiningBonus: Optional[condecimal] = Field(
+        None, description="Joining bonus amount"
+    )
 
 
 class EmployeeCreate(EmployeeBase):
@@ -45,7 +53,7 @@ class EmployeeUpdate(BaseModel):
     MotherName: Optional[str] = Field(None, max_length=255, description="Mother's name")
     Gender: Optional[str] = Field(None, max_length=10, description="Gender (Male/Female/Other)")
     DateOfBirth: Optional[datetime] = Field(None, description="Date of birth")
-    Email: Optional[EmailStr] = Field(None, description="Email address")
+    Email: Optional[str] = Field(None, description="Email address")
     Phone: Optional[str] = Field(None, max_length=20, description="Phone number")
     UserId: Optional[int] = Field(None, description="Associated user ID")
     RoleId: Optional[int] = Field(None, description="Role ID")
@@ -57,9 +65,17 @@ class EmployeeUpdate(BaseModel):
     LastWorkingDay: Optional[datetime] = Field(None, description="Last working day")
     OfferReleasedOn: Optional[datetime] = Field(None, description="Date when offer was released")
     OfferAcceptedOn: Optional[datetime] = Field(None, description="Date when offer was accepted")
-    OfferPrice: Optional[Decimal] = Field(None, max_digits=18, decimal_places=2, description="Offer price/salary")
-    CurrentPrice: Optional[Decimal] = Field(None, max_digits=18, decimal_places=2, description="Current salary")
-    JoiningBonus: Optional[Decimal] = Field(None, max_digits=18, decimal_places=2, description="Joining bonus amount")
+    
+    # Corrected: Use condecimal for Decimal fields
+    OfferPrice: Optional[condecimal] = Field(
+        None, description="Offer price/salary"
+    )
+    CurrentPrice: Optional[condecimal] = Field(
+        None, description="Current salary"
+    )
+    JoiningBonus: Optional[condecimal] = Field(
+        None, description="Joining bonus amount"
+    )
     ModifiedBy: Optional[int] = Field(None, description="User ID who last modified the record")
     IsActive: Optional[bool] = Field(None, description="Whether the employee is active")
 
@@ -94,6 +110,9 @@ class EmployeeResponse(BaseModel):
     ModifiedBy: Optional[int] = None
     ModifiedOn: Optional[datetime] = None
     IsActive: Optional[bool] = None
+    
+    model_config = ConfigDict(from_attributes=True)
+
 
 class EmployeeListResponse(BaseModel):
     """Schema for listing multiple Employees with pagination"""
@@ -166,3 +185,14 @@ class EmployeeSearchResponse(BaseModel):
     """Response for employee search"""
     total: int
     employees: List[EmployeeSummaryResponse]
+
+
+# Alternative approach if you prefer to keep Decimal type annotations:
+class EmployeeBaseAlternative(BaseModel):
+    """Alternative with field_validator for Decimal fields"""
+    # ... other fields ...
+    
+    OfferPrice: Optional[Decimal] = Field(None, description="Offer price/salary")
+    CurrentPrice: Optional[Decimal] = Field(None, description="Current salary")
+    JoiningBonus: Optional[Decimal] = Field(None, description="Joining bonus amount")
+    
