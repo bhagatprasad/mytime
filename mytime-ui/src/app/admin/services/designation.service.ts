@@ -18,4 +18,8 @@ export class DesignationService {
         return this.apiService.send<Designation[]>("GET", environment.UrlConstants.Designation.GetAllDesignations);
     }
 
+    insertOrUpdateDesignation(des: Designation): Observable<Designation> {
+        return this.apiService.send<Designation>("POST", environment.UrlConstants.Designation.InsertOrUpdateDesignation, des);
+    }
+
 }
