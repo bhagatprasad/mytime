@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, ConfigDict, condecimal
-from typing import Dict, Optional, List
+from typing import Dict, Optional, List, Annotated
 from datetime import datetime
 from decimal import Decimal
 
@@ -13,25 +13,25 @@ class EmployeeSalaryStructureBase(BaseModel):
     BankName: Optional[str] = Field(None, max_length=100, description="Bank name")
     IFSC: Optional[str] = Field(None, max_length=11, description="IFSC code")
     
-    # Earnings - using condecimal for constraints
-    BASIC: condecimal = Field(..., description="Basic salary")
-    HRA: condecimal = Field(0, description="House Rent Allowance")
-    CONVEYANCE: condecimal = Field(0, description="Conveyance allowance")
-    MEDICALALLOWANCE: condecimal = Field(0, description="Medical allowance")
-    SPECIALALLOWANCE: condecimal = Field(0, description="Special allowance")
-    SPECIALBONUS: condecimal = Field(0, description="Special bonus")
-    STATUTORYBONUS: condecimal = Field(0, description="Statutory bonus")
-    OTHERS: condecimal = Field(0, description="Other earnings")
+    # Earnings - using condecimal with Annotated
+    BASIC: Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)] = Field(..., description="Basic salary")
+    HRA: Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)] = Field(0, description="House Rent Allowance")
+    CONVEYANCE: Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)] = Field(0, description="Conveyance allowance")
+    MEDICALALLOWANCE: Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)] = Field(0, description="Medical allowance")
+    SPECIALALLOWANCE: Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)] = Field(0, description="Special allowance")
+    SPECIALBONUS: Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)] = Field(0, description="Special bonus")
+    STATUTORYBONUS: Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)] = Field(0, description="Statutory bonus")
+    OTHERS: Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)] = Field(0, description="Other earnings")
     
     # Provident Fund
     UAN: Optional[str] = Field(None, max_length=20, description="UAN number")
     PFNO: Optional[str] = Field(None, max_length=20, description="PF number")
     
-    # Deductions - using condecimal for constraints
-    PF: condecimal = Field(0, description="Provident Fund deduction")
-    ESIC: condecimal = Field(0, description="ESIC deduction")
-    PROFESSIONALTAX: condecimal = Field(0, description="Professional Tax")
-    GroupHealthInsurance: condecimal = Field(0, description="Health insurance")
+    # Deductions
+    PF: Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)] = Field(0, description="Provident Fund deduction")
+    ESIC: Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)] = Field(0, description="ESIC deduction")
+    PROFESSIONALTAX: Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)] = Field(0, description="Professional Tax")
+    GroupHealthInsurance: Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)] = Field(0, description="Health insurance")
 
 
 class EmployeeSalaryStructureCreate(EmployeeSalaryStructureBase):
@@ -48,25 +48,25 @@ class EmployeeSalaryStructureUpdate(BaseModel):
     BankName: Optional[str] = Field(None, max_length=100, description="Bank name")
     IFSC: Optional[str] = Field(None, max_length=11, description="IFSC code")
     
-    # Earnings - using Optional[condecimal] for update
-    BASIC: Optional[condecimal] = Field(None, description="Basic salary")
-    HRA: Optional[condecimal] = Field(None, description="House Rent Allowance")
-    CONVEYANCE: Optional[condecimal] = Field(None, description="Conveyance allowance")
-    MEDICALALLOWANCE: Optional[condecimal] = Field(None, description="Medical allowance")
-    SPECIALALLOWANCE: Optional[condecimal] = Field(None, description="Special allowance")
-    SPECIALBONUS: Optional[condecimal] = Field(None, description="Special bonus")
-    STATUTORYBONUS: Optional[condecimal] = Field(None, description="Statutory bonus")
-    OTHERS: Optional[condecimal] = Field(None, description="Other earnings")
+    # Earnings - using Optional with Annotated
+    BASIC: Optional[Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)]] = Field(None, description="Basic salary")
+    HRA: Optional[Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)]] = Field(None, description="House Rent Allowance")
+    CONVEYANCE: Optional[Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)]] = Field(None, description="Conveyance allowance")
+    MEDICALALLOWANCE: Optional[Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)]] = Field(None, description="Medical allowance")
+    SPECIALALLOWANCE: Optional[Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)]] = Field(None, description="Special allowance")
+    SPECIALBONUS: Optional[Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)]] = Field(None, description="Special bonus")
+    STATUTORYBONUS: Optional[Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)]] = Field(None, description="Statutory bonus")
+    OTHERS: Optional[Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)]] = Field(None, description="Other earnings")
     
     # Provident Fund
     UAN: Optional[str] = Field(None, max_length=20, description="UAN number")
     PFNO: Optional[str] = Field(None, max_length=20, description="PF number")
     
-    # Deductions - using Optional[condecimal] for update
-    PF: Optional[condecimal] = Field(None, description="Provident Fund deduction")
-    ESIC: Optional[condecimal] = Field(None, description="ESIC deduction")
-    PROFESSIONALTAX: Optional[condecimal] = Field(None, description="Professional Tax")
-    GroupHealthInsurance: Optional[condecimal] = Field(None, description="Health insurance")
+    # Deductions
+    PF: Optional[Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)]] = Field(None, description="Provident Fund deduction")
+    ESIC: Optional[Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)]] = Field(None, description="ESIC deduction")
+    PROFESSIONALTAX: Optional[Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)]] = Field(None, description="Professional Tax")
+    GroupHealthInsurance: Optional[Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)]] = Field(None, description="Health insurance")
     
     ModifiedBy: Optional[int] = Field(None, description="User ID who last modified the record")
     IsActive: Optional[bool] = Field(None, description="Whether the salary structure is active")
@@ -119,6 +119,7 @@ class EmployeeSalaryStructureResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+# Rest of the classes remain the same as before...
 class EmployeeSalaryStructureListResponse(BaseModel):
     """Schema for listing multiple EmployeeSalaryStructures with pagination"""
     total: int
@@ -179,10 +180,10 @@ class EmployeeSalaryStructureFilterParams(BaseModel):
     employee_id: Optional[int] = None
     department_id: Optional[int] = None
     designation_id: Optional[int] = None
-    min_basic: Optional[condecimal] = Field(
+    min_basic: Optional[Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)]] = Field(
         None, description="Minimum basic salary"
     )
-    max_basic: Optional[condecimal] = Field(
+    max_basic: Optional[Annotated[Decimal, condecimal(max_digits=18, decimal_places=2, ge=0)]] = Field(
         None, description="Maximum basic salary"
     )
     is_active: Optional[bool] = None
@@ -199,13 +200,3 @@ class SalaryStatisticsResponse(BaseModel):
     highest_salary: Decimal
     lowest_salary: Decimal
     salary_distribution: Dict[str, int]  # Salary ranges and count
-
-
-# Alternative: If you want to use Decimal type with validators
-class EmployeeSalaryStructureBaseAlternative(BaseModel):
-    """Alternative approach using field validators"""
-    # ... other fields ...
-    
-    BASIC: Decimal = Field(..., ge=0, description="Basic salary")
-    HRA: Decimal = Field(0, ge=0, description="House Rent Allowance")
-   

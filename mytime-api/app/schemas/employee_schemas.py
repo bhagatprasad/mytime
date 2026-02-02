@@ -1,5 +1,5 @@
-from pydantic import BaseModel, Field, ConfigDict, condecimal
-from typing import Optional, List
+from pydantic import BaseModel, Field, ConfigDict
+from typing import Optional, List, Annotated
 from datetime import datetime
 from decimal import Decimal
 
@@ -26,16 +26,10 @@ class EmployeeBase(BaseModel):
     OfferReleasedOn: Optional[datetime] = Field(None, description="Date when offer was released")
     OfferAcceptedOn: Optional[datetime] = Field(None, description="Date when offer was accepted")
     
-    # Corrected: Use condecimal instead of max_digits/decimal_places in Field()
-    OfferPrice: Optional[condecimal] = Field(
-        None, description="Offer price/salary"
-    )
-    CurrentPrice: Optional[condecimal] = Field(
-        None, description="Current salary"
-    )
-    JoiningBonus: Optional[condecimal] = Field(
-        None, description="Joining bonus amount"
-    )
+    # Use plain Decimal with field_validator approach (simpler)
+    OfferPrice: Optional[Decimal] = Field(None, ge=0, description="Offer price/salary")
+    CurrentPrice: Optional[Decimal] = Field(None, ge=0, description="Current salary")
+    JoiningBonus: Optional[Decimal] = Field(None, ge=0, description="Joining bonus amount")
 
 
 class EmployeeCreate(EmployeeBase):
@@ -66,16 +60,10 @@ class EmployeeUpdate(BaseModel):
     OfferReleasedOn: Optional[datetime] = Field(None, description="Date when offer was released")
     OfferAcceptedOn: Optional[datetime] = Field(None, description="Date when offer was accepted")
     
-    # Corrected: Use condecimal for Decimal fields
-    OfferPrice: Optional[condecimal] = Field(
-        None, description="Offer price/salary"
-    )
-    CurrentPrice: Optional[condecimal] = Field(
-        None, description="Current salary"
-    )
-    JoiningBonus: Optional[condecimal] = Field(
-        None, description="Joining bonus amount"
-    )
+    # Use plain Decimal for update
+    OfferPrice: Optional[Decimal] = Field(None, ge=0, description="Offer price/salary")
+    CurrentPrice: Optional[Decimal] = Field(None, ge=0, description="Current salary")
+    JoiningBonus: Optional[Decimal] = Field(None, ge=0, description="Joining bonus amount")
     ModifiedBy: Optional[int] = Field(None, description="User ID who last modified the record")
     IsActive: Optional[bool] = Field(None, description="Whether the employee is active")
 
@@ -187,12 +175,34 @@ class EmployeeSearchResponse(BaseModel):
     employees: List[EmployeeSummaryResponse]
 
 
-# Alternative approach if you prefer to keep Decimal type annotations:
-class EmployeeBaseAlternative(BaseModel):
-    """Alternative with field_validator for Decimal fields"""
+# If you really need the max_digits and decimal_places constraints, use this:
+from pydantic.functional_validators import field_validator
+
+class EmployeeBaseWithDecimalConstraints(BaseModel):
+    """Base schema with decimal precision constraints"""
+    EmployeeCode: Optional[str] = Field(None, max_length=50, description="Unique employee code")
+    FirstName: str = Field(..., max_length=255, description="Employee's first name")
+    LastName: str = Field(..., max_length=255, description="Employee's last name")
     # ... other fields ...
     
-    OfferPrice: Optional[Decimal] = Field(None, description="Offer price/salary")
-    CurrentPrice: Optional[Decimal] = Field(None, description="Current salary")
-    JoiningBonus: Optional[Decimal] = Field(None, description="Joining bonus amount")
+    OfferPrice: Optional[Decimal] = Field(None, ge=0, description="Offer price/salary")
+    CurrentPrice: Optional[Decimal] = Field(None, ge=0, description="Current salary")
+    JoiningBonus: Optional[Decimal] = Field(None, ge=0, description="Joining bonus amount")
     
+    @field_validator('OfferPrice', 'CurrentPrice', 'JoiningBonus')
+    @classmethod
+    def validate_decimal_precision(cls, v: Optional[Decimal]) -> Optional[Decimal]:
+        """Validate max_digits=18, decimal_places=2 constraint"""
+        if v is not None:
+            str_value = str(v)
+            if '.' in str_value:
+                integer_part, decimal_part = str_value.split('.')
+                if len(integer_part) > 16:  # 18 total - 2 decimal places
+                    raise ValueError("Maximum 16 digits before decimal point")
+                if len(decimal_part) > 2:
+                    # Round to 2 decimal places
+                    v = Decimal(str_value).quantize(Decimal('0.01'))
+            else:
+                if len(str_value) > 16:
+                    raise ValueError("Maximum 16 digits before decimal point")
+        return v
