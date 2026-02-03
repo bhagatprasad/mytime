@@ -88,14 +88,6 @@ export class EmployeesListComponent implements OnInit, OnDestroy {
       }
     },
     {
-      field: 'EmployeeCode',
-      headerName: 'Employee Code',
-      width: 120,
-      filter: 'agTextColumnFilter',
-      sortable: true,
-      cellClass: 'text-center'
-    },
-    {
       field: 'Email',
       headerName: 'Email',
       width: 200,
@@ -283,8 +275,6 @@ export class EmployeesListComponent implements OnInit, OnDestroy {
         });
 
         this.loader.hide();
-        this.toastr.success('Data loaded successfully');
-
         // Update grid if ready
         if (this.gridApi) {
           setTimeout(() => {
