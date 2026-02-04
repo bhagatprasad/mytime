@@ -20,6 +20,7 @@ import { CreateRoleComponent } from './create-role.component';
 import { AuditFieldsService } from '../../common/services/auditfields.service';
 import { ActionsRendererComponent } from '../../common/components/actions-renderer.component';
 import { MobileActionsRendererComponent } from '../../common/components/mobile-actions-renderer.component';
+import { DeleteConfirmationComponent } from '../../common/components/delete.compunent';
 
 // Register AG Grid modules
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -27,7 +28,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
   selector: 'app-role',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, DatePipe, FormsModule, CreateRoleComponent],
+  imports: [CommonModule, AgGridAngular, DatePipe, FormsModule, CreateRoleComponent,DeleteConfirmationComponent],
   templateUrl: './role.component.html',
   styleUrls: ['./role.component.css']
 })
@@ -39,6 +40,11 @@ export class RoleComponent implements OnInit, OnDestroy {
 
   // Responsive state
   isMobile: boolean = false;
+
+  showDeletePopup = false;
+
+  selectedDeleteItem: Role | null = null;
+
 
   // Desktop Columns (7-8 columns)
   desktopColumnDefs: ColDef[] = [
@@ -347,13 +353,20 @@ export class RoleComponent implements OnInit, OnDestroy {
   getInactiveRolesCount(): number {
     return this.rowData.filter(role => !role.IsActive).length;
   }
-  deleteRole(role:Role):void{
+  deleteRole(role: Role): void {
+    this.selectedDeleteItem = role;
+    this.showDeletePopup = true;
     console.log(JSON.stringify(role));
+  }
+
+  closePopup(): void {
+    this.showDeletePopup = false;
+    this.selectedDeleteItem = null;
   }
 
   requestRoleProcess(role: Role): void {
     this.selectedRole = role;
-    this.showSidebar=true;
+    this.showSidebar = true;
   }
   openAddEditRole(): void {
     this.selectedRole = null;
@@ -380,4 +393,31 @@ export class RoleComponent implements OnInit, OnDestroy {
   onCloseSidebar(): void {
     this.showSidebar = false;
   }
+
+  deleterole(){
+
+    if (!this.selectedDeleteItem) {
+      console.error("No item selected for delete");
+      return;
+    }
+
+    this.roleService.deleteRoleAsync(this.selectedDeleteItem.Id)
+      .subscribe({
+        next: (res) => {
+          console.log("Delete success:", res);
+
+          this.refreshData();          // reload grid data
+          this.showDeletePopup = false;
+          this.selectedDeleteItem = null;
+        },
+        error: (err) => {
+          console.error("Delete failed:", err);
+          // keep popup open OR close — your choice
+          this.showDeletePopup = false;
+        },
+        complete: () => {
+          alert("Delete request completed");
+        }
+      });
+    }
 }

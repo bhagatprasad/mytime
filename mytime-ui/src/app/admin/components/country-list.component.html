@@ -82,6 +82,13 @@
           <!-- <app-create-role [isVisible]="showSidebar" [role]="selectedRole"  (closeSidebar)="onCloseSidebar()" (saveRole)="onSaveRole($event)"></app-create-role> -->
         </div>
          <app-create-country [isVisible]="showSidebar" [country]="selectedCountry"  (closeSidebar)="onCloseSidebar()" (saveCountry)="onSaveCountry($event)"></app-create-country>
+         <app-delete-confirmation
+  *ngIf="showDeletePopup"
+  title="Delete Country"
+  message="Do you really want to delete this country?"
+  (confirm)="confirmDelete()"
+  (cancel)="closePopup()">
+</app-delete-confirmation>
       </div>
     </div>
   </div>

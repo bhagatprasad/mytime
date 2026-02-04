@@ -19,4 +19,9 @@ export class CountryService {
     insertOrUpdateCountry(country: Country): Observable<Country> {
         return this.apiService.send<Country>("POST", environment.UrlConstants.Country.InsertOrUpdateCountry, country);
     }
+
+    deleteCountry(countryId: number): Observable<void> {
+        return this.apiService.send("DELETE", `${environment.UrlConstants.Country.DeleteCountry}/${countryId}`
+        );
+    }
 }
