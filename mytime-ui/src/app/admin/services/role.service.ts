@@ -20,4 +20,8 @@ export class RoleService {
         return this.apiService.send<any>("POST", environment.UrlConstants.Role.InsertOrUpdateRoleAsync, role);
     }
 
+    deleteRoleAsync(roleId: number): Observable<any> {
+        return this.apiService.send<any>("DELETE", `${environment.UrlConstants.Role.DeleteRoleAsync}/${roleId}`);
+    }
+
 }
