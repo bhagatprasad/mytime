@@ -22,11 +22,8 @@
               <!-- Action Buttons -->
               <div class="d-flex gap-2 ms-3">
                 <!-- Add Button -->
-                <button 
-                  class="btn btn-primary btn-sm d-flex align-items-center"
-                  (click)="openAddEditRole()"
-                  title="Add new role"
-                >
+                <button class="btn btn-primary btn-sm d-flex align-items-center" (click)="openAddEditRole()"
+                  title="Add new role">
                   <i class="mdi mdi-plus me-1"></i>
                   <span>Add Role</span>
                 </button>
@@ -39,21 +36,10 @@
         <div class="card-body p-0">
           <!-- AG Grid -->
           <div *ngIf="rowData.length > 0" class="ag-grid-container">
-            <ag-grid-angular
-              style="width: 100%; height: 500px;"
-              class="ag-theme-alpine"
-              [rowData]="rowData"
-              [columnDefs]="columnDefs"
-              [defaultColDef]="defaultColDef"
-              [gridOptions]="gridOptions"
-              (gridReady)="onGridReady($event)"
-              [pagination]="true"
-              [paginationPageSize]="10"
-              [suppressCellFocus]="true"
-              [animateRows]="true"
-              [rowSelection]="'single'"
-              [domLayout]="isMobile ? 'autoHeight' : 'normal'"
-            >
+            <ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-alpine" [rowData]="rowData"
+              [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [gridOptions]="gridOptions"
+              (gridReady)="onGridReady($event)" [pagination]="true" [paginationPageSize]="10" [suppressCellFocus]="true"
+              [animateRows]="true" [rowSelection]="'single'" [domLayout]="isMobile ? 'autoHeight' : 'normal'">
             </ag-grid-angular>
           </div>
 
@@ -80,7 +66,13 @@
             </div>
           </div>
 
-          <app-create-role [isVisible]="showSidebar" [role]="selectedRole"  (closeSidebar)="onCloseSidebar()" (saveRole)="onSaveRole($event)"></app-create-role>
+          <app-create-role [isVisible]="showSidebar" [role]="selectedRole" (closeSidebar)="onCloseSidebar()"
+            (saveRole)="onSaveRole($event)"></app-create-role>
+
+          <app-delete-confirmation *ngIf="showDeletePopup" title="Delete Role"
+            message="Do you really want to delete this role?" (confirm)="deleterole()"
+            (cancel)="closePopup()">
+          </app-delete-confirmation>
         </div>
       </div>
     </div>

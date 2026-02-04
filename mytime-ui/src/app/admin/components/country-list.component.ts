@@ -11,6 +11,7 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ActionsRendererComponent } from '../../common/components/actions-renderer.component';
 import { MobileActionsRendererComponent } from '../../common/components/mobile-actions-renderer.component';
 import { ToastrService } from 'ngx-toastr';
+import { DeleteConfirmationComponent } from '../../common/components/delete.compunent';
 
 
 // Register AG Grid modules
@@ -20,7 +21,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
   selector: 'app-country-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, DatePipe, FormsModule, CreateCountryComponent],
+  imports: [CommonModule, AgGridAngular, DatePipe, FormsModule, CreateCountryComponent,DeleteConfirmationComponent],
   templateUrl: './country-list.component.html',
   styleUrl: './country-list.component.css'
 })
@@ -33,6 +34,8 @@ export class CountryListComponent implements OnInit, OnDestroy {
   private gridApi!: GridApi;
 
   isMobile: boolean = false;
+
+  showDeletePopup = false;
 
   desktopColumnDefs: ColDef[] = [
     {
@@ -255,7 +258,14 @@ export class CountryListComponent implements OnInit, OnDestroy {
 
 
   deleteCountry(country: Country): void {
+    this.selectedCountry = country;
+    this.showDeletePopup = true;
 
+  }
+
+  closePopup() {
+    this.showDeletePopup = false;
+    this.selectedCountry = null;
   }
 
   requestCountryProcess(country: Country): void {
@@ -363,6 +373,35 @@ export class CountryListComponent implements OnInit, OnDestroy {
     const statusClass = isActive ? 'success' : 'danger';
 
     return `<span class="badge bg-${statusClass}">${statusText}</span>`;
+  }
+
+  confirmDelete() {
+
+    if (!this.selectedCountry) {
+      console.error("No item selected for delete");
+      return;
+    }
+
+    this.countryService.deleteCountry(this.selectedCountry.Id)
+      .subscribe({
+        next: (res) => {
+          console.log("Delete success:", res);
+
+          this.refreshData();          // reload grid data
+          this.showDeletePopup = false;
+          this.selectedCountry = null;
+        },
+
+        error: (err) => {
+          console.error("Delete failed:", err);
+          // keep popup open OR close — your choice
+          this.showDeletePopup = false;
+
+        },
+        complete: () => {
+          alert("Delete request completed");
+        }
+      });
   }
 
 }

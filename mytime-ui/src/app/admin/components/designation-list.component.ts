@@ -13,13 +13,14 @@ import { ActionsRendererComponent } from '../../common/components/actions-render
 import { LoaderService } from '../../common/services/loader.service';
 import { AuditFieldsService } from '../../common/services/auditfields.service';
 import { CreateDesignationComponent } from './create-designation.component';
+import { DeleteConfirmationComponent } from '../../common/components/delete.compunent';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-designation-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, DatePipe, FormsModule, CreateDesignationComponent],
+  imports: [CommonModule, AgGridAngular, DatePipe, FormsModule, CreateDesignationComponent, DeleteConfirmationComponent],
   templateUrl: './designation-list.component.html',
   styleUrl: './designation-list.component.css'
 })
@@ -31,6 +32,11 @@ export class DesignationListComponent implements OnInit {
 
   // Responsive state
   isMobile: boolean = false;
+
+  showDeletePopup = false;
+
+  selectedDeleteItem: Designation | null = null;
+
 
   // Desktop Columns (7-8 columns)
   desktopColumnDefs: ColDef[] = [
@@ -340,6 +346,8 @@ export class DesignationListComponent implements OnInit {
     return this.rowData.filter(des => !des.IsActive).length;
   }
   deleteDesignation(des: Designation): void {
+    this.selectedDeleteItem = des;
+    this.showDeletePopup = true;
     console.log(JSON.stringify(des));
   }
 
@@ -380,27 +388,40 @@ export class DesignationListComponent implements OnInit {
     this.showSidebar = false;
   }
 
-  showDeletePopup = false;
-
-  deleteId: number | null = null;
-
-  openDeletePopup(id: number) {
-    this.deleteId = id;
-    this.showDeletePopup = true;
-  }
+  // Delete Designation 
   closePopup() {
     this.showDeletePopup = false;
-    this.deleteId = null;
+    this.selectedDeleteItem = null;
   }
   confirmDelete() {
-    if (!this.deleteId) return;
 
-    this.designationService.deleteDesignationAsync(this.deleteId)
-      .subscribe(() => {
-        this.refreshData(); // refresh list
-        this.showDeletePopup = false;
+    if (!this.selectedDeleteItem) {
+      console.error("No item selected for delete");
+      return;
+    }
+
+    this.designationService.ddeleteDesignationAsync(this.selectedDeleteItem.DesignationId)
+      .subscribe({
+        next: (res) => {
+          console.log("Delete success:", res);
+
+          this.refreshData();          // reload grid data
+          this.showDeletePopup = false;
+          this.selectedDeleteItem = null;
+        },
+
+        error: (err) => {
+          console.error("Delete failed:", err);
+          // keep popup open OR close — your choice
+          this.showDeletePopup = false;
+
+        },
+        complete: () => {
+          alert("Delete request completed");
+        }
       });
   }
+
 }
 
 

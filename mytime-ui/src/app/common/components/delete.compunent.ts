@@ -1,9 +1,10 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-delete-confirmation',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './delete.component.html',
   styleUrls: ['./delete.component.css']
 })
