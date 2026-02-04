@@ -13,7 +13,7 @@
                 Employee Management
               </h5>
               <span class="badge bg-light text-dark ms-3">
-                <span class="text-primary fw-bold">{{ getTotalRowsCount() }}</span> roles
+                <span class="text-primary fw-bold">{{ getTotalRowsCount() }}</span>
               </span>
             </div>
 
@@ -22,12 +22,12 @@
               <!-- Action Buttons -->
               <div class="d-flex gap-2 ms-3">
                 <!-- Add Button -->
-                <button 
-                  class="btn btn-primary btn-sm d-flex align-items-center"
+                <a 
+                  class="btn-sm d-flex align-items-center"
                   title="Add new employee"
                 >
-                  <i class="mdi mdi-plus me-1"></i>
-                </button>
+                  <i class="mdi mdi-plus-circle-outline me-1"></i>
+              </a>
               </div>
             </div>
           </div>
@@ -38,7 +38,7 @@
           <!-- AG Grid -->
           <div *ngIf="employees.length > 0" class="ag-grid-container">
             <ag-grid-angular
-              style="width: 100%; height: 550px;"
+              style="width: 100%; height: 640px;"
               class="ag-theme-alpine"
               [rowData]="employees"
               [columnDefs]="columnDefs"
