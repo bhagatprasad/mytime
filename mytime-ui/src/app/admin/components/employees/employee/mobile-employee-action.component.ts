@@ -1,37 +1,43 @@
 // mobile-employee-action.component.ts
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 
 @Component({
   selector: 'app-mobile-employee-action',
+  imports: [CommonModule],
+  standalone: true,
   template: `
-    <div class="d-flex justify-content-center gap-1">
-      <!-- Details Icon -->
+    <div class="d-flex justify-content-center gap-2">
+      <!-- Details Icon - Always show -->
       <i class="mdi mdi-eye text-info mobile-action-icon" 
          title="View Details" 
          (click)="onDetailsClick($event)"></i>
       
-      <!-- User Access Icon (Only show if UserId doesn't exist) -->
+      <!-- User Access Icon - ONLY show if UserId doesn't exist -->
       <i *ngIf="!hasUserAccount" 
          class="mdi mdi-account-key text-primary mobile-action-icon" 
          title="Create User" 
          (click)="onCreateUserClick($event)"></i>
       
-      <!-- User Exists Icon (Only show if UserId exists) -->
-      <i *ngIf="hasUserAccount" 
+      <!-- DON'T show user exists checkmark icon at all -->
+      <!-- Remove this block -->
+      <!-- <i *ngIf="hasUserAccount" 
          class="mdi mdi-account-check text-success mobile-action-icon" 
-         title="User Exists"></i>
+         title="User Exists"></i> -->
       
-      <!-- Status Toggle (Active/Inactive) -->
-      <i *ngIf="params.data.IsActive" 
-         class="mdi mdi-toggle-switch text-success mobile-action-icon" 
-         title="Active - Tap to deactivate" 
-         (click)="onDeactivateClick($event)"></i>
-      
-      <i *ngIf="!params.data.IsActive" 
-         class="mdi mdi-toggle-switch-off text-warning mobile-action-icon" 
-         title="Inactive - Tap to activate" 
-         (click)="onActivateClick($event)"></i>
+      <!-- Status Toggle (Active/Inactive) - Only show if user exists -->
+      <ng-container *ngIf="hasUserAccount">
+        <i *ngIf="params.data.IsActive" 
+           class="mdi mdi-toggle-switch text-success mobile-action-icon" 
+           title="Active - Tap to deactivate" 
+           (click)="onDeactivateClick($event)"></i>
+        
+        <i *ngIf="!params.data.IsActive" 
+           class="mdi mdi-toggle-switch-off text-warning mobile-action-icon" 
+           title="Inactive - Tap to activate" 
+           (click)="onActivateClick($event)"></i>
+      </ng-container>
     </div>
   `,
   styles: [`
@@ -59,15 +65,15 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
     .text-primary:hover { color: #0056b3 !important; }
     .text-warning:hover { color: #d39e00 !important; }
     
-    /* Non-clickable icon for existing user */
-    .mdi-account-check[title="User Exists"] {
+    /* Remove the non-clickable icon styles since we removed that icon */
+    /* .mdi-account-check[title="User Exists"] {
       cursor: default !important;
       opacity: 0.7;
     }
     .mdi-account-check[title="User Exists"]:hover {
       transform: none;
       background-color: transparent;
-    }
+    } */
     
     /* Larger touch targets for mobile */
     @media (max-width: 768px) {
