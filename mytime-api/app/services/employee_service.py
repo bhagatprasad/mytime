@@ -111,47 +111,90 @@ class EmployeeService:
     @staticmethod
     def insert_or_update_employee(db: Session, employee_data: dict) -> Dict[str, Any]:
         """Insert or update employee"""
-        employee_id = employee_data.get('EmployeeId')
-        
-        if employee_id:
-            # Update existing employee
-            db_employee = db.query(Employee).filter(Employee.EmployeeId == employee_id).first()
-            if not db_employee:
-                return {"success": False, "message": "Employee not found", "employee": None}
+        try:
+            employee_id = employee_data.get('EmployeeId')
             
-            # Update only non-null values
-            for key, value in employee_data.items():
-                if key != 'EmployeeId' and value is not None:
-                    setattr(db_employee, key, value)
+            # Fix the typo in OfferReleasedOn
+            if 'OfferRelesedOn' in employee_data:
+                employee_data['OfferRelesedOn'] = employee_data.pop('OfferRelesedOn')
             
-            # Set ModifiedOn timestamp
-            db_employee.ModifiedOn = datetime.utcnow()
+            # Ensure date fields are proper datetime objects
+            date_fields = [
+                'DateOfBirth', 'StartedOn', 'EndedOn', 'ResignedOn',
+                'LastWorkingDay', 'OfferRelesedOn', 'OfferAcceptedOn',
+                'CreatedOn', 'ModifiedOn'
+            ]
             
-            db.commit()
-            db.refresh(db_employee)
-            return {
-                "success": True, 
-                "message": "Employee updated successfully",
-                "employee": db_employee
-            }
-        else:
-            # Create new employee
-            # Remove EmployeeId if present in create mode
-            employee_data.pop('EmployeeId', None)
+            for field in date_fields:
+                if field in employee_data and employee_data[field] is not None:
+                    if isinstance(employee_data[field], str):
+                        try:
+                            employee_data[field] = datetime.fromisoformat(
+                                employee_data[field].replace('Z', '+00:00')
+                            )
+                        except (ValueError, AttributeError):
+                            # If parsing fails, set to None
+                            employee_data[field] = None
+                            print(f"WARNING: Failed to parse date field: {field}")
             
-            # Set CreatedOn timestamp if not provided
-            if 'CreatedOn' not in employee_data:
-                employee_data['CreatedOn'] = datetime.utcnow()
+            # Ensure numeric fields are proper types
+            if 'CreatedBy' in employee_data and isinstance(employee_data['CreatedBy'], str):
+                try:
+                    employee_data['CreatedBy'] = int(employee_data['CreatedBy'])
+                except (ValueError, TypeError):
+                    employee_data['CreatedBy'] = None
             
-            db_employee = Employee(**employee_data)
-            db.add(db_employee)
-            db.commit()
-            db.refresh(db_employee)
-            return {
-                "success": True, 
-                "message": "Employee created successfully",
-                "employee": db_employee
-            }
+            if 'ModifiedBy' in employee_data and isinstance(employee_data['ModifiedBy'], str):
+                try:
+                    employee_data['ModifiedBy'] = int(employee_data['ModifiedBy'])
+                except (ValueError, TypeError):
+                    employee_data['ModifiedBy'] = None
+            
+            if employee_id:
+                # Update existing employee
+                db_employee = db.query(Employee).filter(Employee.EmployeeId == employee_id).first()
+                if not db_employee:
+                    return {"success": False, "message": "Employee not found", "employee": None}
+                
+                # Update only non-null values
+                for key, value in employee_data.items():
+                    if key != 'EmployeeId' and value is not None:
+                        setattr(db_employee, key, value)
+                
+                # Set ModifiedOn timestamp
+                db_employee.ModifiedOn = datetime.utcnow()
+                
+                db.commit()
+                db.refresh(db_employee)
+                return {
+                    "success": True, 
+                    "message": "Employee updated successfully",
+                    "employee": db_employee
+                }
+            else:
+                # Create new employee
+                # Remove EmployeeId if present in create mode
+                employee_data.pop('EmployeeId', None)
+                
+                # Set CreatedOn timestamp if not provided
+                if 'CreatedOn' not in employee_data:
+                    employee_data['CreatedOn'] = datetime.utcnow()
+                
+                db_employee = Employee(**employee_data)
+                db.add(db_employee)
+                db.commit()
+                db.refresh(db_employee)
+                return {
+                    "success": True, 
+                    "message": "Employee created successfully",
+                    "employee": db_employee
+                }
+                
+        except Exception as e:
+            print(f"ERROR in insert_or_update_employee: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return {"success": False, "message": f"Error saving employee: {str(e)}", "employee": None}
     
     @staticmethod
     def delete_employee(db: Session, employee_id: int) -> Dict[str, Any]:

@@ -3,6 +3,7 @@ import { ApiService } from "../../common/services/api.service";
 import { Observable } from "rxjs";
 import { Employee } from "../models/employee";
 import { environment } from "../../../environment";
+import { EmployeeDTO } from "../models/employee.dto";
 
 @Injectable({
     providedIn: "root"
@@ -18,7 +19,7 @@ export class EmployeeService {
         return this.apiService.send<Employee>("GET", `${environment.UrlConstants.Employee.GetEmployee}?employeeId=${employeeId}`)
     }
 
-    insertOrUpdateEmployee(employee: Employee): Observable<Employee> {
+    insertOrUpdateEmployee(employee: EmployeeDTO): Observable<Employee> {
         return this.apiService.send<Employee>("POST", environment.UrlConstants.Employee.InsertOrUpdateEmployee, employee);
     }
 }

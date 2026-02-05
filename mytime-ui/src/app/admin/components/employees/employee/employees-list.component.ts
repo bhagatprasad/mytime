@@ -24,13 +24,19 @@ import { forkJoin } from 'rxjs';
 import { EmployeeActionComponent } from './employee-action-component';
 import { Employee } from '../../../models/employee';
 import { MobileEmployeeActionComponent } from './mobile-employee-action.component';
+import { Role } from '../../../models/role';
+import { Department } from '../../../models/department';
+import { Designation } from '../../../models/designation';
+import { EmployeesCreateComponent } from './employees-create.component';
+import { response } from 'express';
+import { EmployeeDTO } from '../../../models/employee.dto';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-employees-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, FormsModule],
+  imports: [CommonModule, AgGridAngular, FormsModule, EmployeesCreateComponent],
   templateUrl: './employees-list.component.html',
   styleUrls: ['./employees-list.component.css']
 })
@@ -46,6 +52,14 @@ export class EmployeesListComponent implements OnInit, OnDestroy {
   private rolesMap: Map<number, string> = new Map();
   private departmentsMap: Map<number, string> = new Map();
   private designationsMap: Map<number, string> = new Map();
+
+
+  coreRoles: Role[] = [];
+  coreDepartments: Department[] = [];
+  coreDesignations: Designation[] = [];
+
+  selectedEmployee: Employee | null = null;
+  showSidebar: boolean = false;
 
   defaultColDef: ColDef = {
     flex: 1,
@@ -245,7 +259,13 @@ export class EmployeesListComponent implements OnInit, OnDestroy {
       employees: this.employeeService.getEmployeesListAsync()
     }).subscribe({
       next: ({ roles, departments, designations, employees }) => {
+        //for employee creation /update
+        this.coreRoles = roles;
+        this.coreDepartments = departments;
+        this.coreDesignations = designations;
+
         // Process roles
+
         this.rolesMap.clear();
         roles.forEach(role => {
           this.rolesMap.set(role.Id, role.Name);
@@ -580,6 +600,40 @@ export class EmployeesListComponent implements OnInit, OnDestroy {
   getInactiveEmployeesCount(): number {
     return this.employees.filter(e => !e.IsActive).length;
   }
+  openAddEditEmployee(): void {
+    this.showSidebar = true;
+    this.selectedEmployee = null;
+  }
+
+  onSaveEmployee(employee: Employee) {
+
+    this.loader.show();
+
+    const employeeDTO = this.convertEmployeeToDTO(employee);
+
+    var _employee = this.audit.appendAuditFields(employeeDTO);
+    console.log(_employee);
+
+
+    console.log(_employee);
+
+    this.employeeService.insertOrUpdateEmployee(_employee).subscribe(reponse => {
+      if (reponse) {
+        this.toastr.success("employee processed succeessfully");
+        this.showSidebar = false;
+        this.refreshData();
+      }
+    }, error => {
+      this.toastr.error("something went wrong , please check and resubmit");
+      this.showSidebar = true;
+      this.loader.hide();
+    });
+  }
+
+  onCloseSidebar(): void {
+    this.showSidebar = false;
+    this.selectedEmployee = null;
+  }
 
   editEmployee(employee: EmployeesDetails): void {
     console.log('Edit employee:', employee);
@@ -599,5 +653,27 @@ export class EmployeesListComponent implements OnInit, OnDestroy {
       //   }
       // });
     }
+  }
+  private parseDateString(dateString: string | null | undefined): Date | null {
+    if (!dateString || dateString.trim() === '') {
+      return null;
+    }
+
+    const date = new Date(dateString);
+    return isNaN(date.getTime()) ? null : date;
+  }
+  private convertEmployeeToDTO(employee: Employee): EmployeeDTO {
+    return {
+      ...employee,
+      DateOfBirth: this.parseDateString(employee.DateOfBirth),
+      StartedOn: this.parseDateString(employee.StartedOn),
+      EndedOn: this.parseDateString(employee.EndedOn),
+      ResignedOn: this.parseDateString(employee.ResignedOn),
+      LastWorkingDay: this.parseDateString(employee.LastWorkingDay),
+      OfferRelesedOn: this.parseDateString(employee.OfferRelesedOn),
+      OfferAcceptedOn: this.parseDateString(employee.OfferAcceptedOn),
+      CreatedOn: this.parseDateString(employee.CreatedOn),
+      ModifiedOn: this.parseDateString(employee.ModifiedOn)
+    };
   }
 }

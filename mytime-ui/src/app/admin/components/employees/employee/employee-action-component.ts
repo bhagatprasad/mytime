@@ -1,40 +1,46 @@
 // employee-action.component.ts - Simplified version
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 
 @Component({
   selector: 'app-employee-action',
+  imports: [CommonModule],
+  standalone: true,
   template: `
     <div class="d-flex justify-content-center gap-2">
-      <!-- Details Icon -->
+      <!-- Details Icon - Always show -->
       <i class="mdi mdi-eye text-info action-icon" 
          title="View Details" 
          (click)="onDetailsClick($event)"></i>
       
-      <!-- User Access Icon (Only show if UserId doesn't exist) -->
+      <!-- User Access Icon - ONLY show if UserId doesn't exist -->
       <i *ngIf="!hasUserAccount" 
          class="mdi mdi-account-key text-primary action-icon" 
          title="Create User Access" 
          (click)="onCreateUserClick($event)"></i>
       
-      <!-- User Exists Icon (Only show if UserId exists) -->
-      <i *ngIf="hasUserAccount" 
+      <!-- DON'T show the user exists checkmark at all - as per requirement -->
+      <!-- Remove this block entirely -->
+      <!-- <i *ngIf="hasUserAccount" 
          class="mdi mdi-account-check text-success action-icon" 
-         title="User Account Exists"></i>
+         title="User Account Exists"></i> -->
       
-      <!-- Active/Inactive Toggle -->
-      <i *ngIf="params.data.IsActive" 
-         class="mdi mdi-account-cancel text-warning action-icon" 
-         title="Deactivate Employee" 
-         (click)="onDeactivateClick($event)"></i>
+      <!-- Active/Inactive Toggle - Only show if user exists (hasUserAccount) -->
+      <ng-container *ngIf="hasUserAccount">
+        <i *ngIf="params.data.IsActive" 
+           class="mdi mdi-account-cancel text-warning action-icon" 
+           title="Deactivate Employee" 
+           (click)="onDeactivateClick($event)"></i>
+        
+        <i *ngIf="!params.data.IsActive" 
+           class="mdi mdi-account-check text-success action-icon" 
+           title="Activate Employee" 
+           (click)="onActivateClick($event)"></i>
+      </ng-container>
       
-      <i *ngIf="!params.data.IsActive" 
-         class="mdi mdi-account-check text-success action-icon" 
-         title="Activate Employee" 
-         (click)="onActivateClick($event)"></i>
-      
-      <!-- Delete Icon (Only for inactive employees) -->
-      <i *ngIf="!params.data.IsActive" 
+      <!-- Delete Icon - Only for inactive employees and user exists -->
+      <i *ngIf="hasUserAccount && !params.data.IsActive" 
          class="mdi mdi-delete text-danger action-icon" 
          title="Delete" 
          (click)="onDeleteClick($event)"></i>
@@ -59,16 +65,6 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
     .text-primary:hover { color: #0056b3 !important; }
     .text-warning:hover { color: #d39e00 !important; }
     .text-danger:hover { color: #bd2130 !important; }
-    
-    /* Non-clickable icon for existing user */
-    .mdi-account-check[title="User Account Exists"] {
-      cursor: default !important;
-      opacity: 0.7;
-    }
-    .mdi-account-check[title="User Account Exists"]:hover {
-      transform: none;
-      background-color: transparent;
-    }
   `]
 })
 export class EmployeeActionComponent implements ICellRendererAngularComp {

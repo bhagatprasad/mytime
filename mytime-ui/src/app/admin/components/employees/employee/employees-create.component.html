@@ -1,1 +1,358 @@
-<p>employees-create works!</p>
+<!-- employees-create.component.html -->
+<!-- Overlay -->
+<div class="sidebar-overlay" *ngIf="isVisible" (click)="close()"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" [class.visible]="isVisible">
+    <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+
+        <!-- Header -->
+        <div class="sidebar-header">
+            <h5 class="sidebar-title">
+                {{ employee?.EmployeeId ? 'Edit Employee' : 'Create Employee' }}
+            </h5>
+            <button type="button" class="close" (click)="close()">
+                <span>&times;</span>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="sidebar-body">
+            <div class="form-container">
+                <!-- Employee Code -->
+                <div class="form-group">
+                    <label>Employee Code
+                        <small class="text-muted ms-1">
+                            {{ employee?.EmployeeId ? '(Existing)' : '(Auto-generated)' }}
+                        </small>
+                    </label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="mdi mdi-badge-account"></i>
+                            </span>
+                        </div>
+                        <input type="text" class="form-control" formControlName="EmployeeCode" [readonly]="true"
+                            [class.is-invalid]="employeeForm.get('EmployeeCode')?.invalid">
+                    </div>
+                    <small class="form-text text-muted" *ngIf="!employee?.EmployeeId">
+                        Auto-generated: EMPYYYYMMDD_XXXX
+                    </small>
+                    <small class="text-danger" *ngIf="employeeForm.get('EmployeeCode')?.invalid">
+                        Employee Code is required
+                    </small>
+                </div>
+
+                <!-- First Name -->
+                <div class="form-group">
+                    <label>First Name *</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="mdi mdi-account"></i>
+                            </span>
+                        </div>
+                        <input type="text" class="form-control" formControlName="FirstName">
+                    </div>
+                    <small class="text-danger"
+                        *ngIf="employeeForm.get('FirstName')?.invalid && (employeeForm.get('FirstName')?.touched || employeeForm.get('FirstName')?.dirty)">
+                        First Name is required
+                    </small>
+                </div>
+
+                <!-- Last Name -->
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="mdi mdi-account-outline"></i>
+                            </span>
+                        </div>
+                        <input type="text" class="form-control" formControlName="LastName">
+                    </div>
+                </div>
+
+                <!-- Gender -->
+                <div class="form-group">
+                    <label>Gender</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="mdi mdi-gender-male-female"></i>
+                            </span>
+                        </div>
+                        <select class="form-control" formControlName="Gender">
+                            <option value="">Select</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Date of Birth -->
+                <div class="form-group">
+                    <label>Date of Birth</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="mdi mdi-calendar"></i>
+                            </span>
+                        </div>
+                        <input type="date" class="form-control" formControlName="DateOfBirth">
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label>Email</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="mdi mdi-email"></i>
+                            </span>
+                        </div>
+                        <input type="email" class="form-control" formControlName="Email">
+                    </div>
+                    <small class="text-danger"
+                        *ngIf="employeeForm.get('Email')?.invalid && (employeeForm.get('Email')?.touched || employeeForm.get('Email')?.dirty)">
+                        Please enter a valid email address
+                    </small>
+                </div>
+
+                <!-- Phone -->
+                <div class="form-group">
+                    <label>Phone</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="mdi mdi-phone"></i>
+                            </span>
+                        </div>
+                        <input type="text" class="form-control" formControlName="Phone">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Father Name</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="mdi mdi-account-outline"></i>
+                            </span>
+                        </div>
+                        <input type="text" class="form-control" formControlName="FatherName">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Mother Name</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="mdi mdi-account-outline"></i>
+                            </span>
+                        </div>
+                        <input type="text" class="form-control" formControlName="MotherName">
+                    </div>
+                </div>
+                <!-- Department -->
+                <div class="form-group">
+                    <label>Department *</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="mdi mdi-office-building"></i>
+                            </span>
+                        </div>
+                        <select class="form-control" formControlName="DepartmentId">
+                            <option [ngValue]="null">Select Department</option>
+                            <option *ngFor="let d of departments" [ngValue]="d.DepartmentId">
+                                {{ d.Name }}
+                            </option>
+                        </select>
+                    </div>
+                    <small class="text-danger"
+                        *ngIf="employeeForm.get('DepartmentId')?.invalid && (employeeForm.get('DepartmentId')?.touched || employeeForm.get('DepartmentId')?.dirty)">
+                        Department is required
+                    </small>
+                </div>
+
+                <!-- Role -->
+                <div class="form-group">
+                    <label>Role *</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="mdi mdi-shield-account"></i>
+                            </span>
+                        </div>
+                        <select class="form-control" formControlName="RoleId">
+                            <option [ngValue]="null">Select Role</option>
+                            <option *ngFor="let r of roles" [ngValue]="r.Id">
+                                {{ r.Name }}
+                            </option>
+                        </select>
+                    </div>
+                    <small class="text-danger"
+                        *ngIf="employeeForm.get('RoleId')?.invalid && (employeeForm.get('RoleId')?.touched || employeeForm.get('RoleId')?.dirty)">
+                        Role is required
+                    </small>
+                </div>
+
+                <!-- Designation -->
+                <div class="form-group">
+                    <label>Designation *</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="mdi mdi-briefcase-account"></i>
+                            </span>
+                        </div>
+                        <select class="form-control" formControlName="DesignationId">
+                            <option [ngValue]="null">Select Designation</option>
+                            <option *ngFor="let des of designations" [ngValue]="des.DesignationId">
+                                {{ des.Name }}
+                            </option>
+                        </select>
+                    </div>
+                    <small class="text-danger"
+                        *ngIf="employeeForm.get('DesignationId')?.invalid && (employeeForm.get('DesignationId')?.touched || employeeForm.get('DesignationId')?.dirty)">
+                        Designation is required
+                    </small>
+                </div>
+
+                <!-- Start Date -->
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="mdi mdi-calendar-start"></i>
+                            </span>
+                        </div>
+                        <input type="date" class="form-control" formControlName="StartedOn">
+                    </div>
+                </div>
+
+                <!-- End Date -->
+                <div class="form-group" *ngIf="employee?.EmployeeId">
+                    <label>End Date</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="mdi mdi-calendar-end"></i>
+                            </span>
+                        </div>
+                        <input type="date" class="form-control" formControlName="EndedOn">
+                    </div>
+                </div>
+
+                <!-- Offer Price -->
+                <div class="form-group">
+                    <label>Offer Price</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="mdi mdi-currency-inr"></i>
+                            </span>
+                        </div>
+                        <input type="number" step="0.01" class="form-control" formControlName="OfferPrice">
+                    </div>
+                </div>
+
+                <!-- Current Price -->
+                <div class="form-group">
+                    <label>Current Price</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="mdi mdi-currency-inr"></i>
+                            </span>
+                        </div>
+                        <input type="number" step="0.01" class="form-control" formControlName="CurrentPrice">
+                    </div>
+                </div>
+
+                <!-- Joining Bonus -->
+                <div class="form-group">
+                    <label>Joining Bonus</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="mdi mdi-currency-inr"></i>
+                            </span>
+                        </div>
+                        <input type="number" step="0.01" class="form-control" formControlName="JoiningBonus">
+                    </div>
+                </div>
+
+                <!-- Resigned On -->
+                <div class="form-group" *ngIf="employee?.EmployeeId">
+                    <label>Resigned On</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="mdi mdi-calendar-remove"></i>
+                            </span>
+                        </div>
+                        <input type="date" class="form-control" formControlName="ResignedOn">
+                    </div>
+                </div>
+
+                <!-- Last Working Day -->
+                <div class="form-group" *ngIf="employee?.EmployeeId">
+                    <label>Last Working Day</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="mdi mdi-calendar-clock"></i>
+                            </span>
+                        </div>
+                        <input type="date" class="form-control" formControlName="LastWorkingDay">
+                    </div>
+                </div>
+
+                <!-- Offer Released On -->
+                <div class="form-group">
+                    <label>Offer Released On</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="mdi mdi-calendar-today"></i>
+                            </span>
+                        </div>
+                        <input type="date" class="form-control" formControlName="OfferRelesedOn">
+                    </div>
+                </div>
+
+                <!-- Offer Accepted On -->
+                <div class="form-group">
+                    <label>Offer Accepted On</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="mdi mdi-calendar-check"></i>
+                            </span>
+                        </div>
+                        <input type="date" class="form-control" formControlName="OfferAcceptedOn">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer - Mobile: Only submit button, Desktop: Submit + Cancel -->
+        <div class="sidebar-footer">
+            <button class="btn btn-primary" type="submit" [disabled]="employeeForm.invalid">
+                <i class="mdi" [class.mdi-content-save]="!employee?.EmployeeId"
+                    [class.mdi-pencil]="employee?.EmployeeId"></i>
+                {{ employee?.EmployeeId ? 'Update' : 'Save' }}
+            </button>
+            <button class="btn btn-secondary ml-2 desktop-only" type="button" (click)="close()">
+                <i class="mdi mdi-close"></i>
+                Cancel
+            </button>
+        </div>
+
+    </form>
+</div>
