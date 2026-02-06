@@ -28,7 +28,7 @@ import { LoaderService } from '../../common/services/loader.service';
       right: 0;
       bottom: 0;
       background: rgba(255, 255, 255, 0.85);
-      z-index: 1000;
+      z-index: 1100;
       display: flex;
       align-items: center;
       justify-content: center;

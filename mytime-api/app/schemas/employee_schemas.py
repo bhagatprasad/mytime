@@ -6,7 +6,7 @@ from decimal import Decimal
 
 class EmployeeBase(BaseModel):
     """Base schema for Employee data"""
-    EmployeeCode: Optional[str] = Field(None, max_length=50, description="Unique employee code")
+    EmployeeCode: Optional[str] = Field(None, max_length=100, description="Unique employee code")
     FirstName: str = Field(..., max_length=255, description="Employee's first name")
     LastName: str = Field(..., max_length=255, description="Employee's last name")
     FatherName: Optional[str] = Field(None, max_length=255, description="Father's name")
@@ -40,7 +40,7 @@ class EmployeeCreate(EmployeeBase):
 
 class EmployeeUpdate(BaseModel):
     """Schema for updating an existing Employee"""
-    EmployeeCode: Optional[str] = Field(None, max_length=50, description="Unique employee code")
+    EmployeeCode: Optional[str] = Field(None, max_length=100, description="Unique employee code")
     FirstName: Optional[str] = Field(None, max_length=255, description="Employee's first name")
     LastName: Optional[str] = Field(None, max_length=255, description="Employee's last name")
     FatherName: Optional[str] = Field(None, max_length=255, description="Father's name")
