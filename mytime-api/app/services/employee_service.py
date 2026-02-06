@@ -23,6 +23,8 @@ class EmployeeService:
     @staticmethod
     def fetch_employee_by_email(db: Session, email: str) -> Optional[Employee]:
         """Get employee by Email"""
+        if not email:
+            return None
         return db.query(Employee).filter(func.lower(Employee.Email) == func.lower(email)).first()
     
     @staticmethod
@@ -55,8 +57,8 @@ class EmployeeService:
         query = db.query(Employee)
         
         # Apply search filter
-        if search:
-            search_term = f"%{search}%"
+        if search and search.strip():
+            search_term = f"%{search.strip()}%"
             query = query.filter(
                 or_(
                     func.coalesce(Employee.FirstName, '').ilike(search_term),
@@ -84,8 +86,8 @@ class EmployeeService:
             query = query.filter(Employee.RoleId == role_id)
         
         # Apply gender filter
-        if gender:
-            query = query.filter(func.lower(Employee.Gender) == func.lower(gender))
+        if gender and gender.strip():
+            query = query.filter(func.lower(Employee.Gender) == func.lower(gender.strip()))
         
         # Apply date range filters
         if start_date_from:
@@ -114,9 +116,12 @@ class EmployeeService:
         try:
             employee_id = employee_data.get('EmployeeId')
             
-            # Fix the typo in OfferReleasedOn
-            if 'OfferRelesedOn' in employee_data:
-                employee_data['OfferRelesedOn'] = employee_data.pop('OfferRelesedOn')
+            # Handle the typo in the incoming data
+            # The database column is named 'OfferRelesedOn' (with typo), but incoming JSON might have different keys
+            # We'll accept both spellings and standardize to the correct DB column name
+            if 'OfferReleasedOn' in employee_data:
+                # If using correct spelling, rename to match DB column
+                employee_data['OfferRelesedOn'] = employee_data.pop('OfferReleasedOn')
             
             # Ensure date fields are proper datetime objects
             date_fields = [
@@ -127,28 +132,51 @@ class EmployeeService:
             
             for field in date_fields:
                 if field in employee_data and employee_data[field] is not None:
-                    if isinstance(employee_data[field], str):
-                        try:
-                            employee_data[field] = datetime.fromisoformat(
-                                employee_data[field].replace('Z', '+00:00')
-                            )
-                        except (ValueError, AttributeError):
-                            # If parsing fails, set to None
+                    try:
+                        if isinstance(employee_data[field], str):
+                            date_str = employee_data[field]
+                            # Handle ISO format with Z
+                            if 'Z' in date_str:
+                                date_str = date_str.replace('Z', '+00:00')
+                            employee_data[field] = datetime.fromisoformat(date_str)
+                        elif isinstance(employee_data[field], datetime):
+                            # Already a datetime object
+                            continue
+                        else:
+                            # Unsupported type
                             employee_data[field] = None
-                            print(f"WARNING: Failed to parse date field: {field}")
+                    except (ValueError, AttributeError) as e:
+                        print(f"WARNING: Failed to parse date field {field}: {str(e)}")
+                        employee_data[field] = None
             
-            # Ensure numeric fields are proper types
-            if 'CreatedBy' in employee_data and isinstance(employee_data['CreatedBy'], str):
-                try:
-                    employee_data['CreatedBy'] = int(employee_data['CreatedBy'])
-                except (ValueError, TypeError):
-                    employee_data['CreatedBy'] = None
+            # Handle integer conversion for ID fields
+            int_fields = ['CreatedBy', 'ModifiedBy', 'UserId', 'RoleId', 
+                         'DepartmentId', 'DesignationId']
+            for field in int_fields:
+                if field in employee_data and employee_data[field] is not None:
+                    try:
+                        if isinstance(employee_data[field], str):
+                            employee_data[field] = int(employee_data[field])
+                        elif not isinstance(employee_data[field], int):
+                            employee_data[field] = None
+                    except (ValueError, TypeError):
+                        employee_data[field] = None
             
-            if 'ModifiedBy' in employee_data and isinstance(employee_data['ModifiedBy'], str):
-                try:
-                    employee_data['ModifiedBy'] = int(employee_data['ModifiedBy'])
-                except (ValueError, TypeError):
-                    employee_data['ModifiedBy'] = None
+            # Handle numeric fields - convert to Decimal for SQLAlchemy
+            numeric_fields = ['OfferPrice', 'CurrentPrice', 'JoiningBonus']
+            for field in numeric_fields:
+                if field in employee_data and employee_data[field] is not None:
+                    try:
+                        if isinstance(employee_data[field], (int, float)):
+                            employee_data[field] = Decimal(str(employee_data[field]))
+                        elif isinstance(employee_data[field], str):
+                            employee_data[field] = Decimal(employee_data[field])
+                    except (ValueError, TypeError, InvalidOperation):
+                        employee_data[field] = None
+            
+            # Handle boolean fields
+            if 'IsActive' in employee_data and isinstance(employee_data['IsActive'], str):
+                employee_data['IsActive'] = employee_data['IsActive'].lower() in ['true', '1', 'yes']
             
             if employee_id:
                 # Update existing employee
@@ -161,8 +189,9 @@ class EmployeeService:
                     if key != 'EmployeeId' and value is not None:
                         setattr(db_employee, key, value)
                 
-                # Set ModifiedOn timestamp
-                db_employee.ModifiedOn = datetime.utcnow()
+                # Set ModifiedOn timestamp if not provided
+                if 'ModifiedOn' not in employee_data or employee_data.get('ModifiedOn') is None:
+                    db_employee.ModifiedOn = datetime.utcnow()
                 
                 db.commit()
                 db.refresh(db_employee)
@@ -177,8 +206,27 @@ class EmployeeService:
                 employee_data.pop('EmployeeId', None)
                 
                 # Set CreatedOn timestamp if not provided
-                if 'CreatedOn' not in employee_data:
+                if 'CreatedOn' not in employee_data or employee_data.get('CreatedOn') is None:
                     employee_data['CreatedOn'] = datetime.utcnow()
+                
+                # Ensure EmployeeCode is set
+                if 'EmployeeCode' not in employee_data or not employee_data['EmployeeCode']:
+                    return {
+                        "success": False, 
+                        "message": "EmployeeCode is required",
+                        "employee": None
+                    }
+                
+                # Check if EmployeeCode already exists
+                existing = db.query(Employee).filter(
+                    Employee.EmployeeCode == employee_data['EmployeeCode']
+                ).first()
+                if existing:
+                    return {
+                        "success": False, 
+                        "message": f"Employee with code {employee_data['EmployeeCode']} already exists",
+                        "employee": None
+                    }
                 
                 db_employee = Employee(**employee_data)
                 db.add(db_employee)
@@ -235,6 +283,17 @@ class EmployeeService:
         if 'CreatedOn' not in employee_data:
             employee_data['CreatedOn'] = datetime.utcnow()
         
+        # Handle the typo for OfferReleasedOn
+        if 'OfferReleasedOn' in employee_data:
+            employee_data['OfferRelesedOn'] = employee_data.pop('OfferReleasedOn')
+        
+        # Check if EmployeeCode already exists
+        existing = db.query(Employee).filter(
+            Employee.EmployeeCode == employee_data.get('EmployeeCode')
+        ).first()
+        if existing:
+            raise ValueError(f"Employee with code {employee_data.get('EmployeeCode')} already exists")
+        
         db_employee = Employee(**employee_data)
         db.add(db_employee)
         db.commit()
@@ -247,6 +306,10 @@ class EmployeeService:
         db_employee = db.query(Employee).filter(Employee.EmployeeId == employee_id).first()
         if db_employee:
             update_data = employee.model_dump(exclude_none=True)
+            
+            # Handle the typo for OfferReleasedOn
+            if 'OfferReleasedOn' in update_data:
+                update_data['OfferRelesedOn'] = update_data.pop('OfferReleasedOn')
             
             # Set ModifiedOn timestamp
             update_data['ModifiedOn'] = datetime.utcnow()
@@ -317,6 +380,9 @@ class EmployeeService:
         modified_by: int
     ) -> int:
         """Bulk update department for multiple employees"""
+        if not employee_ids:
+            return 0
+            
         result = db.query(Employee).filter(
             Employee.EmployeeId.in_(employee_ids)
         ).update(
@@ -335,7 +401,7 @@ class EmployeeService:
         """Get employee statistics"""
         total_employees = db.query(func.count(Employee.EmployeeId)).scalar()
         active_employees = db.query(func.count(Employee.EmployeeId)).filter(Employee.IsActive == True).scalar()
-        inactive_employees = total_employees - active_employees
+        inactive_employees = total_employees - active_employees if total_employees else 0
         
         # Count by department
         dept_stats = db.query(
@@ -348,8 +414,8 @@ class EmployeeService:
         ).all()
         
         return {
-            "total_employees": total_employees,
-            "active_employees": active_employees,
+            "total_employees": total_employees or 0,
+            "active_employees": active_employees or 0,
             "inactive_employees": inactive_employees,
             "department_statistics": [
                 {"department_id": dept_id, "employee_count": count} 
