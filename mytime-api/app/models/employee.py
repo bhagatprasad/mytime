@@ -7,7 +7,7 @@ class Employee(Base):
     __tablename__ = "Employee"
     
     EmployeeId = Column(Integer, primary_key=True, index=True)
-    EmployeeCode = Column(String(10), nullable=False, unique=True)  # Changed from String(max)
+    EmployeeCode = Column(String(100), nullable=False, unique=True)  # Changed from String(max)
     FirstName = Column(String(255), nullable=True)  # Changed from String(max)
     LastName = Column(String(255), nullable=True)   # Changed from String(max)
     FatherName = Column(String(255), nullable=True)
