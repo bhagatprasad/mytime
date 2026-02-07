@@ -24,4 +24,9 @@ export class CityService {
     getCitiesListByCountryAndStateAsync(countryId: number, stateId: number): Observable<City[]> {
         return this.apiService.send<City[]>("GET", `${environment.UrlConstants.City.GetCitiesByState}?countryId=${countryId}&stateId=${stateId}`);
     }
+
+    deleteCityAsync(Id: number): Observable<void> {
+        return this.apiService.send("DELETE", `${environment.UrlConstants.City.DeleteCity}/${Id}`
+        );
+    }
 }
