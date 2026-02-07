@@ -38,7 +38,7 @@ class StateService:
             query = query.filter(
                 or_(
                     func.coalesce(State.Name, '').ilike(search_term),
-                    func.coalesce(State.SateCode, '').ilike(search_term),
+                    func.coalesce(State.StateCode, '').ilike(search_term),
                     func.coalesce(State.CountryCode, '').ilike(search_term),
                     func.coalesce(State.Description, '').ilike(search_term)
                 )
@@ -209,7 +209,7 @@ class StateService:
     @staticmethod
     def get_state_by_code(db: Session, state_code: str, country_code: Optional[str] = None) -> Optional[State]:
         """Get state by state code (optionally filtered by country code)"""
-        query = db.query(State).filter(State.SateCode == state_code)
+        query = db.query(State).filter(State.StateCode == state_code)
         
         if country_code:
             query = query.filter(State.CountryCode == country_code)
