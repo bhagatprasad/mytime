@@ -24,5 +24,5 @@ class State(Base):
     def __repr__(self):
         return (
             f"<State(StateId={self.StateId}, Name='{self.Name}', "
-            f"SateCode='{self.SateCode}', CountryCode='{self.CountryCode}')>"
+            f"StateCode='{self.StateCode}', CountryCode='{self.CountryCode}')>"
         )

@@ -49,7 +49,7 @@ class CityService:
             state = db.query(State).filter(State.StateId == city.StateId).first()
             if state:
                 result["StateName"] = state.Name
-                result["StateCode"] = state.SateCode
+                result["StateCode"] = state.StateCode
         
         return result
     
@@ -138,7 +138,7 @@ class CityService:
             Country.Name.label("CountryName"),
             Country.Code.label("CountryCode"),
             State.Name.label("StateName"),
-            State.SateCode.label("StateCode")
+            State.StateCode.label("StateCode")
         )
         
         # Join with Country and State tables
