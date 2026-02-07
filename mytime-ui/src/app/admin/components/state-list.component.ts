@@ -13,13 +13,14 @@ import { AuditFieldsService } from '../../common/services/auditfields.service';
 import { ActionsRendererComponent } from '../../common/components/actions-renderer.component';
 import { MobileActionsRendererComponent } from '../../common/components/mobile-actions-renderer.component';
 import { forkJoin } from 'rxjs';
+import { DeleteConfirmationComponent } from '../../common/components/delete.compunent';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-state-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, DatePipe, FormsModule],
+  imports: [CommonModule, AgGridAngular, DatePipe, FormsModule,DeleteConfirmationComponent],
   templateUrl: './state-list.component.html',
   styleUrl: './state-list.component.css'
 })
@@ -30,6 +31,9 @@ export class StateListComponent implements OnInit,OnDestroy {
   countries: Country[] = [];
 
   states: State[] = [];
+
+  showDeletePopup:boolean =false;
+  selectedDeleteItem: State | null = null;
 
   private gridApi!: GridApi;
 
@@ -182,6 +186,8 @@ export class StateListComponent implements OnInit,OnDestroy {
 
   }
   deleteState(state: State): void {
+    this.showDeletePopup=true;
+    this.selectedDeleteItem=state;
 
   }
   requestStateProcess(state: State): void {
@@ -338,5 +344,42 @@ export class StateListComponent implements OnInit,OnDestroy {
 
   getInactiveStatesCount(): number {
     return this.states.filter(c => !c.IsActive).length;
+  }
+
+  closePopup() {
+    this.showDeletePopup = false;
+    this.selectedDeleteItem = null;
+  }
+
+  confirmDelete() {
+
+    if (!this.selectedDeleteItem) {
+      console.error("No item selected for delete");
+      return;
+    }
+
+    this.stateService.deleteStateAsync(this.selectedDeleteItem.StateId)
+      .subscribe({
+        next: (res) => {
+          console.log("Delete success:", res);
+
+          this.refreshData();          // reload grid data
+          this.showDeletePopup = false;
+          this.selectedDeleteItem = null;
+        },
+
+        error: (err) => {
+          console.error("Delete failed:", err);
+          // keep popup open OR close — your choice
+          this.showDeletePopup = false;
+
+        },
+        complete: () => {
+          alert("Delete request completed");
+        }
+      });
+  }
+  refreshData() {
+    this.loadRoleData();
   }
 }

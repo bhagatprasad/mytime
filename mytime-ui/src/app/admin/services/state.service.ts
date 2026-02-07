@@ -19,4 +19,9 @@ export class StateService {
     getStateListByCountryAsync(countryId:number): Observable<State[]> {
         return this.apiService.send<State[]>("GET", `${environment.UrlConstants.State.GetStatesByCountry}?countryId=${countryId}`);
     }
+
+    deleteStateAsync(stateId: number): Observable<any>{
+        return this.apiService.send("DELETE", `${environment.UrlConstants.State.DeleteState}/${stateId}`
+        );
+    }
 }
