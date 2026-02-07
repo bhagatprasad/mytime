@@ -11,7 +11,7 @@ class State(Base):
 
     Name = Column(Text, nullable=False)
     Description = Column(Text, nullable=True)
-    SateCode = Column(Text, nullable=True)
+    StateCode = Column(Text, nullable=True)
     CountryCode = Column(Text, nullable=True)
 
     # Common fields from Common base class

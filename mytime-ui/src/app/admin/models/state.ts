@@ -3,11 +3,11 @@ export interface State {
     CountryId: number;
     Name: string;
     Description: string;
-    Code: string;
+    StateCode: string;
     CountryCode: string;
-    IsActive: boolean;
-    CreatedBy: number;
-    CreatedOn: Date;
-    ModifiedBy: number;
-    ModifiedOn: Date;
+    IsActive?: boolean;
+    CreatedBy?: number;
+    CreatedOn?: Date;
+    ModifiedBy?: number;
+    ModifiedOn?: Date;
 }

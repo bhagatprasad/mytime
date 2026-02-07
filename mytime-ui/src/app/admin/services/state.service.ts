@@ -15,13 +15,17 @@ export class StateService {
     getStateListAsync(): Observable<State[]> {
         return this.apiService.send<State[]>("GET", environment.UrlConstants.State.GetAllStates);
     }
-    
-    getStateListByCountryAsync(countryId:number): Observable<State[]> {
+
+    getStateListByCountryAsync(countryId: number): Observable<State[]> {
         return this.apiService.send<State[]>("GET", `${environment.UrlConstants.State.GetStatesByCountry}?countryId=${countryId}`);
     }
 
-    deleteStateAsync(stateId: number): Observable<any>{
+    deleteStateAsync(stateId: number): Observable<any> {
         return this.apiService.send("DELETE", `${environment.UrlConstants.State.DeleteState}/${stateId}`
         );
+    }
+
+    insertOrUpdateStateAsync(state: State): Observable<State> {
+        return this.apiService.send<State>("POST", environment.UrlConstants.State.InsertOrUpdateState, state);
     }
 }
