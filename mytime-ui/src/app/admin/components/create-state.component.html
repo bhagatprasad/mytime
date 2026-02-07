@@ -1,1 +1,117 @@
-<p>create-state works!</p>
+<!-- Overlay -->
+<div class="sidebar-overlay" *ngIf="isVisible" (click)="close()"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" [class.visible]="isVisible">
+    <form [formGroup]="stateForm" (ngSubmit)="onSubmit()">
+        <div class="sidebar-header">
+            <h5 class="sidebar-title">{{ state?.StateId ? 'Edit State' : 'Create State' }}</h5>
+            <button type="button" class="close" (click)="close()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="sidebar-body">
+            <!-- Country Selection -->
+            <div class="form-group">
+                <label>Country *</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-office-building"></i>
+                        </span>
+                    </div>
+                    <select class="form-control" formControlName="CountryId" (change)="onCountrySelected($event)">
+                        <option [ngValue]="null">Select Country</option>
+                        <option *ngFor="let c of countries" [ngValue]="c.Id">
+                            {{ c.Name }}
+                        </option>
+                    </select>
+                </div>
+                <small class="text-danger"
+                    *ngIf="stateForm.get('CountryId')?.invalid && (stateForm.get('CountryId')?.touched || stateForm.get('CountryId')?.dirty)">
+                    Country is required
+                </small>
+            </div>
+
+            <!-- Country Code (Auto-populated and Readonly) -->
+            <div class="form-group">
+                <label for="CountryCode">Country Code</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-earth"></i>
+                        </span>
+                    </div>
+                    <input type="text" class="form-control" id="CountryCode" formControlName="CountryCode"
+                        placeholder="Country code will auto-populate" readonly>
+                    <!-- Validation message (though it's auto-populated, keep for consistency) -->
+                    <div *ngIf="stateForm.get('CountryCode')?.invalid && stateForm.get('CountryCode')?.touched"
+                        class="text-danger small mt-1">
+                        Country code is required
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="Name">State Name</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-earth"></i> <!-- Changed icon to be more appropriate -->
+                        </span>
+                    </div>
+                    <input type="text" class="form-control" id="Name" formControlName="Name"
+                        placeholder="Enter state name">
+                    <!-- Added validation message -->
+                    <div *ngIf="stateForm.get('Name')?.invalid && stateForm.get('Name')?.touched"
+                        class="text-danger small mt-1">
+                        State name is required
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="StateCode">State Code</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-code-tags"></i>
+                        </span>
+                    </div>
+                    <input type="text" class="form-control" id="Code" formControlName="StateCode"
+                        placeholder="Enter state code (e.g., US)">
+                    <!-- Added validation message -->
+                    <div *ngIf="stateForm.get('StateCode')?.invalid && stateForm.get('StateCode')?.touched"
+                        class="text-danger small mt-1">
+                        state code is required
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="Description">Description</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-code-tags"></i>
+                        </span>
+                    </div>
+                    <input type="text" class="form-control" id="Description" formControlName="Description"
+                        placeholder="Enter state code (e.g., US)">
+                    <!-- Added validation message -->
+                    <div *ngIf="stateForm.get('Description')?.invalid && stateForm.get('Description')?.touched"
+                        class="text-danger small mt-1">
+                        state code is required
+                    </div>
+                </div>
+            </div>
+            <!-- Other fields (Name, Code, Description) can be added here as needed -->
+        </div>
+
+        <div class="sidebar-footer">
+            <button type="submit" class="btn btn-primary" [disabled]="stateForm.invalid">
+                <i class="mdi" [class.mdi-content-save]="!state?.StateId" [class.mdi-pencil]="state?.StateId"></i>
+                {{ state?.StateId ? 'Update' : 'Save' }}
+            </button>
+            <button type="button" class="btn btn-secondary ml-2" (click)="close()">Cancel</button>
+        </div>
+    </form>
+</div>

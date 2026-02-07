@@ -8,7 +8,7 @@ class StateBase(BaseModel):
     CountryId: int = Field(..., description="Foreign key to Country table")
     Name: str = Field(..., max_length=255, description="State name")
     Description: Optional[str] = Field(None, description="State description")
-    SateCode: Optional[str] = Field(None, max_length=100, description="State code")
+    StateCode: Optional[str] = Field(None, max_length=100, description="State code")
     CountryCode: Optional[str] = Field(None, max_length=100, description="Country code")
 
 
@@ -23,7 +23,7 @@ class StateUpdate(BaseModel):
     CountryId: Optional[int] = Field(None, description="Foreign key to Country table")
     Name: Optional[str] = Field(None, max_length=255, description="State name")
     Description: Optional[str] = Field(None, description="State description")
-    SateCode: Optional[str] = Field(None, max_length=100, description="State code")
+    StateCode: Optional[str] = Field(None, max_length=100, description="State code")
     CountryCode: Optional[str] = Field(None, max_length=100, description="Country code")
     ModifiedBy: Optional[int] = Field(None, description="User ID who last modified the record")
     IsActive: Optional[bool] = Field(None, description="Whether the state is active")
@@ -35,7 +35,7 @@ class StateResponse(BaseModel):
     CountryId: int
     Name: str
     Description: Optional[str] = None
-    SateCode: Optional[str] = None
+    StateCode: Optional[str] = None
     CountryCode: Optional[str] = None
     CreatedBy: Optional[int] = None
     CreatedOn: Optional[datetime] = None

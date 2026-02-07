@@ -14,17 +14,18 @@ import { ActionsRendererComponent } from '../../common/components/actions-render
 import { MobileActionsRendererComponent } from '../../common/components/mobile-actions-renderer.component';
 import { forkJoin } from 'rxjs';
 import { DeleteConfirmationComponent } from '../../common/components/delete.compunent';
+import { CreateStateComponent } from './create-state.component';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-state-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, DatePipe, FormsModule,DeleteConfirmationComponent],
+  imports: [CommonModule, AgGridAngular, DatePipe, FormsModule, DeleteConfirmationComponent, CreateStateComponent],
   templateUrl: './state-list.component.html',
   styleUrl: './state-list.component.css'
 })
-export class StateListComponent implements OnInit,OnDestroy {
+export class StateListComponent implements OnInit, OnDestroy {
 
   today = new Date();
 
@@ -32,7 +33,8 @@ export class StateListComponent implements OnInit,OnDestroy {
 
   states: State[] = [];
 
-  showDeletePopup:boolean =false;
+  showDeletePopup: boolean = false;
+
   selectedDeleteItem: State | null = null;
 
   private gridApi!: GridApi;
@@ -178,6 +180,10 @@ export class StateListComponent implements OnInit,OnDestroy {
       cellClass: 'text-center'
     }
   ];
+
+  showSidebar: boolean = false;
+
+  selectedState: State | null = null;
   constructor(private stateService: StateService,
     private countryService: CountryService,
     private loader: LoaderService,
@@ -186,9 +192,8 @@ export class StateListComponent implements OnInit,OnDestroy {
 
   }
   deleteState(state: State): void {
-    this.showDeletePopup=true;
-    this.selectedDeleteItem=state;
-
+    this.showDeletePopup = true;
+    this.selectedDeleteItem = state;
   }
   requestStateProcess(state: State): void {
   }
@@ -382,4 +387,31 @@ export class StateListComponent implements OnInit,OnDestroy {
   refreshData() {
     this.loadRoleData();
   }
+
+  onCloseSidebar(): void {
+    this.showSidebar = false;
+    this.selectedState = null;
+  }
+
+  onSaveState(state: State): void {
+    this.loader.show();
+    console.log(state);
+    const _state = this.audit.appendAuditFields(state);
+    this.stateService.insertOrUpdateStateAsync(_state).subscribe(reponse => {
+      if (reponse) {
+        this.toster.success("state processed succeessfully");
+        this.showSidebar = false;
+        this.refreshData();
+      }
+    }, error => {
+      this.toster.error("something went wrong , please check and resubmit");
+      this.showSidebar = true;
+      this.loader.hide();
+    });
+  }
+  openAddEditState(): void {
+    this.showSidebar = true;
+    this.selectedState = null;
+  }
+
 }
