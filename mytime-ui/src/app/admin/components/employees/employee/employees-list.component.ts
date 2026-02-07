@@ -30,6 +30,7 @@ import { Designation } from '../../../models/designation';
 import { EmployeesCreateComponent } from './employees-create.component';
 import { response } from 'express';
 import { EmployeeDTO } from '../../../models/employee.dto';
+import { Router } from '@angular/router';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -234,7 +235,8 @@ export class EmployeesListComponent implements OnInit, OnDestroy {
     private designationService: DesignationService,
     private toastr: ToastrService,
     private audit: AuditFieldsService,
-    private loader: LoaderService
+    private loader: LoaderService,
+    private routerService: Router
   ) { }
 
   ngOnDestroy(): void {
@@ -312,7 +314,8 @@ export class EmployeesListComponent implements OnInit, OnDestroy {
 
 
   viewEmployeeDetails(employee: Employee): void {
-
+    console.log(employee);
+    this.routerService.navigate(['/admin/employees', employee.EmployeeId]);
   }
   createUserAccess(employee: Employee): void {
 

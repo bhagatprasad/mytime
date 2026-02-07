@@ -66,14 +66,21 @@ export const routes: Routes = [
                 path: 'users',
                 loadComponent: () => import('./admin/components/user-list.component').then(m => m.UserListComponent)
             },
+            // ========== EMPLOYEES ROUTES ==========
             {
                 path: 'employees',
-                loadComponent: () => import('./admin/components/employees/employee/employees-list.component').then(m => m.EmployeesListComponent)
+                children: [
+                    {
+                        path: '',
+                        loadComponent: () => import('./admin/components/employees/employee/employees-list.component').then(m => m.EmployeesListComponent)
+                    },
+                    {
+                        path: ':employeeId',
+                        loadComponent: () => import('./admin/components/employees/employee/employees-details.component').then(m => m.EmployeesDetailsComponent)
+                    }
+                ]
             },
-            {
-                path: 'employees/:employeeId', 
-                loadComponent: () => import('./admin/components/employees/employee/employees-details.component').then(m => m.EmployeesDetailsComponent)
-            },
+            // ======================================
             {
                 path: '',
                 redirectTo: 'dashboard',

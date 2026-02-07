@@ -16,7 +16,7 @@ export class EmployeeService {
     }
 
     getEmployeeByIdAsync(employeeId: number): Observable<Employee> {
-        return this.apiService.send<Employee>("GET", `${environment.UrlConstants.Employee.GetEmployee}?employeeId=${employeeId}`)
+        return this.apiService.send<Employee>("GET", `${environment.UrlConstants.Employee.GetEmployee}/${employeeId}`)
     }
 
     insertOrUpdateEmployee(employee: EmployeeDTO): Observable<Employee> {
