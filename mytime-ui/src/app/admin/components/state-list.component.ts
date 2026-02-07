@@ -81,7 +81,7 @@ export class StateListComponent implements OnInit, OnDestroy {
       cellRenderer: this.nameRenderer.bind(this)
     },
     {
-      field: 'SateCode',
+      field: 'StateCode',
       headerName: 'Code',
       width: 120,
       filter: 'agTextColumnFilter',
@@ -196,6 +196,8 @@ export class StateListComponent implements OnInit, OnDestroy {
     this.selectedDeleteItem = state;
   }
   requestStateProcess(state: State): void {
+    this.selectedState = state;
+    this.showSidebar = true;
   }
 
   loadRoleData(): void {
