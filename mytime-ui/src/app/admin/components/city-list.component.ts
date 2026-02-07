@@ -16,13 +16,14 @@ import { forkJoin } from 'rxjs';
 import { StateService } from '../services/state.service';
 import { Country } from '../models/country';
 import { State } from '../models/state';
+import { DeleteConfirmationComponent } from '../../common/components/delete.compunent';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-city-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, DatePipe, FormsModule],
+  imports: [CommonModule, AgGridAngular, DatePipe, FormsModule,DeleteConfirmationComponent],
   templateUrl: './city-list.component.html',
   styleUrl: './city-list.component.css'
 })
@@ -37,6 +38,9 @@ export class CityListComponent implements OnInit, OnDestroy {
   states: State[] = [];
 
   citiesData: CityDetails[] = [];
+
+  showDeletePopup:boolean=false;
+  selectedDeleteItem: City | null = null;
 
   private gridApi!: GridApi;
 
@@ -183,6 +187,8 @@ export class CityListComponent implements OnInit, OnDestroy {
   }
 
   deleteCity(city: City): void {
+    this.showDeletePopup=true;
+    this.selectedDeleteItem=city;
 
   }
   requestCityProcess(city: City): void {
@@ -340,5 +346,41 @@ export class CityListComponent implements OnInit, OnDestroy {
 
   getInactiveCitiesCount(): number {
     return this.cities.filter(c => !c.IsActive).length;
+  }
+
+  closePopup() {
+    this.showDeletePopup = false;
+    this.selectedDeleteItem = null;
+  }
+  confirmDelete() {
+
+    if (!this.selectedDeleteItem) {
+      console.error("No item selected for delete");
+      return;
+    }
+
+    this.cityService.deleteCityAsync(this.selectedDeleteItem.Id)
+      .subscribe({
+        next: (res) => {
+          console.log("Delete success:", res);
+
+          this.refreshData();          // reload grid data
+          this.showDeletePopup = false;
+          this.selectedDeleteItem = null;
+        },
+
+        error: (err) => {
+          console.error("Delete failed:", err);
+          // keep popup open OR close — your choice
+          this.showDeletePopup = false;
+
+        },
+        complete: () => {
+          alert("Delete request completed");
+        }
+      });
+  }
+  refreshData() {
+    this.loadRoleData();
   }
 }

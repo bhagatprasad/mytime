@@ -79,7 +79,10 @@
             </div>
           </div>
         </div>
-         <!-- <app-create-country [isVisible]="showSidebar" [country]="selectedCountry"  (closeSidebar)="onCloseSidebar()" (saveCountry)="onSaveCountry($event)"></app-create-country> -->
+        <app-delete-confirmation *ngIf="showDeletePopup" title="Delete City"
+            message="Do you really want to delete this City?" (confirm)="confirmDelete()"
+            (cancel)="closePopup()">
+          </app-delete-confirmation>
       </div>
     </div>
   </div>
