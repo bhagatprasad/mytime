@@ -26,28 +26,53 @@ export class EmployeesCreateComponent implements OnInit, OnChanges {
   employeeForm!: FormGroup;
   isCreateMode = false;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.buildForm();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['isVisible']?.currentValue) {
-      this.isCreateMode = !this.employee;
-      
-      if (this.employee) {
-        // Edit mode - use existing employee code
-        this.patchForm(this.employee);
-      } else {
-        // Create mode - reset form and generate new code
-        this.resetForm();
-        this.generateEmployeeCode();
-      }
+    console.log('ngOnChanges triggered:', changes);
+    
+    // Always reinitialize when isVisible changes to true
+    if (changes['isVisible'] && changes['isVisible'].currentValue === true) {
+      console.log('Sidebar opened. Employee:', this.employee);
+      this.initializeForm();
+    }
+    
+    // Also handle employee changes when sidebar is already visible
+    if (changes['employee'] && this.isVisible) {
+      console.log('Employee data updated:', this.employee);
+      this.initializeForm();
     }
   }
 
+  private initializeForm(): void {
+    console.log('Initializing form. isVisible:', this.isVisible, 'employee:', this.employee);
+    
+    if (!this.isVisible) {
+      console.log('Sidebar not visible, skipping initialization');
+      return;
+    }
+
+    // Use setTimeout to ensure form is ready
+    setTimeout(() => {
+      this.isCreateMode = !this.employee;
+
+      if (this.employee) {
+        console.log('EDIT MODE - Patching form with:', this.employee);
+        this.patchForm(this.employee);
+      } else {
+        console.log('CREATE MODE - Resetting form');
+        this.resetForm();
+        this.generateEmployeeCode();
+      }
+    });
+  }
+
   private buildForm(): void {
+    console.log('Building form');
     this.employeeForm = this.fb.group({
       EmployeeId: [0],
       EmployeeCode: ['', [Validators.required, Validators.maxLength(50)]],
@@ -74,29 +99,27 @@ export class EmployeesCreateComponent implements OnInit, OnChanges {
       UserId: [null],
       IsActive: [true]
     });
+
+    // Log when form is built
+    console.log('Form built. Current value:', this.employeeForm.value);
   }
 
   private generateEmployeeCode(): void {
-    // Only generate for new employees
     if (!this.isCreateMode) return;
 
-    // Generate unique employee code
     const now = new Date();
     const datePart = this.formatDateForCode(now);
-    
-    // Generate a unique 4-digit random number
     const uniqueId = Math.floor(1000 + Math.random() * 9000);
-    
-    // Format: EMP20260205_1234
     const employeeCode = `EMP${datePart}${uniqueId}_FS`;
+
+    this.employeeForm.patchValue({
+      EmployeeCode: employeeCode
+    });
     
-    this.employeeForm.patchValue({ 
-      EmployeeCode: employeeCode 
-    }, { emitEvent: false });
+    console.log('Generated employee code:', employeeCode);
   }
 
   private formatDateForCode(date: Date): string {
-    // Format: YYYYMMDD
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
@@ -104,27 +127,56 @@ export class EmployeesCreateComponent implements OnInit, OnChanges {
   }
 
   private patchForm(employee: Employee): void {
-    const formatDate = (dateString: string | null | undefined): string => {
-      if (!dateString) return '';
+    if (!employee) {
+      console.error('Cannot patch form: employee is null or undefined');
+      return;
+    }
+
+    console.log('=== PATCHING FORM ===');
+    console.log('Employee object:', employee);
+    console.log('Employee type:', typeof employee);
+
+    // Check if employee is actually an object
+    if (typeof employee !== 'object') {
+      console.error('Employee is not an object:', employee);
+      return;
+    }
+
+    // Check if form exists
+    if (!this.employeeForm) {
+      console.error('Form not initialized yet');
+      return;
+    }
+
+    // Convert dates to proper format
+    const formatDate = (dateValue: any): string => {
+      if (!dateValue) return '';
+
       try {
-        const date = new Date(dateString);
+        const date = new Date(dateValue);
+        if (isNaN(date.getTime())) {
+          console.warn('Invalid date value:', dateValue);
+          return '';
+        }
         return date.toISOString().split('T')[0];
-      } catch {
+      } catch (error) {
+        console.warn('Error formatting date:', dateValue, error);
         return '';
       }
     };
 
-    this.employeeForm.patchValue({
-      EmployeeId: employee.EmployeeId,
-      EmployeeCode: employee.EmployeeCode, // Keep existing code for edit
-      FirstName: employee.FirstName,
-      LastName: employee.LastName,
-      FatherName: employee.FatherName,
-      MotherName: employee.MotherName,
-      Gender: employee.Gender,
+    // Prepare form data with fallback values
+    const formData = {
+      EmployeeId: employee.EmployeeId || 0,
+      EmployeeCode: employee.EmployeeCode || '',
+      FirstName: employee.FirstName || '',
+      LastName: employee.LastName || '',
+      FatherName: employee.FatherName || '',
+      MotherName: employee.MotherName || '',
+      Gender: employee.Gender || '',
       DateOfBirth: formatDate(employee.DateOfBirth),
-      Email: employee.Email,
-      Phone: employee.Phone,
+      Email: employee.Email || '',
+      Phone: employee.Phone || '',
       DepartmentId: employee.DepartmentId ?? null,
       RoleId: employee.RoleId ?? null,
       DesignationId: employee.DesignationId ?? null,
@@ -134,22 +186,42 @@ export class EmployeesCreateComponent implements OnInit, OnChanges {
       LastWorkingDay: formatDate(employee.LastWorkingDay),
       OfferRelesedOn: formatDate(employee.OfferRelesedOn),
       OfferAcceptedOn: formatDate(employee.OfferAcceptedOn),
-      OfferPrice: employee.OfferPrice,
-      CurrentPrice: employee.CurrentPrice,
-      JoiningBonus: employee.JoiningBonus,
-      UserId: employee.UserId,
+      OfferPrice: employee.OfferPrice ?? null,
+      CurrentPrice: employee.CurrentPrice ?? null,
+      JoiningBonus: employee.JoiningBonus ?? null,
+      UserId: employee.UserId ?? null,
       IsActive: employee.IsActive ?? true
-    }, { emitEvent: false });
+    };
+
+    console.log('Form data to patch:', formData);
+
+    try {
+      // First reset the form to clear any previous values
+      this.employeeForm.reset();
+      
+      // Then patch the values
+      this.employeeForm.patchValue(formData);
+      
+      console.log('Form successfully patched');
+      console.log('Current form value:', this.employeeForm.value);
+      
+      // Force form validation update
+      this.employeeForm.updateValueAndValidity();
+    } catch (error) {
+      console.error('Error patching form:', error);
+    }
   }
 
   onSubmit(): void {
     if (this.employeeForm.invalid) {
+      console.log('Form is invalid. Errors:', this.employeeForm.errors);
       this.employeeForm.markAllAsTouched();
       return;
     }
 
     const formValue = this.employeeForm.value;
-    
+    console.log('Submitting form:', formValue);
+
     const payload: Employee = {
       ...(this.employee || {}),
       ...formValue,
@@ -162,11 +234,14 @@ export class EmployeesCreateComponent implements OnInit, OnChanges {
   }
 
   close(): void {
+    console.log('Closing sidebar');
     this.resetForm();
     this.closeSidebar.emit();
   }
 
   private resetForm(): void {
+    console.log('Resetting form');
+    
     this.employeeForm.reset({
       EmployeeId: 0,
       EmployeeCode: '',
@@ -196,5 +271,6 @@ export class EmployeesCreateComponent implements OnInit, OnChanges {
 
     this.employeeForm.markAsPristine();
     this.employeeForm.markAsUntouched();
+    console.log('Form reset completed');
   }
 }

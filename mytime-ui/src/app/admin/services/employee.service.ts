@@ -19,7 +19,7 @@ export class EmployeeService {
         return this.apiService.send<Employee>("GET", `${environment.UrlConstants.Employee.GetEmployee}/${employeeId}`)
     }
 
-    insertOrUpdateEmployee(employee: EmployeeDTO): Observable<Employee> {
-        return this.apiService.send<Employee>("POST", environment.UrlConstants.Employee.InsertOrUpdateEmployee, employee);
+    insertOrUpdateEmployee(employee: EmployeeDTO): Observable<any> {
+        return this.apiService.send<any>("POST", environment.UrlConstants.Employee.InsertOrUpdateEmployee, employee);
     }
 }

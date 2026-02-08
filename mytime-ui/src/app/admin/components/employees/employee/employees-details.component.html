@@ -12,9 +12,6 @@
                             </h5>
                         </div>
                         <div class="d-flex align-items-center gap-2">
-                            <button class="btn btn-sm btn-outline-primary" (click)="openEditForm()">
-                                <i class="mdi mdi-pencil me-1"></i>
-                            </button>
                             <button class="btn btn-sm btn-outline-secondary" (click)="goBack()">
                                 <i class="mdi mdi-arrow-left me-1"></i>
                             </button>
@@ -23,434 +20,405 @@
                 </div>
 
                 <!-- Card Body -->
-                <div class="card-body">
-                    <div *ngIf="employee" class="employee-details">
-                        <div class="form-container">
-                            <!-- Personal Information Section -->
-                            <div class="section-header mb-3">
-                                <h5 class="text-primary mb-0">
-                                    <i class="mdi mdi-account-circle"></i> Personal Information
-                                </h5>
-                            </div>
-
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Employee Code</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-badge-account"></i>
-                                                </span>
-                                            </div>
-                                            <input type="text" class="form-control"
-                                                [value]="employee.EmployeeCode || 'Not assigned'" readonly>
-                                        </div>
-                                    </div>
+                <div class="card-body" style="padding: 0px !important;">
+                    <div class="card" style="padding: 0px !important;">
+                        <div class="card-header bg-white border-bottom">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <h5 class="mb-0">
+                                        Personal Information
+                                    </h5>
                                 </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>User ID</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-account-key"></i>
-                                                </span>
-                                            </div>
-                                            <input type="text" class="form-control"
-                                                [value]="employee.UserId || 'Not assigned'" readonly>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>First Name</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-account"></i>
-                                                </span>
-                                            </div>
-                                            <input type="text" class="form-control"
-                                                [value]="employee.FirstName || 'Not specified'" readonly>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Last Name</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-account-outline"></i>
-                                                </span>
-                                            </div>
-                                            <input type="text" class="form-control"
-                                                [value]="employee.LastName || 'Not specified'" readonly>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Gender</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-gender-male-female"></i>
-                                                </span>
-                                            </div>
-                                            <input type="text" class="form-control"
-                                                [value]="employee.Gender || 'Not specified'" readonly>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Date of Birth</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-calendar"></i>
-                                                </span>
-                                            </div>
-                                            <input type="text" class="form-control"
-                                                [value]="(employee.DateOfBirth | date:'dd/MM/yyyy') || 'Not specified'"
-                                                readonly>
-                                        </div>
-                                    </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <button class="btn btn-sm btn-outline-primary" (click)="openEditForm()">
+                                        <i class="mdi mdi-pencil me-1"></i>
+                                    </button>
                                 </div>
                             </div>
 
-                            <!-- Contact Information Section -->
-                            <div class="section-header mb-3">
-                                <h5 class="text-primary mb-0">
-                                    <i class="mdi mdi-contacts"></i> Contact Information
-                                </h5>
-                            </div>
 
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Email</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-email"></i>
-                                                </span>
+                        </div>
+                        <div class="card-body">
+                            <div *ngIf="employee" class="employee-details">
+                                <div class="form-container">
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Employee Code</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="mdi mdi-badge-account"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control"
+                                                        [value]="employee.EmployeeCode || 'Not assigned'" readonly>
+                                                </div>
                                             </div>
-                                            <input type="text" class="form-control"
-                                                [value]="employee.Email || 'Not specified'" readonly>
                                         </div>
-                                    </div>
-                                </div>
 
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Phone</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-phone"></i>
-                                                </span>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>User ID</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="mdi mdi-account-key"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control"
+                                                        [value]="employee.UserId || 'Not assigned'" readonly>
+                                                </div>
                                             </div>
-                                            <input type="text" class="form-control"
-                                                [value]="employee.Phone || 'Not specified'" readonly>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <!-- Family Information Section -->
-                            <div class="section-header mb-3">
-                                <h5 class="text-primary mb-0">
-                                    <i class="mdi mdi-account-multiple"></i> Family Information
-                                </h5>
-                            </div>
-
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Father Name</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-account-outline"></i>
-                                                </span>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>First Name</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="mdi mdi-account"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control"
+                                                        [value]="employee.FirstName || 'Not specified'" readonly>
+                                                </div>
                                             </div>
-                                            <input type="text" class="form-control"
-                                                [value]="employee.FatherName || 'Not specified'" readonly>
                                         </div>
-                                    </div>
-                                </div>
 
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Mother Name</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-account-outline"></i>
-                                                </span>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Last Name</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="mdi mdi-account-outline"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control"
+                                                        [value]="employee.LastName || 'Not specified'" readonly>
+                                                </div>
                                             </div>
-                                            <input type="text" class="form-control"
-                                                [value]="employee.MotherName || 'Not specified'" readonly>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <!-- Employment Information Section -->
-                            <div class="section-header mb-3">
-                                <h5 class="text-primary mb-0">
-                                    <i class="mdi mdi-briefcase"></i> Employment Information
-                                </h5>
-                            </div>
-
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Department</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-office-building"></i>
-                                                </span>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Gender</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="mdi mdi-gender-male-female"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control"
+                                                        [value]="employee.Gender || 'Not specified'" readonly>
+                                                </div>
                                             </div>
-                                            <input type="text" class="form-control"
-                                                [value]="employee.DepartmentId || 'Not specified'" readonly>
                                         </div>
-                                    </div>
-                                </div>
 
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Role</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-shield-account"></i>
-                                                </span>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Date of Birth</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="mdi mdi-calendar"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control"
+                                                        [value]="(employee.DateOfBirth | date:'dd/MM/yyyy') || 'Not specified'"
+                                                        readonly>
+                                                </div>
                                             </div>
-                                            <input type="text" class="form-control"
-                                                [value]="employee.RoleId || 'Not specified'" readonly>
                                         </div>
                                     </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Designation</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-briefcase-account"></i>
-                                                </span>
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Email</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="mdi mdi-email"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control"
+                                                        [value]="employee.Email || 'Not specified'" readonly>
+                                                </div>
                                             </div>
-                                            <input type="text" class="form-control"
-                                                [value]="employee.DesignationId || 'Not specified'" readonly>
                                         </div>
-                                    </div>
-                                </div>
 
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Started On</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-calendar-start"></i>
-                                                </span>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Phone</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="mdi mdi-phone"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control"
+                                                        [value]="employee.Phone || 'Not specified'" readonly>
+                                                </div>
                                             </div>
-                                            <input type="text" class="form-control"
-                                                [value]="(employee.StartedOn | date:'dd/MM/yyyy') || 'Not specified'"
-                                                readonly>
                                         </div>
                                     </div>
-                                </div>
-
-                                <div class="col-md-6" *ngIf="employee.EndedOn">
-                                    <div class="form-group">
-                                        <label>Ended On</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-calendar-end"></i>
-                                                </span>
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Father Name</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="mdi mdi-account-outline"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control"
+                                                        [value]="employee.FatherName || 'Not specified'" readonly>
+                                                </div>
                                             </div>
-                                            <input type="text" class="form-control"
-                                                [value]="(employee.EndedOn | date:'dd/MM/yyyy') || 'Not specified'"
-                                                readonly>
                                         </div>
-                                    </div>
-                                </div>
 
-                                <div class="col-md-6" *ngIf="employee.ResignedOn">
-                                    <div class="form-group">
-                                        <label>Resigned On</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-calendar-remove"></i>
-                                                </span>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Mother Name</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="mdi mdi-account-outline"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control"
+                                                        [value]="employee.MotherName || 'Not specified'" readonly>
+                                                </div>
                                             </div>
-                                            <input type="text" class="form-control"
-                                                [value]="(employee.ResignedOn | date:'dd/MM/yyyy') || 'Not specified'"
-                                                readonly>
                                         </div>
                                     </div>
-                                </div>
-
-                                <div class="col-md-6" *ngIf="employee.LastWorkingDay">
-                                    <div class="form-group">
-                                        <label>Last Working Day</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-calendar-clock"></i>
-                                                </span>
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Department</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="mdi mdi-office-building"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control" *ngIf="employee"
+                                                        [value]="GetDepartmentName(employee.DepartmentId ?? 0)" readonly>
+                                                </div>
                                             </div>
-                                            <input type="text" class="form-control"
-                                                [value]="(employee.LastWorkingDay | date:'dd/MM/yyyy') || 'Not specified'"
-                                                readonly>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <!-- Compensation Information Section -->
-                            <div class="section-header mb-3">
-                                <h5 class="text-primary mb-0">
-                                    <i class="mdi mdi-currency-inr"></i> Compensation Information
-                                </h5>
-                            </div>
-
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Offer Price</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-currency-inr"></i>
-                                                </span>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Role</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="mdi mdi-shield-account"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control" *ngIf="employee"
+                                                        [value]="GetRoleName(employee.RoleId ?? 0)" readonly>
+                                                </div>
                                             </div>
-                                            <input type="text" class="form-control"
-                                                [value]="(employee.OfferPrice | currency:'INR') || 'Not specified'"
-                                                readonly>
                                         </div>
-                                    </div>
-                                </div>
 
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Current Price</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-currency-inr"></i>
-                                                </span>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Designation</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="mdi mdi-briefcase-account"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control" *ngIf="employee"
+                                                        [value]="GetDesignationName(employee.DesignationId ?? 0)" readonly>
+                                                </div>
                                             </div>
-                                            <input type="text" class="form-control"
-                                                [value]="(employee.CurrentPrice | currency:'INR') || 'Not specified'"
-                                                readonly>
                                         </div>
-                                    </div>
-                                </div>
 
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Joining Bonus</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-currency-inr"></i>
-                                                </span>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Started On</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="mdi mdi-calendar-start"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control"
+                                                        [value]="(employee.StartedOn | date:'dd/MM/yyyy') || 'Not specified'"
+                                                        readonly>
+                                                </div>
                                             </div>
-                                            <input type="text" class="form-control"
-                                                [value]="(employee.JoiningBonus | currency:'INR') || 'Not specified'"
-                                                readonly>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <!-- Offer Information Section -->
-                            <div class="section-header mb-3">
-                                <h5 class="text-primary mb-0">
-                                    <i class="mdi mdi-file-document"></i> Offer Information
-                                </h5>
-                            </div>
-
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Offer Released On</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-calendar-today"></i>
-                                                </span>
+                                        <div class="col-md-6" *ngIf="employee.EndedOn">
+                                            <div class="form-group">
+                                                <label>Ended On</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="mdi mdi-calendar-end"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control"
+                                                        [value]="(employee.EndedOn | date:'dd/MM/yyyy') || 'Not specified'"
+                                                        readonly>
+                                                </div>
                                             </div>
-                                            <input type="text" class="form-control"
-                                                [value]="(employee.OfferRelesedOn | date:'dd/MM/yyyy') || 'Not specified'"
-                                                readonly>
                                         </div>
-                                    </div>
-                                </div>
 
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Offer Accepted On</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="mdi mdi-calendar-check"></i>
-                                                </span>
+                                        <div class="col-md-6" *ngIf="employee.ResignedOn">
+                                            <div class="form-group">
+                                                <label>Resigned On</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="mdi mdi-calendar-remove"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control"
+                                                        [value]="(employee.ResignedOn | date:'dd/MM/yyyy') || 'Not specified'"
+                                                        readonly>
+                                                </div>
                                             </div>
-                                            <input type="text" class="form-control"
-                                                [value]="(employee.OfferAcceptedOn | date:'dd/MM/yyyy') || 'Not specified'"
-                                                readonly>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <!-- Additional Sections -->
-                            <div class="row mt-4">
-                                <div class="col-md-6 mb-3 mb-md-0">
-                                    <div class="card border">
-                                        <div class="card-body text-center py-4">
-                                            <i class="mdi mdi-school text-muted mb-2" style="font-size: 2rem;"></i>
-                                            <h6 class="text-muted">Education Details</h6>
-                                            <small class="text-muted">Education information will be added here</small>
+                                        <div class="col-md-6" *ngIf="employee.LastWorkingDay">
+                                            <div class="form-group">
+                                                <label>Last Working Day</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="mdi mdi-calendar-clock"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control"
+                                                        [value]="(employee.LastWorkingDay | date:'dd/MM/yyyy') || 'Not specified'"
+                                                        readonly>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="card border">
-                                        <div class="card-body text-center py-4">
-                                            <i class="mdi mdi-account-multiple text-muted mb-2"
-                                                style="font-size: 2rem;"></i>
-                                            <h6 class="text-muted">Additional Contacts</h6>
-                                            <small class="text-muted">Additional contacts will be added here</small>
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Offer Price</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="mdi mdi-currency-inr"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control"
+                                                        [value]="(employee.OfferPrice | currency:'INR') || 'Not specified'"
+                                                        readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Current Price</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="mdi mdi-currency-inr"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control"
+                                                        [value]="(employee.CurrentPrice | currency:'INR') || 'Not specified'"
+                                                        readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Joining Bonus</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="mdi mdi-currency-inr"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control"
+                                                        [value]="(employee.JoiningBonus | currency:'INR') || 'Not specified'"
+                                                        readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Offer Released On</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="mdi mdi-calendar-today"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control"
+                                                        [value]="(employee.OfferRelesedOn | date:'dd/MM/yyyy') || 'Not specified'"
+                                                        readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Offer Accepted On</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="mdi mdi-calendar-check"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control"
+                                                        [value]="(employee.OfferAcceptedOn | date:'dd/MM/yyyy') || 'Not specified'"
+                                                        readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Additional Sections -->
+                                    <div class="row mt-4">
+                                        <div class="col-md-6 mb-3 mb-md-0">
+                                            <div class="card border">
+                                                <div class="card-body text-center py-4">
+                                                    <i class="mdi mdi-school text-muted mb-2"
+                                                        style="font-size: 2rem;"></i>
+                                                    <h6 class="text-muted">Education Details</h6>
+                                                    <small class="text-muted">Education information will be added
+                                                        here</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card border">
+                                                <div class="card-body text-center py-4">
+                                                    <i class="mdi mdi-account-multiple text-muted mb-2"
+                                                        style="font-size: 2rem;"></i>
+                                                    <h6 class="text-muted">Additional Contacts</h6>
+                                                    <small class="text-muted">Additional contacts will be added
+                                                        here</small>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="card-footer">
-                    <button class="btn btn-primary">
-                        <i class="mdi" [class.mdi-content-save]="!employee?.EmployeeId"
-                            [class.mdi-pencil]="employee?.EmployeeId"></i>
-                       edit
-                    </button>
+
                 </div>
             </div>
         </div>
@@ -458,7 +426,7 @@
 </div>
 
 <!-- Edit Form -->
-<app-employees-create *ngIf="showEditForm" [isVisible]="showEditForm" [employee]="employee" [departments]="departments"
-    [roles]="roles" [designations]="designations" (saveEmployee)="onEmployeeUpdated($event)"
+<app-employees-create *ngIf="showEditForm" [isVisible]="showEditForm" [employee]="selectedEmployee"
+    [departments]="departments" [roles]="roles" [designations]="designations" (saveEmployee)="onEmployeeUpdated($event)"
     (closeSidebar)="closeEditForm()">
 </app-employees-create>
