@@ -1,15 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, OnDestroy, OnInit, Input } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
-import { 
-  AllCommunityModule, 
-  ColDef, 
-  GridApi, 
-  GridOptions, 
-  GridReadyEvent, 
-  ICellRendererParams, 
-  ModuleRegistry, 
-  ValueFormatterParams 
+import {
+  AllCommunityModule,
+  ColDef,
+  GridApi,
+  GridOptions,
+  GridReadyEvent,
+  ICellRendererParams,
+  ModuleRegistry,
+  ValueFormatterParams
 } from 'ag-grid-community';
 import { EmployeeEducation } from '../../../models/employee_education';
 import { ActionsRendererComponent } from '../../../../common/components/actions-renderer.component';
@@ -18,6 +18,7 @@ import { EmployeeEducationService } from '../../../services/employee_education.s
 import { LoaderService } from '../../../../common/services/loader.service';
 import { ToastrService } from 'ngx-toastr';
 import { EmployeesEducationAddComponent } from './employees-education-add.component';
+import { AuditFieldsService } from '../../../../common/services/auditfields.service';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -56,7 +57,7 @@ export class EmployeesEducationListComponent implements OnInit, OnDestroy {
       sortable: true
     },
     {
-      field: 'FieldOfStudy',
+      field: 'FeildOfStudy',
       headerName: 'Field Of Study',
       width: 150,
       filter: 'agTextColumnFilter',
@@ -123,12 +124,6 @@ export class EmployeesEducationListComponent implements OnInit, OnDestroy {
       width: 120
     },
     {
-      field: 'YearOfCompletion',
-      headerName: 'Year',
-      width: 80,
-      cellClass: 'text-center'
-    },
-    {
       field: 'Actions',
       headerName: '',
       width: 80,
@@ -143,7 +138,7 @@ export class EmployeesEducationListComponent implements OnInit, OnDestroy {
   ];
 
   columnDefs: ColDef[] = [];
-  
+
   defaultColDef: ColDef = {
     flex: 1,
     minWidth: 100,
@@ -167,8 +162,9 @@ export class EmployeesEducationListComponent implements OnInit, OnDestroy {
   constructor(
     private employeeEducationService: EmployeeEducationService,
     private loader: LoaderService,
-    private notify: ToastrService
-  ) {}
+    private notify: ToastrService,
+    private audit: AuditFieldsService
+  ) { }
 
   ngOnDestroy(): void {
     window.removeEventListener('resize', this.onResize.bind(this));
@@ -198,7 +194,7 @@ export class EmployeesEducationListComponent implements OnInit, OnDestroy {
       this.columnDefs = [...this.desktopColumnDefs];
       this.educationGridOptions.domLayout = 'normal';
     }
-    
+
     if (this.educationGridApi) {
       this.refreshGridColumns();
     }
@@ -215,7 +211,7 @@ export class EmployeesEducationListComponent implements OnInit, OnDestroy {
 
   loadEducationData(): void {
     if (!this.employeeId) return;
-    
+
     this.loader.show();
     this.employeeEducationService.getEmployeeEducationsListAsync(this.employeeId).subscribe({
       next: (employeeEducations: EmployeeEducation[]) => {
@@ -285,27 +281,30 @@ export class EmployeesEducationListComponent implements OnInit, OnDestroy {
 
   onSaveEducation(education: EmployeeEducation): void {
     this.loader.show();
-    
+
     // Set employee ID if it's a new education
     if (!education.EmployeeEducationId && this.employeeId) {
       education.EmployeeId = this.employeeId;
     }
 
-    // this.employeeEducationService.insertOrUpdateEmployeeEducation(education).subscribe({
-    //   next: (response) => {
-    //     if (response) {
-    //       this.notify.success('Education saved successfully');
-    //       this.showEducationForm = false;
-    //       this.selectedEducation = null;
-    //       this.loadEducationData();
-    //     }
-    //   },
-    //   error: (error) => {
-    //     console.error('Error saving education:', error);
-    //     this.notify.error('Failed to save education');
-    //     this.loader.hide();
-    //   }
-    // });
+    const _education = this.audit.appendAuditFields(education);
+
+
+    this.employeeEducationService.insertOrUpdateEmployeeEducationAsync(_education).subscribe({
+      next: (response) => {
+        if (response) {
+          this.notify.success('Education saved successfully');
+          this.showEducationForm = false;
+          this.selectedEducation = null;
+          this.loadEducationData();
+        }
+      },
+      error: (error) => {
+        console.error('Error saving education:', error);
+        this.notify.error('Failed to save education');
+        this.loader.hide();
+      }
+    });
   }
 
   getTotalRowsCount(): number {

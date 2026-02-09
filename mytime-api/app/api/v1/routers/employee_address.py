@@ -7,7 +7,7 @@ from app.schemas.employee_address_schemas import (
     EmployeeAddressListResponse, EmployeeAddressExistsResponse,
     EmployeeAddressDeleteResponse, EmployeeAddressCreateResponse,
     EmployeeAddressUpdateResponse, EmployeeAddressBulkCreate,
-    EmployeeAddressFilterParams, EmployeeAddressWithDetailsResponse
+    EmployeeAddressFilterParams
 )
 from app.core.database import get_db
 from app.services.employee_address_service import EmployeeAddressService

@@ -1,17 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { 
-  Component, 
-  Input, 
-  Output, 
-  EventEmitter, 
-  OnChanges, 
-  SimpleChanges 
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnChanges,
+  SimpleChanges
 } from '@angular/core';
-import { 
-  ReactiveFormsModule, 
-  FormBuilder, 
-  FormGroup, 
-  Validators 
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators
 } from '@angular/forms';
 import { EmployeeEducation } from '../../../models/employee_education';
 
@@ -30,7 +30,7 @@ export class EmployeesEducationAddComponent implements OnChanges {
 
   currentYear = new Date().getFullYear();
   years: number[] = [];
-  
+
   educationForm: FormGroup;
 
   degrees = [
@@ -100,13 +100,13 @@ export class EmployeesEducationAddComponent implements OnChanges {
   constructor(private fb: FormBuilder) {
     this.educationForm = this.fb.group({
       Degree: ['', Validators.required],
-      FieldOfStudy: [''],
-      Institution: [''],
-      YearOfCompletion: [''],
+      FeildOfStudy: ['', Validators.required],
+      Institution: ['', Validators.required],
+      YearOfCompletion: ['', Validators.required],
       PercentageMarks: ['', [Validators.min(0), Validators.max(100)]],
       IsActive: [true]
     });
-    
+
     this.generateYears();
   }
 
@@ -125,11 +125,24 @@ export class EmployeesEducationAddComponent implements OnChanges {
 
   private initializeForm(): void {
     if (this.education) {
+      // Convert YearOfCompletion from datetime to just year if it's a date
+      let yearOfCompletion = '';
+      if (this.education.YearOfCompletion) {
+        try {
+          const date = new Date(this.education.YearOfCompletion);
+          if (!isNaN(date.getTime())) {
+            yearOfCompletion = date.getFullYear().toString();
+          }
+        } catch (e) {
+          console.error('Error parsing YearOfCompletion:', e);
+        }
+      }
+
       this.educationForm.patchValue({
         Degree: this.education.Degree || '',
-        FieldOfStudy: this.education.FieldOfStudy || '',
+        FeildOfStudy: this.education.FeildOfStudy || '',
         Institution: this.education.Institution || '',
-        YearOfCompletion: this.education.YearOfCompletion || '',
+        YearOfCompletion: yearOfCompletion || this.education.YearOfCompletion || '',
         PercentageMarks: this.education.PercentageMarks || '',
         IsActive: this.education.IsActive !== undefined ? this.education.IsActive : true
       });
@@ -142,9 +155,22 @@ export class EmployeesEducationAddComponent implements OnChanges {
 
   onSubmit(): void {
     if (this.educationForm.valid) {
+      const formValue = this.educationForm.value;
+      
+      // Convert YearOfCompletion from year string to datetime
+      let yearOfCompletion: Date | null = null;
+      if (formValue.YearOfCompletion) {
+        const year = parseInt(formValue.YearOfCompletion, 10);
+        if (!isNaN(year) && year >= 1900 && year <= 2100) {
+          // Create a date object for January 1st of that year
+          yearOfCompletion = new Date(year, 0, 1); // Month is 0-indexed, so 0 = January
+        }
+      }
+
       const educationData: EmployeeEducation = {
         ...this.education,
-        ...this.educationForm.value,
+        ...formValue,
+        YearOfCompletion: yearOfCompletion,
         EmployeeEducationId: this.education?.EmployeeEducationId || 0
       };
       
