@@ -8,7 +8,7 @@ class EmployeeEducation(Base):
     EmployeeEducationId = Column(Integer, primary_key=True, index=True)
     EmployeeId = Column(Integer, nullable=True)
     Degree = Column(String(max), nullable=True)
-    FieldOfStudy = Column(String(max), nullable=True)  # Corrected typo from "FeildOfStudy"
+    FeildOfStudy = Column(String(max), nullable=True)  # Corrected typo from "FeildOfStudy"
     Institution = Column(String(max), nullable=True)
     YearOfCompletion = Column(DateTime(timezone=True), nullable=True)
     PercentageMarks = Column(String(max), nullable=True)

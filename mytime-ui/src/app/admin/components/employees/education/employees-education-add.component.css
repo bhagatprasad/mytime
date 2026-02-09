@@ -1,0 +1,575 @@
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1040;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Show overlay when sidebar is visible */
+.sidebar.visible ~ .sidebar-overlay {
+    opacity: 1;
+    visibility: visible;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: -500px;
+    width: 500px;
+    height: 100vh;
+    background-color: white;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.15);
+    z-index: 1050;
+    transition: right 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar.visible {
+    right: 0;
+}
+
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    min-height: 70px;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.sidebar-title {
+    margin: 0;
+    font-weight: 600;
+    color: #343a40;
+    font-size: 1.25rem;
+    line-height: 1.2;
+}
+
+.close {
+    background: transparent;
+    border: none;
+    font-size: 1.75rem;
+    line-height: 1;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.close:hover {
+    color: #343a40;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-body {
+    padding: 25px;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    flex: 1;
+    min-height: min-content;
+}
+
+.form-group {
+    margin-bottom: 0;
+    width: 100%;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.375rem;
+    font-weight: 500;
+    color: #495057;
+    font-size: 0.95rem;
+    line-height: 1.2;
+}
+
+.input-group {
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #ced4da;
+    transition: all 0.2s ease;
+    display: flex;
+    width: 100%;
+    min-height: 48px;
+}
+
+.input-group:focus-within {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.input-group-prepend {
+    display: flex;
+}
+
+.input-group-text {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background-color: #e9ecef;
+    border: none;
+    border-right: 1px solid #ced4da;
+    color: #495057;
+    min-width: 48px;
+    justify-content: center;
+}
+
+.input-group-text i {
+    font-size: 1.25rem;
+    color: #6c757d;
+}
+
+.form-control {
+    border: none;
+    border-radius: 0;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    color: #495057;
+    background-color: white;
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    min-height: 46px;
+    box-sizing: border-box;
+    line-height: 1.5;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+.form-control::placeholder {
+    color: #6c757d;
+    opacity: 0.7;
+}
+
+/* Make selects and date inputs consistent height */
+select.form-control,
+input[type="date"].form-control {
+    height: 46px;
+    line-height: 1.5;
+}
+
+.sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid #dee2e6;
+    text-align: right;
+    flex-shrink: 0;
+    min-height: 80px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    background-color: white;
+}
+
+.btn-primary {
+    padding: 0.625rem 1.75rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    background-color: #007bff;
+    border-color: #007bff;
+    min-width: 100px;
+    min-height: 45px;
+    justify-content: center;
+    box-sizing: border-box;
+    flex: 1;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.25);
+}
+
+.btn-primary i {
+    font-size: 1.1rem;
+}
+
+.btn-secondary {
+    min-height: 45px;
+    padding: 0.625rem 1.75rem;
+    box-sizing: border-box;
+}
+
+/* Hide cancel button on mobile */
+.desktop-only {
+    display: none;
+}
+
+/* ========== MOBILE OPTIMIZATION ========== */
+@media (max-width: 767px) {
+    .sidebar {
+        width: 100% !important;
+        right: -100% !important;
+        height: 100%;
+    }
+    
+    .sidebar.visible {
+        right: 0 !important;
+    }
+    
+    /* Compact header */
+    .sidebar-header {
+        padding: 12px 15px;
+        min-height: 60px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    .sidebar-title {
+        font-size: 1.1rem;
+    }
+    
+    .close {
+        width: 36px;
+        height: 36px;
+        font-size: 1.5rem;
+    }
+    
+    /* Compact body with scroll */
+    .sidebar-body {
+        padding: 15px;
+        padding-bottom: 20px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        flex: 1;
+        min-height: 0;
+    }
+    
+    .form-container {
+        gap: 1rem;
+    }
+    
+    /* Compact form labels */
+    .form-group label {
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+        line-height: 1.2;
+    }
+    
+    /* Compact input groups */
+    .input-group {
+        min-height: 42px;
+        border-radius: 5px;
+    }
+    
+    .input-group-text {
+        padding: 0.5rem 0.75rem;
+        min-width: 42px;
+    }
+    
+    .input-group-text i {
+        font-size: 1.1rem;
+    }
+    
+    /* Compact form controls */
+    .form-control {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.95rem;
+        min-height: 40px;
+        line-height: 1.4;
+    }
+    
+    select.form-control,
+    input[type="date"].form-control {
+        height: 40px;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    
+    /* Compact footer - mobile has only submit button */
+    .sidebar-footer {
+        padding: 12px 15px;
+        min-height: 70px;
+        gap: 0;
+        position: sticky;
+        bottom: 0;
+        background-color: white;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+    }
+    
+    .btn-primary {
+        padding: 0.5rem 1.25rem;
+        min-height: 42px;
+        font-size: 0.95rem;
+        flex: 1;
+        min-width: 0;
+        width: 100%;
+    }
+    
+    .btn-secondary {
+        display: none !important; /* Hide cancel button on mobile */
+    }
+    
+    .text-danger {
+        font-size: 0.8rem;
+        margin-top: 0.2rem;
+        line-height: 1.2;
+    }
+}
+
+/* Extra small mobile devices (≤ 480px) */
+@media (max-width: 480px) {
+    .sidebar-header {
+        padding: 10px 12px;
+        min-height: 56px;
+    }
+    
+    .sidebar-title {
+        font-size: 1rem;
+    }
+    
+    .close {
+        width: 32px;
+        height: 32px;
+        font-size: 1.4rem;
+    }
+    
+    .sidebar-body {
+        padding: 12px;
+        padding-bottom: 15px;
+    }
+    
+    .form-container {
+        gap: 0.875rem;
+    }
+    
+    .form-group label {
+        font-size: 0.85rem;
+    }
+    
+    .input-group {
+        min-height: 40px;
+    }
+    
+    .input-group-text {
+        padding: 0.375rem 0.625rem;
+        min-width: 40px;
+    }
+    
+    .input-group-text i {
+        font-size: 1rem;
+    }
+    
+    .form-control {
+        padding: 0.375rem 0.625rem;
+        font-size: 0.9rem;
+        min-height: 38px;
+    }
+    
+    select.form-control,
+    input[type="date"].form-control {
+        height: 38px;
+    }
+    
+    .sidebar-footer {
+        padding: 10px 12px;
+        min-height: 65px;
+    }
+    
+    .btn-primary {
+        padding: 0.375rem 1rem;
+        min-height: 40px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Mobile Landscape Optimization */
+@media (max-width: 767px) and (orientation: landscape) {
+    .sidebar-body {
+        max-height: calc(100vh - 120px);
+        overflow-y: auto;
+    }
+    
+    .form-container {
+        gap: 0.75rem;
+    }
+    
+    .input-group {
+        min-height: 38px;
+    }
+    
+    .form-control {
+        min-height: 36px;
+        padding: 0.375rem 0.625rem;
+    }
+    
+    .input-group-text {
+        min-height: 36px;
+        padding: 0.375rem 0.625rem;
+    }
+}
+
+/* ========== DESKTOP LAYOUT ========== */
+@media (min-width: 768px) {
+    .desktop-only {
+        display: inline-flex !important; /* Show cancel button on desktop */
+    }
+    
+    .sidebar {
+        width: 800px;
+        right: -800px;
+    }
+    
+    .sidebar-body {
+        padding: 25px;
+    }
+    
+    .form-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+    
+    .form-group {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* Keep desktop input heights comfortable */
+    .input-group {
+        min-height: 48px;
+    }
+    
+    .form-control {
+        min-height: 46px;
+    }
+    
+    select.form-control,
+    input[type="date"].form-control {
+        height: 46px;
+    }
+    
+    /* Desktop footer - show both buttons */
+    .sidebar-footer {
+        justify-content: flex-end;
+    }
+    
+    .btn-primary {
+        flex: 0 0 auto;
+        min-width: 100px;
+    }
+    
+    .btn-secondary {
+        display: inline-flex;
+    }
+}
+
+/* Tablet Layout (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+    .sidebar {
+        width: 600px;
+        right: -600px;
+    }
+    
+    .sidebar-body {
+        padding: 20px;
+    }
+    
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    /* Slightly more compact than desktop but still comfortable */
+    .input-group {
+        min-height: 46px;
+    }
+    
+    .form-control {
+        min-height: 44px;
+    }
+}
+
+/* Fix scrollbar styling */
+.sidebar-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.sidebar-body::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.sidebar-body::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Ensure proper spacing for validation messages */
+.text-danger {
+    display: block;
+    overflow: hidden;
+    word-wrap: break-word;
+    min-height: 1.2em;
+}
+
+/* Fix for iOS Safari 100vh issue */
+@supports (-webkit-touch-callout: none) {
+    .sidebar {
+        height: -webkit-fill-available;
+        max-height: 100%;
+    }
+}
+
+/* Remove unnecessary modal classes */
+.modal-header, .modal-footer, .modal-body, .modal-backdrop.show {
+    display: none;
+}
+
+/* Fix for input focus on iOS */
+@media (max-width: 767px) {
+    .form-control:focus,
+    select.form-control:focus {
+        font-size: 16px;
+    }
+    
+    /* Remove tap highlight on mobile */
+    .form-control,
+    .btn-primary,
+    .close {
+        -webkit-tap-highlight-color: transparent;
+    }
+}

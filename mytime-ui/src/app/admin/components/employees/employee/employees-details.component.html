@@ -206,7 +206,8 @@
                                                         </span>
                                                     </div>
                                                     <input type="text" class="form-control" *ngIf="employee"
-                                                        [value]="GetDepartmentName(employee.DepartmentId ?? 0)" readonly>
+                                                        [value]="GetDepartmentName(employee.DepartmentId ?? 0)"
+                                                        readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -236,7 +237,8 @@
                                                         </span>
                                                     </div>
                                                     <input type="text" class="form-control" *ngIf="employee"
-                                                        [value]="GetDesignationName(employee.DesignationId ?? 0)" readonly>
+                                                        [value]="GetDesignationName(employee.DesignationId ?? 0)"
+                                                        readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -418,7 +420,11 @@
                             </div>
                         </div>
                     </div>
-
+                    <div class="card">
+                        <!-- Edit Form -->
+                        <app-employees-education-list [employeeId]="employeeId">
+                        </app-employees-education-list>
+                    </div>
                 </div>
             </div>
         </div>
