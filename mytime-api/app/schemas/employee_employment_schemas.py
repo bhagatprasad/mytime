@@ -1,5 +1,5 @@
-from pydantic import BaseModel, Field, ConfigDict
-from typing import Dict, Optional, List
+from pydantic import BaseModel, Field, ConfigDict, field_validator
+from typing import Dict, Optional, List, Any
 from datetime import datetime
 
 
@@ -13,8 +13,13 @@ class EmployeeEmploymentBase(BaseModel):
     EndedOn: Optional[datetime] = Field(None, description="Employment end date")
     Reason: Optional[str] = Field(None, max_length=1000, description="Reason for leaving")
     ReportingManager: Optional[str] = Field(None, max_length=255, description="Reporting manager name")
-    HREmail: Optional[str] = Field(None, description="HR email at previous company")
-    Reference: Optional[str] = Field(None, max_length=1000, description="Reference details")
+    HREmail: Optional[str] = Field(None, max_length=255, description="HR email at previous company")
+    Referance: Optional[str] = Field(None, max_length=1000, description="Reference details")  # NOTE: Spelled as "Referance"
+
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True
+    )
 
 
 class EmployeeEmploymentCreate(EmployeeEmploymentBase):
@@ -32,10 +37,15 @@ class EmployeeEmploymentUpdate(BaseModel):
     EndedOn: Optional[datetime] = Field(None, description="Employment end date")
     Reason: Optional[str] = Field(None, max_length=1000, description="Reason for leaving")
     ReportingManager: Optional[str] = Field(None, max_length=255, description="Reporting manager name")
-    HREmail: Optional[str] = Field(None, description="HR email at previous company")
-    Reference: Optional[str] = Field(None, max_length=1000, description="Reference details")
+    HREmail: Optional[str] = Field(None, max_length=255, description="HR email at previous company")
+    Referance: Optional[str] = Field(None, max_length=1000, description="Reference details")  # NOTE: Spelled as "Referance"
     ModifiedBy: Optional[int] = Field(None, description="User ID who last modified the record")
     IsActive: Optional[bool] = Field(None, description="Whether the employment record is active")
+
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True
+    )
 
 
 class EmployeeEmploymentResponse(BaseModel):
@@ -50,14 +60,17 @@ class EmployeeEmploymentResponse(BaseModel):
     Reason: Optional[str] = None
     ReportingManager: Optional[str] = None
     HREmail: Optional[str] = None
-    Reference: Optional[str] = None
+    Referance: Optional[str] = None  # NOTE: Spelled as "Referance"
     CreatedBy: Optional[int] = None
     CreatedOn: Optional[datetime] = None
     ModifiedBy: Optional[int] = None
     ModifiedOn: Optional[datetime] = None
     IsActive: Optional[bool] = None
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True
+    )
 
 
 class EmployeeEmploymentListResponse(BaseModel):
@@ -87,11 +100,13 @@ class EmployeeEmploymentWithDetailsResponse(EmployeeEmploymentResponse):
     employee_name: Optional[str] = None
     duration_months: Optional[int] = Field(None, description="Employment duration in months")
 
+
 class EmployeeEmploymentCreateResponse(BaseModel):
     """Response after creating a new employee employment record"""
     success: bool
     message: str = "Employee employment record created successfully"
     employee_employment_id: int
+    employment: Optional[EmployeeEmploymentResponse] = None
 
 
 class EmployeeEmploymentUpdateResponse(BaseModel):
@@ -100,6 +115,7 @@ class EmployeeEmploymentUpdateResponse(BaseModel):
     message: str = "Employee employment record updated successfully"
     employee_employment_id: int
     modified_fields: List[str] = Field(default_factory=list)
+    employment: Optional[EmployeeEmploymentResponse] = None
 
 
 class EmployeeEmploymentBulkCreate(BaseModel):
@@ -119,7 +135,6 @@ class EmployeeEmploymentFilterParams(BaseModel):
     end_year_to: Optional[int] = Field(None, ge=1900, le=2100, description="End year to")
     is_active: Optional[bool] = None
     search_term: Optional[str] = None
-
 
 class EmployeeEmploymentStatistics(BaseModel):
     """Schema for employment statistics"""

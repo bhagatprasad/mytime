@@ -44,7 +44,7 @@
             <span class="input-group-text">
               <i class="mdi mdi-book-open-page-variant"></i>
             </span>
-            <select class="form-control" formControlName="FieldOfStudy">
+            <select class="form-control" formControlName="FeildOfStudy">
               <option value="">Select Field of Study</option>
               <option *ngFor="let field of fieldOfStudies" [value]="field.code">
                 {{ field.name }}
@@ -103,16 +103,6 @@
           <div *ngIf="educationForm.get('PercentageMarks')?.invalid && educationForm.get('PercentageMarks')?.touched"
                class="text-danger small">
             Percentage must be between 0 and 100
-          </div>
-        </div>
-
-        <!-- Active Status -->
-        <div class="form-group mb-3">
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" formControlName="IsActive" id="isActive">
-            <label class="form-check-label" for="isActive">
-              Active Status
-            </label>
           </div>
         </div>
       </div>

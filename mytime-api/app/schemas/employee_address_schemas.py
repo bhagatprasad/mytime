@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, field_validator
 from typing import Optional, List
 from datetime import datetime
 
@@ -6,14 +6,19 @@ from datetime import datetime
 class EmployeeAddressBase(BaseModel):
     """Base schema for EmployeeAddress data"""
     EmployeeId: int = Field(..., description="Foreign key to Employee table")
-    HNo: Optional[str] = Field(None, max_length=100, description="House number")
-    AddressLineOne: str = Field(..., max_length=500, description="Address line 1")
-    AddressLineTwo: Optional[str] = Field(None, max_length=500, description="Address line 2")
-    Landmark: Optional[str] = Field(None, max_length=255, description="Landmark")
+    HNo: Optional[str] = Field(None, max_length=500, description="House number")
+    AddressLineOne: str = Field(..., max_length=2000, description="Address line 1")
+    AddressLineTwo: Optional[str] = Field(None, max_length=2000, description="Address line 2")
+    Landmark: Optional[str] = Field(None, max_length=1000, description="Landmark")
     CityId: Optional[int] = Field(None, description="Foreign key to City table")
     StateId: Optional[int] = Field(None, description="Foreign key to State table")
     CountryId: Optional[int] = Field(None, description="Foreign key to Country table")
-    Zipcode: Optional[str] = Field(None, max_length=20, description="Postal/ZIP code")
+    Zipcode: Optional[str] = Field(None, max_length=50, description="Postal/ZIP code")
+
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True
+    )
 
 
 class EmployeeAddressCreate(EmployeeAddressBase):
@@ -24,16 +29,21 @@ class EmployeeAddressCreate(EmployeeAddressBase):
 
 class EmployeeAddressUpdate(BaseModel):
     """Schema for updating an existing EmployeeAddress"""
-    HNo: Optional[str] = Field(None, max_length=100, description="House number")
-    AddressLineOne: Optional[str] = Field(None, max_length=500, description="Address line 1")
-    AddressLineTwo: Optional[str] = Field(None, max_length=500, description="Address line 2")
-    Landmark: Optional[str] = Field(None, max_length=255, description="Landmark")
+    HNo: Optional[str] = Field(None, max_length=500, description="House number")
+    AddressLineOne: Optional[str] = Field(None, max_length=2000, description="Address line 1")
+    AddressLineTwo: Optional[str] = Field(None, max_length=2000, description="Address line 2")
+    Landmark: Optional[str] = Field(None, max_length=1000, description="Landmark")
     CityId: Optional[int] = Field(None, description="Foreign key to City table")
     StateId: Optional[int] = Field(None, description="Foreign key to State table")
     CountryId: Optional[int] = Field(None, description="Foreign key to Country table")
-    Zipcode: Optional[str] = Field(None, max_length=20, description="Postal/ZIP code")
+    Zipcode: Optional[str] = Field(None, max_length=50, description="Postal/ZIP code")
     ModifiedBy: Optional[int] = Field(None, description="User ID who last modified the record")
     IsActive: Optional[bool] = Field(None, description="Whether the address is active")
+
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True
+    )
 
 
 class EmployeeAddressResponse(BaseModel):
@@ -54,7 +64,10 @@ class EmployeeAddressResponse(BaseModel):
     ModifiedOn: Optional[datetime] = None
     IsActive: Optional[bool] = None
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True
+    )
 
 
 class EmployeeAddressListResponse(BaseModel):
@@ -92,6 +105,7 @@ class EmployeeAddressCreateResponse(BaseModel):
     success: bool
     message: str = "Employee address created successfully"
     employee_address_id: int
+    address: Optional[EmployeeAddressResponse] = None
 
 
 class EmployeeAddressUpdateResponse(BaseModel):
@@ -100,6 +114,7 @@ class EmployeeAddressUpdateResponse(BaseModel):
     message: str = "Employee address updated successfully"
     employee_address_id: int
     modified_fields: List[str] = Field(default_factory=list)
+    address: Optional[EmployeeAddressResponse] = None
 
 
 class EmployeeAddressBulkCreate(BaseModel):
@@ -116,3 +131,5 @@ class EmployeeAddressFilterParams(BaseModel):
     country_id: Optional[int] = None
     is_active: Optional[bool] = None
     search_term: Optional[str] = None
+    
+    model_config = ConfigDict(from_attributes=True)
