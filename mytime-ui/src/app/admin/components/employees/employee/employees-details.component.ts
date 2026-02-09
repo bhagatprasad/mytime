@@ -13,6 +13,7 @@ import { ToastrService } from 'ngx-toastr';
 
 // Components
 import { EmployeesCreateComponent } from './employees-create.component';
+import { EmployeesEducationListComponent } from '../education/employees-education-list.component';
 
 // Models
 import { Employee } from '../../../models/employee';
@@ -21,12 +22,15 @@ import { Designation } from '../../../models/designation';
 import { Role } from '../../../models/role';
 import { EmployeeDTO } from '../../../models/employee.dto';
 import { AuditFieldsService } from '../../../../common/services/auditfields.service';
-import { response } from 'express';
 
 @Component({
   selector: 'app-employees-details',
   standalone: true,
-  imports: [CommonModule, EmployeesCreateComponent],
+  imports: [
+    CommonModule, 
+    EmployeesCreateComponent, 
+    EmployeesEducationListComponent
+  ],
   providers: [DatePipe, CurrencyPipe],
   templateUrl: './employees-details.component.html',
   styleUrls: ['./employees-details.component.css']
@@ -40,9 +44,9 @@ export class EmployeesDetailsComponent implements OnInit {
   departments: Department[] = [];
   designations: Designation[] = [];
   roles: Role[] = [];
+  
   // UI State
   showEditForm = false;
-
   selectedEmployee: Employee | null = null;
 
   constructor(
@@ -105,27 +109,6 @@ export class EmployeesDetailsComponent implements OnInit {
     return (first + last).toUpperCase();
   }
 
-  formatDate(dateString: string | null | undefined): string {
-    if (!dateString) return 'Not specified';
-
-    try {
-      const date = new Date(dateString);
-      return this.datePipe.transform(date, 'dd/MM/yyyy') || dateString;
-    } catch {
-      return dateString;
-    }
-  }
-
-  formatCurrency(amount: number | null | undefined): string {
-    if (amount === null || amount === undefined) return 'Not specified';
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2
-    }).format(amount);
-  }
-
   // ========== UI ACTIONS ==========
   openEditForm(): void {
     this.selectedEmployee = this.employee;
@@ -134,34 +117,32 @@ export class EmployeesDetailsComponent implements OnInit {
 
   closeEditForm(): void {
     this.showEditForm = false;
+    this.selectedEmployee = null;
   }
 
   onEmployeeUpdated(updateEmployee: Employee): void {
     this.loaderService.show();
 
     const employeeDTO = this.convertEmployeeToDTO(updateEmployee);
+    const _employee = this.audit.appendAuditFields(employeeDTO);
 
-    var _employee = this.audit.appendAuditFields(employeeDTO);
-    console.log(_employee);
-
-
-    console.log(_employee);
-
-    this.employeeService.insertOrUpdateEmployee(_employee).subscribe(reponse => {
-      if (reponse) {
-        this.toastr.success("employee processed succeessfully");
-        this.showEditForm = false;
-        this.employee = reponse.employee;
-        this.selectedEmployee = this.employee;
+    this.employeeService.insertOrUpdateEmployee(_employee).subscribe({
+      next: (response) => {
+        if (response) {
+          this.toastr.success("Employee processed successfully");
+          this.showEditForm = false;
+          this.employee = response.employee;
+          this.selectedEmployee = this.employee;
+          this.loaderService.hide();
+        }
+      },
+      error: (error) => {
+        console.error('Error updating employee:', error);
+        this.toastr.error("Something went wrong, please check and resubmit");
         this.loaderService.hide();
       }
-    }, error => {
-      this.toastr.error("something went wrong , please check and resubmit");
-      this.showEditForm = true;
-      this.loaderService.hide();
     });
   }
-
 
   private convertEmployeeToDTO(employee: Employee): EmployeeDTO {
     return {
@@ -177,6 +158,7 @@ export class EmployeesDetailsComponent implements OnInit {
       ModifiedOn: this.parseDateString(employee.ModifiedOn)
     };
   }
+
   private parseDateString(dateString: string | null | undefined): Date | null {
     if (!dateString || dateString.trim() === '') {
       return null;
@@ -185,8 +167,9 @@ export class EmployeesDetailsComponent implements OnInit {
     const date = new Date(dateString);
     return isNaN(date.getTime()) ? null : date;
   }
+
   goBack(): void {
-    this.router.navigate(['/admin/employees']);;
+    this.router.navigate(['/admin/employees']);
   }
 
   GetRoleName(roleId: any): string {
@@ -195,14 +178,16 @@ export class EmployeesDetailsComponent implements OnInit {
     const role = this.roles?.find(x => x.Id === roleId);
     return role ? role.Name : "Not specified";
   }
+
   GetDesignationName(designationId: any): string {
     if (!designationId || designationId <= 0) return "Not specified";
 
     const designation = this.designations?.find(x => x.DesignationId === designationId);
     return designation ? designation.Name : "Not specified";
   }
+
   GetDepartmentName(departmentId: any): string {
- if (!departmentId || departmentId <= 0) return "Not specified";
+    if (!departmentId || departmentId <= 0) return "Not specified";
 
     const department = this.departments?.find(x => x.DepartmentId === departmentId);
     return department ? department.Name : "Not specified";

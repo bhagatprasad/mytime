@@ -1,1 +1,137 @@
-<p>employees-education-add works!</p>
+<!-- Overlay -->
+<div class="sidebar-overlay" *ngIf="isVisible" (click)="onClose()"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" [class.visible]="isVisible">
+  <form [formGroup]="educationForm" (ngSubmit)="onSubmit()" novalidate>
+    <!-- Header -->
+    <div class="sidebar-header">
+      <h5 class="sidebar-title">
+        {{ education ? 'Edit Education' : 'Add Education' }}
+      </h5>
+      <button type="button" class="close" (click)="onClose()">
+        <span>&times;</span>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="sidebar-body">
+      <div class="form-container">
+        <!-- Degree -->
+        <div class="form-group mb-3">
+          <label class="form-label">Degree *</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="mdi mdi-school"></i>
+            </span>
+            <select class="form-control" formControlName="Degree">
+              <option value="">Select Degree</option>
+              <option *ngFor="let degree of degrees" [value]="degree.code">
+                {{ degree.name }}
+              </option>
+            </select>
+          </div>
+          <div *ngIf="educationForm.get('Degree')?.invalid && educationForm.get('Degree')?.touched" 
+               class="text-danger small">
+            Degree is required
+          </div>
+        </div>
+
+        <!-- Field of Study -->
+        <div class="form-group mb-3">
+          <label class="form-label">Field of Study</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="mdi mdi-book-open-page-variant"></i>
+            </span>
+            <select class="form-control" formControlName="FieldOfStudy">
+              <option value="">Select Field of Study</option>
+              <option *ngFor="let field of fieldOfStudies" [value]="field.code">
+                {{ field.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Institution -->
+        <div class="form-group mb-3">
+          <label class="form-label">Institution</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="mdi mdi-office-building"></i>
+            </span>
+            <select class="form-control" formControlName="Institution">
+              <option value="">Select Institution</option>
+              <option *ngFor="let institution of institutions" [value]="institution.code">
+                {{ institution.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Year of Completion -->
+        <div class="form-group mb-3">
+          <label class="form-label">Year of Completion</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="mdi mdi-calendar"></i>
+            </span>
+            <select class="form-control" formControlName="YearOfCompletion">
+              <option value="">Select Year</option>
+              <option *ngFor="let year of years" [value]="year">
+                {{ year }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Percentage Marks -->
+        <div class="form-group mb-3">
+          <label class="form-label">Percentage Marks</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="mdi mdi-percent"></i>
+            </span>
+            <input type="number" 
+                   step="0.01" 
+                   min="0" 
+                   max="100" 
+                   class="form-control" 
+                   formControlName="PercentageMarks"
+                   placeholder="Enter percentage">
+          </div>
+          <div *ngIf="educationForm.get('PercentageMarks')?.invalid && educationForm.get('PercentageMarks')?.touched"
+               class="text-danger small">
+            Percentage must be between 0 and 100
+          </div>
+        </div>
+
+        <!-- Active Status -->
+        <div class="form-group mb-3">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" formControlName="IsActive" id="isActive">
+            <label class="form-check-label" for="isActive">
+              Active Status
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="sidebar-footer">
+      <button type="submit" 
+              class="btn btn-primary" 
+              [disabled]="educationForm.invalid">
+        <i class="mdi mdi-content-save"></i>
+        {{ education ? 'Update' : 'Save' }}
+      </button>
+      <button type="button" 
+              class="btn btn-secondary ms-2" 
+              (click)="onClose()">
+        <i class="mdi mdi-close"></i>
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>
