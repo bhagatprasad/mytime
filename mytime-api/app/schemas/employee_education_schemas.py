@@ -7,7 +7,7 @@ class EmployeeEducationBase(BaseModel):
     """Base schema for EmployeeEducation data"""
     EmployeeId: int = Field(..., description="Foreign key to Employee table")
     Degree: str = Field(..., max_length=255, description="Degree/Qualification")
-    FieldOfStudy: str = Field(..., max_length=255, description="Field of study/Specialization")
+    FeildOfStudy: str = Field(..., max_length=255, description="Field of study/Specialization")
     Institution: str = Field(..., max_length=500, description="Educational institution")
     YearOfCompletion: Optional[datetime] = Field(None, description="Year of completion")
     PercentageMarks: Optional[str] = Field(None, max_length=50, description="Percentage/CGPA/Marks")
@@ -22,7 +22,7 @@ class EmployeeEducationCreate(EmployeeEducationBase):
 class EmployeeEducationUpdate(BaseModel):
     """Schema for updating an existing EmployeeEducation"""
     Degree: Optional[str] = Field(None, max_length=255, description="Degree/Qualification")
-    FieldOfStudy: Optional[str] = Field(None, max_length=255, description="Field of study/Specialization")
+    FeildOfStudy: Optional[str] = Field(None, max_length=255, description="Field of study/Specialization")
     Institution: Optional[str] = Field(None, max_length=500, description="Educational institution")
     YearOfCompletion: Optional[datetime] = Field(None, description="Year of completion")
     PercentageMarks: Optional[str] = Field(None, max_length=50, description="Percentage/CGPA/Marks")
@@ -35,7 +35,7 @@ class EmployeeEducationResponse(BaseModel):
     EmployeeEducationId: int
     EmployeeId: int
     Degree: str
-    FieldOfStudy: str
+    FeildOfStudy: str
     Institution: str
     YearOfCompletion: Optional[datetime] = None
     PercentageMarks: Optional[str] = None
