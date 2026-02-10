@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import or_, asc, desc, func, extract
+from sqlalchemy import or_, asc, desc, func
 from typing import Optional, List, Tuple, Dict, Any
 from datetime import datetime
 import logging
@@ -37,28 +37,167 @@ class EmployeeEducationService:
             return []
     
     @staticmethod
+    def get_employee_educations_with_pagination(
+        db: Session,
+        skip: int = 0,
+        limit: int = 100,
+        search: Optional[str] = None,
+        employee_id: Optional[int] = None,
+        degree: Optional[str] = None,
+        field_of_study: Optional[str] = None,
+        institution: Optional[str] = None,
+        year_from: Optional[int] = None,
+        year_to: Optional[int] = None,
+        is_active: Optional[bool] = None,
+        sort_by: str = "EmployeeEducationId",
+        sort_order: str = "desc"
+    ) -> Tuple[List[Any], int]:
+        """Get paginated employee education records with filtering and sorting"""
+        try:
+            from app.models.employee_education import EmployeeEducation
+            
+            query = db.query(EmployeeEducation)
+            
+            # Apply search filter
+            if search and search.strip():
+                search_term = f"%{search.strip()}%"
+                query = query.filter(
+                    or_(
+                        func.coalesce(EmployeeEducation.Degree, '').ilike(search_term),
+                        func.coalesce(EmployeeEducation.FeildOfStudy, '').ilike(search_term),
+                        func.coalesce(EmployeeEducation.Institution, '').ilike(search_term),
+                        func.coalesce(EmployeeEducation.PercentageMarks, '').ilike(search_term)
+                    )
+                )
+            
+            # Apply employee filter
+            if employee_id:
+                query = query.filter(EmployeeEducation.EmployeeId == employee_id)
+            
+            # Apply degree filter
+            if degree and degree.strip():
+                query = query.filter(func.lower(EmployeeEducation.Degree) == func.lower(degree.strip()))
+            
+            # Apply field of study filter (using FeildOfStudy)
+            if field_of_study and field_of_study.strip():
+                query = query.filter(func.lower(EmployeeEducation.FeildOfStudy) == func.lower(field_of_study.strip()))
+            
+            # Apply institution filter
+            if institution and institution.strip():
+                query = query.filter(func.lower(EmployeeEducation.Institution) == func.lower(institution.strip()))
+            
+            # Apply year range filters - FIXED: Don't use extract() function
+            if year_from:
+                # Create start date for the year (January 1st)
+                try:
+                    start_date = datetime(year_from, 1, 1)
+                    query = query.filter(EmployeeEducation.YearOfCompletion >= start_date)
+                except Exception as e:
+                    logger.warning(f"Invalid year_from {year_from}: {str(e)}")
+            
+            if year_to:
+                # Create end date for the year (December 31st)
+                try:
+                    end_date = datetime(year_to, 12, 31, 23, 59, 59)
+                    query = query.filter(EmployeeEducation.YearOfCompletion <= end_date)
+                except Exception as e:
+                    logger.warning(f"Invalid year_to {year_to}: {str(e)}")
+            
+            # Apply active filter
+            if is_active is not None:
+                query = query.filter(EmployeeEducation.IsActive == is_active)
+            
+            # Get total count
+            total = query.count()
+            
+            # Apply sorting
+            sort_column_map = {
+                "employee_education_id": EmployeeEducation.EmployeeEducationId,
+                "employee_id": EmployeeEducation.EmployeeId,
+                "degree": EmployeeEducation.Degree,
+                "feild_of_study": EmployeeEducation.FeildOfStudy,
+                "institution": EmployeeEducation.Institution,
+                "year_of_completion": EmployeeEducation.YearOfCompletion,
+                "percentage_marks": EmployeeEducation.PercentageMarks,
+                "created_on": EmployeeEducation.CreatedOn,
+                "is_active": EmployeeEducation.IsActive
+            }
+            
+            sort_column = sort_column_map.get(
+                sort_by.lower().replace(" ", "_"),
+                EmployeeEducation.EmployeeEducationId
+            )
+            
+            if sort_order.lower() == "asc":
+                query = query.order_by(asc(sort_column))
+            else:
+                query = query.order_by(desc(sort_column))
+            
+            # Apply pagination
+            items = query.offset(skip).limit(limit).all()
+            
+            return items, total
+            
+        except Exception as e:
+            logger.error(f"Error in get_employee_educations_with_pagination: {str(e)}")
+            return [], 0
+    
+    @staticmethod
     def insert_or_update_employee_education(db: Session, education_data: dict) -> Dict[str, Any]:
         """Insert or update employee education"""
         try:
             from app.models.employee_education import EmployeeEducation
             
-            # Map field_of_study to FeildOfStudy if present
-            if 'field_of_study' in education_data:
-                education_data['FeildOfStudy'] = education_data.pop('field_of_study')
-            
-            # Handle YearOfCompletion
+            # Handle YearOfCompletion - Convert from various formats to datetime
             if 'YearOfCompletion' in education_data and education_data['YearOfCompletion']:
                 try:
                     year_data = education_data['YearOfCompletion']
-                    if isinstance(year_data, str) and year_data.isdigit():
-                        # Convert year string to datetime (January 1st of that year)
-                        year_int = int(year_data)
-                        education_data['YearOfCompletion'] = datetime(year_int, 1, 1)
+                    
+                    if isinstance(year_data, str):
+                        if 'T' in year_data:  # ISO format (e.g., "2021-01-01T00:00:00.000Z")
+                            # Handle ISO format with timezone
+                            if year_data.endswith('Z'):
+                                year_data = year_data.replace('Z', '+00:00')
+                            education_data['YearOfCompletion'] = datetime.fromisoformat(year_data)
+                        elif year_data.isdigit():  # Just year number as string
+                            year_int = int(year_data)
+                            education_data['YearOfCompletion'] = datetime(year_int, 1, 1)
+                        else:
+                            # Try other date formats
+                            education_data['YearOfCompletion'] = datetime.fromisoformat(year_data)
+                    
                     elif isinstance(year_data, int):
+                        # Integer year
                         education_data['YearOfCompletion'] = datetime(year_data, 1, 1)
+                    
+                    elif isinstance(year_data, dict):
+                        # Handle special formats like {"$date": "2021-01-01T00:00:00.000Z"}
+                        if '$date' in year_data:
+                            date_str = year_data['$date']
+                            if isinstance(date_str, str):
+                                if date_str.endswith('Z'):
+                                    date_str = date_str.replace('Z', '+00:00')
+                                education_data['YearOfCompletion'] = datetime.fromisoformat(date_str)
+                    
+                    # If it's already a datetime object, keep it as is
+                    elif isinstance(year_data, datetime):
+                        pass
+                    
+                    else:
+                        # If we can't parse it, set to None
+                        education_data['YearOfCompletion'] = None
+                        
                 except Exception as e:
-                    logger.warning(f"Error parsing YearOfCompletion {education_data['YearOfCompletion']}: {str(e)}")
+                    logger.warning(f"Error parsing YearOfCompletion {year_data}: {str(e)}")
                     education_data['YearOfCompletion'] = None
+            
+            # Map field_of_study to FeildOfStudy if present (from frontend with correct spelling)
+            if 'field_of_study' in education_data:
+                education_data['FeildOfStudy'] = education_data.pop('field_of_study')
+            
+            # Ensure PercentageMarks is string (as per model)
+            if 'PercentageMarks' in education_data and education_data['PercentageMarks'] is not None:
+                education_data['PercentageMarks'] = str(education_data['PercentageMarks'])
             
             employee_education_id = education_data.get('EmployeeEducationId')
             
