@@ -107,7 +107,7 @@ export class CreateCityComponent implements OnInit, OnChanges {
 
   private patchForm(city: City): void {
     this.cityForm.patchValue({
-      CountryId: city.ContryId || '',
+      ContryId: city.ContryId || '',
       StateId: city.StateId || '',
       Name: city.Name || '',
       Code: city.Code || ''
