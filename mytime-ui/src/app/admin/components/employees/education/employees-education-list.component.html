@@ -1,1 +1,71 @@
-<p>employees-education-list works!</p>
+<div class="container-fluid py-3">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header bg-white border-bottom">
+                    <div class="d-flex justify-content-between align-items-center py-1">
+                        <div class="d-flex align-items-center">
+                            <h5 class="mb-0">
+                                <i class="mdi mdi-school text-primary me-2"></i>
+                                Education Details
+                            </h5>
+                            <span class="badge bg-light text-dark ms-3">
+                                <span class="text-primary fw-bold">{{ getTotalRowsCount() }}</span> records
+                            </span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2">
+                            <a class="btn-sm d-flex align-items-center" (click)="openAddEducationForm()" title="Add Education">
+                                <i class="mdi mdi-plus-circle-outline me-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-0">
+                    <!-- Grid Container -->
+                    <div *ngIf="educations.length > 0" class="ag-grid-container">
+                        <ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-alpine"
+                            [rowData]="educations" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef"
+                            [gridOptions]="educationGridOptions" (gridReady)="onGridReady($event)" [pagination]="true"
+                            [paginationPageSize]="10" [suppressCellFocus]="true" [animateRows]="true"
+                            [rowSelection]="'single'" [domLayout]="isMobile ? 'autoHeight' : 'normal'">
+                        </ag-grid-angular>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div *ngIf="educations.length === 0" class="text-center py-5">
+                        <i class="mdi mdi-school-outline text-muted" style="font-size: 3rem;"></i>
+                        <h5 class="text-muted mt-3">No education records found</h5>
+                        <p class="text-muted">Click "Add Education" to add new education records</p>
+                    </div>
+
+                    <!-- Footer -->
+                    <div *ngIf="educations.length > 0" class="card-footer bg-white border-top">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex gap-3">
+                                <small class="text-muted">
+                                    <span class="fw-medium">{{ getTotalRowsCount() }}</span> total
+                                </small>
+                                <small class="text-muted">
+                                    <i class="mdi mdi-check-circle-outline text-success me-1"></i>
+                                    <span class="fw-medium">{{ getActiveEducationsCount() }}</span> active
+                                </small>
+                            </div>
+                            <small class="text-muted">
+                                <i class="mdi me-1" [class.mdi-cellphone]="isMobile"
+                                    [class.mdi-monitor]="!isMobile"></i>
+                                {{ isMobile ? 'Mobile' : 'Desktop' }} view
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Education Add/Edit Form -->
+<app-employees-education-add *ngIf="showEducationForm" [education]="selectedEducation" [isVisible]="showEducationForm"
+    (save)="onSaveEducation($event)" (close)="onCloseEducationForm()">
+</app-employees-education-add>

@@ -9,33 +9,46 @@
       "args": [
         "app.main:app",
         "--reload",
-        "--host", "0.0.0.0",
-        "--port", "8000",
-        "--log-level", "debug"
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+        "--log-level",
+        "debug"
       ],
       "jinja": true,
       "justMyCode": false,
       "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
       "env": {
         "PYTHONPATH": "${workspaceFolder}",
-        "ENVIRONMENT": "development"
+        "ENVIRONMENT": "development",
+        "DEBUG": "true"
       },
-      "autoReload": {
-        "enable": true
-      }
+      "envFile": "${workspaceFolder}/.env",
+      "gevent": true
     },
     {
-      "name": "FastAPI Debug (No Reload)",
+      "name": "FastAPI Debug (Hot Reload)",
       "type": "python",
       "request": "launch",
       "module": "uvicorn",
       "args": [
         "app.main:app",
-        "--host", "0.0.0.0",
-        "--port", "8000"
+        "--reload",
+        "--reload-dir",
+        "${workspaceFolder}/app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000"
       ],
       "justMyCode": false,
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      }
     },
     {
       "name": "Python: Current File",
@@ -43,15 +56,23 @@
       "request": "launch",
       "program": "${file}",
       "console": "integratedTerminal",
-      "justMyCode": false
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}"
     },
     {
-      "name": "Python: Attach",
+      "name": "Python: Remote Attach",
       "type": "python",
       "request": "attach",
       "port": 5678,
       "host": "localhost",
-      "justMyCode": false
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}",
+          "remoteRoot": "${workspaceFolder}"
+        }
+      ],
+      "justMyCode": false,
+      "redirectOutput": true
     },
     {
       "name": "Run Tests",
@@ -61,10 +82,37 @@
       "args": [
         "-v",
         "-s",
-        "--tb=short"
+        "--tb=short",
+        "--cov=app",
+        "--cov-report=term-missing"
       ],
       "console": "integratedTerminal",
-      "justMyCode": false
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      }
+    },
+    {
+      "name": "FastAPI Test Debug",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "tests/",
+        "-v",
+        "-s",
+        "--log-cli-level=DEBUG"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "FastAPI + Tests",
+      "configurations": ["FastAPI Debug", "Run Tests"]
     }
   ]
 }
