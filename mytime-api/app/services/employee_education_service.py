@@ -148,57 +148,6 @@ class EmployeeEducationService:
         try:
             from app.models.employee_education import EmployeeEducation
             
-            # Handle YearOfCompletion - Convert from various formats to datetime
-            if 'YearOfCompletion' in education_data and education_data['YearOfCompletion']:
-                try:
-                    year_data = education_data['YearOfCompletion']
-                    
-                    if isinstance(year_data, str):
-                        if 'T' in year_data:  # ISO format (e.g., "2021-01-01T00:00:00.000Z")
-                            # Handle ISO format with timezone
-                            if year_data.endswith('Z'):
-                                year_data = year_data.replace('Z', '+00:00')
-                            education_data['YearOfCompletion'] = datetime.fromisoformat(year_data)
-                        elif year_data.isdigit():  # Just year number as string
-                            year_int = int(year_data)
-                            education_data['YearOfCompletion'] = datetime(year_int, 1, 1)
-                        else:
-                            # Try other date formats
-                            education_data['YearOfCompletion'] = datetime.fromisoformat(year_data)
-                    
-                    elif isinstance(year_data, int):
-                        # Integer year
-                        education_data['YearOfCompletion'] = datetime(year_data, 1, 1)
-                    
-                    elif isinstance(year_data, dict):
-                        # Handle special formats like {"$date": "2021-01-01T00:00:00.000Z"}
-                        if '$date' in year_data:
-                            date_str = year_data['$date']
-                            if isinstance(date_str, str):
-                                if date_str.endswith('Z'):
-                                    date_str = date_str.replace('Z', '+00:00')
-                                education_data['YearOfCompletion'] = datetime.fromisoformat(date_str)
-                    
-                    # If it's already a datetime object, keep it as is
-                    elif isinstance(year_data, datetime):
-                        pass
-                    
-                    else:
-                        # If we can't parse it, set to None
-                        education_data['YearOfCompletion'] = None
-                        
-                except Exception as e:
-                    logger.warning(f"Error parsing YearOfCompletion {year_data}: {str(e)}")
-                    education_data['YearOfCompletion'] = None
-            
-            # Map field_of_study to FeildOfStudy if present (from frontend with correct spelling)
-            if 'field_of_study' in education_data:
-                education_data['FeildOfStudy'] = education_data.pop('field_of_study')
-            
-            # Ensure PercentageMarks is string (as per model)
-            if 'PercentageMarks' in education_data and education_data['PercentageMarks'] is not None:
-                education_data['PercentageMarks'] = str(education_data['PercentageMarks'])
-            
             employee_education_id = education_data.get('EmployeeEducationId')
             
             # Handle EmployeeEducationId properly
@@ -248,28 +197,6 @@ class EmployeeEducationService:
                 # Set default Active status if not provided
                 if 'IsActive' not in education_data:
                     education_data['IsActive'] = True
-                
-                # Validate required fields
-                if 'EmployeeId' not in education_data or not education_data['EmployeeId']:
-                    return {
-                        "success": False,
-                        "message": "EmployeeId is required",
-                        "education": None
-                    }
-                
-                if 'Degree' not in education_data or not education_data['Degree']:
-                    return {
-                        "success": False,
-                        "message": "Degree is required",
-                        "education": None
-                    }
-                
-                if 'FeildOfStudy' not in education_data or not education_data['FeildOfStudy']:
-                    return {
-                        "success": False,
-                        "message": "FeildOfStudy is required",
-                        "education": None
-                    }
                 
                 db_education = EmployeeEducation(**education_data)
                 db.add(db_education)
