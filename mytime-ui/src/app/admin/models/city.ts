@@ -3,7 +3,7 @@ export interface City {
     Name: string;
     Code: string;
     StateId: number;
-    CountryId: number;
+    ContryId: number;
     IsActive: boolean;
     CreatedBy: number;
     CreatedOn: Date;

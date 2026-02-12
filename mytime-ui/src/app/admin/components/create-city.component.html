@@ -1,1 +1,95 @@
-<p>create-city works!</p>
+<!-- Overlay -->
+<div class="sidebar-overlay" *ngIf="isVisible" (click)="close()"></div>
+<!-- Sidebar -->
+<div class="sidebar" [class.visible]="isVisible">
+    <form [formGroup]="cityForm" (ngSubmit)="onSubmit()">
+        <div class="sidebar-header">
+            <h5 class="sidebar-title">{{ city?.Id ? 'Edit city' : 'Create city' }}</h5>
+            <button type="button" class="close" (click)="close()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="sidebar-body">
+            <!-- Country Selection -->
+            <div class="form-group">
+                <label>Country *</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-office-building"></i>
+                        </span>
+                    </div>
+                    <select class="form-control" formControlName="ContryId" (change)="onCountryChange()" >
+                        <option [ngValue]="null">Select Country</option>
+                        <option *ngFor="let c of countries" [ngValue]="c.Id">
+                            {{ c.Name }}
+                        </option>
+                    </select>
+                </div>
+                <small class="text-danger"
+                    *ngIf="cityForm.get('ContryId')?.invalid && (cityForm.get('ContryId')?.touched || cityForm.get('ContryId')?.dirty)">
+                    Country is required
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label>State *</label>
+
+                <select class="form-control" formControlName="StateId">
+
+                    <option value="">Select State</option>
+
+                    <option *ngFor="let s of filteredStates" [value]="s.StateId">
+                        {{ s.Name }}
+                    </option>
+
+                </select>
+            </div>
+
+
+            <div class="form-group">
+                <label for="Name">City Name</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-earth"></i> <!-- Changed icon to be more appropriate -->
+                        </span>
+                    </div>
+                    <input type="text" class="form-control" id="Name" formControlName="Name"
+                        placeholder="Enter city name">
+                    <!-- Added validation message -->
+                    <div *ngIf="cityForm.get('Name')?.invalid && cityForm.get('Name')?.touched"
+                        class="text-danger small mt-1">
+                        City name is required
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="StateCode">City Code</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-code-tags"></i>
+                        </span>
+                    </div>
+                    <input type="text" class="form-control" id="Code" formControlName="Code"
+                        placeholder="Enter city code (e.g., Hyd)">
+                    <!-- Added validation message -->
+                    <div *ngIf="cityForm.get('Code')?.invalid && cityForm.get('Code')?.touched"
+                        class="text-danger small mt-1">
+                        state code is required
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <button type="submit" class="btn btn-primary" [disabled]="cityForm.invalid">
+                    <i class="mdi" [class.mdi-content-save]="!city?.Id" [class.mdi-pencil]="city?.Id"></i>
+                    {{ city?.Id ? 'Update' : 'Save' }}
+                </button>
+                <button type="button" class="btn btn-secondary ml-2" (click)="close()">Cancel</button>
+            </div>
+        </div>
+    </form>
+</div>

@@ -17,13 +17,15 @@ import { StateService } from '../services/state.service';
 import { Country } from '../models/country';
 import { State } from '../models/state';
 import { DeleteConfirmationComponent } from '../../common/components/delete.compunent';
+import { subscribe } from 'diagnostics_channel';
+import { CreateCityComponent } from './create-city.component';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-city-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, DatePipe, FormsModule,DeleteConfirmationComponent],
+  imports: [CommonModule, AgGridAngular, DatePipe, FormsModule,DeleteConfirmationComponent,CreateCityComponent],
   templateUrl: './city-list.component.html',
   styleUrl: './city-list.component.css'
 })
@@ -41,6 +43,12 @@ export class CityListComponent implements OnInit, OnDestroy {
 
   showDeletePopup:boolean=false;
   selectedDeleteItem: City | null = null;
+
+   showSidebar: boolean = false;
+
+  selectedCity: City | null = null;
+
+
 
   private gridApi!: GridApi;
 
@@ -192,6 +200,8 @@ export class CityListComponent implements OnInit, OnDestroy {
 
   }
   requestCityProcess(city: City): void {
+    this.showSidebar =true;
+    this.selectedCity = city;
   }
 
   loadRoleData(): void {
@@ -382,5 +392,30 @@ export class CityListComponent implements OnInit, OnDestroy {
   }
   refreshData() {
     this.loadRoleData();
+  }
+  onCloseSidebar():void{
+    this.showSidebar = false;
+    this.selectedCity =null;
+  }
+   openAddEditCity(): void {
+    this.showSidebar = true;
+    this.selectedCity = null;
+  }
+
+  onSaveCity(city: any): void {
+    this.loader.show();
+    console.log(city);
+    const _city = this.audit.appendAuditFields(city);
+    this.cityService.insertOrUpdateCityAsync(_city).subscribe(reponse => {
+      if (reponse) {
+        this.toster.success("city processed succeessfully");
+        this.showSidebar = false;
+        this.refreshData();
+      }
+    }, error => {
+      this.toster.error("something went wrong , please check and resubmit");
+      this.showSidebar = true;
+      this.loader.hide();
+    });
   }
 }

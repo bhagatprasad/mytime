@@ -29,4 +29,8 @@ export class CityService {
         return this.apiService.send("DELETE", `${environment.UrlConstants.City.DeleteCity}/${Id}`
         );
     }
+
+    insertOrUpdateCityAsync(city: City): Observable<City> {
+        return this.apiService.send<City>("POST", environment.UrlConstants.City.InsertOrUpdateCity, city);
+    }
 }
