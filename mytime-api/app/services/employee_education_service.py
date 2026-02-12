@@ -150,13 +150,6 @@ class EmployeeEducationService:
             
             employee_education_id = education_data.get('EmployeeEducationId')
             
-            # Handle EmployeeEducationId properly
-            if employee_education_id:
-                try:
-                    employee_education_id = int(employee_education_id)
-                except (ValueError, TypeError):
-                    employee_education_id = 0
-            
             if employee_education_id and employee_education_id > 0:
                 # Update existing education record
                 db_education = db.query(EmployeeEducation).filter(
@@ -170,12 +163,6 @@ class EmployeeEducationService:
                         "education": None
                     }
                 
-                # Update only non-null values
-                for key, value in education_data.items():
-                    if key != 'EmployeeEducationId' and value is not None:
-                        setattr(db_education, key, value)
-                
-                # Set ModifiedOn timestamp
                 db_education.ModifiedOn = datetime.utcnow()
                 
                 db.commit()

@@ -7,7 +7,7 @@ class CityBase(BaseModel):
     """Base schema for City data"""
     Name: Optional[str] = Field(None, max_length=255, description="City name")
     Code: Optional[str] = Field(None, max_length=50, description="City code")
-    CountryId: Optional[int] = Field(None, description="Foreign key to Country table")
+    ContryId: Optional[int] = Field(None, description="Foreign key to Country table")
     StateId: Optional[int] = Field(None, description="Foreign key to State table")
     IsActive: Optional[bool] = Field(True, description="Whether the city is active")
 
@@ -21,7 +21,7 @@ class CityUpdate(BaseModel):
     """Schema for updating an existing City"""
     Name: Optional[str] = Field(None, max_length=255, description="City name")
     Code: Optional[str] = Field(None, max_length=50, description="City code")
-    CountryId: Optional[int] = Field(None, description="Foreign key to Country table")
+    ContryId: Optional[int] = Field(None, description="Foreign key to Country table")
     StateId: Optional[int] = Field(None, description="Foreign key to State table")
     ModifiedBy: Optional[int] = Field(None, description="User ID who last modified the record")
     IsActive: Optional[bool] = Field(None, description="Whether the city is active")
@@ -32,7 +32,7 @@ class CityResponse(BaseModel):
     Id: int
     Name: Optional[str] = None
     Code: Optional[str] = None
-    CountryId: Optional[int] = None
+    ContryId: Optional[int] = None
     StateId: Optional[int] = None
     CreatedBy: Optional[int] = None
     CreatedOn: Optional[datetime] = None

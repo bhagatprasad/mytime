@@ -120,7 +120,7 @@ if HAS_AUTH:
     api_router.include_router(roles_protected, prefix="/roles", tags=["roles"])
     api_router.include_router(countries_protected, prefix="/countries", tags=["countries"])
     api_router.include_router(states_protected, prefix="/states", tags=["states"])
-    api_router.include_router(countries_protected, prefix="/cities", tags=["cities"])
+    api_router.include_router(cities_protected, prefix="/cities", tags=["cities"])
     api_router.include_router(department_protected, prefix="/departments", tags=["departments"])
     api_router.include_router(designation_protected, prefix="/designations", tags=["designations"])
     api_router.include_router(documenttype_protected, prefix="/documenttypes", tags=["documenttypes"])
