@@ -11,7 +11,7 @@ class EmployeeEducationBase(BaseModel):
     Institution: str = Field(..., max_length=500, description="Educational institution")
     YearOfCompletion: Optional[datetime] = Field(None, description="Year of completion")
     PercentageMarks: Optional[str] = Field(None, max_length=50, description="Percentage/CGPA/Marks")
-
+    Year: str = Field(..., max_length=10, description="Year of completion")
     model_config = ConfigDict(
         from_attributes=True,
         populate_by_name=True
@@ -33,6 +33,7 @@ class EmployeeEducationUpdate(BaseModel):
     PercentageMarks: Optional[str] = Field(None, max_length=50, description="Percentage/CGPA/Marks")
     ModifiedBy: Optional[int] = Field(None, description="User ID who last modified the record")
     IsActive: Optional[bool] = Field(None, description="Whether the education record is active")
+    Year: Optional[str] = Field(None, max_length=10, description="Year of completion")
 
     model_config = ConfigDict(
         from_attributes=True,
@@ -54,6 +55,7 @@ class EmployeeEducationResponse(BaseModel):
     ModifiedBy: Optional[int] = None
     ModifiedOn: Optional[datetime] = None
     IsActive: Optional[bool] = None
+    Year: str
 
     model_config = ConfigDict(
         from_attributes=True,

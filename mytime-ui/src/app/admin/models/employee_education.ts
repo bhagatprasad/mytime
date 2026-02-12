@@ -11,4 +11,5 @@ export interface EmployeeEducation {
   ModifiedOn?: string | null;
   ModifiedBy?: number | null;
   IsActive?: boolean | null;
+  Year?: string | null;
 }
