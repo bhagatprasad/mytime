@@ -149,22 +149,8 @@ class EmployeeAddressService:
     def insert_or_update_employee_address(db: Session, address_data: dict) -> Dict[str, Any]:
         """Insert or update employee address"""
         try:
-            # Convert IDs to BigInteger if needed
-            for id_field in ['EmployeeId', 'CityId', 'StateId', 'CountryId', 'CreatedBy', 'ModifiedBy']:
-                if id_field in address_data and address_data[id_field] is not None:
-                    try:
-                        address_data[id_field] = int(address_data[id_field])
-                    except (ValueError, TypeError):
-                        address_data[id_field] = None
             
             employee_address_id = address_data.get('EmployeeAddressId')
-            
-            # Handle EmployeeAddressId properly
-            if employee_address_id:
-                try:
-                    employee_address_id = int(employee_address_id)
-                except (ValueError, TypeError):
-                    employee_address_id = 0
             
             if employee_address_id and employee_address_id > 0:
                 # Update existing address
@@ -206,21 +192,6 @@ class EmployeeAddressService:
                 # Set default Active status if not provided
                 if 'IsActive' not in address_data:
                     address_data['IsActive'] = True
-                
-                # Validate required fields
-                if 'EmployeeId' not in address_data or not address_data['EmployeeId']:
-                    return {
-                        "success": False,
-                        "message": "EmployeeId is required",
-                        "address": None
-                    }
-                
-                if 'AddressLineOne' not in address_data or not address_data['AddressLineOne']:
-                    return {
-                        "success": False,
-                        "message": "AddressLineOne is required",
-                        "address": None
-                    }
                 
                 db_address = EmployeeAddress(**address_data)
                 db.add(db_address)

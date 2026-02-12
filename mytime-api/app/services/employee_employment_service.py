@@ -171,22 +171,8 @@ class EmployeeEmploymentService:
     def insert_or_update_employee_employment(db: Session, employment_data: dict) -> Dict[str, Any]:
         """Insert or update employee employment"""
         try:
-            # Map "Reference" to "Referance" if needed (frontend might send correct spelling)
-            if 'Reference' in employment_data:
-                employment_data['Referance'] = employment_data.pop('Reference')
-            
-            # Convert EmployeeId to BigInteger if needed
-            if 'EmployeeId' in employment_data:
-                employment_data['EmployeeId'] = int(employment_data['EmployeeId'])
             
             employee_employment_id = employment_data.get('EmployeeEmploymentId')
-            
-            # Handle EmployeeEmploymentId properly
-            if employee_employment_id:
-                try:
-                    employee_employment_id = int(employee_employment_id)
-                except (ValueError, TypeError):
-                    employee_employment_id = 0
             
             if employee_employment_id and employee_employment_id > 0:
                 # Update existing employment record
@@ -228,35 +214,6 @@ class EmployeeEmploymentService:
                 # Set default Active status if not provided
                 if 'IsActive' not in employment_data:
                     employment_data['IsActive'] = True
-                
-                # Validate required fields
-                if 'EmployeeId' not in employment_data or not employment_data['EmployeeId']:
-                    return {
-                        "success": False,
-                        "message": "EmployeeId is required",
-                        "employment": None
-                    }
-                
-                if 'CompanyName' not in employment_data or not employment_data['CompanyName']:
-                    return {
-                        "success": False,
-                        "message": "CompanyName is required",
-                        "employment": None
-                    }
-                
-                if 'Designation' not in employment_data or not employment_data['Designation']:
-                    return {
-                        "success": False,
-                        "message": "Designation is required",
-                        "employment": None
-                    }
-                
-                if 'StartedOn' not in employment_data or not employment_data['StartedOn']:
-                    return {
-                        "success": False,
-                        "message": "StartedOn is required",
-                        "employment": None
-                    }
                 
                 db_employment = EmployeeEmployment(**employment_data)
                 db.add(db_employment)
