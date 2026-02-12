@@ -17,6 +17,7 @@ class EmployeeEducation(Base):
     ModifiedOn = Column(DateTime(timezone=True), onupdate=func.now())
     ModifiedBy = Column(Integer, nullable=True)
     IsActive = Column(Boolean, nullable=True)
+    Year = Column(String(10), nullable=True)
     
     def __repr__(self):
         return f"<EmployeeEducation(EmployeeEducationId={self.EmployeeEducationId}, EmployeeId={self.EmployeeId}, Degree='{self.Degree}')>"

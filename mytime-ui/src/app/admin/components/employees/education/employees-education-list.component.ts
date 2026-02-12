@@ -42,14 +42,6 @@ export class EmployeesEducationListComponent implements OnInit, OnDestroy {
 
   desktopColumnDefs: ColDef[] = [
     {
-      field: 'EmployeeEducationId',
-      headerName: 'ID',
-      width: 80,
-      filter: 'agNumberColumnFilter',
-      sortable: true,
-      cellClass: 'text-center'
-    },
-    {
       field: 'Degree',
       headerName: 'Degree',
       width: 150,
@@ -71,7 +63,7 @@ export class EmployeesEducationListComponent implements OnInit, OnDestroy {
       sortable: true
     },
     {
-      field: 'YearOfCompletion',
+      field: 'Year',
       headerName: 'Year',
       width: 100,
       filter: 'agNumberColumnFilter',
@@ -86,15 +78,6 @@ export class EmployeesEducationListComponent implements OnInit, OnDestroy {
       sortable: true,
       cellClass: 'text-center',
       valueFormatter: this.percentageFormatter.bind(this)
-    },
-    {
-      field: 'IsActive',
-      headerName: 'Status',
-      width: 120,
-      filter: 'agTextColumnFilter',
-      sortable: true,
-      cellRenderer: this.statusRenderer.bind(this),
-      cellClass: this.statusCellClass.bind(this)
     },
     {
       field: 'Actions',
@@ -278,6 +261,12 @@ export class EmployeesEducationListComponent implements OnInit, OnDestroy {
     this.showEducationForm = false;
     this.selectedEducation = null;
   }
+  prepareEmployeeEducationPayload(data: any): EmployeeEducation {
+    return {
+      ...data,
+      PercentageMarks: data.PercentageMarks?.toString() || null
+    };
+  }
 
   onSaveEducation(education: EmployeeEducation): void {
     this.loader.show();
@@ -287,7 +276,7 @@ export class EmployeesEducationListComponent implements OnInit, OnDestroy {
       education.EmployeeId = this.employeeId;
     }
 
-    const _education = this.audit.appendAuditFields(education);
+    const _education = this.prepareEmployeeEducationPayload(this.audit.appendAuditFields(education));
 
 
     this.employeeEducationService.insertOrUpdateEmployeeEducationAsync(_education).subscribe({

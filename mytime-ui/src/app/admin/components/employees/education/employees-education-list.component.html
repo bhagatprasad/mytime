@@ -25,7 +25,7 @@
                 <div class="card-body p-0">
                     <!-- Grid Container -->
                     <div *ngIf="educations.length > 0" class="ag-grid-container">
-                        <ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-alpine"
+                        <ag-grid-angular style="width: 100%; height: 300px;" class="ag-theme-alpine"
                             [rowData]="educations" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef"
                             [gridOptions]="educationGridOptions" (gridReady)="onGridReady($event)" [pagination]="true"
                             [paginationPageSize]="10" [suppressCellFocus]="true" [animateRows]="true"
