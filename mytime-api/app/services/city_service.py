@@ -28,7 +28,7 @@ class CityService:
             "Id": city.Id,
             "Name": city.Name,
             "Code": city.Code,
-            "CountryId": city.CountryId,
+            "ContryId": city.ContryId,
             "StateId": city.StateId,
             "CreatedBy": city.CreatedBy,
             "CreatedOn": city.CreatedOn,
@@ -38,8 +38,8 @@ class CityService:
         }
         
         # Get country info
-        if city.CountryId:
-            country = db.query(Country).filter(Country.Id == city.CountryId).first()
+        if city.ContryId:
+            country = db.query(Country).filter(Country.Id == city.ContryId).first()
             if country:
                 result["CountryName"] = country.Name
                 result["CountryCode"] = country.Code
@@ -92,7 +92,7 @@ class CityService:
         
         # Apply country filter
         if country_id is not None:
-            query = query.filter(City.CountryId == country_id)
+            query = query.filter(City.ContryId == country_id)
         
         # Apply state filter
         if state_id is not None:
@@ -142,7 +142,7 @@ class CityService:
         )
         
         # Join with Country and State tables
-        query = query.outerjoin(Country, City.CountryId == Country.Id)
+        query = query.outerjoin(Country, City.ContryId == Country.Id)
         query = query.outerjoin(State, City.StateId == State.StateId)
         
         # Apply filters
@@ -158,7 +158,7 @@ class CityService:
             )
         
         if country_id is not None:
-            query = query.filter(City.CountryId == country_id)
+            query = query.filter(City.ContryId == country_id)
         
         if state_id is not None:
             query = query.filter(City.StateId == state_id)
@@ -180,7 +180,7 @@ class CityService:
                 "Id": city.Id,
                 "Name": city.Name,
                 "Code": city.Code,
-                "CountryId": city.CountryId,
+                "ContryId": city.ContryId,
                 "StateId": city.StateId,
                 "CountryName": country_name,
                 "CountryCode": country_code,
@@ -208,12 +208,12 @@ class CityService:
         if name and country_id:
             conditions.append(
                 (func.lower(City.Name) == func.lower(name)) & 
-                (City.CountryId == country_id)
+                (City.ContryId == country_id)
             )
         if code and country_id:
             conditions.append(
                 (func.lower(City.Code) == func.lower(code)) & 
-                (City.CountryId == country_id)
+                (City.ContryId == country_id)
             )
         
         if not conditions:
@@ -233,7 +233,7 @@ class CityService:
     def get_cities_by_country(db: Session, country_id: int) -> List[City]:
         """Get all cities for a specific country"""
         return db.query(City).filter(
-            City.CountryId == country_id,
+            City.ContryId == country_id,
             City.IsActive == True
         ).order_by(City.Name).all()
     
@@ -251,7 +251,7 @@ class CityService:
         query = db.query(City).filter(func.lower(City.Code) == func.lower(code))
         
         if country_id:
-            query = query.filter(City.CountryId == country_id)
+            query = query.filter(City.ContryId == country_id)
         
         return query.first()
     
@@ -269,7 +269,7 @@ class CityService:
             # Check for duplicate name or code
             name = city_data.get('Name')
             code = city_data.get('Code')
-            country_id = city_data.get('CountryId', db_city.CountryId)
+            country_id = city_data.get('ContryId', db_city.ContryId)
             state_id = city_data.get('StateId', db_city.StateId)
             
             if (name and country_id) or (code and country_id):
@@ -296,7 +296,7 @@ class CityService:
             # Check for duplicate name or code
             name = city_data.get('Name')
             code = city_data.get('Code')
-            country_id = city_data.get('CountryId')
+            country_id = city_data.get('ContryId')
             state_id = city_data.get('StateId')
             
             if CityService.check_city_exists(db, name, code, country_id, state_id):
@@ -333,7 +333,7 @@ class CityService:
     def create_city(db: Session, city: CityCreate) -> City:
         """Create new city"""
         # Check for duplicate name or code
-        if CityService.check_city_exists(db, city.Name, city.Code, city.CountryId, city.StateId):
+        if CityService.check_city_exists(db, city.Name, city.Code, city.ContryId, city.StateId):
             raise ValueError("City with same name or code already exists in this location")
         
         db_city = City(**city.model_dump(exclude_none=True))
@@ -351,7 +351,7 @@ class CityService:
             update_data = city.model_dump(exclude_none=True)
             name = update_data.get('Name')
             code = update_data.get('Code')
-            country_id = update_data.get('CountryId', db_city.CountryId)
+            country_id = update_data.get('ContryId', db_city.ContryId)
             state_id = update_data.get('StateId', db_city.StateId)
             
             if (name and country_id) or (code and country_id):
@@ -394,7 +394,7 @@ class CityService:
     def get_cities_by_country_and_state(db: Session, country_id: int, state_id: Optional[int] = None) -> List[City]:
         """Get cities by country and optionally state"""
         query = db.query(City).filter(
-            City.CountryId == country_id,
+            City.ContryId == country_id,
             City.IsActive == True
         )
         
