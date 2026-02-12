@@ -22,10 +22,7 @@
               <!-- Action Buttons -->
               <div class="d-flex gap-2 ms-3">
                 <!-- Add Button -->
-                <button 
-                  class="btn btn-primary btn-sm d-flex align-items-center"
-                  title="Add new country"
-                >
+                <button class="btn btn-primary btn-sm d-flex align-items-center" (click)="openAddEditCity()" title="Add new country">
                   <i class="mdi mdi-plus me-1"></i>
                   <span>Add City</span>
                 </button>
@@ -38,21 +35,10 @@
         <div class="card-body p-0">
           <!-- AG Grid -->
           <div *ngIf="cities.length > 0" class="ag-grid-container">
-            <ag-grid-angular
-              style="width: 100%; height: 640px;"
-              class="ag-theme-alpine"
-              [rowData]="cities"
-              [columnDefs]="columnDefs"
-              [defaultColDef]="defaultColDef"
-              [gridOptions]="gridOptions"
-              (gridReady)="onGridReady($event)"
-              [pagination]="true"
-              [paginationPageSize]="20"
-              [suppressCellFocus]="true"
-              [animateRows]="true"
-              [rowSelection]="'single'"
-              [domLayout]="isMobile ? 'autoHeight' : 'normal'"
-            >
+            <ag-grid-angular style="width: 100%; height: 640px;" class="ag-theme-alpine" [rowData]="cities"
+              [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [gridOptions]="gridOptions"
+              (gridReady)="onGridReady($event)" [pagination]="true" [paginationPageSize]="20" [suppressCellFocus]="true"
+              [animateRows]="true" [rowSelection]="'single'" [domLayout]="isMobile ? 'autoHeight' : 'normal'">
             </ag-grid-angular>
           </div>
 
@@ -79,10 +65,14 @@
             </div>
           </div>
         </div>
+
+        <app-create-city [isVisible]="showSidebar" [state]="states" [countries]="countries" [city]="selectedCity"
+          (closeSidebar)="onCloseSidebar()" (saveCity)="onSaveCity($event)"></app-create-city>
+
+
         <app-delete-confirmation *ngIf="showDeletePopup" title="Delete City"
-            message="Do you really want to delete this City?" (confirm)="confirmDelete()"
-            (cancel)="closePopup()">
-          </app-delete-confirmation>
+          message="Do you really want to delete this City?" (confirm)="confirmDelete()" (cancel)="closePopup()">
+        </app-delete-confirmation>
       </div>
     </div>
   </div>

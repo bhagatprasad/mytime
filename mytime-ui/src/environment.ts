@@ -49,7 +49,7 @@ export const environment = {
             InsertOrUpdateState: 'states/InsertOrUpdateState',
             DeleteState: 'states/DeleteState',
             CheckStateExists: 'states/checkStateExists',
-            GetStatesByCountry: 'states/getStatesByCountry',
+            GetStatesByCountry: 'states/getStatesByCountry/',
             GetStatesByCountryCode: 'states/getStatesByCountryCode',
             GetStateByCode: 'states/getStateByCode',
             ToggleActiveStatus: 'states/toggleActiveStatus',
