@@ -12,9 +12,9 @@ class EmployeeDocument(Base):
     DocumentPath = Column(String(max), nullable=True)
     DocumentExtension = Column(String(max), nullable=True)
     CreatedBy = Column(Integer, nullable=True)
-    CreatedOn = Column(DateTime(timezone=True), server_default=func.now())
+    CreatedOn = Column(DateTime, nullable=True)
     ModifiedBy = Column(Integer, nullable=True)
-    ModifiedOn = Column(DateTime(timezone=True), onupdate=func.now())
+    ModifiedOn = Column(DateTime,nullable=True)
     IsActive = Column(Boolean, nullable=True)
     
     def __repr__(self):

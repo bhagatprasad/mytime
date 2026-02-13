@@ -188,21 +188,3 @@ class EmployeeBaseWithDecimalConstraints(BaseModel):
     OfferPrice: Optional[Decimal] = Field(None, ge=0, description="Offer price/salary")
     CurrentPrice: Optional[Decimal] = Field(None, ge=0, description="Current salary")
     JoiningBonus: Optional[Decimal] = Field(None, ge=0, description="Joining bonus amount")
-    
-    @field_validator('OfferPrice', 'CurrentPrice', 'JoiningBonus')
-    @classmethod
-    def validate_decimal_precision(cls, v: Optional[Decimal]) -> Optional[Decimal]:
-        """Validate max_digits=18, decimal_places=2 constraint"""
-        if v is not None:
-            str_value = str(v)
-            if '.' in str_value:
-                integer_part, decimal_part = str_value.split('.')
-                if len(integer_part) > 16:  # 18 total - 2 decimal places
-                    raise ValueError("Maximum 16 digits before decimal point")
-                if len(decimal_part) > 2:
-                    # Round to 2 decimal places
-                    v = Decimal(str_value).quantize(Decimal('0.01'))
-            else:
-                if len(str_value) > 16:
-                    raise ValueError("Maximum 16 digits before decimal point")
-        return v

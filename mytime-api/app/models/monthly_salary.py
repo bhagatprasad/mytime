@@ -17,9 +17,9 @@ class MonthlySalary(Base):
     WrkDays = Column(Integer, nullable=True)
     LopDays = Column(Integer, nullable=True)
 
-    CreatedOn = Column(DateTime(timezone=True), server_default=func.now())
+    CreatedOn = Column(DateTime,   nullable=True)
     CreatedBy = Column(BigInteger, nullable=True)
-    ModifiedOn = Column(DateTime(timezone=True), onupdate=func.now())
+    ModifiedOn = Column(DateTime,   nullable=True)
     ModifiedBy = Column(BigInteger, nullable=True)
     IsActive = Column(Boolean, nullable=True)
 

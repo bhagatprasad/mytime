@@ -13,18 +13,18 @@ class EmployeeEmployment(Base):
     Address = Column(String, nullable=True)      # Changed from Text to String
     Designation = Column(String, nullable=True)  # Changed from Text to String
 
-    StartedOn = Column(DateTime(timezone=True), nullable=True)
-    EndedOn = Column(DateTime(timezone=True), nullable=True)
+    StartedOn = Column(DateTime,   nullable=True)
+    EndedOn = Column(DateTime,   nullable=True)
 
     Reason = Column(String, nullable=True)           # Changed from Text to String
     ReportingManager = Column(String, nullable=True) # Changed from Text to String
     HREmail = Column(String, nullable=True)          # Changed from Text to String
     Referance = Column(String, nullable=True)        # NOTE: Spelled as "Referance" to match SQL table
 
-    CreatedOn = Column(DateTime(timezone=True), server_default=func.now())
+    CreatedOn = Column(DateTime,   nullable=True)
     CreatedBy = Column(BigInteger, nullable=True)
 
-    ModifiedOn = Column(DateTime(timezone=True), onupdate=func.now())
+    ModifiedOn = Column(DateTime,   nullable=True)
     ModifiedBy = Column(BigInteger, nullable=True)
 
     IsActive = Column(Boolean, nullable=True, default=True)
