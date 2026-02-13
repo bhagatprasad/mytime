@@ -147,10 +147,22 @@ class EmployeeEducationService:
         """Insert or update employee education"""
         try:
             from app.models.employee_education import EmployeeEducation
+            from datetime import datetime
             
-            employee_education_id = education_data.get('EmployeeEducationId')
+            # Get EmployeeEducationId and convert to int if it's a string
+            emp_edu_id = education_data.get('EmployeeEducationId')
             
-            if employee_education_id and employee_education_id > 0:
+            # Convert to int if it's a string, handle None case
+            if emp_edu_id is not None:
+                try:
+                    employee_education_id = int(emp_edu_id)
+                except (ValueError, TypeError):
+                    employee_education_id = 0
+            else:
+                employee_education_id = 0
+            
+            # Now safe to compare
+            if employee_education_id > 0:
                 # Update existing education record
                 db_education = db.query(EmployeeEducation).filter(
                     EmployeeEducation.EmployeeEducationId == employee_education_id
@@ -181,18 +193,37 @@ class EmployeeEducationService:
                 }
             else:
                 # Create new education record
+                # Create a copy to avoid modifying the original
+                create_data = education_data.copy()
+                
                 # Remove EmployeeEducationId if present in create mode
-                education_data.pop('EmployeeEducationId', None)
+                create_data.pop('EmployeeEducationId', None)
+                
+                # Convert string IDs to integers for the model
+                if 'CreatedBy' in create_data and create_data['CreatedBy']:
+                    try:
+                        create_data['CreatedBy'] = int(create_data['CreatedBy'])
+                    except (ValueError, TypeError):
+                        pass
+                        
+                if 'ModifiedBy' in create_data and create_data['ModifiedBy']:
+                    try:
+                        create_data['ModifiedBy'] = int(create_data['ModifiedBy'])
+                    except (ValueError, TypeError):
+                        pass
                 
                 # Set CreatedOn timestamp if not provided
-                if 'CreatedOn' not in education_data or not education_data['CreatedOn']:
-                    education_data['CreatedOn'] = datetime.utcnow()
+                if 'CreatedOn' not in create_data or not create_data.get('CreatedOn'):
+                    create_data['CreatedOn'] = datetime.utcnow()
+                
+                # Set ModifiedOn
+                create_data['ModifiedOn'] = datetime.utcnow()
                 
                 # Set default Active status if not provided
-                if 'IsActive' not in education_data:
-                    education_data['IsActive'] = True
+                if 'IsActive' not in create_data:
+                    create_data['IsActive'] = True
                 
-                db_education = EmployeeEducation(**education_data)
+                db_education = EmployeeEducation(**create_data)
                 db.add(db_education)
                 db.commit()
                 db.refresh(db_education)
@@ -210,36 +241,4 @@ class EmployeeEducationService:
                 "success": False, 
                 "message": f"Error saving employee education record: {str(e)}",
                 "education": None
-            }
-    
-    @staticmethod
-    def delete_employee_education(db: Session, employee_education_id: int) -> Dict[str, Any]:
-        """Delete employee education record"""
-        try:
-            from app.models.employee_education import EmployeeEducation
-            
-            db_education = db.query(EmployeeEducation).filter(
-                EmployeeEducation.EmployeeEducationId == employee_education_id
-            ).first()
-            
-            if not db_education:
-                return {
-                    "success": False, 
-                    "message": "Employee education record not found"
-                }
-            
-            db.delete(db_education)
-            db.commit()
-            
-            return {
-                "success": True, 
-                "message": "Employee education record deleted successfully"
-            }
-            
-        except Exception as e:
-            db.rollback()
-            logger.error(f"Error deleting employee education {employee_education_id}: {str(e)}")
-            return {
-                "success": False, 
-                "message": f"Error deleting employee education record: {str(e)}"
             }
