@@ -102,7 +102,7 @@ export class EmployeesEducationAddComponent implements OnChanges {
       Degree: ['', Validators.required],
       FeildOfStudy: ['', Validators.required],
       Institution: ['', Validators.required],
-      YearOfCompletion: ['', Validators.required],
+      Year: ['', Validators.required],
       PercentageMarks: ['', [Validators.min(0), Validators.max(100)]],
       IsActive: [true]
     });
@@ -126,23 +126,11 @@ export class EmployeesEducationAddComponent implements OnChanges {
   private initializeForm(): void {
     if (this.education) {
       // Convert YearOfCompletion from datetime to just year if it's a date
-      let yearOfCompletion = '';
-      if (this.education.YearOfCompletion) {
-        try {
-          const date = new Date(this.education.YearOfCompletion);
-          if (!isNaN(date.getTime())) {
-            yearOfCompletion = date.getFullYear().toString();
-          }
-        } catch (e) {
-          console.error('Error parsing YearOfCompletion:', e);
-        }
-      }
-
       this.educationForm.patchValue({
         Degree: this.education.Degree || '',
         FeildOfStudy: this.education.FeildOfStudy || '',
         Institution: this.education.Institution || '',
-        YearOfCompletion: yearOfCompletion || this.education.YearOfCompletion || '',
+        Year: this.education.Year || this.education.Year || '',
         PercentageMarks: this.education.PercentageMarks || '',
         IsActive: this.education.IsActive !== undefined ? this.education.IsActive : true
       });
