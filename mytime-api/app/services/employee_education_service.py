@@ -163,13 +163,15 @@ class EmployeeEducationService:
                         "education": None
                     }
                 
-                db_education.Degree = education_data.Degree
-                db_education.FeildOfStudy = education_data.FeildOfStudy
-                db_education.Institution = education_data.Institution
-                db_education.PercentageMarks = education_data.PercentageMarks
+                db_education.Degree = education_data.get('Degree')
+                db_education.FeildOfStudy = education_data.get('FeildOfStudy')
+                db_education.Institution = education_data.get('Institution')
+                db_education.PercentageMarks = education_data.get('PercentageMarks')
+                db_education.Year = education_data.get('Year')
+                db_education.YearOfCompletion = education_data.get('YearOfCompletion')
                 db_education.ModifiedOn = datetime.utcnow()
-                db_education.ModifiedBy=education_data.ModifiedBy
-                
+                db_education.ModifiedBy = education_data.get('ModifiedBy')
+
                 db.commit()
                 db.refresh(db_education)
                 return {
