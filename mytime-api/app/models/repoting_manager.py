@@ -10,9 +10,9 @@ class RepotingManager(Base):
     ManagerId = Column(Integer, nullable=True)
     IsActive = Column(Boolean, default=True)
     CreatedBy = Column(Integer, nullable=True)
-    CreatedOn = Column(DateTime, server_default=func.now())
+    CreatedOn = Column(DateTime,   nullable=True)
     ModifiedBy = Column(Integer, nullable=True)
-    ModifiedOn = Column(DateTime, onupdate=func.now())
+    ModifiedOn = Column(DateTime,   nullable=True)
     
     def __repr__(self):
         return f"<RepotingManager(RepotingManagerId={self.RepotingManagerId}, EmployeeId='{self.EmployeeId}', ManagerId='{self.ManagerId}')>"

@@ -15,16 +15,16 @@ class User(Base):
     RoleId = Column(Integer, nullable=True)
     PasswordHash = Column(String(max), nullable=True)
     PasswordSalt = Column(String(max), nullable=True)
-    PasswordlastChangedOn = Column(DateTime, server_default=func.now())
+    PasswordlastChangedOn = Column(DateTime,   nullable=True)
     PasswordLastChangedBY = Column(Integer, nullable=True)
     UserWorngPasswordCount = Column(Integer, nullable=True)
-    UserLastWrongPasswordOn = Column(DateTime, server_default=func.now())
+    UserLastWrongPasswordOn = Column(DateTime,   nullable=True)
     IsBlocked = Column(Boolean, default=True)
     IsActive = Column(Boolean, default=True)
     CreatedBy = Column(Integer, nullable=True)
-    CreatedOn = Column(DateTime, server_default=func.now())
+    CreatedOn = Column(DateTime,   nullable=True)
     ModifiedBy = Column(Integer, nullable=True)
-    ModifiedOn = Column(DateTime, onupdate=func.now())
+    ModifiedOn = Column(DateTime,   nullable=True)
     
     def __repr__(self):
         return f"<User(Id={self.Id}, FirstName='{self.FirstName}', LastName='{self.LastName}', Email='{self.Email}')>"

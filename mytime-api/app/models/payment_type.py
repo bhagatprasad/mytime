@@ -10,9 +10,9 @@ class PaymentType(Base):
     Code = Column(String(100), nullable=True)
     IsActive = Column(Boolean, default=True)
     CreatedBy = Column(Integer, nullable=True)
-    CreatedOn = Column(DateTime, server_default=func.now())
+    CreatedOn = Column(DateTime,   nullable=True)
     ModifiedBy = Column(Integer, nullable=True)
-    ModifiedOn = Column(DateTime, onupdate=func.now())
+    ModifiedOn = Column(DateTime,   nullable=True)
     
     def __repr__(self):
         return f"<PaymentType(Id={self.Id}, Name='{self.Name}', Code='{self.Code}')>"
