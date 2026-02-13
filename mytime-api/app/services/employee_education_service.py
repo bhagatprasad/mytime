@@ -163,7 +163,12 @@ class EmployeeEducationService:
                         "education": None
                     }
                 
+                db_education.Degree = education_data.Degree
+                db_education.FeildOfStudy = education_data.FeildOfStudy
+                db_education.Institution = education_data.Institution
+                db_education.PercentageMarks = education_data.PercentageMarks
                 db_education.ModifiedOn = datetime.utcnow()
+                db_education.ModifiedBy=education_data.ModifiedBy
                 
                 db.commit()
                 db.refresh(db_education)
