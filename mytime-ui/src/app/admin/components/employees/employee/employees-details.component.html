@@ -8,401 +8,341 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
                             <h5 class="mb-0">
-                                Employee Details
+                                <i class="mdi mdi-account-details me-2"></i>Employee Details
                             </h5>
                         </div>
                         <div class="d-flex align-items-center gap-2">
                             <button class="btn btn-sm btn-outline-secondary" (click)="goBack()">
                                 <i class="mdi mdi-arrow-left me-1"></i>
+                                <span class="d-none d-sm-inline">Back</span>
+                            </button>
+                            <button class="btn btn-sm btn-outline-primary" (click)="openEditForm()" [disabled]="!employee">
+                                <i class="mdi mdi-pencil me-1"></i>
+                                <span class="d-none d-sm-inline">Edit</span>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card Body -->
-                <div class="card-body" style="padding: 0px !important;">
-                    <div class="card" style="padding: 0px !important;">
-                        <div class="card-header bg-white border-bottom">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="d-flex align-items-center">
-                                    <h5 class="mb-0">
-                                        Personal Information
-                                    </h5>
-                                </div>
-                                <div class="d-flex align-items-center gap-2">
-                                    <button class="btn btn-sm btn-outline-primary" (click)="openEditForm()">
-                                        <i class="mdi mdi-pencil me-1"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-
+                <!-- Loading State -->
+                <div *ngIf="isLoading" class="loading-container">
+                    <div class="text-center p-5">
+                        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                            <span class="visually-hidden">Loading...</span>
                         </div>
-                        <div class="card-body">
-                            <div *ngIf="employee" class="employee-details">
-                                <div class="form-container">
-                                    <div class="row g-3 mb-4">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Employee Code</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="mdi mdi-badge-account"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control"
-                                                        [value]="employee.EmployeeCode || 'Not assigned'" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
+                        <p class="mt-3 text-muted">Loading employee details...</p>
+                    </div>
+                </div>
 
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>User ID</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="mdi mdi-account-key"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control"
-                                                        [value]="employee.UserId || 'Not assigned'" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
+                <!-- Error State -->
+                <div *ngIf="!isLoading && !employee" class="error-container">
+                    <div class="text-center p-5">
+                        <i class="mdi mdi-alert-circle-outline" style="font-size: 4rem; color: #dc3545;"></i>
+                        <h4 class="mt-3">Employee Not Found</h4>
+                        <p class="text-muted">The employee you're looking for doesn't exist or has been removed.</p>
+                        <button class="btn btn-primary mt-3" (click)="goBack()">
+                            <i class="mdi mdi-arrow-left me-2"></i>Back to Employees
+                        </button>
+                    </div>
+                </div>
 
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>First Name</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="mdi mdi-account"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control"
-                                                        [value]="employee.FirstName || 'Not specified'" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
+                <!-- Content State (shown when not loading and employee exists) -->
+                <div *ngIf="!isLoading && employee" class="card-body p-0">
+                    <!-- Mobile-Friendly Tab Navigation -->
+                    <div class="tab-navigation-wrapper">
+                        <ul class="nav nav-tabs flex-nowrap flex-sm-wrap" id="employeeTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" [class.active]="activeTab === 'personal'" 
+                                        id="personal-tab" data-bs-toggle="tab" 
+                                        data-bs-target="#personal" type="button" role="tab" 
+                                        aria-controls="personal" [attr.aria-selected]="activeTab === 'personal'">
+                                    <i class="mdi mdi-account"></i>
+                                    <span class="d-none d-sm-inline ms-1">Personal</span>
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" [class.active]="activeTab === 'employment'"
+                                        id="employment-tab" data-bs-toggle="tab" 
+                                        data-bs-target="#employment" type="button" role="tab" 
+                                        aria-controls="employment" [attr.aria-selected]="activeTab === 'employment'">
+                                    <i class="mdi mdi-briefcase"></i>
+                                    <span class="d-none d-sm-inline ms-1">Employment</span>
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" [class.active]="activeTab === 'financial'"
+                                        id="financial-tab" data-bs-toggle="tab" 
+                                        data-bs-target="#financial" type="button" role="tab" 
+                                        aria-controls="financial" [attr.aria-selected]="activeTab === 'financial'">
+                                    <i class="mdi mdi-currency-inr"></i>
+                                    <span class="d-none d-sm-inline ms-1">Financial</span>
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" [class.active]="activeTab === 'education'"
+                                        id="education-tab" data-bs-toggle="tab" 
+                                        data-bs-target="#education" type="button" role="tab" 
+                                        aria-controls="education" [attr.aria-selected]="activeTab === 'education'">
+                                    <i class="mdi mdi-school"></i>
+                                    <span class="d-none d-sm-inline ms-1">Education</span>
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" [class.active]="activeTab === 'history'"
+                                        id="history-tab" data-bs-toggle="tab" 
+                                        data-bs-target="#history" type="button" role="tab" 
+                                        aria-controls="history" [attr.aria-selected]="activeTab === 'history'">
+                                    <i class="mdi mdi-history"></i>
+                                    <span class="d-none d-sm-inline ms-1">History</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
 
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Last Name</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="mdi mdi-account-outline"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control"
-                                                        [value]="employee.LastName || 'Not specified'" readonly>
-                                                </div>
-                                            </div>
+                    <!-- Tab Content -->
+                    <div class="tab-content" id="employeeTabsContent">
+                        <!-- Personal Information Tab -->
+                        <div class="tab-pane fade" [class.show]="activeTab === 'personal'" [class.active]="activeTab === 'personal'" 
+                             id="personal" role="tabpanel" aria-labelledby="personal-tab">
+                            <div class="employee-details">
+                                <!-- Employee Header Card -->
+                                <div class="employee-profile-header mb-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle me-3" [style.background-color]="getAvatarColor()">
+                                            {{getInitials()}}
                                         </div>
-
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Gender</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="mdi mdi-gender-male-female"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control"
-                                                        [value]="employee.Gender || 'Not specified'" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Date of Birth</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="mdi mdi-calendar"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control"
-                                                        [value]="(employee.DateOfBirth | date:'dd/MM/yyyy') || 'Not specified'"
-                                                        readonly>
-                                                </div>
-                                            </div>
+                                        <div>
+                                            <h4 class="mb-1">{{employee.FirstName}} {{employee.LastName}}</h4>
+                                            <p class="text-muted mb-0">
+                                                <i class="mdi mdi-email-outline me-1"></i> {{employee.Email || 'No email'}}
+                                            </p>
+                                            <p class="text-muted mb-0">
+                                                <i class="mdi mdi-phone-outline me-1"></i> {{employee.Phone || 'No phone'}}
+                                            </p>
                                         </div>
                                     </div>
-                                    <div class="row g-3 mb-4">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Email</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="mdi mdi-email"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control"
-                                                        [value]="employee.Email || 'Not specified'" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
+                                </div>
 
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Phone</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="mdi mdi-phone"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control"
-                                                        [value]="employee.Phone || 'Not specified'" readonly>
-                                                </div>
-                                            </div>
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <h6 class="section-title">
+                                            <i class="mdi mdi-information me-1"></i>Basic Information
+                                        </h6>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="info-card">
+                                            <label>Employee Code</label>
+                                            <p>{{employee.EmployeeCode || 'Not assigned'}}</p>
                                         </div>
                                     </div>
-                                    <div class="row g-3 mb-4">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Father Name</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="mdi mdi-account-outline"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control"
-                                                        [value]="employee.FatherName || 'Not specified'" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Mother Name</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="mdi mdi-account-outline"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control"
-                                                        [value]="employee.MotherName || 'Not specified'" readonly>
-                                                </div>
-                                            </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="info-card">
+                                            <label>User ID</label>
+                                            <p>{{employee.UserId || 'Not assigned'}}</p>
                                         </div>
                                     </div>
-                                    <div class="row g-3 mb-4">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Department</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="mdi mdi-office-building"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control" *ngIf="employee"
-                                                        [value]="GetDepartmentName(employee.DepartmentId ?? 0)"
-                                                        readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Role</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="mdi mdi-shield-account"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control" *ngIf="employee"
-                                                        [value]="GetRoleName(employee.RoleId ?? 0)" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Designation</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="mdi mdi-briefcase-account"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control" *ngIf="employee"
-                                                        [value]="GetDesignationName(employee.DesignationId ?? 0)"
-                                                        readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Started On</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="mdi mdi-calendar-start"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control"
-                                                        [value]="(employee.StartedOn | date:'dd/MM/yyyy') || 'Not specified'"
-                                                        readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6" *ngIf="employee.EndedOn">
-                                            <div class="form-group">
-                                                <label>Ended On</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="mdi mdi-calendar-end"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control"
-                                                        [value]="(employee.EndedOn | date:'dd/MM/yyyy') || 'Not specified'"
-                                                        readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6" *ngIf="employee.ResignedOn">
-                                            <div class="form-group">
-                                                <label>Resigned On</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="mdi mdi-calendar-remove"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control"
-                                                        [value]="(employee.ResignedOn | date:'dd/MM/yyyy') || 'Not specified'"
-                                                        readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6" *ngIf="employee.LastWorkingDay">
-                                            <div class="form-group">
-                                                <label>Last Working Day</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="mdi mdi-calendar-clock"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control"
-                                                        [value]="(employee.LastWorkingDay | date:'dd/MM/yyyy') || 'Not specified'"
-                                                        readonly>
-                                                </div>
-                                            </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="info-card">
+                                            <label>Gender</label>
+                                            <p>{{employee.Gender || 'Not specified'}}</p>
                                         </div>
                                     </div>
-                                    <div class="row g-3 mb-4">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Offer Price</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="mdi mdi-currency-inr"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control"
-                                                        [value]="(employee.OfferPrice | currency:'INR') || 'Not specified'"
-                                                        readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Current Price</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="mdi mdi-currency-inr"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control"
-                                                        [value]="(employee.CurrentPrice | currency:'INR') || 'Not specified'"
-                                                        readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Joining Bonus</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="mdi mdi-currency-inr"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control"
-                                                        [value]="(employee.JoiningBonus | currency:'INR') || 'Not specified'"
-                                                        readonly>
-                                                </div>
-                                            </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="info-card">
+                                            <label>Date of Birth</label>
+                                            <p>{{(employee.DateOfBirth | date:'dd/MM/yyyy') || 'Not specified'}}</p>
                                         </div>
                                     </div>
-
-                                    <div class="row g-3 mb-4">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Offer Released On</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="mdi mdi-calendar-today"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control"
-                                                        [value]="(employee.OfferRelesedOn | date:'dd/MM/yyyy') || 'Not specified'"
-                                                        readonly>
-                                                </div>
-                                            </div>
+                                    <div class="col-12">
+                                        <h6 class="section-title mt-2">
+                                            <i class="mdi mdi-family-tree me-1"></i>Family Information
+                                        </h6>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="info-card">
+                                            <label>Father's Name</label>
+                                            <p>{{employee.FatherName || 'Not specified'}}</p>
                                         </div>
-
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Offer Accepted On</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="mdi mdi-calendar-check"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control"
-                                                        [value]="(employee.OfferAcceptedOn | date:'dd/MM/yyyy') || 'Not specified'"
-                                                        readonly>
-                                                </div>
-                                            </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="info-card">
+                                            <label>Mother's Name</label>
+                                            <p>{{employee.MotherName || 'Not specified'}}</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="card mb-5">
-                        <!-- Edit Form -->
-                        <app-employees-education-list [employeeId]="employeeId">
-                        </app-employees-education-list>
-                    </div>
-                    <div class="card mb-5">
-                        <!-- Edit Form -->
-                        <app-employees-employement-list [employeeId]="employeeId">
-                        </app-employees-employement-list>
+
+                        <!-- Employment Details Tab -->
+                        <div class="tab-pane fade" [class.show]="activeTab === 'employment'" [class.active]="activeTab === 'employment'"
+                             id="employment" role="tabpanel" aria-labelledby="employment-tab">
+                            <div class="employee-details">
+                                <div class="employee-profile-header mb-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle me-3" [style.background-color]="getAvatarColor()">
+                                            {{getInitials()}}
+                                        </div>
+                                        <div>
+                                            <h4 class="mb-1">{{employee.FirstName}} {{employee.LastName}}</h4>
+                                            <p class="text-muted mb-0">
+                                                <i class="mdi mdi-email-outline me-1"></i> {{employee.Email || 'No email'}}
+                                            </p>
+                                            <p class="text-muted mb-0">
+                                                <i class="mdi mdi-phone-outline me-1"></i> {{employee.Phone || 'No phone'}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <h6 class="section-title">
+                                            <i class="mdi mdi-badge-account me-1"></i>Position Details
+                                        </h6>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="info-card">
+                                            <label>Department</label>
+                                            <p>{{GetDepartmentName(employee.DepartmentId ?? 0)}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="info-card">
+                                            <label>Role</label>
+                                            <p>{{GetRoleName(employee.RoleId ?? 0)}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="info-card">
+                                            <label>Designation</label>
+                                            <p>{{GetDesignationName(employee.DesignationId ?? 0)}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <h6 class="section-title mt-2">
+                                            <i class="mdi mdi-calendar-clock me-1"></i>Employment Timeline
+                                        </h6>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="info-card">
+                                            <label>Started On</label>
+                                            <p>{{(employee.StartedOn | date:'dd/MM/yyyy') || 'Not specified'}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4" *ngIf="employee.EndedOn">
+                                        <div class="info-card">
+                                            <label>Ended On</label>
+                                            <p>{{(employee.EndedOn | date:'dd/MM/yyyy') || 'Not specified'}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4" *ngIf="employee.ResignedOn">
+                                        <div class="info-card">
+                                            <label>Resigned On</label>
+                                            <p>{{(employee.ResignedOn | date:'dd/MM/yyyy') || 'Not specified'}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4" *ngIf="employee.LastWorkingDay">
+                                        <div class="info-card">
+                                            <label>Last Working Day</label>
+                                            <p>{{(employee.LastWorkingDay | date:'dd/MM/yyyy') || 'Not specified'}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="info-card">
+                                            <label>Status</label>
+                                            <p>
+                                                <span class="status-badge" [class.active]="!employee.EndedOn" [class.inactive]="employee.EndedOn">
+                                                    {{employee.EndedOn ? 'Inactive' : 'Active'}}
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Financial Information Tab -->
+                        <div class="tab-pane fade" [class.show]="activeTab === 'financial'" [class.active]="activeTab === 'financial'"
+                             id="financial" role="tabpanel" aria-labelledby="financial-tab">
+                            <div class="employee-details">
+                                <div class="employee-profile-header mb-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle me-3" [style.background-color]="getAvatarColor()">
+                                            {{getInitials()}}
+                                        </div>
+                                        <div>
+                                            <h4 class="mb-1">{{employee.FirstName}} {{employee.LastName}}</h4>
+                                            <p class="text-muted mb-0">
+                                                <i class="mdi mdi-email-outline me-1"></i> {{employee.Email || 'No email'}}
+                                            </p>
+                                            <p class="text-muted mb-0">
+                                                <i class="mdi mdi-phone-outline me-1"></i> {{employee.Phone || 'No phone'}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <h6 class="section-title">
+                                            <i class="mdi mdi-cash-multiple me-1"></i>Compensation Details
+                                        </h6>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="info-card highlight">
+                                            <label>Offer Price</label>
+                                            <p class="amount">{{(employee.OfferPrice | currency:'INR') || 'Not specified'}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="info-card highlight">
+                                            <label>Current Price</label>
+                                            <p class="amount">{{(employee.CurrentPrice | currency:'INR') || 'Not specified'}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="info-card highlight">
+                                            <label>Joining Bonus</label>
+                                            <p class="amount">{{(employee.JoiningBonus | currency:'INR') || 'Not specified'}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <h6 class="section-title mt-2">
+                                            <i class="mdi mdi-calendar-check me-1"></i>Offer Timeline
+                                        </h6>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="info-card">
+                                            <label>Offer Released On</label>
+                                            <p>{{(employee.OfferRelesedOn | date:'dd/MM/yyyy') || 'Not specified'}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="info-card">
+                                            <label>Offer Accepted On</label>
+                                            <p>{{(employee.OfferAcceptedOn | date:'dd/MM/yyyy') || 'Not specified'}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Education Tab -->
+                        <div class="tab-pane fade" [class.show]="activeTab === 'education'" [class.active]="activeTab === 'education'"
+                             id="education" role="tabpanel" aria-labelledby="education-tab">
+                            <div class="p-2">
+                                <app-employees-education-list [employeeId]="employeeId"></app-employees-education-list>
+                            </div>
+                        </div>
+
+                        <!-- Employment History Tab -->
+                        <div class="tab-pane fade" [class.show]="activeTab === 'history'" [class.active]="activeTab === 'history'"
+                             id="history" role="tabpanel" aria-labelledby="history-tab">
+                            <div class="p-2">
+                                <app-employees-employement-list [employeeId]="employeeId"></app-employees-employement-list>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -412,6 +352,6 @@
 
 <!-- Edit Form -->
 <app-employees-create *ngIf="showEditForm" [isVisible]="showEditForm" [employee]="selectedEmployee"
-    [departments]="departments" [roles]="roles" [designations]="designations" (saveEmployee)="onEmployeeUpdated($event)"
-    (closeSidebar)="closeEditForm()">
+    [departments]="departments" [roles]="roles" [designations]="designations" 
+    (saveEmployee)="onEmployeeUpdated($event)" (closeSidebar)="closeEditForm()">
 </app-employees-create>

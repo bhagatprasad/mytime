@@ -63,6 +63,7 @@
               "src/assets/css/sidebar.css"
             ],
             "scripts": [
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
               "src/assets/vendors/base/vendor.bundle.base.js",
               "src/assets/js/off-canvas.js",
               "src/assets/js/hoverable-collapse.js",
