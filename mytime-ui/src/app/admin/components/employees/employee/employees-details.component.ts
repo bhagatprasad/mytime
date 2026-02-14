@@ -23,6 +23,7 @@ import { Role } from '../../../models/role';
 import { EmployeeDTO } from '../../../models/employee.dto';
 import { AuditFieldsService } from '../../../../common/services/auditfields.service';
 import { EmployeesEmployementListComponent } from '../employment/employees-employement-list.component';
+import { EmployeesEmergenceyContactListComponent } from '../contacts/employees-emergencey-contact-list.component';
 
 declare var bootstrap: any;
 
@@ -33,7 +34,8 @@ declare var bootstrap: any;
     CommonModule,
     EmployeesCreateComponent,
     EmployeesEducationListComponent,
-    EmployeesEmployementListComponent
+    EmployeesEmployementListComponent,
+    EmployeesEmergenceyContactListComponent
   ],
   providers: [DatePipe, CurrencyPipe],
   templateUrl: './employees-details.component.html',

@@ -1,1 +1,114 @@
-<p>employees-emergencey-contact-add works!</p>
+<!-- Overlay -->
+<div class="sidebar-overlay" *ngIf="isVisible" (click)="onClose()"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" [class.visible]="isVisible">
+    <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" novalidate>
+        <!-- Header -->
+        <div class="sidebar-header">
+            <h5 class="sidebar-title">
+                {{ employeeEmergencyContact ? 'Edit Emergency Contact' : 'Add Emergency Contact' }}
+            </h5>
+            <button type="button" class="close" (click)="onClose()">
+                <span>&times;</span>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="sidebar-body">
+            <div class="form-container">
+                <!-- Name -->
+                <div class="form-group mb-3">
+                    <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-account"></i>
+                        </span>
+                        <input type="text" class="form-control" formControlName="Name"
+                            [class.is-invalid]="isFieldInvalid('Name')" placeholder="Enter full name">
+                    </div>
+                    <div *ngIf="isFieldInvalid('Name')" class="text-danger small">
+                        Name is required
+                    </div>
+                </div>
+
+                <!-- Relation -->
+                <div class="form-group mb-3">
+                    <label class="form-label">Relationship <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-family-tree"></i>
+                        </span>
+                        <input type="text" class="form-control" formControlName="Relation"
+                            [class.is-invalid]="isFieldInvalid('Relation')" placeholder="e.g., Spouse, Parent, Sibling">
+                    </div>
+                    <div *ngIf="isFieldInvalid('Relation')" class="text-danger small">
+                        Relationship is required
+                    </div>
+                </div>
+
+                <!-- Phone -->
+                <div class="form-group mb-3">
+                    <label class="form-label">Phone Number <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-phone"></i>
+                        </span>
+                        <input type="tel" class="form-control" formControlName="Phone"
+                            [class.is-invalid]="isFieldInvalid('Phone')" placeholder="Enter phone number">
+                    </div>
+                    <div *ngIf="isFieldInvalid('Phone')" class="text-danger small">
+                        <span *ngIf="contactForm.get('Phone')?.errors?.['required']">
+                            Phone number is required
+                        </span>
+                        <span *ngIf="contactForm.get('Phone')?.errors?.['pattern']">
+                            Please enter a valid phone number
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="form-group mb-3">
+                    <label class="form-label">Email Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-email"></i>
+                        </span>
+                        <input type="email" class="form-control" formControlName="Email"
+                            [class.is-invalid]="isFieldInvalid('Email')" placeholder="Enter email address">
+                    </div>
+                    <div *ngIf="isFieldInvalid('Email')" class="text-danger small">
+                        <span *ngIf="contactForm.get('Email')?.errors?.['email']">
+                            Please enter a valid email address
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Address -->
+                <div class="form-group mb-3">
+                    <label class="form-label">Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-map-marker"></i>
+                        </span>
+                        <textarea class="form-control" formControlName="Address"
+                            [class.is-invalid]="isFieldInvalid('Address')" rows="3"
+                            placeholder="Enter complete address"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="sidebar-footer">
+            <button type="submit" class="btn btn-primary" [disabled]="contactForm.invalid">
+                <i class="mdi mdi-content-save"></i>
+                {{ employeeEmergencyContact ? 'Update' : 'Save' }}
+            </button>
+            <button type="button" class="btn btn-secondary ms-2" (click)="onClose()">
+                <i class="mdi mdi-close"></i>
+                Cancel
+            </button>
+        </div>
+    </form>
+</div>
