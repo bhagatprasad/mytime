@@ -78,7 +78,7 @@ class EmployeeEducationService:
             if degree and degree.strip():
                 query = query.filter(func.lower(EmployeeEducation.Degree) == func.lower(degree.strip()))
             
-            # Apply field of study filter (using FeildOfStudy)
+            # Apply field of study filter
             if field_of_study and field_of_study.strip():
                 query = query.filter(func.lower(EmployeeEducation.FeildOfStudy) == func.lower(field_of_study.strip()))
             
@@ -86,9 +86,8 @@ class EmployeeEducationService:
             if institution and institution.strip():
                 query = query.filter(func.lower(EmployeeEducation.Institution) == func.lower(institution.strip()))
             
-            # Apply year range filters - FIXED: Don't use extract() function
+            # Apply year range filters
             if year_from:
-                # Create start date for the year (January 1st)
                 try:
                     start_date = datetime(year_from, 1, 1)
                     query = query.filter(EmployeeEducation.YearOfCompletion >= start_date)
@@ -96,7 +95,6 @@ class EmployeeEducationService:
                     logger.warning(f"Invalid year_from {year_from}: {str(e)}")
             
             if year_to:
-                # Create end date for the year (December 31st)
                 try:
                     end_date = datetime(year_to, 12, 31, 23, 59, 59)
                     query = query.filter(EmployeeEducation.YearOfCompletion <= end_date)
@@ -112,19 +110,19 @@ class EmployeeEducationService:
             
             # Apply sorting
             sort_column_map = {
-                "employee_education_id": EmployeeEducation.EmployeeEducationId,
-                "employee_id": EmployeeEducation.EmployeeId,
+                "employeeeducationid": EmployeeEducation.EmployeeEducationId,
+                "employeeid": EmployeeEducation.EmployeeId,
                 "degree": EmployeeEducation.Degree,
-                "feild_of_study": EmployeeEducation.FeildOfStudy,
+                "feildofstudy": EmployeeEducation.FeildOfStudy,
                 "institution": EmployeeEducation.Institution,
-                "year_of_completion": EmployeeEducation.YearOfCompletion,
-                "percentage_marks": EmployeeEducation.PercentageMarks,
-                "created_on": EmployeeEducation.CreatedOn,
-                "is_active": EmployeeEducation.IsActive
+                "yearofcompletion": EmployeeEducation.YearOfCompletion,
+                "percentagemarks": EmployeeEducation.PercentageMarks,
+                "createdon": EmployeeEducation.CreatedOn,
+                "isactive": EmployeeEducation.IsActive
             }
             
             sort_column = sort_column_map.get(
-                sort_by.lower().replace(" ", "_"),
+                sort_by.lower().replace(" ", "").replace("_", ""),
                 EmployeeEducation.EmployeeEducationId
             )
             
@@ -149,18 +147,66 @@ class EmployeeEducationService:
             from app.models.employee_education import EmployeeEducation
             from datetime import datetime
             
+            # Helper function to parse dates
+            def parse_date(date_value):
+                if date_value is None:
+                    return None
+                if isinstance(date_value, datetime):
+                    return date_value
+                if isinstance(date_value, str):
+                    try:
+                        # Handle ISO format with Z
+                        if date_value.endswith('Z'):
+                            date_value = date_value.replace('Z', '+00:00')
+                        return datetime.fromisoformat(date_value)
+                    except (ValueError, TypeError):
+                        try:
+                            # Try common formats
+                            return datetime.strptime(date_value, '%Y-%m-%dT%H:%M:%S.%fZ')
+                        except:
+                            try:
+                                return datetime.strptime(date_value, '%Y-%m-%dT%H:%M:%SZ')
+                            except:
+                                logger.warning(f"Could not parse date: {date_value}")
+                                return datetime.utcnow()
+                return datetime.utcnow()
+            
+            # Helper function to parse integer IDs
+            def parse_id(id_value, default=0):
+                if id_value is None:
+                    return default
+                if isinstance(id_value, int):
+                    return id_value
+                if isinstance(id_value, str):
+                    try:
+                        return int(id_value.strip()) if id_value.strip() else default
+                    except (ValueError, TypeError):
+                        return default
+                try:
+                    return int(id_value)
+                except:
+                    return default
+            
             # Create a copy to avoid modifying the original
             process_data = education_data.copy()
             
-            # Convert string IDs to integers for all ID fields
-            id_fields = ['CreatedBy', 'ModifiedBy', 'EmployeeEducationId', 'EmployeeId']
-            for field in id_fields:
-                if field in process_data and process_data[field] is not None:
-                    # If it's a string, convert to int
-                    if isinstance(process_data[field], str) and process_data[field].isdigit():
-                        process_data[field] = int(process_data[field])
-                    # If it's already an int, keep it
-                    # If it's something else, handle appropriately
+            # Parse ID fields
+            process_data['EmployeeEducationId'] = parse_id(process_data.get('EmployeeEducationId'), 0)
+            process_data['EmployeeId'] = parse_id(process_data.get('EmployeeId'), None)
+            process_data['CreatedBy'] = parse_id(process_data.get('CreatedBy'), None)
+            process_data['ModifiedBy'] = parse_id(process_data.get('ModifiedBy'), None)
+            
+            # Parse date fields
+            process_data['CreatedOn'] = parse_date(process_data.get('CreatedOn'))
+            process_data['ModifiedOn'] = parse_date(process_data.get('ModifiedOn'))
+            process_data['YearOfCompletion'] = parse_date(process_data.get('YearOfCompletion'))
+            
+            # Ensure IsActive is boolean
+            if 'IsActive' in process_data and process_data['IsActive'] is not None:
+                if isinstance(process_data['IsActive'], str):
+                    process_data['IsActive'] = process_data['IsActive'].lower() in ('true', '1', 'yes')
+            else:
+                process_data['IsActive'] = True
             
             employee_education_id = process_data.get('EmployeeEducationId', 0)
             
@@ -177,15 +223,17 @@ class EmployeeEducationService:
                         "education": None
                     }
                 
-                db_education.Degree = process_data.get('Degree')
-                db_education.FeildOfStudy = process_data.get('FeildOfStudy')
-                db_education.Institution = process_data.get('Institution')
-                db_education.PercentageMarks = process_data.get('PercentageMarks')
-                db_education.Year = process_data.get('Year')
-                db_education.YearOfCompletion = process_data.get('YearOfCompletion')
-                db_education.ModifiedOn = datetime.utcnow()
-                db_education.ModifiedBy = process_data.get('ModifiedBy')
-
+                # Update all fields
+                db_education.Degree = process_data.get('Degree', db_education.Degree)
+                db_education.FeildOfStudy = process_data.get('FeildOfStudy', db_education.FeildOfStudy)
+                db_education.Institution = process_data.get('Institution', db_education.Institution)
+                db_education.Year = process_data.get('Year', db_education.Year)
+                db_education.PercentageMarks = process_data.get('PercentageMarks', db_education.PercentageMarks)
+                db_education.YearOfCompletion = process_data.get('YearOfCompletion', db_education.YearOfCompletion)
+                db_education.IsActive = process_data.get('IsActive', db_education.IsActive)
+                db_education.ModifiedBy = process_data.get('ModifiedBy', db_education.ModifiedBy)
+                db_education.ModifiedOn = datetime.utcnow()  # Always update to current time
+                
                 db.commit()
                 db.refresh(db_education)
                 return {
@@ -198,17 +246,22 @@ class EmployeeEducationService:
                 # Remove EmployeeEducationId if present in create mode
                 process_data.pop('EmployeeEducationId', None)
                 
-                # Set CreatedOn timestamp if not provided
-                if 'CreatedOn' not in process_data or not process_data.get('CreatedOn'):
+                # Set timestamps
+                if not process_data.get('CreatedOn'):
                     process_data['CreatedOn'] = datetime.utcnow()
-                
-                # Set ModifiedOn
                 process_data['ModifiedOn'] = datetime.utcnow()
                 
-                # Set default Active status if not provided
-                if 'IsActive' not in process_data:
-                    process_data['IsActive'] = True
+                # Ensure required fields are present
+                required_fields = ['Degree', 'FeildOfStudy', 'Institution', 'EmployeeId', 'Year']
+                missing_fields = [field for field in required_fields if not process_data.get(field)]
+                if missing_fields:
+                    return {
+                        "success": False,
+                        "message": f"Missing required fields: {', '.join(missing_fields)}",
+                        "education": None
+                    }
                 
+                # Create new record
                 db_education = EmployeeEducation(**process_data)
                 db.add(db_education)
                 db.commit()
@@ -223,8 +276,42 @@ class EmployeeEducationService:
         except Exception as e:
             db.rollback()
             logger.error(f"Error in insert_or_update_employee_education: {str(e)}")
+            import traceback
+            logger.error(traceback.format_exc())
             return {
                 "success": False, 
                 "message": f"Error saving employee education record: {str(e)}",
                 "education": None
+            }
+    
+    @staticmethod
+    def delete_employee_education(db: Session, employee_education_id: int) -> Dict[str, Any]:
+        """Delete employee education record"""
+        try:
+            from app.models.employee_education import EmployeeEducation
+            
+            db_education = db.query(EmployeeEducation).filter(
+                EmployeeEducation.EmployeeEducationId == employee_education_id
+            ).first()
+            
+            if not db_education:
+                return {
+                    "success": False, 
+                    "message": "Employee education record not found"
+                }
+            
+            db.delete(db_education)
+            db.commit()
+            
+            return {
+                "success": True, 
+                "message": "Employee education record deleted successfully"
+            }
+            
+        except Exception as e:
+            db.rollback()
+            logger.error(f"Error deleting employee education {employee_education_id}: {str(e)}")
+            return {
+                "success": False, 
+                "message": f"Error deleting employee education record: {str(e)}"
             }
