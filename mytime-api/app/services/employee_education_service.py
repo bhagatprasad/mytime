@@ -149,20 +149,22 @@ class EmployeeEducationService:
             from app.models.employee_education import EmployeeEducation
             from datetime import datetime
             
-            # Get EmployeeEducationId and convert to int if it's a string
-            emp_edu_id = education_data.get('EmployeeEducationId')
+            # Create a copy to avoid modifying the original
+            process_data = education_data.copy()
             
-            # Convert to int if it's a string, handle None case
-            if emp_edu_id is not None:
-                try:
-                    employee_education_id = int(emp_edu_id)
-                except (ValueError, TypeError):
-                    employee_education_id = 0
-            else:
-                employee_education_id = 0
+            # Convert string IDs to integers for all ID fields
+            id_fields = ['CreatedBy', 'ModifiedBy', 'EmployeeEducationId', 'EmployeeId']
+            for field in id_fields:
+                if field in process_data and process_data[field] is not None:
+                    # If it's a string, convert to int
+                    if isinstance(process_data[field], str) and process_data[field].isdigit():
+                        process_data[field] = int(process_data[field])
+                    # If it's already an int, keep it
+                    # If it's something else, handle appropriately
             
-            # Now safe to compare
-            if employee_education_id > 0:
+            employee_education_id = process_data.get('EmployeeEducationId', 0)
+            
+            if employee_education_id and employee_education_id > 0:
                 # Update existing education record
                 db_education = db.query(EmployeeEducation).filter(
                     EmployeeEducation.EmployeeEducationId == employee_education_id
@@ -175,14 +177,14 @@ class EmployeeEducationService:
                         "education": None
                     }
                 
-                db_education.Degree = education_data.get('Degree')
-                db_education.FeildOfStudy = education_data.get('FeildOfStudy')
-                db_education.Institution = education_data.get('Institution')
-                db_education.PercentageMarks = education_data.get('PercentageMarks')
-                db_education.Year = education_data.get('Year')
-                db_education.YearOfCompletion = education_data.get('YearOfCompletion')
+                db_education.Degree = process_data.get('Degree')
+                db_education.FeildOfStudy = process_data.get('FeildOfStudy')
+                db_education.Institution = process_data.get('Institution')
+                db_education.PercentageMarks = process_data.get('PercentageMarks')
+                db_education.Year = process_data.get('Year')
+                db_education.YearOfCompletion = process_data.get('YearOfCompletion')
                 db_education.ModifiedOn = datetime.utcnow()
-                db_education.ModifiedBy = education_data.get('ModifiedBy')
+                db_education.ModifiedBy = process_data.get('ModifiedBy')
 
                 db.commit()
                 db.refresh(db_education)
@@ -193,37 +195,21 @@ class EmployeeEducationService:
                 }
             else:
                 # Create new education record
-                # Create a copy to avoid modifying the original
-                create_data = education_data.copy()
-                
                 # Remove EmployeeEducationId if present in create mode
-                create_data.pop('EmployeeEducationId', None)
-                
-                # Convert string IDs to integers for the model
-                if 'CreatedBy' in create_data and create_data['CreatedBy']:
-                    try:
-                        create_data['CreatedBy'] = int(create_data['CreatedBy'])
-                    except (ValueError, TypeError):
-                        pass
-                        
-                if 'ModifiedBy' in create_data and create_data['ModifiedBy']:
-                    try:
-                        create_data['ModifiedBy'] = int(create_data['ModifiedBy'])
-                    except (ValueError, TypeError):
-                        pass
+                process_data.pop('EmployeeEducationId', None)
                 
                 # Set CreatedOn timestamp if not provided
-                if 'CreatedOn' not in create_data or not create_data.get('CreatedOn'):
-                    create_data['CreatedOn'] = datetime.utcnow()
+                if 'CreatedOn' not in process_data or not process_data.get('CreatedOn'):
+                    process_data['CreatedOn'] = datetime.utcnow()
                 
                 # Set ModifiedOn
-                create_data['ModifiedOn'] = datetime.utcnow()
+                process_data['ModifiedOn'] = datetime.utcnow()
                 
                 # Set default Active status if not provided
-                if 'IsActive' not in create_data:
-                    create_data['IsActive'] = True
+                if 'IsActive' not in process_data:
+                    process_data['IsActive'] = True
                 
-                db_education = EmployeeEducation(**create_data)
+                db_education = EmployeeEducation(**process_data)
                 db.add(db_education)
                 db.commit()
                 db.refresh(db_education)
