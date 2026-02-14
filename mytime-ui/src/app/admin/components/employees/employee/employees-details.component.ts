@@ -22,14 +22,16 @@ import { Designation } from '../../../models/designation';
 import { Role } from '../../../models/role';
 import { EmployeeDTO } from '../../../models/employee.dto';
 import { AuditFieldsService } from '../../../../common/services/auditfields.service';
+import { EmployeesEmployementListComponent } from '../employment/employees-employement-list.component';
 
 @Component({
   selector: 'app-employees-details',
   standalone: true,
   imports: [
-    CommonModule, 
-    EmployeesCreateComponent, 
-    EmployeesEducationListComponent
+    CommonModule,
+    EmployeesCreateComponent,
+    EmployeesEducationListComponent,
+    EmployeesEmployementListComponent
   ],
   providers: [DatePipe, CurrencyPipe],
   templateUrl: './employees-details.component.html',
@@ -44,7 +46,7 @@ export class EmployeesDetailsComponent implements OnInit {
   departments: Department[] = [];
   designations: Designation[] = [];
   roles: Role[] = [];
-  
+
   // UI State
   showEditForm = false;
   selectedEmployee: Employee | null = null;

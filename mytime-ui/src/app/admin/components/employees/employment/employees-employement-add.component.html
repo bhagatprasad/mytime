@@ -1,1 +1,175 @@
-<p>employees-employement-add works!</p>
+<!-- Overlay -->
+<div class="sidebar-overlay" *ngIf="isVisible" (click)="onClose()"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" [class.visible]="isVisible">
+    <form [formGroup]="employmentForm" (ngSubmit)="onSubmit()" novalidate>
+        <!-- Header -->
+        <div class="sidebar-header">
+            <h5 class="sidebar-title">
+                {{ employment ? 'Edit Employment' : 'Add Employment' }}
+            </h5>
+            <button type="button" class="close" (click)="onClose()">
+                <span>&times;</span>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="sidebar-body">
+            <div class="form-container">
+                <!-- Company Name -->
+                <div class="form-group mb-3">
+                    <label class="form-label">Company Name <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-domain"></i>
+                        </span>
+                        <input type="text" class="form-control" formControlName="CompanyName"
+                            [class.is-invalid]="isFieldInvalid('CompanyName')" placeholder="Enter company name">
+                    </div>
+                    <div *ngIf="isFieldInvalid('CompanyName')" class="text-danger small">
+                        Company name is required
+                    </div>
+                </div>
+
+                <!-- Designation -->
+                <div class="form-group mb-3">
+                    <label class="form-label">Designation <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-badge-account-horizontal"></i>
+                        </span>
+                        <input type="text" class="form-control" formControlName="Designation"
+                            [class.is-invalid]="isFieldInvalid('Designation')" placeholder="Enter designation">
+                    </div>
+                    <div *ngIf="isFieldInvalid('Designation')" class="text-danger small">
+                        Designation is required
+                    </div>
+                </div>
+
+
+                <!-- Started On -->
+                <div class="form-group mb-3">
+                    <label class="form-label">Started On <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-calendar-start"></i>
+                        </span>
+                        <input type="date" class="form-control" formControlName="StartedOn"
+                            [class.is-invalid]="isFieldInvalid('StartedOn')">
+                    </div>
+                    <div *ngIf="isFieldInvalid('StartedOn')" class="text-danger small">
+                        Start date is required
+                    </div>
+                </div>
+
+                <!-- Ended On -->
+                <div class="form-group mb-3">
+                    <label class="form-label">Ended On</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-calendar-end"></i>
+                        </span>
+                        <input type="date" class="form-control" formControlName="EndedOn"
+                            [min]="employmentForm.get('StartedOn')?.value">
+                    </div>
+                    <div *ngIf="employmentForm.get('EndedOn')?.value && 
+                      employmentForm.get('StartedOn')?.value && 
+                      employmentForm.get('EndedOn')?.value < employmentForm.get('StartedOn')?.value"
+                        class="text-danger small">
+                        End date cannot be before start date
+                    </div>
+                </div>
+
+                <!-- Reporting Manager -->
+                <div class="form-group mb-3">
+                    <label class="form-label">Reporting Manager <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-account-tie"></i>
+                        </span>
+                        <input type="text" class="form-control" formControlName="ReportingManager"
+                            [class.is-invalid]="isFieldInvalid('ReportingManager')"
+                            placeholder="Enter reporting manager name">
+                    </div>
+                    <div *ngIf="isFieldInvalid('ReportingManager')" class="text-danger small">
+                        Reporting manager is required
+                    </div>
+                </div>
+
+                <!-- HR Email -->
+                <div class="form-group mb-3">
+                    <label class="form-label">HR Email <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-email"></i>
+                        </span>
+                        <input type="email" class="form-control" formControlName="HREmail"
+                            [class.is-invalid]="isFieldInvalid('HREmail')" placeholder="Enter HR email">
+                    </div>
+                    <div *ngIf="isFieldInvalid('HREmail')" class="text-danger small">
+                        <span *ngIf="employmentForm.get('HREmail')?.errors?.['required']">
+                            HR email is required
+                        </span>
+                        <span *ngIf="employmentForm.get('HREmail')?.errors?.['email']">
+                            Please enter a valid email address
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Address -->
+                <div class="form-group mb-3">
+                    <label class="form-label">Address <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-map-marker"></i>
+                        </span>
+                        <textarea class="form-control" formControlName="Address"
+                            [class.is-invalid]="isFieldInvalid('Address')" rows="3"
+                            placeholder="Enter company address"></textarea>
+                    </div>
+                    <div *ngIf="isFieldInvalid('Address')" class="text-danger small">
+                        Address is required
+                    </div>
+                </div>
+
+
+                <!-- Reason for Leaving -->
+                <div class="form-group mb-3">
+                    <label class="form-label">Reason for Leaving</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-comment-text"></i>
+                        </span>
+                        <textarea class="form-control" formControlName="Reason" rows="2"
+                            placeholder="Enter reason for leaving"></textarea>
+                    </div>
+                </div>
+
+                <!-- Reference -->
+                <div class="form-group mb-3">
+                    <label class="form-label">Reference</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-account-check"></i>
+                        </span>
+                        <input type="text" class="form-control" formControlName="Referance"
+                            placeholder="Enter reference name/contact">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="sidebar-footer">
+            <button type="submit" class="btn btn-primary" [disabled]="employmentForm.invalid">
+                <i class="mdi mdi-content-save"></i>
+                {{ employment ? 'Update' : 'Save' }}
+            </button>
+            <button type="button" class="btn btn-secondary ms-2" (click)="onClose()">
+                <i class="mdi mdi-close"></i>
+                Cancel
+            </button>
+        </div>
+    </form>
+</div>

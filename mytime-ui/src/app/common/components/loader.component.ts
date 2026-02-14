@@ -22,17 +22,16 @@ import { LoaderService } from '../../common/services/loader.service';
   `,
   styles: [`
     .panel-loader-overlay {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
-      right: 0;
-      bottom: 0;
+      width: 100%;
+      height: 100%;
       background: rgba(255, 255, 255, 0.85);
-      z-index: 1100;
+      z-index: 999999;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 8px;
     }
     
     .loader-container {
@@ -42,7 +41,7 @@ import { LoaderService } from '../../common/services/loader.service';
       padding: 20px;
     }
     
-    /* Big Spinner */
+    /* Big Spinner - Original Size */
     .big-spinner {
       position: relative;
       width: 120px;
@@ -57,6 +56,7 @@ import { LoaderService } from '../../common/services/loader.service';
       border-top: 12px solid #007bff;
       border-radius: 50%;
       animation: spin 1.5s linear infinite;
+      box-sizing: border-box;
     }
     
     .spinner-center {
@@ -69,6 +69,7 @@ import { LoaderService } from '../../common/services/loader.service';
       border: 6px solid rgba(0, 123, 255, 0.1);
       border-radius: 50%;
       background: white;
+      box-sizing: border-box;
     }
     
     @keyframes spin {
@@ -84,15 +85,24 @@ import { LoaderService } from '../../common/services/loader.service';
       text-align: center;
     }
     
-    /* Optional: Add pulsing effect to center */
+    /* Pulse animation for center */
     .spinner-center {
       animation: pulse 2s infinite;
     }
     
     @keyframes pulse {
-      0% { transform: translate(-50%, -50%) scale(0.9); }
-      50% { transform: translate(-50%, -50%) scale(1.1); }
-      100% { transform: translate(-50%, -50%) scale(0.9); }
+      0% { 
+        transform: translate(-50%, -50%) scale(0.9);
+        opacity: 0.8;
+      }
+      50% { 
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 1;
+      }
+      100% { 
+        transform: translate(-50%, -50%) scale(0.9);
+        opacity: 0.8;
+      }
     }
   `]
 })
@@ -103,11 +113,11 @@ export class PanelLoaderComponent implements OnInit {
   constructor(private loaderService: LoaderService) {}
 
   ngOnInit() {
-    this.loaderService.isLoading$.subscribe(loading => {
+    this.loaderService.isLoading$.subscribe((loading: boolean) => {
       this.isLoading = loading;
     });
 
-    this.loaderService.message$.subscribe(message => {
+    this.loaderService.message$.subscribe((message: string) => {
       this.message = message;
     });
   }
