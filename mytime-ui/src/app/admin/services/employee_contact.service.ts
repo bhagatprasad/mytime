@@ -20,19 +20,19 @@ export class EmployeeEmergencyContactService {
     }
 
     getEmergencyContactsByEmployeeAsync(employee_id: number): Observable<EmployeeEmergencyContact[]> {
-        return this.apiService.send<EmployeeEmergencyContact[]>("GET", `${environment.UrlConstants.EmployeeEmergencyContact.GetContactsByEmployee}?employee_id=${employee_id}`);
+        return this.apiService.send<EmployeeEmergencyContact[]>("GET", `${environment.UrlConstants.EmployeeEmergencyContact.GetContactsByEmployee}/${employee_id}`);
     }
 
     getActiveEmergencyContactsByEmployeeAsync(employee_id: number): Observable<EmployeeEmergencyContact[]> {
-        return this.apiService.send<EmployeeEmergencyContact[]>("GET", `${environment.UrlConstants.EmployeeEmergencyContact.GetActiveContactsByEmployee}?employee_id=${employee_id}`);
+        return this.apiService.send<EmployeeEmergencyContact[]>("GET", `${environment.UrlConstants.EmployeeEmergencyContact.GetActiveContactsByEmployee}${employee_id}`);
     }
 
     getPrimaryEmergencyContactAsync(employee_id: number): Observable<EmployeeEmergencyContact> {
-        return this.apiService.send<EmployeeEmergencyContact>("GET", `${environment.UrlConstants.EmployeeEmergencyContact.GetPrimaryEmergencyContact}?employee_id=${employee_id}`);
+        return this.apiService.send<EmployeeEmergencyContact>("GET", `${environment.UrlConstants.EmployeeEmergencyContact.GetPrimaryEmergencyContact}/${employee_id}`);
     }
 
     getEmployeeEmergencyContactsSummaryAsync(employee_id: number): Observable<any> {
-        return this.apiService.send<any>("GET", `${environment.UrlConstants.EmployeeEmergencyContact.GetEmployeeEmergencyContactsSummary}?employee_id=${employee_id}`);
+        return this.apiService.send<any>("GET", `${environment.UrlConstants.EmployeeEmergencyContact.GetEmployeeEmergencyContactsSummary}/${employee_id}`);
     }
 
     getEmergencyContactStatisticsAsync(): Observable<any> {
