@@ -16,7 +16,7 @@ export class EmployeeEmploymentService {
     }
 
     getEmploymentsByEmployeeAsync(employeeId: number): Observable<EmployeeEmployment[]> {
-        return this.apiService.send<EmployeeEmployment[]>("GET", `${environment.UrlConstants.EmployeeEmployment.GetEmploymentsByEmployee}?employeeId=${employeeId}`);
+        return this.apiService.send<EmployeeEmployment[]>("GET", `${environment.UrlConstants.EmployeeEmployment.GetEmploymentsByEmployee}/${employeeId}`);
     }
 
     insertOrUpdateEmployementAsync(employeement: EmployeeEmployment): Observable<EmployeeEmployment> {

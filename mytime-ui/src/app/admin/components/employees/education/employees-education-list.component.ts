@@ -114,7 +114,8 @@ export class EmployeesEducationListComponent implements OnInit, OnDestroy {
       filter: false,
       cellRenderer: MobileActionsRendererComponent,
       cellRendererParams: {
-        onEditClick: (data: any) => this.openEditEducationForm(data)
+        onEditClick: (data: any) => this.openEditEducationForm(data),
+        onDeleteClick: (data: any) => this.deleteEducation(data)
       },
       cellClass: 'text-center'
     }

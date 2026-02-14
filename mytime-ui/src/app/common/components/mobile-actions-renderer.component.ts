@@ -4,13 +4,25 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
 @Component({
   selector: 'app-mobile-actions-renderer',
   template: `
-    <div class="d-flex justify-content-center mobile-actions-wrapper">
+    <div class="d-flex justify-content-center gap-1 mobile-actions-wrapper">
+      <!-- Edit Button -->
       <a 
-        class="d-flex align-items-center"
-        (click)="onEdit()"
-        [attr.title]="'Edit ' + (params?.data?.name || params?.data?.title || 'item')"
+        class="d-flex align-items-center mobile-action-btn edit-btn"
+        (click)="onEditClick($event)"
+        title="Edit"
       >
-        <i class="mdi mdi-pencil me-1"></i>
+        <i class="mdi mdi-pencil"></i>
+        <span class="btn-text">Edit</span>
+      </a>
+
+      <!-- Delete Button -->
+      <a 
+        class="d-flex align-items-center mobile-action-btn delete-btn"
+        (click)="onDeleteClick($event)"
+        title="Delete"
+      >
+        <i class="mdi mdi-delete"></i>
+        <span class="btn-text">Delete</span>
       </a>
     </div>
   `,
@@ -20,70 +32,105 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
       height: 100%;
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
     }
     
-    .mobile-edit-btn {
-      padding: 0.25rem 0.5rem;
-      font-size: 0.875rem;
-      line-height: 1.5;
-      border-radius: 0.2rem;
-      background-color: #0d6efd;
-      border-color: #0d6efd;
-      color: white;
+    .mobile-action-btn {
+      padding: 2px 6px;
+      font-size: 11px;
+      line-height: 1.2;
+      border-radius: 3px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       white-space: nowrap;
-      transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, 
-                  border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      transition: all 0.15s ease-in-out;
+      text-decoration: none;
+      gap: 2px;
+      min-height: 20px;
     }
     
-    .mobile-edit-btn:hover {
+    .edit-btn {
+      background-color: #0d6efd;
+      border: 1px solid #0d6efd;
+      color: white;
+    }
+    
+    .edit-btn:hover {
       background-color: #0b5ed7;
       border-color: #0a58ca;
       color: white;
     }
     
-    .mobile-edit-btn:active {
+    .edit-btn:active {
       background-color: #0a58ca;
       border-color: #0a53be;
     }
     
-    .mobile-edit-btn i {
-      font-size: 16px;
+    .delete-btn {
+      background-color: #dc3545;
+      border: 1px solid #dc3545;
+      color: white;
+    }
+    
+    .delete-btn:hover {
+      background-color: #bb2d3b;
+      border-color: #b02a37;
+      color: white;
+    }
+    
+    .delete-btn:active {
+      background-color: #b02a37;
+      border-color: #a52834;
+    }
+    
+    .mobile-action-btn i {
+      font-size: 12px;
       line-height: 1;
     }
     
     /* Mobile-specific optimizations */
     @media (max-width: 768px) {
-      .mobile-edit-btn {
-        padding: 0.5rem 1rem;
-        min-height: 20px;
-        font-size: 14px;
+      .mobile-action-btn {
+        padding: 3px 8px;
+        min-height: 24px;
+        font-size: 12px;
       }
       
-      .mobile-edit-btn i {
-        font-size: 18px;
-        margin-right: 6px;
+      .mobile-action-btn i {
+        font-size: 13px;
       }
     }
     
     /* For very small screens, make it icon-only */
     @media (max-width: 480px) {
-      .mobile-edit-btn span {
+      .btn-text {
         display: none;
       }
       
-      .mobile-edit-btn i {
-        margin-right: 0;
+      .mobile-action-btn {
+        padding: 3px;
+        min-width: 24px;
+        min-height: 24px;
+        justify-content: center;
+        border-radius: 20px;
       }
       
-      .mobile-edit-btn {
-        padding: 0.5rem;
-        min-width: 20px;
-        min-height: 20px;
-        justify-content: center;
+      .mobile-action-btn i {
+        margin-right: 0;
+        font-size: 14px;
+      }
+      
+      .mobile-actions-wrapper {
+        gap: 2px;
+      }
+    }
+    
+    /* For print, show full text */
+    @media print {
+      .mobile-action-btn {
+        display: none;
       }
     }
   `]
@@ -99,9 +146,17 @@ export class MobileActionsRendererComponent implements ICellRendererAngularComp 
     return false;
   }
 
-  onEdit(): void {
-    if (this.params && this.params.onEditClick) {
+  onEditClick(event: MouseEvent): void {
+    event.stopPropagation();
+    if (this.params.onEditClick) {
       this.params.onEditClick(this.params.data);
+    }
+  }
+
+  onDeleteClick(event: MouseEvent): void {
+    event.stopPropagation();
+    if (this.params.onDeleteClick) {
+      this.params.onDeleteClick(this.params.data);
     }
   }
 }
