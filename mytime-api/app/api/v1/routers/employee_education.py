@@ -4,13 +4,9 @@ from typing import Optional, List
 from datetime import datetime
 
 from app.schemas.employee_education_schemas import (
-    EmployeeEducationCreate, EmployeeEducationUpdate, EmployeeEducationResponse,
-    EmployeeEducationListResponse, EmployeeEducationExistsResponse,
-    EmployeeEducationDeleteResponse, EmployeeEducationCreateResponse,
-    EmployeeEducationUpdateResponse, EmployeeEducationBulkCreate,
-    EmployeeEducationFilterParams, EmployeeEducationWithDetailsResponse,
-    EmployeeEducationStatistics
-)
+     EmployeeEducationResponse,
+        EmployeeEducationDeleteResponse
+        )
 from app.core.database import get_db
 from app.services.employee_education_service import EmployeeEducationService
 
