@@ -4,8 +4,7 @@ from typing import Optional, List  # Added List import here
 
 from app.core.database import get_db
 from app.schemas.role_schemas import (
-    RoleCreate, RoleUpdate, RoleResponse, RoleListResponse,
-    RoleExistsResponse, RoleDeleteResponse
+    RoleResponse, RoleDeleteResponse
 )
 from app.services.role_service import RoleService
 
