@@ -9,7 +9,7 @@ class HolidayCallender(Base):
     Id = Column(BigInteger, primary_key=True, index=True)
 
     FestivalName = Column(Text, nullable=True)
-    HolidayDate = Column(DateTime(timezone=True), nullable=True)
+    HolidayDate = Column(DateTime, nullable=True)
     Year = Column(Integer, nullable=True)
 
     CreatedBy = Column(BigInteger, nullable=True)

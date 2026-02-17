@@ -6,7 +6,7 @@ from datetime import datetime, date
 class HolidayCalendarBase(BaseModel):
     """Base schema for HolidayCalendar data"""
     FestivalName: Optional[str] = Field(None, max_length=255, description="Festival/Holiday name")
-    HolidayDate: Optional[date] = Field(None, description="Holiday date")
+    HolidayDate: Optional[datetime] = Field(None, description="Holiday date")
     Year: Optional[int] = Field(None, ge=1900, le=2100, description="Year of the holiday")
     IsActive: Optional[bool] = Field(True, description="Whether the holiday is active")
 
@@ -19,7 +19,7 @@ class HolidayCalendarCreate(HolidayCalendarBase):
 class HolidayCalendarUpdate(BaseModel):
     """Schema for updating an existing HolidayCalendar"""
     FestivalName: Optional[str] = Field(None, max_length=255, description="Festival/Holiday name")
-    HolidayDate: Optional[date] = Field(None, description="Holiday date")
+    HolidayDate: Optional[datetime] = Field(None, description="Holiday date")
     Year: Optional[int] = Field(None, ge=1900, le=2100, description="Year of the holiday")
     ModifiedBy: Optional[int] = Field(None, description="User ID who last modified the record")
     IsActive: Optional[bool] = Field(None, description="Whether the holiday is active")
@@ -29,7 +29,7 @@ class HolidayCalendarResponse(BaseModel):
     """Schema for HolidayCalendar response (read operations)"""
     Id: int
     FestivalName: Optional[str] = None
-    HolidayDate: Optional[date] = None
+    HolidayDate: Optional[datetime] = None
     Year: Optional[int] = None
     CreatedBy: Optional[int] = None
     CreatedOn: Optional[datetime] = None
