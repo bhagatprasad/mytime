@@ -24,6 +24,7 @@ import { EmployeeDTO } from '../../../models/employee.dto';
 import { AuditFieldsService } from '../../../../common/services/auditfields.service';
 import { EmployeesEmployementListComponent } from '../employment/employees-employement-list.component';
 import { EmployeesEmergenceyContactListComponent } from '../contacts/employees-emergencey-contact-list.component';
+import { ListDocumentsComponent } from '../documents/list.component';
 
 declare var bootstrap: any;
 
@@ -35,7 +36,8 @@ declare var bootstrap: any;
     EmployeesCreateComponent,
     EmployeesEducationListComponent,
     EmployeesEmployementListComponent,
-    EmployeesEmergenceyContactListComponent
+    EmployeesEmergenceyContactListComponent,
+    ListDocumentsComponent
   ],
   providers: [DatePipe, CurrencyPipe],
   templateUrl: './employees-details.component.html',

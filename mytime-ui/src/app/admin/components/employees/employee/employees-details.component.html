@@ -93,6 +93,15 @@
                                     <span class="d-none d-sm-inline ms-1">Education</span>
                                 </button>
                             </li>
+                            <!-- New Documents Tab -->
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" [class.active]="activeTab === 'documents'" id="documents-tab"
+                                    data-bs-toggle="tab" data-bs-target="#documents" type="button" role="tab"
+                                    aria-controls="documents" [attr.aria-selected]="activeTab === 'documents'">
+                                    <i class="mdi mdi-file-document"></i>
+                                    <span class="d-none d-sm-inline ms-1">Documents</span>
+                                </button>
+                            </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" [class.active]="activeTab === 'history'" id="history-tab"
                                     data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab"
@@ -360,6 +369,15 @@
                             aria-labelledby="education-tab">
                             <div class="p-2">
                                 <app-employees-education-list [employeeId]="employeeId"></app-employees-education-list>
+                            </div>
+                        </div>
+
+                        <!-- New Documents Tab -->
+                        <div class="tab-pane fade" [class.show]="activeTab === 'documents'"
+                            [class.active]="activeTab === 'documents'" id="documents" role="tabpanel"
+                            aria-labelledby="documents-tab">
+                            <div class="p-2">
+                                <app-document-list [employeeId]="employeeId"></app-document-list>
                             </div>
                         </div>
 

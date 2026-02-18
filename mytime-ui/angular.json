@@ -76,7 +76,12 @@
             "prerender": true,
             "ssr": {
               "entry": "server.ts"
-            }
+            },
+            "allowedCommonJsDependencies": [
+              "buffer",
+              "backblaze-b2",
+              "crypto"
+            ]
           },
           "configurations": {
             "production": {
@@ -110,6 +115,9 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "buildTarget": "mytime-ui:build:production"
