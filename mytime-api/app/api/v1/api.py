@@ -20,7 +20,7 @@ except ImportError as e:
 
 # Import routers
 try:
-    from app.api.v1.routers import auth, user, roles, llm, vision, audio, embeddings, rss, country,state,city,designation,department,document_type,holiday_calendar,employee,employee_address,employee_education,employee_emergency_contact,employee_employment,employee_salary_structure
+    from app.api.v1.routers import auth, user, roles, llm, vision, audio, embeddings, rss, country,state,city,designation,department,document_type,holiday_calendar,employee,employee_address,employee_education,employee_emergency_contact,employee_employment,employee_salary_structure,employee_document
     print("✅ All routers imported")
 except ImportError as e:
     print(f"❌ Router import error: {e}")
@@ -52,7 +52,7 @@ except ImportError as e:
     employee_employment = DummyRouter()
     employee_emergency_contact = DummyRouter()
     employee_salary_structure = DummyRouter()
-
+    employee_document = DummyRouter()
 # Create main router
 api_router = APIRouter()
 
@@ -114,6 +114,9 @@ if HAS_AUTH:
 
     employee_salary_structure_protected = APIRouter(dependencies=[Depends(get_current_user)])
     employee_salary_structure_protected.include_router(employee_salary_structure.router)
+
+    employee_documents_protected = APIRouter(dependencies=[Depends(get_current_user)])
+    employee_documents_protected.include_router(employee_document.router)
     
     # Include protected routes
     api_router.include_router(users_protected, prefix="/users", tags=["users"])
@@ -131,6 +134,7 @@ if HAS_AUTH:
     api_router.include_router(employee_employment_protected, prefix="/employeeemployment", tags=["employeeemployment"])
     api_router.include_router(employee_emergency_contact_protected, prefix="/employeeemergencycontact", tags=["employeeemergencycontact"])
     api_router.include_router(employee_salary_structure_protected, prefix="/employeesalarystructure", tags=["employeesalarystructure"])
+    api_router.include_router(employee_documents_protected, prefix="/employeedocuments", tags=["employeedocuments"])
 else:
     # Development mode - include without auth
     api_router.include_router(user.router, prefix="/users", tags=["users"])
@@ -148,6 +152,7 @@ else:
     api_router.include_router(employee_employment.router, prefix="/employeeemployment", tags=["employeeemployment"])
     api_router.include_router(employee_emergency_contact.router, prefix="/employeeemergencycontact", tags=["employeeemergencycontact"])
     api_router.include_router(employee_salary_structure.router, prefix="/employeesalarystructure", tags=["employeesalarystructure"])
+    api_router.include_router(employee_document.router, prefix="/employeedocuments", tags=["employeedocuments"])
 
 # AI routes - decide if these should be public or protected
 # For now, making them public for development
