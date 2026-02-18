@@ -17,3 +17,15 @@
     margin-left: 5px !important;
     color: red !important;
 }
+
+.btn-download {
+  color: #198754;
+  cursor: pointer;
+  font-size: 18px;
+  transition: 0.2s;
+}
+
+.btn-download:hover {
+  color: #157347;
+  transform: scale(1.1);
+}

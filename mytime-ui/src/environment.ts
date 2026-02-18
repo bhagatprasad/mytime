@@ -272,9 +272,7 @@ export const environment = {
             SoftDeleteEmployeeEmployment: 'employeeemployment/SoftDeleteEmployeeEmployment'
         },
 
-        // EmployeeEmergencyContact endpoints
         EmployeeEmergencyContact: {
-            // GET endpoints
             GetEmployeeEmergencyContact: 'employeeemergencycontact/fetchEmployeeEmergencyContact',
             GetContactsByEmployee: 'employeeemergencycontact/fetchContactsByEmployee',
             GetActiveContactsByEmployee: 'employeeemergencycontact/fetchActiveContactsByEmployee',
@@ -286,27 +284,17 @@ export const environment = {
             GetEmergencyContactStatistics: 'employeeemergencycontact/emergencyContactStatistics',
             SearchByRelation: 'employeeemergencycontact/searchByRelation',
             GetEmployeesWithoutEmergencyContacts: 'employeeemergencycontact/employeesWithoutEmergencyContacts',
-
-            // POST endpoints
             InsertOrUpdateEmployeeEmergencyContact: 'employeeemergencycontact/InsertOrUpdateEmployeeEmergencyContact',
             CreateBulkEmergencyContacts: 'employeeemergencycontact/createBulkEmergencyContacts',
             CreateEmployeeEmergencyContact: 'employeeemergencycontact/create',
             SearchEmployeeEmergencyContacts: 'employeeemergencycontact/searchEmployeeEmergencyContacts',
-
-            // PUT endpoint
             UpdateEmployeeEmergencyContact: 'employeeemergencycontact/update',
-
-            // DELETE endpoint
             DeleteEmployeeEmergencyContact: 'employeeemergencycontact/DeleteEmployeeEmergencyContact',
-
-            // PATCH endpoints
             SoftDeleteEmployeeEmergencyContact: 'employeeemergencycontact/SoftDeleteEmployeeEmergencyContact',
             SetAsPrimaryContact: 'employeeemergencycontact/setAsPrimaryContact'
         },
 
-        // EmployeeSalaryStructure endpoints
         EmployeeSalaryStructure: {
-            // GET endpoints
             GetEmployeeSalaryStructure: 'employeesalarystructure/fetchEmployeeSalaryStructure',
             GetSalaryStructureByEmployee: 'employeesalarystructure/fetchSalaryStructureByEmployee',
             GetAllSalaryStructuresByEmployee: 'employeesalarystructure/fetchAllSalaryStructuresByEmployee',
@@ -320,20 +308,27 @@ export const environment = {
             GetEmployeesWithoutSalaryStructure: 'employeesalarystructure/employeesWithoutSalaryStructure',
             CalculateNetSalary: 'employeesalarystructure/calculateNetSalary',
             GetPayrollSummary: 'employeesalarystructure/payrollSummary',
-
-            // POST endpoints
             InsertOrUpdateEmployeeSalaryStructure: 'employeesalarystructure/InsertOrUpdateEmployeeSalaryStructure',
             CreateEmployeeSalaryStructure: 'employeesalarystructure/create',
             SearchEmployeeSalaryStructures: 'employeesalarystructure/searchEmployeeSalaryStructures',
-
-            // PUT endpoint
             UpdateEmployeeSalaryStructure: 'employeesalarystructure/update',
-
-            // DELETE endpoint
             DeleteEmployeeSalaryStructure: 'employeesalarystructure/DeleteEmployeeSalaryStructure',
-
-            // PATCH endpoint
             SoftDeleteEmployeeSalaryStructure: 'employeesalarystructure/SoftDeleteEmployeeSalaryStructure'
+        },
+        Backblaze: {
+            endpoint: 's3.us-east-005.backblazeb2.com',
+            keyId: '332633bece97',
+            applicationKey: '00537f0af2eea022537d2605ef4ed7557424c2b859',
+            bucketId: '9393a26623636bce9cce0917',
+            bucketName: 'mytime'
+        },
+        EmployeeDocuments: {
+            GetEmployeeDocuments: 'employeedocuments/fetchEmployeeDocuments',
+            GetEmployeeDocument: 'employeedocuments/fetchEmployeeDocument',
+            GetDocumentsByEmployee: 'employeedocuments/fetchDocumentsByEmployee',
+            InsertOrUpdateEmployeeDocument: 'employeedocuments/InsertOrUpdateEmployeeDocument',
+            DeleteEmployeeDocument: 'employeedocuments/DeleteEmployeeDocument'
         }
+
     }
 };
