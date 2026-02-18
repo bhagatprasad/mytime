@@ -38,11 +38,6 @@ class HolidayCalendarService:
             if not db_holiday:
                 return {"success": False, "message": "Holiday not found", "holiday": None}
             
-            # Check for duplicate holiday
-            festival_name = holiday_data.get('FestivalName')
-            holiday_date = holiday_data.get('HolidayDate')
-            year = holiday_data.get('Year')
-            
             for key, value in holiday_data.items():
                 if key != 'Id' and value is not None:
                     setattr(db_holiday, key, value)
@@ -55,20 +50,7 @@ class HolidayCalendarService:
                 "holiday": db_holiday
             }
         else:
-            # Create new holiday
-            # Check for duplicate holiday
-            festival_name = holiday_data.get('FestivalName')
-            holiday_date = holiday_data.get('HolidayDate')
-            year = holiday_data.get('Year')
-            
-            if HolidayCalendarService.check_holiday_calendar_exists(db, festival_name, holiday_date, year):
-                return {
-                    "success": False, 
-                    "message": "Holiday with same name or date already exists",
-                    "holiday": None
-                }
-            
-            # Remove Id if present in create mode
+           
             holiday_data.pop('Id', None)
             db_holiday = HolidayCallender(**holiday_data)
             db.add(db_holiday)
