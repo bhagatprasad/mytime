@@ -28,7 +28,6 @@ export class CreateCityComponent implements OnInit, OnChanges {
   @Output() closeSidebar = new EventEmitter<void>();
   @Output() saveCity = new EventEmitter<City>();
 
-  filteredStates: State[] = [];
 
   cityForm!: FormGroup;
 
@@ -133,7 +132,7 @@ export class CreateCityComponent implements OnInit, OnChanges {
   loadStatesByCountry(countryId: number) {
     this.stateService.getStatesByCountry(countryId)
       .subscribe(res => {
-        this.filteredStates = res;
+        this.states = res;
       });
   }
 }

@@ -1,1 +1,86 @@
-<p>create-holydaycallender works!</p>
+<!-- Overlay -->
+<div class="sidebar-overlay" *ngIf="isVisible" (click)="close()"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" [class.visible]="isVisible">
+    <form [formGroup]="holidayForm" (ngSubmit)="onSubmit()">
+        <div class="sidebar-header">
+            <h5 class="sidebar-title">{{ holidaycallender?.Id ? 'Edit Holiday' : 'Add Holiday' }}</h5>
+            <button type="button" class="close" (click)="close()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="sidebar-body">
+            <div class="form-group">
+                <label for="Name">Festival Name</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-account-circle-outline"></i>
+                        </span>
+                    </div>
+                    <input type="text" class="form-control" id="FestivalName" formControlName="FestivalName"
+                        placeholder="Enter festival name">
+                </div>
+                <!-- Validation messages for Name field -->
+                <div *ngIf="holidayForm.get('FestivalName')?.invalid && holidayForm.get('FestivalName')?.touched"
+                    class="text-danger small mt-1">
+                    <span *ngIf="holidayForm.get('FestivalName')?.errors?.['required']">
+                        Role name is required
+                    </span>
+                    <span *ngIf="holidayForm.get('FestivalName')?.errors?.['maxlength']">
+                        Festival name cannot exceed {{
+                        holidayForm.get('FestivalName')?.errors?.['maxlength']?.requiredLength }} characters
+                    </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="Code">Holiday Date</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-code-tags"></i>
+                        </span>
+                    </div>
+                    <input type="text" class="form-control" id="HolidayDate" formControlName="HolidayDate"
+                        placeholder="yy-mm-dd">
+                </div>
+                <!-- Validation messages for Code field -->
+                <div *ngIf="holidayForm.get('HolidayDate')?.invalid && holidayForm.get('HolidayDate')?.touched"
+                    class="text-danger small mt-1">
+                    <span *ngIf="holidayForm.get('HolidayDate')?.errors?.['required']">
+                        Holiday Date is required
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="Code">Year</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-code-tags"></i>
+                        </span>
+                    </div>
+                    <input type="text" class="form-control" id="Year" formControlName="Year" placeholder="Enter year">
+                </div>
+
+                <div *ngIf="holidayForm.get('Year')?.invalid && holidayForm.get('Year')?.touched"
+                    class="text-danger small mt-1">
+                    <span *ngIf="holidayForm.get('Year')?.errors?.['required']">
+                        Holiday year is required
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar-footer">
+            <button type="submit" class="btn btn-primary" [disabled]="holidayForm.invalid || holidayForm.pristine">
+                <i class="mdi" [class.mdi-content-save]="!holidaycallender?.Id"
+                    [class.mdi-pencil]="holidaycallender?.Id"></i>
+                {{ holidaycallender?.Id ? 'Update' : 'Save' }}
+            </button>
+            <button type="button" class="btn btn-secondary ml-2" (click)="close()">Cancel</button>
+        </div>
+    </form>
+</div>
