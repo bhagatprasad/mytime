@@ -17,13 +17,13 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
   selector: 'app-document-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular,UploadDocumentComponent],
+  imports: [CommonModule, AgGridAngular, UploadDocumentComponent],
   templateUrl: './list.component.html',
   styleUrl: './list.component.css'
 })
 export class ListDocumentsComponent implements OnInit, OnDestroy {
 
-  @Input() employeeId: number | null = null;
+  @Input() employeeId: number = 0;
 
   private documentsGridApi!: GridApi;
 
@@ -246,7 +246,7 @@ export class ListDocumentsComponent implements OnInit, OnDestroy {
     this.selectedDocument = null;
     this.showDocumentForm = false;
   }
- 
+
   getTotalRowsCount(): number {
     return this.documents.length;
   }

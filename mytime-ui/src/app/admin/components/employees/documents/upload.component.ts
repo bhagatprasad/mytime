@@ -26,7 +26,6 @@ export class UploadDocumentComponent implements OnChanges {
   fileError: string = '';
   isUploading: boolean = false;
 
-  // Document types list
   documentTypes: string[] = [
     'Aadhar Card',
     'PAN Card',
@@ -48,7 +47,6 @@ export class UploadDocumentComponent implements OnChanges {
     'Other'
   ];
 
-  // Allowed file types
   private readonly allowedTypes = [
     'application/pdf',
     'image/jpeg',
@@ -60,7 +58,7 @@ export class UploadDocumentComponent implements OnChanges {
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
   ];
 
-  private readonly maxFileSize = 10 * 1024 * 1024;
+  private readonly maxFileSize = 10 * 1024 * 1024; // 10 MB
 
   constructor(
     private fb: FormBuilder,
@@ -88,9 +86,7 @@ export class UploadDocumentComponent implements OnChanges {
       this.initializeForm();
     }
     if (changes['employeeId'] && this.employeeId) {
-      this.documentForm.patchValue({
-        EmployeeId: this.employeeId
-      });
+      this.documentForm.patchValue({ EmployeeId: this.employeeId });
     }
     if (changes['isVisible'] && this.isVisible && !this.employeeDocument) {
       this.resetForm();
@@ -136,7 +132,7 @@ export class UploadDocumentComponent implements OnChanges {
 
   onFileSelected(event: any): void {
     const file = event.target.files[0];
-    this.validateAndSetFile(file);
+    if (file) this.validateAndSetFile(file);
   }
 
   onDragOver(event: DragEvent): void {
@@ -147,7 +143,6 @@ export class UploadDocumentComponent implements OnChanges {
   onDrop(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    
     const files = event.dataTransfer?.files;
     if (files && files.length > 0) {
       this.validateAndSetFile(files[0]);
@@ -157,13 +152,11 @@ export class UploadDocumentComponent implements OnChanges {
   private validateAndSetFile(file: File): void {
     this.fileError = '';
 
-    // Validate file type
     if (!this.allowedTypes.includes(file.type)) {
       this.fileError = 'File type not supported. Please upload PDF, JPG, PNG, DOC, DOCX, XLS, or XLSX files.';
       return;
     }
 
-    // Validate file size
     if (file.size > this.maxFileSize) {
       this.fileError = 'File size exceeds 10MB limit. Please upload a smaller file.';
       return;
@@ -187,36 +180,6 @@ export class UploadDocumentComponent implements OnChanges {
     });
   }
 
-  getFileIcon(): string {
-    if (!this.selectedFile) return 'mdi-file-document';
-    
-    const type = this.selectedFile.type;
-    if (type === 'application/pdf') return 'mdi-file-pdf-box';
-    if (type.includes('image/')) return 'mdi-file-image';
-    if (type.includes('word')) return 'mdi-file-word';
-    if (type.includes('excel') || type.includes('spreadsheet')) return 'mdi-file-excel';
-    return 'mdi-file-document';
-  }
-
-  getIconClass(): string {
-    if (!this.selectedFile) return '';
-    
-    const type = this.selectedFile.type;
-    if (type === 'application/pdf') return 'pdf';
-    if (type.includes('image/')) return 'image';
-    if (type.includes('word')) return 'word';
-    if (type.includes('excel') || type.includes('spreadsheet')) return 'excel';
-    return '';
-  }
-
-  formatFileSize(bytes: number): string {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  }
-
   async onSubmit(): Promise<void> {
     if (this.documentForm.invalid) {
       Object.keys(this.documentForm.controls).forEach(key => {
@@ -234,51 +197,42 @@ export class UploadDocumentComponent implements OnChanges {
     this.loader.show();
 
     try {
-      // Step 1: Upload to Backblaze B2
-      console.log('Uploading to Backblaze B2...');
-      
-      const b2Response = await this.storageService.uploadFile(this.selectedFile, {
-        fileName: `${this.employeeId}_${Date.now()}_${this.selectedFile.name}`,
-        mime: this.selectedFile.type,
-        fileInfo: {
-          employeeId: this.employeeId.toString(),
-          documentType: this.documentForm.get('DocumentType')?.value,
-          uploadedBy: 'employee'
-        }
-      });
+      // Build prefix: employeeId_timestamp so stored file is identifiable
+      const prefix = `${this.employeeId}_${Date.now()}`;
 
-      console.log('B2 Upload Response:', b2Response);
+      const uploadResponse = await this.storageService.uploadFile(this.selectedFile, prefix);
 
-      // Step 2: Prepare EmployeeDocument object with B2 response
+      console.log('Upload response:', uploadResponse);
+
       const formValue = this.documentForm.value;
-      
+
       const documentData: EmployeeDocument = {
         EmployeeDocumentId: formValue.EmployeeDocumentId || 0,
         EmployeeId: formValue.EmployeeId || this.employeeId,
         DocumentType: formValue.DocumentType,
-        FileId: b2Response.fileId,
-        FileName: b2Response.fileName,
-        BucketId: b2Response.bucketId,
-        ContentLength: b2Response.contentLength,
-        ContentType: b2Response.contentType,
-        FileInfo: formValue.FileInfo || JSON.stringify(b2Response.fileInfo),
-        UploadTimestamp: new Date(b2Response.uploadTimestamp).toISOString(),
+        FileId: uploadResponse.fileId,           // unique B2 key — use this for download/delete
+        FileName: uploadResponse.fileName,        // original file name shown to user
+        BucketId: uploadResponse.storedFileName,  // actual stored name in B2
+        ContentLength: uploadResponse.contentLength,
+        ContentType: uploadResponse.contentType,
+        FileInfo: JSON.stringify({
+          downloadUrl: uploadResponse.downloadUrl,
+          storedFileName: uploadResponse.storedFileName
+        }),
+        UploadTimestamp: new Date(uploadResponse.uploadTimestamp).toISOString(),
         CreatedOn: this.employeeDocument ? undefined : new Date().toISOString(),
         ModifiedOn: new Date().toISOString(),
         IsActive: formValue.IsActive
       };
 
-      console.log('Sending document data to parent:', documentData);
-      
-      // Step 3: Emit to parent component
       this.save.emit(documentData);
-      
       this.notify.success('Document uploaded successfully');
       this.onClose();
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Upload failed:', error);
-      this.notify.error('Failed to upload document. Please try again.');
+      const detail = error?.error?.detail || 'Failed to upload document. Please try again.';
+      this.notify.error(detail);
     } finally {
       this.isUploading = false;
       this.loader.hide();
@@ -298,11 +252,36 @@ export class UploadDocumentComponent implements OnChanges {
   getErrorMessage(fieldName: string): string {
     const field = this.documentForm.get(fieldName);
     if (field?.hasError('required')) {
-      if (fieldName === 'DocumentType') {
-        return 'Please select a document type';
-      }
-      return `${fieldName} is required`;
+      return fieldName === 'DocumentType' ? 'Please select a document type' : `${fieldName} is required`;
     }
     return '';
+  }
+
+  getFileIcon(): string {
+    if (!this.selectedFile) return 'mdi-file-document';
+    const type = this.selectedFile.type;
+    if (type === 'application/pdf') return 'mdi-file-pdf-box';
+    if (type.includes('image/')) return 'mdi-file-image';
+    if (type.includes('word')) return 'mdi-file-word';
+    if (type.includes('excel') || type.includes('spreadsheet')) return 'mdi-file-excel';
+    return 'mdi-file-document';
+  }
+
+  getIconClass(): string {
+    if (!this.selectedFile) return '';
+    const type = this.selectedFile.type;
+    if (type === 'application/pdf') return 'pdf';
+    if (type.includes('image/')) return 'image';
+    if (type.includes('word')) return 'word';
+    if (type.includes('excel') || type.includes('spreadsheet')) return 'excel';
+    return '';
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 }

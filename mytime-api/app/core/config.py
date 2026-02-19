@@ -34,15 +34,15 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     BCRYPT_ROUNDS: int = 12
     
-    # ============ BACKBLAZE B2 STORAGE ============
+   # ============ BACKBLAZE B2 STORAGE ============
     B2_ENDPOINT: str = "s3.us-east-005.backblazeb2.com"
-    B2_KEY_ID: str = "332633bece97"
-    B2_APP_KEY: str = "00537f0af2eea022537d2605ef4ed7557424c2b859"
+    B2_KEY_ID: str = "005332633bece970000000001"
+    B2_APP_KEY: str = "K005cLrGz7IuTxILb2g5225gK12jaCU"
     B2_BUCKET_NAME: str = "mytime"
     B2_BUCKET_ID: str = "9393a26623636bce9cce0917"
     B2_REGION: str = "us-east-005"
-    B2_PUBLIC_URL: str ="https://mytime.s3.us-east-005.backblazeb2.com"
-    B2_MAX_FILE_SIZE_MB: int = 100
+    B2_PUBLIC_URL: str = "https://mytime.s3.us-east-005.backblazeb2.com"
+    B2_MAX_FILE_SIZE_MB: int = 104857600  # ✅ Changed: 100 megabytes
     B2_ALLOWED_FILE_TYPES: Union[str, List[str]] = "application/pdf,image/jpeg,image/jpg,image/png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain"
     ENABLE_B2_STORAGE: bool = True
 

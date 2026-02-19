@@ -63,6 +63,6 @@
         </div>
     </div>
 <!-- Education Add/Edit Form -->
-<app-document-upload *ngIf="showDocumentForm" [employeeDocument]="selectedDocument" [isVisible]="showDocumentForm"
+<app-document-upload *ngIf="showDocumentForm" [employeeId]="employeeId" [employeeDocument]="selectedDocument" [isVisible]="showDocumentForm"
     (save)="onSaveEmployeeDocument($event)" (close)="onCloseEmployeeDocumentForm()">
 </app-document-upload>

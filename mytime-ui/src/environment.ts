@@ -328,7 +328,12 @@ export const environment = {
             GetDocumentsByEmployee: 'employeedocuments/fetchDocumentsByEmployee',
             InsertOrUpdateEmployeeDocument: 'employeedocuments/InsertOrUpdateEmployeeDocument',
             DeleteEmployeeDocument: 'employeedocuments/DeleteEmployeeDocument'
+        },
+        BackblazeUpload: {
+            UploadEmployeeDocument: 'backblaze/upload',
+            GetDownloadUrl: 'backblaze/downloadurl',
+            DeleteFile: 'backblaze/delete',
+            GetFileInfo: 'backblaze/info'
         }
-
     }
 };
