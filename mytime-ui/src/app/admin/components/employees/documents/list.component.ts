@@ -3,13 +3,14 @@ import { Component, HostListener, Input, OnDestroy, OnInit } from '@angular/core
 import { AgGridAngular } from 'ag-grid-angular';
 import { AllCommunityModule, ColDef, GridApi, GridOptions, GridReadyEvent, ModuleRegistry } from 'ag-grid-community';
 import { EmployeeDocument } from '../../../models/employee_document';
-import { ActionsRendererComponent } from '../../../../common/components/actions-renderer.component';
-import { MobileActionsRendererComponent } from '../../../../common/components/mobile-actions-renderer.component';
 import { DocumentService } from '../../../services/document.service';
 import { LoaderService } from '../../../../common/services/loader.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuditFieldsService } from '../../../../common/services/auditfields.service';
 import { UploadDocumentComponent } from './upload.component';
+import { ActionsDocumentRendererComponent } from '../../../../common/components/actions-document.renderer.component';
+import { MobileActionsDocumentRendererComponent } from '../../../../common/components/mobile-actions-document.renderer.component';
+import { StorageService } from '../../../../common/services/storage.service';
 
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -71,7 +72,7 @@ export class ListDocumentsComponent implements OnInit, OnDestroy {
       width: 180,
       sortable: false,
       filter: false,
-      cellRenderer: ActionsRendererComponent,
+      cellRenderer: ActionsDocumentRendererComponent,
       cellRendererParams: {
         onDownloadClick: (data: any) => this.downloadDocument(data),
         onDeleteClick: (data: any) => this.deleteDocument(data)
@@ -88,18 +89,16 @@ export class ListDocumentsComponent implements OnInit, OnDestroy {
       width: 160
     },
     {
-      field: 'Document Type',
-      headerName: 'DocumentType',
-      width: 140,
-      valueFormatter: (params) =>
-        params.value ? new Date(params.value).toLocaleDateString() : ''
+      field: 'DocumentType',
+      headerName: 'Document Type',
+      width: 140
     },
     {
       headerName: '',
       width: 110,
       sortable: false,
       filter: false,
-      cellRenderer: MobileActionsRendererComponent,
+      cellRenderer: MobileActionsDocumentRendererComponent,
       cellRendererParams: {
         onDownloadClick: (data: any) => this.downloadDocument(data),
         onDeleteClick: (data: any) => this.deleteDocument(data)
@@ -135,7 +134,8 @@ export class ListDocumentsComponent implements OnInit, OnDestroy {
     private documentService: DocumentService,
     private loader: LoaderService,
     private notify: ToastrService,
-    private audit: AuditFieldsService) { }
+    private audit: AuditFieldsService,
+    private storageService: StorageService) { }
   ngOnDestroy(): void {
     window.removeEventListener('resize', this.onResize.bind(this));
   }
@@ -256,9 +256,65 @@ export class ListDocumentsComponent implements OnInit, OnDestroy {
   }
 
   deleteDocument(eDocument: EmployeeDocument): void {
+    if (!eDocument.FileId) {
+      this.notify.error('File information is missing');
+      return;
+    }
 
+    this.loader.show();
+
+    this.storageService.deleteFile(eDocument.FileId)
+      .then(() => {
+        this.documentService.removeEmployeeDocumentAsync(eDocument.EmployeeDocumentId).subscribe({
+          next: () => {
+            this.notify.success('Document deleted successfully');
+            this.loadDocumnetsData();
+          },
+          error: (error) => {
+            console.error('Error deleting from database:', error);
+            this.notify.error('File deleted from cloud but failed to remove from database');
+          }
+        });
+      })
+      .catch((error) => {
+        console.error('Error deleting file from cloud:', error);
+        this.notify.error('Failed to delete the file');
+      })
+      .finally(() => {
+        this.loader.hide();
+      });
   }
+  
   downloadDocument(eDocument: EmployeeDocument): void {
+    try {
+      if (!eDocument.FileInfo || !eDocument.FileId || !eDocument.FileName) {
+        this.notify.error('File information is missing');
+        return;
+      }
 
+      const fileInfo = JSON.parse(eDocument.FileInfo);
+      const uploadTime = new Date(eDocument.UploadTimestamp ?? 0).getTime();
+      const isExpired = (Date.now() - uploadTime) > 3600 * 1000;
+
+      if (isExpired) {
+        this.storageService.getDownloadUrl(eDocument.FileId, 3600, eDocument.FileName)
+          .then(result => this.triggerDownload(result.url, eDocument.FileName!));
+      } else {
+        this.triggerDownload(fileInfo.downloadUrl, eDocument.FileName);
+      }
+
+    } catch (error) {
+      console.error('Error parsing FileInfo:', error);
+      this.notify.error('Failed to download the file');
+    }
+  }
+
+  private triggerDownload(url: string, filename: string): void {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.target = '_blank';
+    link.click();
+    link.remove();
   }
 }

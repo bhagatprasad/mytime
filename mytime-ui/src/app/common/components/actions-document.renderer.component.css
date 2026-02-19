@@ -1,0 +1,31 @@
+.btn-edit,
+.btn-delete {
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.875rem !important;
+    line-height: 1.5 !important;
+    margin-top: 5px !important;
+
+}
+
+.btn-edit .mdi,
+.btn-delete .mdi {
+    margin-right: 4px !important;
+    font-size: 20px !important;
+}
+
+.btn-delete {
+    margin-left: 5px !important;
+    color: red !important;
+}
+
+.btn-download {
+  color: #198754;
+  cursor: pointer;
+  font-size: 18px;
+  transition: 0.2s;
+}
+
+.btn-download:hover {
+  color: #157347;
+  transform: scale(1.1);
+}

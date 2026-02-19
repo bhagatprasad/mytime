@@ -5,6 +5,7 @@ import { EmployeeDocument } from '../../../models/employee_document';
 import { LoaderService } from '../../../../common/services/loader.service';
 import { ToastrService } from 'ngx-toastr';
 import { StorageService } from '../../../../common/services/storage.service';
+import { environment } from '../../../../../environment';
 
 @Component({
   selector: 'app-document-upload',
@@ -58,7 +59,7 @@ export class UploadDocumentComponent implements OnChanges {
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
   ];
 
-  private readonly maxFileSize = 10 * 1024 * 1024; // 10 MB
+  private readonly maxFileSize = 10 * 1024 * 1024;
 
   constructor(
     private fb: FormBuilder,
@@ -197,7 +198,7 @@ export class UploadDocumentComponent implements OnChanges {
     this.loader.show();
 
     try {
-      // Build prefix: employeeId_timestamp so stored file is identifiable
+
       const prefix = `${this.employeeId}_${Date.now()}`;
 
       const uploadResponse = await this.storageService.uploadFile(this.selectedFile, prefix);
@@ -210,9 +211,9 @@ export class UploadDocumentComponent implements OnChanges {
         EmployeeDocumentId: formValue.EmployeeDocumentId || 0,
         EmployeeId: formValue.EmployeeId || this.employeeId,
         DocumentType: formValue.DocumentType,
-        FileId: uploadResponse.fileId,           // unique B2 key — use this for download/delete
-        FileName: uploadResponse.fileName,        // original file name shown to user
-        BucketId: uploadResponse.storedFileName,  // actual stored name in B2
+        FileId: uploadResponse.fileId,
+        FileName: uploadResponse.fileName,
+        BucketId: environment.UrlConstants.Backblaze.bucketId,
         ContentLength: uploadResponse.contentLength,
         ContentType: uploadResponse.contentType,
         FileInfo: JSON.stringify({
