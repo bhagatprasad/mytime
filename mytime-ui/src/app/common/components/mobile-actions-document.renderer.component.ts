@@ -6,14 +6,14 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
   template: `
     <div class="d-flex justify-content-center gap-1 mobile-actions-wrapper">
 
-      <!-- Edit Button -->
+      <!-- Download Button -->
       <a 
-        class="d-flex align-items-center mobile-action-btn edit-btn"
-        (click)="onEditClick($event)"
-        title="Edit"
+        class="d-flex align-items-center mobile-action-btn download-btn"
+        (click)="onDownloadClick($event)"
+        title="Download"
       >
-        <i class="mdi mdi-pencil"></i>
-        <span class="btn-text">Edit</span>
+        <i class="mdi mdi-download"></i>
+        <span class="btn-text">Download</span>
       </a>
 
       <!-- Delete Button -->
@@ -146,7 +146,7 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
     }
   `]
 })
-export class MobileActionsRendererComponent implements ICellRendererAngularComp {
+export class MobileActionsDocumentRendererComponent implements ICellRendererAngularComp {
 
   params: any;
 
@@ -156,6 +156,13 @@ export class MobileActionsRendererComponent implements ICellRendererAngularComp 
 
   refresh(): boolean {
     return false;
+  }
+
+  onDownloadClick(event: MouseEvent): void {
+    event.stopPropagation();
+    if (this.params.onDownloadClick) {
+      this.params.onDownloadClick(this.params.data);
+    }
   }
 
   onEditClick(event: MouseEvent): void {

@@ -317,10 +317,12 @@ export const environment = {
         },
         Backblaze: {
             endpoint: 's3.us-east-005.backblazeb2.com',
-            keyId: '332633bece97',
-            applicationKey: '00537f0af2eea022537d2605ef4ed7557424c2b859',
+            keyId: '005332633bece970000000001',
+            applicationKey: 'K005cLrGz7IuTxILb2g5225gK12jaCU',
             bucketId: '9393a26623636bce9cce0917',
-            bucketName: 'mytime'
+            bucketName: 'mytime',
+            region: 'us-east-005',
+            publicUrl: 'https://mytime.s3.us-east-005.backblazeb2.com'
         },
         EmployeeDocuments: {
             GetEmployeeDocuments: 'employeedocuments/fetchEmployeeDocuments',
