@@ -1,67 +1,155 @@
 <ul class="nav">
-          <li class="nav-item">
-            <a class="nav-link" href="index.html">
-              <i class="icon-box menu-icon"></i>
-              <span class="menu-title">Dashboard</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-              <i class="icon-disc menu-icon"></i>
-              <span class="menu-title">UI Elements</span>
-              <i class="menu-arrow"></i>
-            </a>
-            <div class="collapse" id="ui-basic">
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">Buttons</a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/ui-features/typography.html">Typography</a></li>
-              </ul>
-            </div>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="pages/forms/basic_elements.html">
-              <i class="icon-file menu-icon"></i>
-              <span class="menu-title">Form elements</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="pages/charts/chartjs.html">
-              <i class="icon-pie-graph menu-icon"></i>
-              <span class="menu-title">Charts</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="pages/tables/basic-table.html">
-              <i class="icon-command menu-icon"></i>
-              <span class="menu-title">Tables</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="pages/icons/feather-icons.html">
-              <i class="icon-help menu-icon"></i>
-              <span class="menu-title">Icons</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
-              <i class="icon-head menu-icon"></i>
-              <span class="menu-title">User Pages</span>
-              <i class="menu-arrow"></i>
-            </a>
-            <div class="collapse" id="auth">
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/login.html"> Login </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/login-2.html"> Login 2 </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/register.html"> Register </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/register-2.html"> Register 2 </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/lock-screen.html"> Lockscreen </a></li>
-              </ul>
-            </div>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="docs/documentation.html">
-              <i class="icon-book menu-icon"></i>
-              <span class="menu-title">Documentation</span>
-            </a>
-          </li>
-        </ul>
+
+  <!-- Home -->
+  <li class="nav-item">
+    <a class="nav-link" routerLink="/home" routerLinkActive="active">
+      <i class="mdi mdi-home menu-icon"></i>
+      <span class="menu-title">Home</span>
+    </a>
+  </li>
+
+  <!-- Engage -->
+  <li class="nav-item">
+    <a class="nav-link" routerLink="/engage" routerLinkActive="active">
+      <i class="mdi mdi-account-group menu-icon"></i>
+      <span class="menu-title">Engage</span>
+    </a>
+  </li>
+
+  <!-- MyWorkLife -->
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="collapse" href="#my-work-life" aria-expanded="false" aria-controls="my-work-life">
+      <i class="mdi mdi-briefcase menu-icon"></i>
+      <span class="menu-title">MyWorkLife</span>
+      <i class="menu-arrow"></i>
+    </a>
+    <div class="collapse" id="my-work-life">
+      <ul class="nav flex-column sub-menu">
+        <li class="nav-item"><a class="nav-link" routerLink="/my-work-life/kudos" routerLinkActive="active">Kudos</a>
+        </li>
+        <li class="nav-item"><a class="nav-link" routerLink="/my-work-life/feedback"
+            routerLinkActive="active">Feedback</a></li>
+      </ul>
+    </div>
+  </li>
+
+  <!-- Todo -->
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="collapse" href="#todo" aria-expanded="false" aria-controls="todo">
+      <i class="mdi mdi-checkbox-marked-circle-outline menu-icon"></i>
+      <span class="menu-title">Todo</span>
+      <i class="menu-arrow"></i>
+    </a>
+    <div class="collapse" id="todo">
+      <ul class="nav flex-column sub-menu">
+        <li class="nav-item"><a class="nav-link" routerLink="/todo/tasks" routerLinkActive="active">Tasks</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/todo/review" routerLinkActive="active">Review</a></li>
+      </ul>
+    </div>
+  </li>
+
+  <!-- Salary -->
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="collapse" href="#salary" aria-expanded="false" aria-controls="salary">
+      <i class="mdi mdi-currency-inr menu-icon"></i>
+      <span class="menu-title">Salary</span>
+      <i class="menu-arrow"></i>
+    </a>
+    <div class="collapse" id="salary">
+      <ul class="nav flex-column sub-menu">
+        <li class="nav-item"><a class="nav-link" routerLink="/salary/payslips" routerLinkActive="active">Payslips</a>
+        </li>
+        <li class="nav-item"><a class="nav-link" routerLink="/salary/ytd-reports" routerLinkActive="active">YTD
+            Reports</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/salary/it-statement" routerLinkActive="active">IT
+            Statement</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/salary/it-declaration" routerLinkActive="active">IT
+            Declaration</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/salary/loans-advances" routerLinkActive="active">Loans &
+            Advances</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/salary/reimbursements"
+            routerLinkActive="active">Reimbursements</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/salary/proof-of-investments"
+            routerLinkActive="active">Proof of Investments</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/salary/salary-revision" routerLinkActive="active">Salary
+            Revision</a></li>
+      </ul>
+    </div>
+  </li>
+
+  <!-- Leave -->
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="collapse" href="#leave" aria-expanded="false" aria-controls="leave">
+      <i class="mdi mdi-calendar-clock menu-icon"></i>
+      <span class="menu-title">Leave</span>
+      <i class="menu-arrow"></i>
+    </a>
+    <div class="collapse" id="leave">
+      <ul class="nav flex-column sub-menu">
+        <li class="nav-item"><a class="nav-link" routerLink="/leave/apply" routerLinkActive="active">Leave Apply</a>
+        </li>
+        <li class="nav-item"><a class="nav-link" routerLink="/leave/balance" routerLinkActive="active">Leave Balance</a>
+        </li>
+        <li class="nav-item"><a class="nav-link" routerLink="/leave/calendar" routerLinkActive="active">Leave
+            Calendar</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/leave/holiday-calendar" routerLinkActive="active">Holiday
+            Calendar</a></li>
+      </ul>
+    </div>
+  </li>
+
+  <!-- Attendance -->
+  <li class="nav-item">
+    <a class="nav-link" routerLink="/attendance" routerLinkActive="active">
+      <i class="mdi mdi-fingerprint menu-icon"></i>
+      <span class="menu-title">Attendance</span>
+    </a>
+  </li>
+
+  <!-- Document Center -->
+  <li class="nav-item">
+    <a class="nav-link" routerLink="/document-center" routerLinkActive="active">
+      <i class="mdi mdi-folder-multiple-outline menu-icon"></i>
+      <span class="menu-title">Document Center</span>
+    </a>
+  </li>
+
+  <!-- People -->
+  <li class="nav-item">
+    <a class="nav-link" routerLink="/people" routerLinkActive="active">
+      <i class="mdi mdi-account-multiple menu-icon"></i>
+      <span class="menu-title">People</span>
+    </a>
+  </li>
+
+  <!-- Helpdesk -->
+  <li class="nav-item">
+    <a class="nav-link" routerLink="/helpdesk" routerLinkActive="active">
+      <i class="mdi mdi-headset menu-icon"></i>
+      <span class="menu-title">Helpdesk</span>
+    </a>
+  </li>
+
+  <!-- RequestHub -->
+  <li class="nav-item">
+    <a class="nav-link" routerLink="/request-hub" routerLinkActive="active">
+      <i class="mdi mdi-inbox-multiple menu-icon"></i>
+      <span class="menu-title">RequestHub</span>
+    </a>
+  </li>
+
+  <!-- Workflow Delegates -->
+  <li class="nav-item">
+    <a class="nav-link" routerLink="/workflow-delegates" routerLinkActive="active">
+      <i class="mdi mdi-swap-horizontal menu-icon"></i>
+      <span class="menu-title">Workflow Delegates</span>
+    </a>
+  </li>
+  <!-- Logout -->
+  <li class="nav-item logout-item">
+    <a class="nav-link logout-btn" (click)="logout()">
+      <i class="mdi mdi-logout menu-icon"></i>
+      <span class="menu-title font-weight-bold">Logout</span>
+    </a>
+  </li>
+</ul>
