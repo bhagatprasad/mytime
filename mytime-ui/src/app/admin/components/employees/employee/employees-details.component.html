@@ -57,18 +57,9 @@
                                     data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab"
                                     aria-controls="personal" [attr.aria-selected]="activeTab === 'personal'">
                                     <i class="mdi mdi-account"></i>
-                                    <span class="d-none d-sm-inline ms-1">Personal</span>
+                                    <span class="d-none d-sm-inline ms-1">Personal Information</span>
                                 </button>
                             </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" [class.active]="activeTab === 'employment'" id="employment-tab"
-                                    data-bs-toggle="tab" data-bs-target="#employment" type="button" role="tab"
-                                    aria-controls="employment" [attr.aria-selected]="activeTab === 'employment'">
-                                    <i class="mdi mdi-briefcase"></i>
-                                    <span class="d-none d-sm-inline ms-1">Employment</span>
-                                </button>
-                            </li>
-
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" [class.active]="activeTab === 'financial'" id="financial-tab"
                                     data-bs-toggle="tab" data-bs-target="#financial" type="button" role="tab"
@@ -93,7 +84,14 @@
                                     <span class="d-none d-sm-inline ms-1">Education</span>
                                 </button>
                             </li>
-                            <!-- New Documents Tab -->
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" [class.active]="activeTab === 'address'" id="address-tab"
+                                    data-bs-toggle="tab" data-bs-target="#address" type="button" role="tab"
+                                    aria-controls="address" [attr.aria-selected]="activeTab === 'address'">
+                                    <i class="mdi mdi-map-marker"></i>
+                                    <span class="d-none d-sm-inline ms-1">Address</span>
+                                </button>
+                            </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" [class.active]="activeTab === 'documents'" id="documents-tab"
                                     data-bs-toggle="tab" data-bs-target="#documents" type="button" role="tab"
@@ -115,7 +113,7 @@
 
                     <!-- Tab Content -->
                     <div class="tab-content" id="employeeTabsContent">
-                        <!-- Personal Information Tab -->
+                        <!-- Personal Information Tab (Merged Personal + Employment) -->
                         <div class="tab-pane fade" [class.show]="activeTab === 'personal'"
                             [class.active]="activeTab === 'personal'" id="personal" role="tabpanel"
                             aria-labelledby="personal-tab">
@@ -129,18 +127,17 @@
                                         <div>
                                             <h4 class="mb-1">{{employee.FirstName}} {{employee.LastName}}</h4>
                                             <p class="text-muted mb-0">
-                                                <i class="mdi mdi-email-outline me-1"></i> {{employee.Email || 'No
-                                                email'}}
+                                                <i class="mdi mdi-email-outline me-1"></i> {{employee.Email || 'No email'}}
                                             </p>
                                             <p class="text-muted mb-0">
-                                                <i class="mdi mdi-phone-outline me-1"></i> {{employee.Phone || 'No
-                                                phone'}}
+                                                <i class="mdi mdi-phone-outline me-1"></i> {{employee.Phone || 'No phone'}}
                                             </p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="row g-3">
+                                    <!-- Basic Information -->
                                     <div class="col-12">
                                         <h6 class="section-title">
                                             <i class="mdi mdi-information me-1"></i>Basic Information
@@ -170,6 +167,8 @@
                                             <p>{{(employee.DateOfBirth | date:'dd/MM/yyyy') || 'Not specified'}}</p>
                                         </div>
                                     </div>
+
+                                    <!-- Family Information -->
                                     <div class="col-12">
                                         <h6 class="section-title mt-2">
                                             <i class="mdi mdi-family-tree me-1"></i>Family Information
@@ -187,36 +186,10 @@
                                             <p>{{employee.MotherName || 'Not specified'}}</p>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- Employment Details Tab -->
-                        <div class="tab-pane fade" [class.show]="activeTab === 'employment'"
-                            [class.active]="activeTab === 'employment'" id="employment" role="tabpanel"
-                            aria-labelledby="employment-tab">
-                            <div class="employee-details">
-                                <div class="employee-profile-header mb-4">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar-circle me-3" [style.background-color]="getAvatarColor()">
-                                            {{getInitials()}}
-                                        </div>
-                                        <div>
-                                            <h4 class="mb-1">{{employee.FirstName}} {{employee.LastName}}</h4>
-                                            <p class="text-muted mb-0">
-                                                <i class="mdi mdi-email-outline me-1"></i> {{employee.Email || 'No
-                                                email'}}
-                                            </p>
-                                            <p class="text-muted mb-0">
-                                                <i class="mdi mdi-phone-outline me-1"></i> {{employee.Phone || 'No
-                                                phone'}}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row g-3">
+                                    <!-- Position Details -->
                                     <div class="col-12">
-                                        <h6 class="section-title">
+                                        <h6 class="section-title mt-2">
                                             <i class="mdi mdi-badge-account me-1"></i>Position Details
                                         </h6>
                                     </div>
@@ -239,6 +212,7 @@
                                         </div>
                                     </div>
 
+                                    <!-- Employment Timeline -->
                                     <div class="col-12">
                                         <h6 class="section-title mt-2">
                                             <i class="mdi mdi-calendar-clock me-1"></i>Employment Timeline
@@ -296,12 +270,10 @@
                                         <div>
                                             <h4 class="mb-1">{{employee.FirstName}} {{employee.LastName}}</h4>
                                             <p class="text-muted mb-0">
-                                                <i class="mdi mdi-email-outline me-1"></i> {{employee.Email || 'No
-                                                email'}}
+                                                <i class="mdi mdi-email-outline me-1"></i> {{employee.Email || 'No email'}}
                                             </p>
                                             <p class="text-muted mb-0">
-                                                <i class="mdi mdi-phone-outline me-1"></i> {{employee.Phone || 'No
-                                                phone'}}
+                                                <i class="mdi mdi-phone-outline me-1"></i> {{employee.Phone || 'No phone'}}
                                             </p>
                                         </div>
                                     </div>
@@ -315,22 +287,19 @@
                                     <div class="col-md-6 col-lg-4">
                                         <div class="info-card highlight">
                                             <label>Offer Price</label>
-                                            <p class="amount">{{(employee.OfferPrice | currency:'INR') || 'Not
-                                                specified'}}</p>
+                                            <p class="amount">{{(employee.OfferPrice | currency:'INR') || 'Not specified'}}</p>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-4">
                                         <div class="info-card highlight">
                                             <label>Current Price</label>
-                                            <p class="amount">{{(employee.CurrentPrice | currency:'INR') || 'Not
-                                                specified'}}</p>
+                                            <p class="amount">{{(employee.CurrentPrice | currency:'INR') || 'Not specified'}}</p>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-4">
                                         <div class="info-card highlight">
                                             <label>Joining Bonus</label>
-                                            <p class="amount">{{(employee.JoiningBonus | currency:'INR') || 'Not
-                                                specified'}}</p>
+                                            <p class="amount">{{(employee.JoiningBonus | currency:'INR') || 'Not specified'}}</p>
                                         </div>
                                     </div>
 
@@ -354,7 +323,8 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Emergency Contact Tab -->
+
+                        <!-- Contact Tab -->
                         <div class="tab-pane fade" [class.show]="activeTab === 'contact'"
                             [class.active]="activeTab === 'contact'" id="contact" role="tabpanel"
                             aria-labelledby="contact-tab">
@@ -363,6 +333,7 @@
                                     [employeeId]="employeeId"></app-employees-emergencey-contact-list>
                             </div>
                         </div>
+
                         <!-- Education Tab -->
                         <div class="tab-pane fade" [class.show]="activeTab === 'education'"
                             [class.active]="activeTab === 'education'" id="education" role="tabpanel"
@@ -372,7 +343,18 @@
                             </div>
                         </div>
 
-                        <!-- New Documents Tab -->
+                        <!-- Address Tab (Renamed from Employment) -->
+                        <div class="tab-pane fade" [class.show]="activeTab === 'address'"
+                            [class.active]="activeTab === 'address'" id="address" role="tabpanel"
+                            aria-labelledby="address-tab">
+                            <div class="p-2">
+                                <!-- Add your address component here -->
+                                <app-employees-addresses-list [employeeId]="employeeId"></app-employees-addresses-list>
+                                <!-- Note: You'll need to create this component or add address fields -->
+                            </div>
+                        </div>
+
+                        <!-- Documents Tab -->
                         <div class="tab-pane fade" [class.show]="activeTab === 'documents'"
                             [class.active]="activeTab === 'documents'" id="documents" role="tabpanel"
                             aria-labelledby="documents-tab">
