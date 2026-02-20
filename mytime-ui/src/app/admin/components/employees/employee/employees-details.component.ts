@@ -25,6 +25,7 @@ import { AuditFieldsService } from '../../../../common/services/auditfields.serv
 import { EmployeesEmployementListComponent } from '../employment/employees-employement-list.component';
 import { EmployeesEmergenceyContactListComponent } from '../contacts/employees-emergencey-contact-list.component';
 import { ListDocumentsComponent } from '../documents/list.component';
+import { EmployeesAddressesListComponent } from '../addresses/employees-addresses-list.component';
 
 declare var bootstrap: any;
 
@@ -37,7 +38,8 @@ declare var bootstrap: any;
     EmployeesEducationListComponent,
     EmployeesEmployementListComponent,
     EmployeesEmergenceyContactListComponent,
-    ListDocumentsComponent
+    ListDocumentsComponent,
+    EmployeesAddressesListComponent
   ],
   providers: [DatePipe, CurrencyPipe],
   templateUrl: './employees-details.component.html',
@@ -113,7 +115,7 @@ export class EmployeesDetailsComponent implements OnInit, AfterViewInit, OnDestr
       this.loaderService.hide();
       return;
     }
-    
+
     console.log('Loading employee details...');
     this.isLoading = true;
     this.loaderService.show();
@@ -126,36 +128,36 @@ export class EmployeesDetailsComponent implements OnInit, AfterViewInit, OnDestr
     }).subscribe({
       next: (data) => {
         console.log('Data received:', data);
-        
+
         // Set all the data
         this.employee = data.employee;
         this.departments = data.departments;
         this.designations = data.designations;
         this.roles = data.roles;
-        
+
         console.log('Employee data set:', this.employee);
-        
+
         // Force change detection
         this.cdr.detectChanges();
-        
+
         // Use requestAnimationFrame to ensure DOM is updated
         requestAnimationFrame(() => {
           console.log('DOM updated, initializing tabs...');
-          
+
           // Initialize tabs
           this.initializeTabs();
-          
+
           // Switch to URL tab if needed
           if (this.activeTab !== 'personal') {
             setTimeout(() => {
               this.switchTab(this.activeTab);
             }, 50);
           }
-          
+
           // Now hide loading states
           this.isLoading = false;
           this.loaderService.hide();
-          
+
           console.log('Loading complete, UI should be visible now');
         });
       },
@@ -170,7 +172,7 @@ export class EmployeesDetailsComponent implements OnInit, AfterViewInit, OnDestr
 
   private initializeTabs(): void {
     console.log('Initializing tabs...');
-    
+
     if (typeof bootstrap === 'undefined') {
       console.warn('Bootstrap JS is not loaded');
       return;
@@ -178,17 +180,17 @@ export class EmployeesDetailsComponent implements OnInit, AfterViewInit, OnDestr
 
     const tabElements = document.querySelectorAll('#employeeTabs button[data-bs-toggle="tab"]');
     console.log('Found tab elements:', tabElements.length);
-    
+
     if (tabElements.length === 0) {
       console.warn('No tab elements found');
       return;
     }
-    
+
     tabElements.forEach(tab => {
       tab.removeEventListener('shown.bs.tab', this.tabShownHandler);
       tab.addEventListener('shown.bs.tab', this.tabShownHandler.bind(this));
     });
-    
+
     console.log('Tab event listeners added');
   }
 
@@ -196,7 +198,7 @@ export class EmployeesDetailsComponent implements OnInit, AfterViewInit, OnDestr
     if (event && event.target) {
       this.activeTab = event.target.id.replace('-tab', '');
       console.log('Tab changed to:', this.activeTab);
-      
+
       this.router.navigate([], {
         relativeTo: this.route,
         queryParams: { tab: this.activeTab },
@@ -207,20 +209,20 @@ export class EmployeesDetailsComponent implements OnInit, AfterViewInit, OnDestr
 
   switchTab(tabId: string): void {
     console.log('Switching to tab:', tabId);
-    
+
     if (!this.employee) {
       console.log('Employee not loaded yet');
       return;
     }
-    
+
     if (typeof bootstrap === 'undefined') {
       console.warn('Bootstrap JS is not loaded');
       return;
     }
-    
+
     const tabButton = document.getElementById(`${tabId}-tab`);
     console.log('Tab button:', tabButton);
-    
+
     if (tabButton) {
       try {
         const bsTab = new bootstrap.Tab(tabButton);
@@ -278,15 +280,15 @@ export class EmployeesDetailsComponent implements OnInit, AfterViewInit, OnDestr
     this.employeeService.insertOrUpdateEmployee(_employee).subscribe({
       next: (response) => {
         console.log('Employee updated:', response);
-        
+
         if (response) {
           this.toastr.success("Employee processed successfully");
           this.showEditForm = false;
           this.employee = response.employee;
           this.selectedEmployee = this.employee;
-          
+
           this.cdr.detectChanges();
-          
+
           requestAnimationFrame(() => {
             this.initializeTabs();
             this.loaderService.hide();

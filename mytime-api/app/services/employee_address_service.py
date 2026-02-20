@@ -30,9 +30,6 @@ class EmployeeAddressService:
         try:
             return db.query(EmployeeAddress).filter(
                 EmployeeAddress.EmployeeId == employee_id
-            ).order_by(
-                asc(EmployeeAddress.IsActive.desc()),  # Active addresses first
-                desc(EmployeeAddress.CreatedOn)  # Newest first
             ).all()
         except Exception as e:
             logger.error(f"Error fetching addresses for employee {employee_id}: {str(e)}")

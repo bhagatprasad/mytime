@@ -1,1 +1,93 @@
-<p>employees-addresses-add works!</p>
+<!-- Overlay -->
+<div class="sidebar-overlay" *ngIf="isVisible" (click)="onClose()"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" [class.visible]="isVisible">
+    <form [formGroup]="addressForm" (ngSubmit)="onSubmit()" novalidate>
+        <!-- Header -->
+        <div class="sidebar-header">
+            <h5 class="sidebar-title">
+                {{ employeeAddress ? 'Edit Address' : 'Add Address' }}
+            </h5>
+            <button type="button" class="close" (click)="onClose()">
+                <span>&times;</span>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="sidebar-body">
+            <div class="form-container">
+                <!-- Name -->
+                <div class="form-group mb-3">
+                    <label class="form-label">H No <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-account"></i>
+                        </span>
+                        <input type="text" class="form-control" formControlName="HNo"
+                             placeholder="Enter Ho">
+                    </div>
+                    <!-- <div *ngIf="isFieldInvalid('Name')" class="text-danger small">
+                        Name is required
+                    </div> -->
+                </div>
+
+              
+
+                 <div class="form-group mb-3">
+                    <label class="form-label">AddressLineOne</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-account"></i>
+                        </span>
+                        <input type="text" class="form-control" formControlName="AddressLineOne"
+                            placeholder="Enter full name">
+                    </div>
+                    <!-- <div *ngIf="isFieldInvalid('Name')" class="text-danger small">
+                        Name is required
+                    </div> -->
+                </div>
+
+                   <div class="form-group mb-3">
+                    <label class="form-label">AddressLineTwo</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-account"></i>
+                        </span>
+                        <input type="text" class="form-control" formControlName="AddressLineTwo"
+                           placeholder="Enter full name">
+                    </div>
+                    <!-- <div *ngIf="isFieldInvalid('Name')" class="text-danger small">
+                        Name is required
+                    </div> -->
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Landmark</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-account"></i>
+                        </span>
+                        <input type="text" class="form-control" formControlName="Landmark"
+                           placeholder="Enter full name">
+                    </div>
+                    <!-- <div *ngIf="isFieldInvalid('Name')" class="text-danger small">
+                        Name is required
+                    </div> -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="sidebar-footer">
+            <button type="submit" class="btn btn-primary" [disabled]="addressForm.invalid">
+                <i class="mdi mdi-content-save"></i>
+                {{ employeeAddress ? 'Update' : 'Save' }}
+            </button>
+            <button type="button" class="btn btn-secondary ms-2" (click)="onClose()">
+                <i class="mdi mdi-close"></i>
+                Cancel
+            </button>
+        </div>
+    </form>
+</div>
