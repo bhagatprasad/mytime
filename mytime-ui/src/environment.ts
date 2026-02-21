@@ -10,10 +10,11 @@ export const environment = {
         ChangePasswordAsync: 'auth/ChangePasswordAsync',
 
         // User endpoints
+       // User endpoints
         Users: {
-            GetUsers: 'users/',
-            GetUserById: 'users',
-            RegisterUser: 'users/'
+            GetUsers: 'users/fetchAllUsers',
+            GetUserById: 'users/fetchUser',
+            RegisterUser: 'users/RegisterUser'
         },
 
         // Role endpoints

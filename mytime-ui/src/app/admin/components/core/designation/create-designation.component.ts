@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Designation } from '../models/designation';
+import { Designation } from '../../../models/designation';
 
 @Component({
   selector: 'app-create-designation',

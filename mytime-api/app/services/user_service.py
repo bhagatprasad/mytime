@@ -1,64 +1,88 @@
-# app/services/user_service.py
-
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
+from sqlalchemy.orm import Session
+from typing import Optional, List, Dict, Any
 from datetime import datetime
-from typing import Optional, List
 
 from app.models.user import User
-from app.schemas.user_schemas import RegisterUser   # ✅ FIX HERE
+from app.schemas.user_schemas import RegisterUser
 from app.utils.hash_salt import HashSalt
 
 
 class UserService:
-    def __init__(self, db_session: AsyncSession):
-        self.db_session = db_session
 
-    # Task<User> fetchUser(long id)
-    async def fetch_user(self, user_id: int) -> Optional[User]:
-        result = await self.db_session.execute(
-            select(User).where(User.id == user_id)
-        )
-        return result.scalars().first()
+    @staticmethod
+    def fetch_user(db: Session, user_id: int) -> Optional[User]:
+        """Get user by ID - matches fetchUser in C#"""
+        return db.query(User).filter(User.Id == user_id).first()
 
-    # Task<List<User>> fetchUsers()
-    async def fetch_users(self) -> List[User]:
-        result = await self.db_session.execute(select(User))
-        return result.scalars().all()
+    @staticmethod
+    def fetch_all_users(db: Session) -> List[User]:
+        """Get all users - matches fetchAllUsers in C#"""
+        return db.query(User).all()
 
-    # Task<bool> RegisterUser(RegisterUser registerUser)
-    async def register_user(self, register_user: RegisterUser) -> bool:
-        if not register_user.id or register_user.id == 0:
-            if not register_user.password:
-                return False
-
-            hash_salt = HashSalt.generate_salted_hash(register_user.password)
-
-            user = User(
-                employee_id=register_user.employee_id,
-                first_name=register_user.first_name,
-                last_name=register_user.last_name,
-                role_id=register_user.role_id,
-                department_id=register_user.department_id,
-                email=register_user.email,
-                phone=register_user.phone,
-                password_hash=hash_salt["hash"],
-                password_salt=hash_salt["salt"],
-                created_by=-1,
-                created_on=datetime.utcnow(),
-                modified_by=-1,
-                modified_on=datetime.utcnow(),
-                is_active=True,
-                user_wrong_password_count=0,
-                is_blocked=False
-            )
-
-            self.db_session.add(user)
-
-        try:
-            await self.db_session.commit()
-            return True
-        except Exception as e:
-            await self.db_session.rollback()
-            print(f"Error saving user: {e}")
+    @staticmethod
+    def register_user(db: Session, register_user: RegisterUser) -> bool:
+        """Register new user - matches RegisterUser in C#"""
+        if not register_user.password:
             return False
+
+        hash_salt = HashSalt.generate_salted_hash(register_user.password)
+
+        db_user = User(
+            employee_id=register_user.employee_id,
+            first_name=register_user.first_name,
+            last_name=register_user.last_name,
+            role_id=register_user.role_id,
+            department_id=register_user.department_id,
+            email=register_user.email,
+            phone=register_user.phone,
+            password_hash=hash_salt["hash"],
+            password_salt=hash_salt["salt"],
+            created_by=-1,
+            created_on=datetime.utcnow(),
+            modified_by=-1,
+            modified_on=datetime.utcnow(),
+            is_active=True,
+            user_wrong_password_count=0,
+            is_blocked=False
+        )
+
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+        return True
+
+    @staticmethod
+    def insert_or_update_user(db: Session, user_data: dict) -> Dict[str, Any]:
+        """Insert or update user - matches InsertOrUpdateUser in C#"""
+        user_id = user_data.get('Id')
+
+        if user_id:
+            db_user = db.query(User).filter(User.Id == user_id).first()
+            if not db_user:
+                return {"success": False, "message": "User not found", "user": None}
+
+            for key, value in user_data.items():
+                if key != 'Id' and value is not None:
+                    setattr(db_user, key, value)
+
+            db.commit()
+            db.refresh(db_user)
+            return {"success": True, "message": "User updated successfully", "user": db_user}
+        else:
+            user_data.pop('Id', None)
+            db_user = User(**user_data)
+            db.add(db_user)
+            db.commit()
+            db.refresh(db_user)
+            return {"success": True, "message": "User created successfully", "user": db_user}
+
+    @staticmethod
+    def delete_user(db: Session, user_id: int) -> Dict[str, Any]:
+        """Delete user - matches DeleteUser in C#"""
+        db_user = db.query(User).filter(User.Id == user_id).first()
+        if not db_user:
+            return {"success": False, "message": "User not found"}
+
+        db.delete(db_user)
+        db.commit()
+        return {"success": True, "message": "User deleted successfully"}
