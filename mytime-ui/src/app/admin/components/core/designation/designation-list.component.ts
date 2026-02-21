@@ -1,29 +1,29 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { DesignationService } from '../../../services/designation.service';
 import { AllCommunityModule, ColDef, GridApi, GridOptions, GridReadyEvent, ICellRendererParams, ModuleRegistry, ValueFormatterParams } from 'ag-grid-community';
-import { HolidayCallender } from '../models/HolidayCallender';
-import { ActionsRendererComponent } from '../../common/components/actions-renderer.component';
-import { MobileActionsRendererComponent } from '../../common/components/mobile-actions-renderer.component';
+import { Designation } from '../../../models/designation';
 import { CommonEngine } from '@angular/ssr';
 import { CommonModule, DatePipe } from '@angular/common';
+import { ToastrService } from 'ngx-toastr';
 import { AgGridAngular } from 'ag-grid-angular';
 import { FormsModule } from '@angular/forms';
-import { HolydayCallenderService } from '../services/HolydayCallender.service';
-import { ToastrService } from 'ngx-toastr';
-import { LoaderService } from '../../common/services/loader.service';
-import { AuditFieldsService } from '../../common/services/auditfields.service';
-import { DeleteConfirmationComponent } from '../../common/components/delete.compunent';
-import { CreateHolydaycallenderComponent } from './create-holydaycallender.component';
+import { MobileActionsRendererComponent } from '../../../../common/components/mobile-actions-renderer.component';
+import { ActionsRendererComponent } from '../../../../common/components/actions-renderer.component';
+import { LoaderService } from '../../../../common/services/loader.service';
+import { AuditFieldsService } from '../../../../common/services/auditfields.service';
+import { CreateDesignationComponent } from './create-designation.component';
+import { DeleteConfirmationComponent } from '../../../../common/components/delete.compunent';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
-  selector: 'app-holydaycallender-list',
+  selector: 'app-designation-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, DatePipe, FormsModule, DeleteConfirmationComponent,CreateHolydaycallenderComponent],
-  templateUrl: './holydaycallender-list.component.html',
-  styleUrl: './holydaycallender-list.component.css'
+  imports: [CommonModule, AgGridAngular, DatePipe, FormsModule, CreateDesignationComponent, DeleteConfirmationComponent],
+  templateUrl: './designation-list.component.html',
+  styleUrl: './designation-list.component.css'
 })
-export class HolydaycallenderListComponent {
+export class DesignationListComponent implements OnInit {
 
   today = new Date();
   // Grid API
@@ -34,15 +34,13 @@ export class HolydaycallenderListComponent {
 
   showDeletePopup = false;
 
-  selectedDeleteItem: HolidayCallender | null = null;
-
-  rowData: HolidayCallender[] = [];
+  selectedDeleteItem: Designation | null = null;
 
 
   // Desktop Columns (7-8 columns)
   desktopColumnDefs: ColDef[] = [
     {
-      field: 'Id',
+      field: 'DesignationId',
       headerName: 'ID',
       width: 80,
       filter: 'agNumberColumnFilter',
@@ -50,24 +48,16 @@ export class HolydaycallenderListComponent {
       cellClass: 'text-center'
     },
     {
-      field: 'FestivalName',
-      headerName: 'Festival Name',
-      width: 180,
+      field: 'Name',
+      headerName: 'Name',
+      width: 120,
       filter: 'agTextColumnFilter',
       sortable: true,
       cellRenderer: this.nameRenderer.bind(this)
     },
     {
-      field: 'HolidayDate',
-      headerName: 'Holiday Date',
-      width: 120,
-      filter: 'agTextColumnFilter',
-      sortable: true,
-      cellClass: 'text-center'
-    },
-    {
-      field: 'Year',
-      headerName: 'Year',
+      field: 'Code',
+      headerName: 'Code',
       width: 120,
       filter: 'agTextColumnFilter',
       sortable: true,
@@ -124,8 +114,8 @@ export class HolydaycallenderListComponent {
       filter: false,
       cellRenderer: ActionsRendererComponent,
       cellRendererParams: {
-        onEditClick: (data: any) => this.requestRoleProcess(data),
-        onDeleteClick: (data: any) => this.deleteHoliday(data)
+        onEditClick: (data: any) => this.requestadesignationProcess(data),
+        onDeleteClick: (data: any) => this.deleteDesignation(data)
       },
       cellClass: 'text-center'
     }
@@ -133,14 +123,14 @@ export class HolydaycallenderListComponent {
 
   mobileColumnDefs: ColDef[] = [
     {
-      field: 'FestivalName',
-      headerName: 'Name',
+      field: 'Name',
+      headerName: 'Designation',
       width: 180,
       cellRenderer: this.mobileNameRenderer.bind(this)
     },
     {
-      field: 'HolidayDate',
-      headerName: 'Date',
+      field: 'Code',
+      headerName: 'Code',
       width: 100,
       cellClass: 'text-center'
     },
@@ -152,7 +142,7 @@ export class HolydaycallenderListComponent {
       filter: false,
       cellRenderer: MobileActionsRendererComponent,
       cellRendererParams: {
-        onEditClick: (data: any) => this.requestRoleProcess(data)
+        onEditClick: (data: any) => this.requestadesignationProcess(data)
       },
       cellClass: 'text-center'
     }
@@ -180,11 +170,15 @@ export class HolydaycallenderListComponent {
     domLayout: 'autoHeight'
   };
 
-  showsidebar: boolean = false;
-  selectedHolidayCallender: HolidayCallender | null = null;
+  rowData: Designation[] = [];
+
+  isLoading: boolean = false;
+
+  showSidebar: boolean = false;
+  selectedDes: Designation | null = null;
 
   constructor(
-    private holidaycallenderService: HolydayCallenderService,
+    private designationService: DesignationService,
     private toastr: ToastrService,
     private loader: LoaderService,
     private audit: AuditFieldsService
@@ -193,7 +187,7 @@ export class HolydaycallenderListComponent {
   ngOnInit(): void {
     this.checkScreenSize();
     this.setupResponsiveColumns();
-    this.loadHolydayCallender();
+    this.loadRoleData();
     window.addEventListener('resize', this.onResize.bind(this));
   }
 
@@ -236,6 +230,29 @@ export class HolydaycallenderListComponent {
       this.gridApi.sizeColumnsToFit();
     }, 100);
   }
+
+  loadRoleData(): void {
+    this.loader.show();
+
+    this.designationService.getDesignationsListAsync().subscribe({
+      next: (des: Designation[]) => {
+        this.rowData = des;
+        this.loader.hide();
+        if (this.gridApi) {
+          setTimeout(() => {
+            this.gridApi.sizeColumnsToFit();
+          }, 100);
+        }
+      },
+      error: (error) => {
+        console.error('Error loading designations:', error);
+        this.loader.hide();
+
+        this.toastr.error('Failed to load designations.', 'Error');
+      }
+    });
+  }
+
   onGridReady(params: GridReadyEvent): void {
     this.gridApi = params.api;
     setTimeout(() => {
@@ -245,20 +262,20 @@ export class HolydaycallenderListComponent {
 
   nameRenderer(params: ICellRendererParams): string {
     return `
-          <div class="role-name-cell">
-            <strong>${params.value}</strong>
-            <div class="text-muted small">Code: ${params.data.Code}</div>
-          </div>
-        `;
+        <div class="role-name-cell">
+          <strong>${params.value}</strong>
+          <div class="text-muted small">Code: ${params.data.Code}</div>
+        </div>
+      `;
   }
 
   mobileNameRenderer(params: ICellRendererParams): string {
     return `
-          <div class="mobile-role-cell">
-            <strong>${params.value}</strong>
-            <div class="text-muted small">ID: ${params.data.Id}</div>
-          </div>
-        `;
+        <div class="mobile-role-cell">
+          <strong>${params.value}</strong>
+          <div class="text-muted small">ID: ${params.data.Id}</div>
+        </div>
+      `;
   }
 
   statusRenderer(params: ICellRendererParams): string {
@@ -268,11 +285,11 @@ export class HolydaycallenderListComponent {
     const icon = isActive ? 'mdi-check-circle' : 'mdi-close-circle';
 
     return `
-          <div class="d-flex align-items-center gap-2">
-            <i class="mdi ${icon} text-${statusClass}"></i>
-            <span class="badge bg-${statusClass}">${statusText}</span>
-          </div>
-        `;
+        <div class="d-flex align-items-center gap-2">
+          <i class="mdi ${icon} text-${statusClass}"></i>
+          <span class="badge bg-${statusClass}">${statusText}</span>
+        </div>
+      `;
   }
 
   mobileStatusRenderer(params: ICellRendererParams): string {
@@ -302,56 +319,15 @@ export class HolydaycallenderListComponent {
     });
   }
 
-
-  loadHolydayCallender(): void {
-    this.loader.show();
-
-    this.holidaycallenderService.getHolydaysListAsync().subscribe({
-      next: (holyday: HolidayCallender[]) => {
-        this.rowData = holyday;
-        this.loader.hide();
-        if (this.gridApi) {
-          setTimeout(() => {
-            this.gridApi.sizeColumnsToFit();
-          }, 100);
-        }
-      },
-      error: (error) => {
-        console.error('Error loading holiday:', error);
-        this.loader.hide();
-
-        this.toastr.error('Failed to load holiday', 'Error');
-      }
-    });
-  }
-
   refreshData(): void {
-    this.loadHolydayCallender();
+    this.loadRoleData();
   }
 
-  deleteHoliday(holiday: HolidayCallender): void {
-    this.selectedDeleteItem = holiday;
-    this.showDeletePopup = true;
+  addNewRole(): void {
+    this.toastr.info('Add new role functionality will be implemented', 'Coming Soon');
+    console.log('Add new role clicked');
   }
 
-  openAddEditholiday(): void {
-    this.selectedHolidayCallender = null;
-    this.showsidebar = true;
-  }
-
-  onCloseSidebar():void{
-    this.selectedHolidayCallender=null;
-    this.showsidebar=false;
-  }
-
-  closepopup(): void {
-    this.showDeletePopup = false;
-    this.selectedDeleteItem = null;
-  }
-  requestRoleProcess(holyday: HolidayCallender): void {
-    this.showsidebar = true
-    this.selectedHolidayCallender = holyday
-  }
 
   getSelectedRowsCount(): number {
     return this.gridApi?.getSelectedRows()?.length || 0;
@@ -361,22 +337,69 @@ export class HolydaycallenderListComponent {
     return this.rowData.length;
   }
 
-  getActiveHolydayCount(): number {
-    return this.rowData.filter(holiday => holiday.IsActive).length;
+  getActiveRolesCount(): number {
+    return this.rowData.filter(des => des.IsActive).length;
   }
 
-  getInactiveHolydayCount(): number {
-    return this.rowData.filter(holiday => !holiday.IsActive).length;
+  getInactiveRolesCount(): number {
+    return this.rowData.filter(des => !des.IsActive).length;
+  }
+  deleteDesignation(des: Designation): void {
+    this.selectedDeleteItem = des;
+    this.showDeletePopup = true;
+    console.log(JSON.stringify(des));
   }
 
+  requestadesignationProcess(des: Designation): void {
+    this.selectedDes = des;
+    this.showSidebar = true;
+  }
+  openAddEditDesignation(): void {
+    this.selectedDes = null;
+    this.showSidebar = true;
+  }
 
-  deleteHolidayCallender() {
+  onSaveDesignation(des: Designation): void {
+    this.loader.show();
+    const _des = this.audit.appendAuditFields(des);
+
+    console.log("Received designation:", _des);
+
+    this.designationService.insertOrUpdateDesignation(_des).subscribe(
+      response => {
+        this.loader.hide();   // ✅ add this
+
+        if (response) {
+          this.toastr.success("Designation processed successfully");
+          this.showSidebar = false;
+          this.refreshData();
+        }
+      },
+      error => {
+        this.loader.hide();   // already here
+        console.error(error);
+        this.toastr.error("Something went wrong, please check and resubmit");
+        this.showSidebar = true;
+      }
+    );
+  }
+  onCloseSidebar(): void {
+    this.showSidebar = false;
+  }
+
+  // Delete Designation 
+  closePopup() {
+    this.showDeletePopup = false;
+    this.selectedDeleteItem = null;
+  }
+  confirmDelete() {
+
     if (!this.selectedDeleteItem) {
       console.error("No item selected for delete");
       return;
     }
 
-    this.holidaycallenderService.deleteHolydayCallender(this.selectedDeleteItem.Id)
+    this.designationService.ddeleteDesignationAsync(this.selectedDeleteItem.DesignationId)
       .subscribe({
         next: (res) => {
           console.log("Delete success:", res);
@@ -385,10 +408,12 @@ export class HolydaycallenderListComponent {
           this.showDeletePopup = false;
           this.selectedDeleteItem = null;
         },
+
         error: (err) => {
           console.error("Delete failed:", err);
           // keep popup open OR close — your choice
           this.showDeletePopup = false;
+
         },
         complete: () => {
           alert("Delete request completed");
@@ -396,21 +421,6 @@ export class HolydaycallenderListComponent {
       });
   }
 
-  onSaveHolidaycallender(holiday: HolidayCallender): void {
-    this.loader.show();
-    var _holiday = this.audit.appendAuditFields(holiday);
-    console.log("we have receved holiday data " + JSON.stringify(holiday));
-    this.holidaycallenderService.insertOrUpdateHolidayCallender(_holiday).subscribe(
-      reponse => {
-        if (reponse) {
-          this.toastr.success("holiday processed succeessfully");
-          this.showsidebar = false;
-          this.refreshData();
-        }
-      }, error => {
-        this.toastr.error("something went wrong , please check and resubmit");
-        this.showsidebar = true;
-        this.loader.hide();
-      });
-  }
 }
+
+

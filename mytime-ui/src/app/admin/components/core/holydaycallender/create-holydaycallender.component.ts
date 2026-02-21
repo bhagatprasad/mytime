@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
-import { HolidayCallender } from '../models/HolidayCallender';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { HolidayCallender } from '../../../models/HolidayCallender';
 
 @Component({
   selector: 'app-create-holydaycallender',
