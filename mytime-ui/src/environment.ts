@@ -116,16 +116,8 @@ export const environment = {
         DocumentType: {
             GetDocumentType: 'documenttypes/fetchDocumentType',
             GetAllDocumentTypes: 'documenttypes/fetchAllDocumentTypes',
-            GetActiveDocumentTypes: 'documenttypes/fetchActiveDocumentTypes',
-            GetDocumentTypes: 'documenttypes/getDocumentTypes',
-            CheckDocumentTypeExists: 'documenttypes/checkDocumentTypeExists',
             InsertOrUpdateDocumentType: 'documenttypes/InsertOrUpdateDocumentType',
-            DeleteDocumentType: 'documenttypes/DeleteDocumentType',
-            CreateDocumentType: 'documenttypes/create',
-            UpdateDocumentType: 'documenttypes/update',
-            ToggleActiveStatus: 'documenttypes/toggleActiveStatus',
-            SearchDocumentTypes: 'documenttypes/searchDocumentTypes',
-            GetDocumentTypesByIds: 'documenttypes/getDocumentTypesByIds'
+            DeleteDocumentType: 'documenttypes/DeleteDocumentType'
         },
 
         // HolidayCalendar endpoints
