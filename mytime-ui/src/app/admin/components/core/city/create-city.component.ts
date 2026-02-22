@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { CountryService } from '../services/country.service';
-import { StateService } from '../services/state.service';
-import { State } from '../models/state';
-import { Country } from '../models/country';
+import { CountryService } from '../../../services/country.service';
+import { StateService } from '../../../services/state.service';
+import { State } from '../../../models/state';
+import { Country } from '../../../models/country';
 import { response } from 'express';
 import { forkJoin } from 'rxjs';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { City } from '../models/city';
+import { City } from '../../../models/city';
 import { CommonModule } from '@angular/common';
 
 @Component({

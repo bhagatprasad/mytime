@@ -28,11 +28,11 @@ export const routes: Routes = [
         children: [
             {
                 path: 'cities',
-                loadComponent: () => import('./admin/components/city-list.component').then(m => m.CityListComponent)
+                loadComponent: () => import('./admin/components/core/city/city-list.component').then(m => m.CityListComponent)
             },
             {
                 path: 'countries',
-                loadComponent: () => import('./admin/components/country-list.component').then(m => m.CountryListComponent)
+                loadComponent: () => import('./admin/components/core/country/country-list.component').then(m => m.CountryListComponent)
             },
             {
                 path: 'dashboard',
@@ -40,31 +40,31 @@ export const routes: Routes = [
             },
             {
                 path: 'departments',
-                loadComponent: () => import('./admin/components/department-list.component').then(m => m.DepartmentListComponent)
+                loadComponent: () => import('./admin/components/core/department/department-list.component').then(m => m.DepartmentListComponent)
             },
             {
                 path: 'designations',
-                loadComponent: () => import('./admin/components/designation-list.component').then(m => m.DesignationListComponent)
+                loadComponent: () => import('./admin/components/core/designation/designation-list.component').then(m => m.DesignationListComponent)
             },
             {
                 path: 'documenttypes',
-                loadComponent: () => import('./admin/components/documenttype-list.component').then(m => m.DocumenttypeListComponent)
+                loadComponent: () => import('./admin/components/core/documenttype/documenttype-list.component').then(m => m.DocumenttypeListComponent)
             },
             {
                 path: 'holydaycallenders',
-                loadComponent: () => import('./admin/components/holydaycallender-list.component').then(m => m.HolydaycallenderListComponent)
+                loadComponent: () => import('./admin/components/core/holydaycallender/holydaycallender-list.component').then(m => m.HolydaycallenderListComponent)
             },
             {
                 path: 'roles',
-                loadComponent: () => import('./admin/components/role.component').then(m => m.RoleComponent)
+                loadComponent: () => import('./admin/components/core/role/role.component').then(m => m.RoleComponent)
             },
             {
                 path: 'states',
-                loadComponent: () => import('./admin/components/state-list.component').then(m => m.StateListComponent)
+                loadComponent: () => import('./admin/components/core/state/state-list.component').then(m => m.StateListComponent)
             },
             {
                 path: 'users',
-                loadComponent: () => import('./admin/components/user-list.component').then(m => m.UserListComponent)
+                loadComponent: () => import('./admin/components/user/user-list.component').then(m => m.UserListComponent)
             },
             // ========== EMPLOYEES ROUTES ==========
             {

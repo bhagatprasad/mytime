@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { Country } from '../models/country';
-import { State } from '../models/state';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Country } from '../../../models/country';
+import { State } from '../../../models/state';
 
 @Component({
   selector: 'app-create-state',

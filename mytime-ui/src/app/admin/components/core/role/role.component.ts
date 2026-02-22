@@ -12,15 +12,15 @@ import {
   ModuleRegistry,
   AllCommunityModule
 } from 'ag-grid-community';
-import { RoleService } from '../services/role.service';
-import { Role } from '../models/role';
+import { RoleService } from '../../../services/role.service';
+import { Role } from '../../../models/role';
 import { ToastrService } from 'ngx-toastr';
-import { LoaderService } from '../../common/services/loader.service';
+import { LoaderService } from '../../../../common/services/loader.service';
 import { CreateRoleComponent } from './create-role.component';
-import { AuditFieldsService } from '../../common/services/auditfields.service';
-import { ActionsRendererComponent } from '../../common/components/actions-renderer.component';
-import { MobileActionsRendererComponent } from '../../common/components/mobile-actions-renderer.component';
-import { DeleteConfirmationComponent } from '../../common/components/delete.compunent';
+import { AuditFieldsService } from '../../../../common/services/auditfields.service';
+import { ActionsRendererComponent } from '../../../../common/components/actions-renderer.component';
+import { MobileActionsRendererComponent } from '../../../../common/components/mobile-actions-renderer.component';
+import { DeleteConfirmationComponent } from '../../../../common/components/delete.compunent';
 
 // Register AG Grid modules
 ModuleRegistry.registerModules([AllCommunityModule]);

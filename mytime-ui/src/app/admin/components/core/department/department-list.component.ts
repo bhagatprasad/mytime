@@ -1,18 +1,16 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { DepartmentService } from '../services/department.service';
-import { Department } from '../models/department';
+import { DepartmentService } from '../../../services/department.service';
+import { Department } from '../../../models/department';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AllCommunityModule, ColDef, GridApi, GridOptions, GridReadyEvent, ICellRendererParams, ModuleRegistry, ValueFormatterParams } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
-import { LoaderService } from '../../common/services/loader.service';
+import { LoaderService } from '../../../../common/services/loader.service';
 import { ToastrService } from 'ngx-toastr';
-import { AuditFieldsService } from '../../common/services/auditfields.service';
-import { ActionsRendererComponent } from '../../common/components/actions-renderer.component';
-import { MobileActionsRendererComponent } from '../../common/components/mobile-actions-renderer.component';
+import { AuditFieldsService } from '../../../../common/services/auditfields.service';
+import { ActionsRendererComponent } from '../../../../common/components/actions-renderer.component';
+import { MobileActionsRendererComponent } from '../../../../common/components/mobile-actions-renderer.component';
 import { CreateDepartmentComponent } from './create-department.component';
-import { response } from 'express';
-
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
