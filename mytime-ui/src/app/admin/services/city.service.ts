@@ -19,8 +19,9 @@ export class CityService {
     }
 
     getCitiesListByStateAsync(stateId: number): Observable<City[]> {
-        return this.apiService.send<City[]>("GET", `${environment.UrlConstants.City.GetCitiesByState}?stateId=${stateId}`);
+        return this.apiService.send<City[]>("GET", `${environment.UrlConstants.City.GetCitiesByState}/${stateId}`);
     }
+    
     getCitiesListByCountryAndStateAsync(countryId: number, stateId: number): Observable<City[]> {
         return this.apiService.send<City[]>("GET", `${environment.UrlConstants.City.GetCitiesByState}?countryId=${countryId}&stateId=${stateId}`);
     }
