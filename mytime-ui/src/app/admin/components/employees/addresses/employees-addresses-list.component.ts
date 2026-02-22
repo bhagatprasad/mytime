@@ -18,13 +18,14 @@ import { City } from '../../../models/city';
 import { forkJoin } from 'rxjs';
 import { EmployeeAddressDetails } from '../../../models/employee_address_details';
 import { EmployeesAddressesAddComponent } from './employees-addresses-add.component';
+import { DeleteConfirmationComponent } from '../../../../common/components/delete.compunent';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-employees-addresses-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, EmployeesAddressesAddComponent],
+  imports: [CommonModule, AgGridAngular, EmployeesAddressesAddComponent,DeleteConfirmationComponent],
   templateUrl: './employees-addresses-list.component.html',
   styleUrl: './employees-addresses-list.component.css'
 })
@@ -207,6 +208,8 @@ export class EmployeesAddressesListComponent implements OnInit, OnDestroy {
   coreStates: State[] = [];
   coreCities: City[] = [];
 
+  showDeletePopUp : boolean = false;
+
 
 
   constructor(private employeeAddressService: EmployeeAddressService,
@@ -384,11 +387,39 @@ export class EmployeesAddressesListComponent implements OnInit, OnDestroy {
     console.log('Edit address:', employeeAddress);
   }
 
+  closePopup():void{
+    this.showDeletePopUp = false;
+    this.selectedEmployeeAddress = null;
+  }
+
   deleteEmployeeAddress(employeeAddress: EmployeeAddressDetails): void {
-    if (confirm('Are you sure you want to delete this address?')) {
-      // Implement your delete logic here
-      console.log('Delete address:', employeeAddress);
+    this.showDeletePopUp=true;
+    this.selectedEmployeeAddress = employeeAddress;
+  }
+
+  confirmDelete() {
+    if (!this.selectedEmployeeAddress) {
+      console.error("No item selected for delete");
+      return;
     }
+
+    this.employeeAddressService.removeEmployeeAddressAsync(this.selectedEmployeeAddress.EmployeeAddressId)
+      .subscribe({
+        next: (res) => {
+          console.log("Delete success:", res);
+
+          this.refreshData();          // reload grid data
+          this.showDeletePopUp = false;
+          this.selectedEmployeeAddress = null;
+        },
+
+        error: (err) => {
+          console.error("Delete failed:", err);
+          // keep popup open OR close — your choice
+          this.showDeletePopUp = false;
+
+        },
+      });
   }
   getTotalRowsCount(): number {
     return this.employeeAddressDetails.length;
