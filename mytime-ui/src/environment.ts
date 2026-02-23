@@ -1,6 +1,6 @@
 export const environment = {
     production: false,
-    baseUrl: 'http://localhost:8000/api/v1',
+    baseUrl: 'https://mytime-docker.onrender.com/api/v1',
     UrlConstants: {
         // Authentication endpoints
         Authenticate: 'auth/AuthenticateUser',
@@ -334,6 +334,12 @@ export const environment = {
             GetEmployeeSalaries: 'employeesalary/fetchEmployeeSalaries',
             GetSalariesByEmployee: 'employeesalary/fetchEmployeeSalariesByEmployee',
             GetEmployeeSalary: 'employeesalary/fetchEmployeeSalary',
+        },
+        MonthlySalary: {
+            GetMonthlySalaryAsync: 'monthlysalary/fetchMonthlySalary',
+            GetMontlySalaryListAsync: 'monthlysalary/fetchAllMonthlySalaries',
+            InsertOrUpdateMonthlySalaryAsync: 'monthlysalary/InsertOrUpdateMonthlySalary',
+            DeleteMonthlySalaryAsync: 'monthlysalary/deleteMonthlySalary'
         }
     }
 };

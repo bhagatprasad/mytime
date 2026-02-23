@@ -152,7 +152,7 @@ export class SalaryListComponent implements OnInit, OnDestroy {
       width: 200,
       sortable: false,
       filter: false,
-      cellRenderer: SalaryActionComponent, 
+      cellRenderer: SalaryActionComponent,
       cellRendererParams: {
         onEditClick: (data: any) => this.onEditClick(data),
         onDownloadClick: (data: any) => this.onDownloadClick(data),
@@ -221,7 +221,7 @@ export class SalaryListComponent implements OnInit, OnDestroy {
     }).subscribe({
       next: ({ employees, salaries }) => {
         this.employees = employees;
-        this.employeeSalaries = salaries;
+        this.employeeSalaries = this.sortMonthlySalariesByYearDesc(salaries);
         this.loader.hide();
         if (this.gridApi) {
           setTimeout(() => {
@@ -330,6 +330,14 @@ export class SalaryListComponent implements OnInit, OnDestroy {
   }
   getInActiveEmployeesSalariesCount(): number {
     return this.employeeSalaries.filter(salary => !salary.IsActive).length;
+  }
+
+  private sortMonthlySalariesByYearDesc(salaries: any[]): any[] {
+    return salaries.sort((a, b) => {
+      if (a.SalaryYear > b.SalaryYear) return -1;
+      if (a.SalaryYear < b.SalaryYear) return 1;
+      return 0;
+    });
   }
 
   getEmployeesCount(): number {
