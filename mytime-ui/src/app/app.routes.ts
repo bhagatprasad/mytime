@@ -84,6 +84,10 @@ export const routes: Routes = [
                 loadComponent: () => import('./admin/components/salary/salary-list.component').then(m => m.SalaryListComponent)
             },
             {
+                path: 'salary-structure',
+                loadComponent: () => import('./admin/components/salary/salary-structure-list.component').then(m => m.SalaryStructureListComponent)
+            },
+            {
                 path: '',
                 redirectTo: 'dashboard',
                 pathMatch: 'full'
