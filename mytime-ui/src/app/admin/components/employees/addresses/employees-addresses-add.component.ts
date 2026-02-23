@@ -40,6 +40,7 @@ export class EmployeesAddressesAddComponent implements OnChanges {
       CountryId: [null, [Validators.required]],
       StateId: [null, [Validators.required]],
       CityId: [null, [Validators.required]],
+      Zipcode: [null, [Validators.required]],
       IsActive: [true]
 
     });
@@ -82,7 +83,8 @@ export class EmployeesAddressesAddComponent implements OnChanges {
       Landmark: address.Landmark || '',
       CountryId: address.CountryId || '',
       StateId: address.StateId || '',
-      CityId: address.CityId || ''
+      CityId: address.CityId || '',
+      Zipcode: address.Zipcode || ''
     }, { emitEvent: false });
 
     // Mark form as pristine after patching existing data
@@ -104,6 +106,7 @@ export class EmployeesAddressesAddComponent implements OnChanges {
         CountryId:formValue.CountryId,
         StateId:formValue.StateId,
         CityId:formValue.CityId,
+        Zipcode:formValue.Zipcode,
       };
       this.save.emit(_address);
       // Optionally reset the form after save, or handle in parent component
