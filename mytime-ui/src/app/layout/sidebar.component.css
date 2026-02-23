@@ -1,7 +1,7 @@
 /* sidebar.component.css */
 .sidebar {
     min-height: calc(100vh - 0px);
-    background: #001737;
+    background: #5e7185;
     font-family: "Karla", sans-serif;
     font-weight: normal;
     padding: 0;
@@ -12,6 +12,7 @@
     box-shadow: 6px 16px 31px -18px #b7bcd1;
     overflow-x: hidden;
     overflow-y: auto;
+    border-top: 1px solid white;
 }
 
 /* Desktop styles (always visible) */

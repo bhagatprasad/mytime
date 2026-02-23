@@ -11,7 +11,7 @@ from app.services.role_service import RoleService
 router = APIRouter()
 
 # Exact C# controller endpoints
-@router.get("/fetchAllRoles", response_model=List[RoleResponse])  # Now List is defined
+@router.get("/fetchAllRoles", response_model=List[RoleResponse])
 async def fetch_all_roles(db: Session = Depends(get_db)):
     """Get all roles - matches C# fetchAllRoles endpoint"""
     try:

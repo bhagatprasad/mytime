@@ -23,7 +23,6 @@ class EmployeeSalary(Base):
     WRKDAYS = Column(Integer, nullable=True)
     LOPDAYS = Column(Integer, nullable=True)
 
-    # ===== Earnings (Monthly / YTD) =====
     Earning_Monthly_Basic = Column(Numeric(18, 2), nullable=True)
     Earning_YTD_Basic = Column(Numeric(18, 2), nullable=True)
 
@@ -51,7 +50,6 @@ class EmployeeSalary(Base):
     Earning_Montly_OTHERS = Column(Numeric(18, 2), nullable=True)
     Earning_YTD_OTHERS = Column(Numeric(18, 2), nullable=True)
 
-    # ===== Deductions (Monthly / YTD) =====
     Deduction_Montly_PROFESSIONALTAX = Column(Numeric(18, 2), nullable=True)
     Deduction_YTD_PROFESSIONALTAX = Column(Numeric(18, 2), nullable=True)
 
