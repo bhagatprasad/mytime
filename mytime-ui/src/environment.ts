@@ -1,6 +1,6 @@
 export const environment = {
     production: false,
-    baseUrl: 'https://mytime-docker.onrender.com/api/v1',
+    baseUrl: 'http://localhost:8000/api/v1',
     UrlConstants: {
         // Authentication endpoints
         Authenticate: 'auth/AuthenticateUser',
@@ -10,7 +10,7 @@ export const environment = {
         ChangePasswordAsync: 'auth/ChangePasswordAsync',
 
         // User endpoints
-       // User endpoints
+        // User endpoints
         Users: {
             GetUsers: 'users/fetchAllUsers',
             GetUserById: 'users/fetchUser',
@@ -329,6 +329,11 @@ export const environment = {
             GetDownloadUrl: 'backblaze/downloadurl',
             DeleteFile: 'backblaze/delete',
             GetFileInfo: 'backblaze/info'
+        },
+        EmployeeSalary: {
+            GetEmployeeSalaries: 'employeesalary/fetchEmployeeSalaries',
+            GetSalariesByEmployee: 'employeesalary/fetchEmployeeSalariesByEmployee',
+            GetEmployeeSalary: 'employeesalary/fetchEmployeeSalary',
         }
     }
 };

@@ -66,7 +66,6 @@ export const routes: Routes = [
                 path: 'users',
                 loadComponent: () => import('./admin/components/user/user-list.component').then(m => m.UserListComponent)
             },
-            // ========== EMPLOYEES ROUTES ==========
             {
                 path: 'employees',
                 children: [
@@ -80,7 +79,10 @@ export const routes: Routes = [
                     }
                 ]
             },
-            // ======================================
+            {
+                path: 'salary',
+                loadComponent: () => import('./admin/components/salary/salary-list.component').then(m => m.SalaryListComponent)
+            },
             {
                 path: '',
                 redirectTo: 'dashboard',
