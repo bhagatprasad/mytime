@@ -1,5 +1,7 @@
+# app/models/monthly_salary.py
+
 from sqlalchemy import Column, BigInteger, Text, Integer, Boolean, DateTime
-from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 from app.core.database import Base
 
 
@@ -7,24 +9,30 @@ class MonthlySalary(Base):
     __tablename__ = "MonthlySalary"
 
     MonthlySalaryId = Column(BigInteger, primary_key=True, index=True)
+    Title           = Column(Text, nullable=True)
+    SalaryMonth     = Column(Text, nullable=True)
+    SalaryYear      = Column(Text, nullable=True)
+    Location        = Column(Text, nullable=True)
+    StdDays         = Column(Integer, nullable=True)
+    WrkDays         = Column(Integer, nullable=True)
+    LopDays         = Column(Integer, nullable=True)
+    CreatedOn       = Column(DateTime, nullable=True)
+    CreatedBy       = Column(BigInteger, nullable=True)
+    ModifiedOn      = Column(DateTime, nullable=True)
+    ModifiedBy      = Column(BigInteger, nullable=True)
+    IsActive        = Column(Boolean, nullable=True)
 
-    Title = Column(Text, nullable=True)
-    SalaryMonth = Column(Text, nullable=True)
-    SalaryYear = Column(Text, nullable=True)
-    Location = Column(Text, nullable=True)
-
-    StdDays = Column(Integer, nullable=True)
-    WrkDays = Column(Integer, nullable=True)
-    LopDays = Column(Integer, nullable=True)
-
-    CreatedOn = Column(DateTime, nullable=True)
-    CreatedBy = Column(BigInteger, nullable=True)
-    ModifiedOn = Column(DateTime, nullable=True)
-    ModifiedBy = Column(BigInteger, nullable=True)
-    IsActive = Column(Boolean, nullable=True)
+    # ── ADD THIS ──────────────────────────────────────────────────────
+    employee_salaries = relationship(
+        "EmployeeSalary",
+        back_populates="monthly_salary",
+        lazy="select",
+    )
+    # ─────────────────────────────────────────────────────────────────
 
     def __repr__(self):
         return (
             f"<MonthlySalary(MonthlySalaryId={self.MonthlySalaryId}, "
-            f"Title='{self.Title}', SalaryMonth='{self.SalaryMonth}', SalaryYear='{self.SalaryYear}')>"
+            f"Title='{self.Title}', SalaryMonth='{self.SalaryMonth}', "
+            f"SalaryYear='{self.SalaryYear}')>"
         )
