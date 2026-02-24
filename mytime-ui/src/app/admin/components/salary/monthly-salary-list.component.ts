@@ -10,6 +10,7 @@ import { MonthlySalary } from '../../models/monlty_salary';
 import { ActionsRendererComponent } from '../../../common/components/actions-renderer.component';
 import { MobileActionsRendererComponent } from '../../../common/components/mobile-actions-renderer.component';
 import { MonthlySalaryAddComponent } from './monthly-salary-add.component';
+import { MonthlySalaryDetails } from '../../models/monlty_salary.details';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -24,6 +25,8 @@ export class MonthlySalaryListComponent implements OnInit, OnDestroy {
 
   monthlySalaries: MonthlySalary[] = [];
 
+  monthlySalaryDetails: MonthlySalaryDetails[] = [];
+
   today = new Date();
 
   private gridApi!: GridApi;
@@ -33,6 +36,14 @@ export class MonthlySalaryListComponent implements OnInit, OnDestroy {
   showDeletePopup = false;
 
   desktopColumnDefs: ColDef[] = [
+    {
+      field: 'MonthlySalaryId',
+      headerName: 'Id',
+      width: 100,
+      filter: 'agTextColumnFilter',
+      sortable: true,
+      cellClass: 'text-left'
+    },
     {
       field: 'Title',
       headerName: 'Title',
@@ -218,33 +229,34 @@ export class MonthlySalaryListComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
- loadInitalData(): void {
-  this.loader.show();
-  this.monthlySalaryService.GetMonthlySalaryListAsync().subscribe({
-    next: (response) => {
-      this.monthlySalaries = this.sortMonthlySalariesByYearDesc(response);
-      this.loader.hide();
+  loadInitalData(): void {
+    this.loader.show();
+    this.monthlySalaryService.GetMonthlySalaryListAsync().subscribe({
+      next: (response) => {
+        this.monthlySalaries = this.sortMonthlySalariesByYearDesc(response);
+        // this.monthlySalaryDetails = response; //this.sortMonthlySalariesByYearDesc(response);
+        this.loader.hide();
 
-      if (this.gridApi) {
-        setTimeout(() => {
-          this.gridApi.sizeColumnsToFit();
-        }, 100);
+        if (this.gridApi) {
+          setTimeout(() => {
+            this.gridApi.sizeColumnsToFit();
+          }, 100);
+        }
+      },
+      error: (error) => {
+        this.toster.error('Failed to load monthly salaries. Please try again later.', 'Error');
+        this.loader.hide();
       }
-    },
-    error: (error) => {
-      this.toster.error('Failed to load monthly salaries. Please try again later.', 'Error');
-      this.loader.hide();
-    }
-  });
-}
+    });
+  }
 
-private sortMonthlySalariesByYearDesc(salaries: any[]): any[] {
-  return salaries.sort((a, b) => {
-    if (a.SalaryYear > b.SalaryYear) return -1;
-    if (a.SalaryYear < b.SalaryYear) return 1;
-    return 0;
-  });
-}
+  private sortMonthlySalariesByYearDesc(salaries: any[]): any[] {
+    return salaries.sort((a, b) => {
+      if (a.SalaryYear > b.SalaryYear) return -1;
+      if (a.SalaryYear < b.SalaryYear) return 1;
+      return 0;
+    });
+  }
   onGridReady(params: GridReadyEvent): void {
     this.gridApi = params.api;
     setTimeout(() => {
