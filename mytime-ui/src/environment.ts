@@ -336,8 +336,9 @@ export const environment = {
             GetEmployeeSalary: 'employeesalary/fetchEmployeeSalary',
         },
         MonthlySalary: {
-            GetMonthlySalaryAsync: 'monthlysalary/fetchMonthlySalary',
-            GetMontlySalaryListAsync: 'monthlysalary/fetchAllMonthlySalaries',
+            GetMonthlySalaryAsync: 'monthlysalary/fetch-with-employees',
+            GetMontlySalaryListAsync: 'monthlysalary/fetch-all-with-employees',
+            GetMonthySalaryList: 'monthlysalary/fetch-all',
             InsertOrUpdateMonthlySalaryAsync: 'monthlysalary/InsertOrUpdateMonthlySalary',
             DeleteMonthlySalaryAsync: 'monthlysalary/deleteMonthlySalary'
         }
