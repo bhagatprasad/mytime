@@ -1,4 +1,67 @@
 <div class="container-fluid py-3">
+
+  <!-- ================= EMPLOYEE MODAL ================= -->
+  <div *ngIf="showModal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="d-flex align-items-center gap-2">
+          <h5 class="mdi mdi-account-group">Employees List</h5>
+
+          <small class="text-muted total-count">
+            <span class="fw-medium count">{{ getTotalEmployeesCount() }}</span>&nbsp;total
+          </small>
+        </div>
+
+        <button class="btn-close" (click)="showModal = false">
+          Close
+        </button>
+      </div>
+
+      <table class="table table-bordered table-striped premium-table">
+        <thead>
+          <tr>
+            <th>Employee Id</th>
+            <th>Salary Id</th>
+            <th>Title</th>
+            <th>Year</th>
+            <th>Location</th>
+            <th>Std Days</th>
+            <th>WRK Days</th>
+            <th>Net Transfer</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let salary of employeeSalaries">
+            <td>
+              <a [routerLink]="['/admin/employees/',salary.EmployeeId]" title=" View employee details">
+                {{ getEmployeeDetails(salary.EmployeeId) || 'Employee #' + salary.EmployeeId }}
+              </a>
+            </td>
+            <td>{{ salary.EmployeeSalaryId }}</td>
+            <td>{{ salary.Title }}</td>
+            <td>{{ salary.SalaryYear }}</td>
+            <td>{{ salary.LOCATION }}</td>
+            <td>{{ salary.STDDAYS }}</td>
+            <td>{{ salary.WRKDAYS }}</td>
+            <td>{{ salary.NETTRANSFER }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="salary.IsActive ? 'active' : 'inactive'">
+                {{ salary.IsActive ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="employees.length === 0" class="no-data">
+        No Employees Found
+      </div>
+
+    </div>
+  </div>
+  <!-- ================================================== -->
   <!-- AG Grid Section with Integrated Header -->
   <div class="row">
     <div class="col">
@@ -22,13 +85,9 @@
               <!-- Action Buttons -->
               <div class="d-flex gap-2 ms-3">
                 <!-- Add Button -->
-                <a 
-                  class="d-flex align-items-center"
-                  (click)="openAddMonthlySalary()"
-                  title="Add new monthly salary"
-                >
+                <a class="d-flex align-items-center" (click)="openAddMonthlySalary()" title="Add new monthly salary">
                   <i class="mdi mdi-plus-circle-outline me-1"></i>
-              </a>
+                </a>
               </div>
             </div>
           </div>
@@ -38,21 +97,10 @@
         <div class="card-body p-0">
           <!-- AG Grid -->
           <div *ngIf="monthlySalaries.length > 0" class="ag-grid-container">
-            <ag-grid-angular
-              style="width: 100%; height: 640px;"
-              class="ag-theme-alpine"
-              [rowData]="monthlySalaries"
-              [columnDefs]="columnDefs"
-              [defaultColDef]="defaultColDef"
-              [gridOptions]="gridOptions"
-              (gridReady)="onGridReady($event)"
-              [pagination]="true"
-              [paginationPageSize]="20"
-              [suppressCellFocus]="true"
-              [animateRows]="true"
-              [rowSelection]="'single'"
-              [domLayout]="isMobile ? 'autoHeight' : 'normal'"
-            >
+            <ag-grid-angular style="width: 100%; height: 640px;" class="ag-theme-alpine" [rowData]="monthlySalaries"
+              [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [gridOptions]="gridOptions"
+              (gridReady)="onGridReady($event)" [pagination]="true" [paginationPageSize]="20" [suppressCellFocus]="true"
+              [animateRows]="true" [rowSelection]="'single'" [domLayout]="isMobile ? 'autoHeight' : 'normal'">
             </ag-grid-angular>
           </div>
 
@@ -71,16 +119,10 @@
             </div>
           </div>
 
-          <app-monthly-salary-add [isVisible]="showSidebar" [monthlySalary]="selectedMonthlySalary"  (closeSidebar)="onCloseSidebar()" (saveMonthlySalary)="onSaveMonthlySalary($event)"></app-monthly-salary-add>
+          <app-monthly-salary-add [isVisible]="showSidebar" [monthlySalary]="selectedMonthlySalary"
+            (closeSidebar)="onCloseSidebar()"
+            (saveMonthlySalary)="onSaveMonthlySalary($event)"></app-monthly-salary-add>
         </div>
-         <!-- <app-create-country [isVisible]="showSidebar" [country]="selectedCountry"  (closeSidebar)="onCloseSidebar()" (saveCountry)="onSaveCountry($event)"></app-create-country>
-         <app-delete-confirmation
-  *ngIf="showDeletePopup"
-  title="Delete Country"
-  message="Do you really want to delete this country?"
-  (confirm)="confirmDelete()"
-  (cancel)="closePopup()">
-</app-delete-confirmation> -->
       </div>
     </div>
   </div>
