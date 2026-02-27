@@ -33,22 +33,22 @@
         </thead>
 
         <tbody>
-          <tr *ngFor="let emp of employees">
+          <tr *ngFor="let salary of employeeSalaries">
             <td>
-              <a [routerLink]="['/admin/employees/',emp.EmployeeId]" title=" View employee details">
-                {{ emp.EmployeeId }}
+              <a [routerLink]="['/admin/employees/',salary.EmployeeId]" title=" View employee details">
+                {{ getEmployeeDetails(salary.EmployeeId) || 'Employee #' + salary.EmployeeId }}
               </a>
             </td>
-            <td>{{ emp.EmployeeSalaryId }}</td>
-            <td>{{ emp.Title }}</td>
-            <td>{{ emp.SalaryYear }}</td>
-            <td>{{ emp.LOCATION }}</td>
-            <td>{{ emp.STDDAYS }}</td>
-            <td>{{ emp.WRKDAYS }}</td>
-            <td>{{ emp.NETTRANSFER }}</td>
+            <td>{{ salary.EmployeeSalaryId }}</td>
+            <td>{{ salary.Title }}</td>
+            <td>{{ salary.SalaryYear }}</td>
+            <td>{{ salary.LOCATION }}</td>
+            <td>{{ salary.STDDAYS }}</td>
+            <td>{{ salary.WRKDAYS }}</td>
+            <td>{{ salary.NETTRANSFER }}</td>
             <td>
-              <span class="status-badge" [ngClass]="emp.IsActive ? 'active' : 'inactive'">
-                {{ emp.IsActive ? 'Active' : 'Inactive' }}
+              <span class="status-badge" [ngClass]="salary.IsActive ? 'active' : 'inactive'">
+                {{ salary.IsActive ? 'Active' : 'Inactive' }}
               </span>
             </td>
           </tr>

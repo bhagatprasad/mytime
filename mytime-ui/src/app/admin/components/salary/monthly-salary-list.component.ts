@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, Inject, inject, OnDestroy, OnInit } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import { AllCommunityModule, ColDef, GridApi, GridOptions, GridReadyEvent, ICellRendererParams, ModuleRegistry } from 'ag-grid-community';
 import { AuditFieldsService } from '../../../common/services/auditfields.service';
@@ -14,13 +14,16 @@ import { MonthlySalaryDetails } from '../../models/monlty_salary.details';
 import { EmployeeSalary } from '../../models/employee_salary';
 import { EmployeeAddressDetails } from '../../models/employee_address_details';
 import { RouterModule } from '@angular/router';
+import { Employee } from '../../models/employee';
+import { forkJoin } from 'rxjs';
+import { EmployeeService } from '../../services/employee.service';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-monthly-salary-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, MonthlySalaryAddComponent,RouterModule],
+  imports: [CommonModule, AgGridAngular, MonthlySalaryAddComponent, RouterModule],
   templateUrl: './monthly-salary-list.component.html',
   styleUrl: './monthly-salary-list.component.css'
 })
@@ -29,6 +32,10 @@ export class MonthlySalaryListComponent implements OnInit, OnDestroy {
   monthlySalaries: MonthlySalary[] = [];
 
   monthlySalaryDetails: MonthlySalaryDetails[] = [];
+
+  employees: Employee[] = [];
+
+  employeeSalaries: EmployeeSalary[] = [];
 
   today = new Date();
 
@@ -192,12 +199,11 @@ export class MonthlySalaryListComponent implements OnInit, OnDestroy {
 
   selectedMonthlySalary: MonthlySalary | null = null;
 
-  employees: EmployeeSalary[] = [];
   showModal = false;
   selectedTitle = '';
-
   constructor(
     private monthlySalaryService: MonthlySalaryService,
+    private employeesService: EmployeeService,
     private audit: AuditFieldsService,
     private loader: LoaderService,
     private toster: ToastrService
@@ -246,9 +252,13 @@ export class MonthlySalaryListComponent implements OnInit, OnDestroy {
 
   loadInitalData(): void {
     this.loader.show();
-    this.monthlySalaryService.GetMonthlySalaryListAsync().subscribe({
+    forkJoin({
+      employees: this.employeesService.getEmployeesListAsync(),
+      monthlySalaries: this.monthlySalaryService.GetMonthlySalaryListAsync()
+    }).subscribe({
       next: (response) => {
-        this.monthlySalaries = this.sortMonthlySalariesByYearDesc(response);
+        this.employees = response.employees;
+        this.monthlySalaries = this.sortMonthlySalariesByYearDesc(response.monthlySalaries);
         // this.monthlySalaryDetails = response; //this.sortMonthlySalariesByYearDesc(response);
         this.loader.hide();
 
@@ -325,13 +335,13 @@ export class MonthlySalaryListComponent implements OnInit, OnDestroy {
     this.monthlySalaryService
       .GetMonthlySalaryAsync(id).subscribe({
         next: (res) => {
-          this.employees = res.employee_salaries;
+          this.employeeSalaries = res.employee_salaries;
           this.showModal = true;
           this.loader.hide();
         },
 
         error: (err) => {
-         this.toster.error('API Error:', err);
+          this.toster.error('API Error:', err);
           this.loader.hide();
         }
       });
@@ -366,5 +376,10 @@ export class MonthlySalaryListComponent implements OnInit, OnDestroy {
               <span class="badge bg-${statusClass}">${statusText}</span>
             </div>
           `;
+  }
+
+  getEmployeeDetails(employeeId: any): String | undefined {
+    const employee = this.employees.find(emp => emp.EmployeeId === employeeId);
+    return employee ? `${employee.FirstName} ${employee.LastName}-(${employee.EmployeeCode})` : undefined;
   }
 }
