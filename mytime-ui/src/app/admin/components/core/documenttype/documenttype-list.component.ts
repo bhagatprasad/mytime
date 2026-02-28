@@ -18,6 +18,10 @@ import { response } from 'express';
 import { MobileActionsRendererComponent } from '../../../../common/components/mobile-actions-renderer.component';
 import { CommonModule } from '@angular/common';
 import { AgGridAngular } from 'ag-grid-angular';
+import { ActionsRendererComponent } from '../../../../common/components/actions-renderer.component';
+import { CreateDocumenttypeComponent } from './create-documenttype.component';
+import { DeleteConfirmationComponent } from '../../../../common/components/delete.compunent';
+import { FormsModule } from '@angular/forms';
 
 // Register AG Grid modules
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -25,14 +29,26 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
   selector: 'app-documenttype-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular],
+  imports: [
+    CommonModule,
+    AgGridAngular,
+    CreateDocumenttypeComponent,
+    DeleteConfirmationComponent,
+    FormsModule,
+  ],
   templateUrl: './documenttype-list.component.html',
   styleUrl: './documenttype-list.component.css',
 })
 export class DocumenttypeListComponent implements OnInit {
-  requestRoleProcess(data: any) {
-    throw new Error('Method not implemented.');
+  requestDocumentTypeProcess(document: DocumentType): void {
+    this.selecteDocumentType = document;
+    this.showSidebar = true;
   }
+  selectedDeleteItem: any;
+  showDeletePopup: boolean = false;
+  showSidebar: boolean = false;
+  selecteDocumentType: DocumentType | null = null;
+
   today = new Date();
   private gridApi!: GridApi;
   columnDefs: ColDef[] = [];
@@ -117,6 +133,19 @@ export class DocumenttypeListComponent implements OnInit {
       sortable: true,
       cellRenderer: this.statusRenderer.bind(this),
       cellClass: this.statusCellClass.bind(this),
+    },
+    {
+      field: 'Actions',
+      headerName: 'Actions',
+      width: 150,
+      sortable: false,
+      filter: false,
+      cellRenderer: ActionsRendererComponent,
+      cellRendererParams: {
+        onEditClick: (data: any) => this.requestDocumentTypeProcess(data),
+        onDeleteClick: (data: any) => this.deletedocumenttype(data),
+      },
+      cellClass: 'text-center',
     },
   ];
 
@@ -272,5 +301,74 @@ export class DocumenttypeListComponent implements OnInit {
       this.gridApi.refreshHeader();
       this.gridApi.sizeColumnsToFit();
     }, 100);
+  }
+  onCloseSidebar(): void {
+    this.showSidebar = false;
+  }
+
+  deletedocumenttype(documenttype: DocumentType): void {
+    this.selectedDeleteItem = documenttype;
+    this.showDeletePopup = true;
+    console.log(JSON.stringify(documenttype));
+  }
+
+  closePopup(): void {
+    this.showDeletePopup = false;
+    this.selectedDeleteItem = null;
+  }
+  refreshData(): void {
+    this.loadIntialData;
+  }
+
+  ddeletedocumenttype(): void {
+    if (!this.selectedDeleteItem) {
+      console.error('No item selected for delete');
+      return;
+    }
+
+    this.documentTypeService
+      .DeleteDocumentTypeAsync(this.selectedDeleteItem.Id)
+      .subscribe({
+        next: (res) => {
+          console.log('Delete success:', res);
+
+          this.refreshData(); // reload grid data
+          this.showDeletePopup = false;
+          this.selectedDeleteItem = null;
+        },
+        error: (err) => {
+          console.error('Delete failed:', err);
+          // keep popup open OR close — your choice
+          this.showDeletePopup = false;
+        },
+        complete: () => {
+          alert('Delete request completed');
+        },
+      });
+  }
+  onSaveDocumentType(document: DocumentType): void {
+    this.loader.show();
+    var _document = this.audit.appendAuditFields(document);
+    console.log(
+      'we have receved documenttype data ' + JSON.stringify(document),
+    );
+    this.documentTypeService
+      .InsertOrUpdateDocumentTypeAsync(_document)
+      .subscribe(
+        (reponse) => {
+          if (reponse) {
+            this.toaster.success('DocumentType processed succeessfully');
+            this.showSidebar = false;
+            this.refreshData();
+          }
+        },
+        (error) => {
+          this.toaster.error(
+            'something went wrong , please check and resubmit',
+          );
+          this.showSidebar = true;
+          this.loader.hide();
+        },
+      );
   }
 }

@@ -92,6 +92,21 @@
                 </small>
               </div>
             </div>
+            <!-- <app-create-documenttype
+              [isVisible]="showSidebar"
+              [documenttype]="selectedDocumentType"
+              (closeSidebar)="onCloseSidebar()"
+              (saveDocumentType)="onSaveDocumentType($event)"
+            ></app-create-documenttype> -->
+
+            <app-delete-confirmation
+              *ngIf="showDeletePopup"
+              title="Delete DocumentType"
+              message="Do you really want to delete this DocumentType?"
+              (confirm)="ddeletedocumenttype()"
+              (cancel)="closePopup()"
+            >
+            </app-delete-confirmation>
           </div>
         </div>
       </div>
