@@ -196,6 +196,13 @@ export class DocumenttypeListComponent implements OnInit {
   getTotalRowsCount(): number {
     return this.documentTypes.length;
   }
+  getActiveDocumentTypeCount(): number {
+    return this.documentTypes.filter((doc) => doc.IsActive).length;
+  }
+
+  getInactiveDocumentTypeCount(): number {
+    return this.documentTypes.filter((doc) => !doc.IsActive).length;
+  }
 
   openAddEditDocumentType(): void {}
 
@@ -266,7 +273,4 @@ export class DocumenttypeListComponent implements OnInit {
       this.gridApi.sizeColumnsToFit();
     }, 100);
   }
-  // refreshGridColumns() {
-  //   throw new Error('Method not implemented.');
-  // }
 }

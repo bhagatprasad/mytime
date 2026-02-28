@@ -53,6 +53,45 @@
               [domLayout]="isMobile ? 'autoHeight' : 'normal'"
             >
             </ag-grid-angular>
+            <div
+              *ngIf="documentTypes.length > 0"
+              class="card-footer bg-white border-top"
+            >
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex gap-3">
+                  <small class="text-muted">
+                    <span class="fw-medium">{{ getTotalRowsCount() }}</span>
+                    total
+                  </small>
+                  <small class="text-muted">
+                    <i
+                      class="mdi mdi-check-circle-outline text-success me-1"
+                    ></i>
+                    <span class="fw-medium">{{
+                      getActiveDocumentTypeCount()
+                    }}</span>
+                    active
+                  </small>
+                  <small class="text-muted">
+                    <i
+                      class="mdi mdi-close-circle-outline text-danger me-1"
+                    ></i>
+                    <span class="fw-medium">{{
+                      getInactiveDocumentTypeCount()
+                    }}</span>
+                    inactive
+                  </small>
+                </div>
+                <small class="text-muted">
+                  <i
+                    class="mdi me-1"
+                    [class.mdi-cellphone]="isMobile"
+                    [class.mdi-monitor]="!isMobile"
+                  ></i>
+                  {{ isMobile ? "Mobile" : "Desktop" }}
+                </small>
+              </div>
+            </div>
           </div>
         </div>
       </div>
