@@ -162,6 +162,18 @@ export class DocumenttypeListComponent implements OnInit {
       width: 80,
       cellRenderer: this.nameRenderer.bind(this),
     },
+    {
+      field: 'Actions',
+      headerName: '',
+      width: 80,
+      sortable: false,
+      filter: false,
+      cellRenderer: MobileActionsRendererComponent,
+      cellRendererParams: {
+        onEditClick: (data: any) => this.requestDocumentTypeProcess(data),
+      },
+      cellClass: 'text-center',
+    },
   ];
 
   documentTypes: DocumentType[] = [];
