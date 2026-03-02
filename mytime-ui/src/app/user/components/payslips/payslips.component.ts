@@ -1,18 +1,20 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { EmployeeSalaryService } from '../../admin/services/employee_salary.service';
-import { LoaderService } from '../../common/services/loader.service';
-import { EmployeeSalary } from '../../admin/models/employee_salary';
+import { EmployeeSalaryService } from '../../../admin/services/employee_salary.service';
+import { LoaderService } from '../../../common/services/loader.service';
+import { EmployeeSalary } from '../../../admin/models/employee_salary';
 import { CommonModule } from '@angular/common';
-import { AccountService } from '../../common/services/account.service';
+import { AccountService } from '../../../common/services/account.service';
 import { AllCommunityModule, ColDef, GridApi, GridOptions, GridReadyEvent, ModuleRegistry } from 'ag-grid-community';
 import { ToastrService } from 'ngx-toastr';
 import { AgGridAngular } from 'ag-grid-angular';
-import { Employee } from '../../admin/models/employee';
-import { MonthlySalaryAddComponent } from '../../admin/components/salary/monthly-salary-add.component';
+import { Employee } from '../../../admin/models/employee';
+import { MonthlySalaryAddComponent } from '../../../admin/components/salary/monthly-salary-add.component';
 import { Router, RouterModule } from '@angular/router';
-import { SalaryActionComponent } from '../../admin/components/salary/salary-action-component';
-import { EmployeeService } from '../../admin/services/employee.service';
-import { UserService } from '../../admin/services/user.service';
+import { SalaryActionComponent } from '../../../admin/components/salary/salary-action-component';
+import { EmployeeService } from '../../../admin/services/employee.service';
+import { UserService } from '../../../admin/services/user.service';
+import { UserActionComponent } from '../common/user-action-component';
+import { UserMobileActionsComponent } from '../common/user-mobile-action-component';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -147,11 +149,10 @@ export class PayslipsComponent implements OnInit {
       width: 200,
       sortable: false,
       filter: false,
-      cellRenderer: SalaryActionComponent,
+      cellRenderer: UserActionComponent,
       cellRendererParams: {
-        onEditClick: (data: any) => this.onEditClick(data),
         onDownloadClick: (data: any) => this.onDownloadClick(data),
-        onDeleteClick: (data: any) => this.onDeleteClick(data),
+        onViewClick: (data: any) => this.onViewClick(data)
       },
       cellClass: 'text-left'
     }
@@ -159,17 +160,6 @@ export class PayslipsComponent implements OnInit {
 
 
   mobileColumnDefs: ColDef[] = [
-    {
-      field: 'EmployeeId',
-      headerName: 'Employee',
-      width: 180,
-      sortable: true,
-      filter: 'agTextColumnFilter',
-      valueGetter: (params) => {
-        const employee = this.employees.find(e => e.EmployeeId === params.data.EmployeeId);
-        return employee ? `(${employee.EmployeeCode}) ${employee.FirstName} ${employee.LastName}` : "Unknown Employee";
-      }
-    },
     {
       field: 'SalaryYear',
       headerName: 'Salary',
@@ -191,6 +181,19 @@ export class PayslipsComponent implements OnInit {
       valueGetter: (params) => {
         return `${params.data.NETTRANSFER}/${params.data.Earning_Montly_GROSSEARNINGS}`;
       }
+    },
+     {
+      field: 'Actions',
+      headerName: 'Actions',
+      width: 200,
+      sortable: false,
+      filter: false,
+      cellRenderer: UserMobileActionsComponent,
+      cellRendererParams: {
+        onDownloadClick: (data: any) => this.onDownloadClick(data),
+        onViewClick: (data: any) => this.onViewClick(data)
+      },
+      cellClass: 'text-left'
     }
   ];
 
@@ -347,13 +350,11 @@ export class PayslipsComponent implements OnInit {
     const uniqueEmployeeIds = new Set(this.employeeSalaries.map(salary => salary.EmployeeId));
     return uniqueEmployeeIds.size;
   }
-  onEditClick(salary: EmployeeSalary): void {
-    //this.router.navigate(['/admin/salaries/edit', salary.EmployeeSalaryId]);
-  }
+  onViewClick(salary: EmployeeSalary): void {
+    // Implement view logic here, e.g., show employee details in a modal or navigate to a detail view
+  } 
   onDownloadClick(salary: EmployeeSalary): void {
     // Implement download logic here, e.g., call a service to get the file and trigger download
   }
-  onDeleteClick(salary: EmployeeSalary): void {
-    // Implement delete logic here, e.g., show confirmation dialog and call service to delete
-  }
+
 }

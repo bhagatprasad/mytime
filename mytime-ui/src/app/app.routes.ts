@@ -22,7 +22,7 @@ export const routes: Routes = [
             },
             {
                 path: 'payslips',
-                loadComponent: () => import('./user/payslips/payslips.component').then(m => m.PayslipsComponent)
+                loadComponent: () => import('./user/components/payslips/payslips.component').then(m => m.PayslipsComponent)
             },
         ]
     },
