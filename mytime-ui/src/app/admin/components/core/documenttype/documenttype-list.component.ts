@@ -50,7 +50,9 @@ export class DocumenttypeListComponent implements OnInit {
   selecteDocumentType: DocumentType | null = null;
 
   today = new Date();
+
   private gridApi!: GridApi;
+
   columnDefs: ColDef[] = [];
 
   defaultColDef: ColDef = {
@@ -245,7 +247,10 @@ export class DocumenttypeListComponent implements OnInit {
     return this.documentTypes.filter((doc) => !doc.IsActive).length;
   }
 
-  openAddEditDocumentType(): void {}
+  openAddEditDocumentType(): void {
+    this.showSidebar = true;
+    this.selecteDocumentType = null;
+  }
 
   nameRenderer(params: ICellRendererParams): string {
     return `
@@ -329,7 +334,7 @@ export class DocumenttypeListComponent implements OnInit {
     this.selectedDeleteItem = null;
   }
   refreshData(): void {
-    this.loadIntialData;
+    this.loadIntialData();
   }
 
   ddeletedocumenttype(): void {
@@ -353,16 +358,16 @@ export class DocumenttypeListComponent implements OnInit {
           // keep popup open OR close — your choice
           this.showDeletePopup = false;
         },
-        complete: () => {
-          alert('Delete request completed');
-        },
+        // complete: () => {
+        //   alert('Delete request completed');
+        // },
       });
   }
   onSaveDocumentType(document: DocumentType): void {
     this.loader.show();
     var _document = this.audit.appendAuditFields(document);
     console.log(
-      'we have receved documenttype data ' + JSON.stringify(document),
+      'we have received documenttype data ' + JSON.stringify(document),
     );
     this.documentTypeService
       .InsertOrUpdateDocumentTypeAsync(_document)
@@ -371,6 +376,7 @@ export class DocumenttypeListComponent implements OnInit {
           if (reponse) {
             this.toaster.success('DocumentType processed succeessfully');
             this.showSidebar = false;
+            this.loader.hide();
             this.refreshData();
           }
         },

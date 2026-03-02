@@ -35,14 +35,6 @@ export class CreateDocumenttypeComponent implements OnInit, OnChanges {
   constructor(private fb: FormBuilder) {
     this.documentForm = this.fb.group({
       Name: ['', [Validators.required, Validators.maxLength(100)]],
-      Code: [
-        '',
-        [
-          Validators.required,
-          Validators.maxLength(50),
-          Validators.pattern(/^[a-zA-Z0-9_]+$/),
-        ],
-      ],
     });
   }
 
