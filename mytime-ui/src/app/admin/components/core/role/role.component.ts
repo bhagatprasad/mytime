@@ -10,7 +10,7 @@ import {
   ICellRendererParams,
   ValueFormatterParams,
   ModuleRegistry,
-  AllCommunityModule
+  AllCommunityModule,
 } from 'ag-grid-community';
 import { RoleService } from '../../../services/role.service';
 import { Role } from '../../../models/role';
@@ -28,12 +28,18 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
   selector: 'app-role',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, DatePipe, FormsModule, CreateRoleComponent,DeleteConfirmationComponent],
+  imports: [
+    CommonModule,
+    AgGridAngular,
+    DatePipe,
+    FormsModule,
+    CreateRoleComponent,
+    DeleteConfirmationComponent,
+  ],
   templateUrl: './role.component.html',
-  styleUrls: ['./role.component.css']
+  styleUrls: ['./role.component.css'],
 })
 export class RoleComponent implements OnInit, OnDestroy {
-
   today = new Date();
   // Grid API
   private gridApi!: GridApi;
@@ -45,7 +51,6 @@ export class RoleComponent implements OnInit, OnDestroy {
 
   selectedDeleteItem: Role | null = null;
 
-
   // Desktop Columns (7-8 columns)
   desktopColumnDefs: ColDef[] = [
     {
@@ -54,7 +59,7 @@ export class RoleComponent implements OnInit, OnDestroy {
       width: 80,
       filter: 'agNumberColumnFilter',
       sortable: true,
-      cellClass: 'text-center'
+      cellClass: 'text-center',
     },
     {
       field: 'Name',
@@ -62,7 +67,7 @@ export class RoleComponent implements OnInit, OnDestroy {
       width: 120,
       filter: 'agTextColumnFilter',
       sortable: true,
-      cellRenderer: this.nameRenderer.bind(this)
+      cellRenderer: this.nameRenderer.bind(this),
     },
     {
       field: 'Code',
@@ -70,7 +75,7 @@ export class RoleComponent implements OnInit, OnDestroy {
       width: 120,
       filter: 'agTextColumnFilter',
       sortable: true,
-      cellClass: 'text-center'
+      cellClass: 'text-center',
     },
     {
       field: 'IsActive',
@@ -79,7 +84,7 @@ export class RoleComponent implements OnInit, OnDestroy {
       filter: 'agTextColumnFilter',
       sortable: true,
       cellRenderer: this.statusRenderer.bind(this),
-      cellClass: this.statusCellClass.bind(this)
+      cellClass: this.statusCellClass.bind(this),
     },
     {
       field: 'CreatedBy',
@@ -87,7 +92,7 @@ export class RoleComponent implements OnInit, OnDestroy {
       width: 120,
       filter: 'agNumberColumnFilter',
       sortable: true,
-      cellClass: 'text-center'
+      cellClass: 'text-center',
     },
     {
       field: 'CreatedOn',
@@ -96,7 +101,7 @@ export class RoleComponent implements OnInit, OnDestroy {
       filter: 'agDateColumnFilter',
       sortable: true,
       valueFormatter: this.dateFormatter.bind(this),
-      cellClass: 'text-center'
+      cellClass: 'text-center',
     },
     {
       field: 'ModifiedBy',
@@ -104,7 +109,7 @@ export class RoleComponent implements OnInit, OnDestroy {
       width: 120,
       filter: 'agNumberColumnFilter',
       sortable: true,
-      cellClass: 'text-center'
+      cellClass: 'text-center',
     },
     {
       field: 'ModifiedOn',
@@ -113,7 +118,7 @@ export class RoleComponent implements OnInit, OnDestroy {
       filter: 'agDateColumnFilter',
       sortable: true,
       valueFormatter: this.dateFormatter.bind(this),
-      cellClass: 'text-center'
+      cellClass: 'text-center',
     },
     {
       field: 'Actions',
@@ -124,10 +129,10 @@ export class RoleComponent implements OnInit, OnDestroy {
       cellRenderer: ActionsRendererComponent,
       cellRendererParams: {
         onEditClick: (data: any) => this.requestRoleProcess(data),
-        onDeleteClick: (data: any) => this.deleteRole(data)
+        onDeleteClick: (data: any) => this.deleteRole(data),
       },
-      cellClass: 'text-center'
-    }
+      cellClass: 'text-center',
+    },
   ];
 
   mobileColumnDefs: ColDef[] = [
@@ -135,13 +140,13 @@ export class RoleComponent implements OnInit, OnDestroy {
       field: 'Name',
       headerName: 'Role',
       width: 180,
-      cellRenderer: this.mobileNameRenderer.bind(this)
+      cellRenderer: this.mobileNameRenderer.bind(this),
     },
     {
       field: 'Code',
       headerName: 'Code',
       width: 100,
-      cellClass: 'text-center'
+      cellClass: 'text-center',
     },
     {
       field: 'Actions',
@@ -151,10 +156,10 @@ export class RoleComponent implements OnInit, OnDestroy {
       filter: false,
       cellRenderer: MobileActionsRendererComponent,
       cellRendererParams: {
-        onEditClick: (data: any) => this.requestRoleProcess(data)
+        onEditClick: (data: any) => this.requestRoleProcess(data),
       },
-      cellClass: 'text-center'
-    }
+      cellClass: 'text-center',
+    },
   ];
 
   columnDefs: ColDef[] = [];
@@ -165,7 +170,7 @@ export class RoleComponent implements OnInit, OnDestroy {
     filter: true,
     resizable: true,
     sortable: true,
-    floatingFilter: false
+    floatingFilter: false,
   };
 
   gridOptions: GridOptions = {
@@ -176,7 +181,7 @@ export class RoleComponent implements OnInit, OnDestroy {
     animateRows: true,
     enableCellTextSelection: true,
     suppressRowClickSelection: false,
-    domLayout: 'autoHeight'
+    domLayout: 'autoHeight',
   };
 
   rowData: Role[] = [];
@@ -190,8 +195,8 @@ export class RoleComponent implements OnInit, OnDestroy {
     private roleService: RoleService,
     private toastr: ToastrService,
     private loader: LoaderService,
-    private audit: AuditFieldsService
-  ) { }
+    private audit: AuditFieldsService,
+  ) {}
 
   ngOnInit(): void {
     this.checkScreenSize();
@@ -258,7 +263,7 @@ export class RoleComponent implements OnInit, OnDestroy {
         this.loader.hide();
 
         this.toastr.error('Failed to load roles', 'Error');
-      }
+      },
     });
   }
 
@@ -314,7 +319,6 @@ export class RoleComponent implements OnInit, OnDestroy {
     return isActive ? 'status-active' : 'status-inactive';
   }
 
-
   dateFormatter(params: ValueFormatterParams): string {
     if (!params.value) return 'N/A';
 
@@ -324,7 +328,7 @@ export class RoleComponent implements OnInit, OnDestroy {
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     });
   }
 
@@ -333,10 +337,12 @@ export class RoleComponent implements OnInit, OnDestroy {
   }
 
   addNewRole(): void {
-    this.toastr.info('Add new role functionality will be implemented', 'Coming Soon');
+    this.toastr.info(
+      'Add new role functionality will be implemented',
+      'Coming Soon',
+    );
     console.log('Add new role clicked');
   }
-
 
   getSelectedRowsCount(): number {
     return this.gridApi?.getSelectedRows()?.length || 0;
@@ -347,11 +353,11 @@ export class RoleComponent implements OnInit, OnDestroy {
   }
 
   getActiveRolesCount(): number {
-    return this.rowData.filter(role => role.IsActive).length;
+    return this.rowData.filter((role) => role.IsActive).length;
   }
 
   getInactiveRolesCount(): number {
-    return this.rowData.filter(role => !role.IsActive).length;
+    return this.rowData.filter((role) => !role.IsActive).length;
   }
   deleteRole(role: Role): void {
     this.selectedDeleteItem = role;
@@ -375,49 +381,48 @@ export class RoleComponent implements OnInit, OnDestroy {
   onSaveRole(role: Role): void {
     this.loader.show();
     var _role = this.audit.appendAuditFields(role);
-    console.log("we have receved role data " + JSON.stringify(role));
+    console.log('we have receved role data ' + JSON.stringify(role));
     this.roleService.saveRoleAsync(_role).subscribe(
-      reponse => {
+      (reponse) => {
         if (reponse) {
-          this.toastr.success("Role processed succeessfully");
+          this.toastr.success('Role processed succeessfully');
           this.showSidebar = false;
           this.refreshData();
         }
-      }, error => {
-        this.toastr.error("something went wrong , please check and resubmit");
+      },
+      (error) => {
+        this.toastr.error('something went wrong , please check and resubmit');
         this.showSidebar = true;
         this.loader.hide();
-      });
-
+      },
+    );
   }
   onCloseSidebar(): void {
     this.showSidebar = false;
   }
 
-  deleterole(){
-
+  deleterole() {
     if (!this.selectedDeleteItem) {
-      console.error("No item selected for delete");
+      console.error('No item selected for delete');
       return;
     }
 
-    this.roleService.deleteRoleAsync(this.selectedDeleteItem.Id)
-      .subscribe({
-        next: (res) => {
-          console.log("Delete success:", res);
+    this.roleService.deleteRoleAsync(this.selectedDeleteItem.Id).subscribe({
+      next: (res) => {
+        console.log('Delete success:', res);
 
-          this.refreshData();          // reload grid data
-          this.showDeletePopup = false;
-          this.selectedDeleteItem = null;
-        },
-        error: (err) => {
-          console.error("Delete failed:", err);
-          // keep popup open OR close — your choice
-          this.showDeletePopup = false;
-        },
-        complete: () => {
-          alert("Delete request completed");
-        }
-      });
-    }
+        this.refreshData(); // reload grid data
+        this.showDeletePopup = false;
+        this.selectedDeleteItem = null;
+      },
+      error: (err) => {
+        console.error('Delete failed:', err);
+        // keep popup open OR close — your choice
+        this.showDeletePopup = false;
+      },
+      complete: () => {
+        alert('Delete request completed');
+      },
+    });
+  }
 }
