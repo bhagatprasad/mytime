@@ -16,7 +16,7 @@ export class EmployeeSalaryService {
     }
 
     getSalariesByEmployee(employeeId: number): Observable<EmployeeSalary[]> {
-        return this.apiService.send<EmployeeSalary[]>("GET", `${environment.UrlConstants.EmployeeSalary.GetSalariesByEmployee}?employeeId=${employeeId}`);
+        return this.apiService.send<EmployeeSalary[]>("GET", `${environment.UrlConstants.EmployeeSalary.GetSalariesByEmployee}/${employeeId}`);
     }
 
     getEmployeeSalary(employeeSalaryId: number): Observable<EmployeeSalary> {

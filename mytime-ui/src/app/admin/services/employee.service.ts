@@ -15,7 +15,7 @@ export class EmployeeService {
         return this.apiService.send<Employee[]>("GET", environment.UrlConstants.Employee.GetAllEmployees);
     }
 
-    getEmployeeByIdAsync(employeeId: number): Observable<Employee> {
+    getEmployeeByIdAsync(employeeId: any): Observable<Employee> {
         return this.apiService.send<Employee>("GET", `${environment.UrlConstants.Employee.GetEmployee}/${employeeId}`)
     }
 
