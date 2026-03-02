@@ -17,7 +17,7 @@ export class UserService {
     GetAllUsersAsync(): Observable<User[]> {
         return this.apiService.send<User[]>("GET", environment.UrlConstants.Users.GetUsers);
     }
-    GetUserByIdAsync(userId: number): Observable<User> {
+    GetUserByIdAsync(userId: any): Observable<User> {
         return this.apiService.send<User>("GET", `${environment.UrlConstants.Users.GetUserById}/${userId}`);
     }
     RegisterUserAsync(user: RegisterUser): Observable<boolean> {

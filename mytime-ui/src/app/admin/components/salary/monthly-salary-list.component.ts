@@ -49,6 +49,14 @@ export class MonthlySalaryListComponent implements OnInit, OnDestroy {
     {
       field: 'MonthlySalaryId',
       headerName: 'Id',
+      width: 80,
+      filter: 'agTextColumnFilter',
+      sortable: true,
+      cellClass: 'text-left'
+    },
+    {
+      field: 'Title',
+      headerName: 'Title',
       cellRenderer: (params: any) => {
         return `<span class="text-primary" style="cursor:pointer" title="View employees">
                 ${params.value}
@@ -57,14 +65,6 @@ export class MonthlySalaryListComponent implements OnInit, OnDestroy {
       onCellClicked: (params: any) => {
         this.openEmployees(params.data.MonthlySalaryId);
       },
-      width: 100,
-      filter: 'agTextColumnFilter',
-      sortable: true,
-      cellClass: 'text-left'
-    },
-    {
-      field: 'Title',
-      headerName: 'Title',
       width: 250,
       filter: 'agTextColumnFilter',
       sortable: true,
@@ -356,7 +356,7 @@ export class MonthlySalaryListComponent implements OnInit, OnDestroy {
   }
 
   getTotalEmployeesCount(): number {
-    return this.employees.length;
+    return this.employeeSalaries.length;
   }
 
   statusCellClass(params: any): string {
