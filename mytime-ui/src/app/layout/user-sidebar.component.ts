@@ -1,10 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { AccountService } from '../common/services/account.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-user-sidebar',
   standalone: true,
-  imports: [],
+  imports: [RouterModule],
   templateUrl: './user-sidebar.component.html',
   styleUrl: './user-sidebar.component.css'
 })

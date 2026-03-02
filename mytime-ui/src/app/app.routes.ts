@@ -19,7 +19,11 @@ export const routes: Routes = [
                 path: '',
                 redirectTo: 'dashboard',
                 pathMatch: 'full'
-            }
+            },
+            {
+                path: 'payslips',
+                loadComponent: () => import('./user/payslips/payslips.component').then(m => m.PayslipsComponent)
+            },
         ]
     },
     {
