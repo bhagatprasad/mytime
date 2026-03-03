@@ -286,7 +286,9 @@ export const environment = {
             SoftDeleteEmployeeEmergencyContact: 'employeeemergencycontact/SoftDeleteEmployeeEmergencyContact',
             SetAsPrimaryContact: 'employeeemergencycontact/setAsPrimaryContact'
         },
-
+//employeesalarystructure/fetchEmployeeSalaryStructure
+//employeesalarystructure/fetchSalaryStructureByEmployee
+//employeesalarystructure/fetchEmployeeSalaryStructure/30
         EmployeeSalaryStructure: {
             GetEmployeeSalaryStructure: 'employeesalarystructure/fetchEmployeeSalaryStructure',
             GetSalaryStructureByEmployee: 'employeesalarystructure/fetchSalaryStructureByEmployee',
