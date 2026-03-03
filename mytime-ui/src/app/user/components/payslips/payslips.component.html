@@ -1,45 +1,125 @@
 <div class="container-fluid py-3">
-    <div class="row">
-        <div class="col">
-            <div class="card">
-                <div class="card-header bg-white border-bottom">
-                    <div class="d-flex justify-content-between align-items-center py-1">
-                        <div class="d-flex align-items-center">
-                            <h5 class="mb-0">
-                                <i class="mdi mdi-account-group text-primary me-2"></i>
-                                Salaries
-                            </h5>
-                            <span class="badge bg-light text-dark ms-3">
-                                <span class="text-primary fw-bold">{{ getTotalRowsCount() }}</span>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <div *ngIf="employeeSalaries.length > 0" class="ag-grid-container">
-                        <ag-grid-angular style="width: 100%; height: 640px;" class="ag-theme-alpine"
-                            [rowData]="employeeSalaries" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef"
-                            [gridOptions]="gridOptions" (gridReady)="onGridReady($event)" [pagination]="true"
-                            [paginationPageSize]="20" [suppressCellFocus]="true" [animateRows]="true"
-                            [rowSelection]="'single'" [domLayout]="isMobile ? 'autoHeight' : 'normal'">
-                        </ag-grid-angular>
-                    </div>
-                    <div *ngIf="employeeSalaries.length > 0" class="card-footer bg-white border-top">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex gap-3">
-                                <small class="text-muted">
-                                    <span class="fw-medium">{{ getTotalRowsCount() }}</span> total
-                                </small>
-                            </div>
-                            <small class="text-muted">
-                                <i class="mdi me-1" [class.mdi-cellphone]="isMobile"
-                                    [class.mdi-monitor]="!isMobile"></i>
-                                {{ isMobile ? 'Mobile' : 'Desktop' }}
-                            </small>
-                        </div>
-                    </div>
-                </div>
+  <div class="row">
+    <div class="col">
+      <div class="card">
+
+        <!-- Card Header -->
+        <div class="card-header bg-white border-bottom">
+          <div class="d-flex justify-content-between align-items-center py-1">
+            <div class="d-flex align-items-center">
+              <h5 class="mb-0">
+                <i class="mdi mdi-file-document-outline text-primary me-2"></i>My Payslips
+              </h5>
+              <span class="badge bg-light text-dark ms-3">
+                <span class="text-primary fw-bold">{{ getTotalRowsCount() }}</span>
+              </span>
             </div>
+          </div>
         </div>
+
+        <!-- Card Body -->
+        <div class="card-body p-0">
+          <div *ngIf="employeeSalaries.length > 0" class="ag-grid-container">
+            <ag-grid-angular
+              style="width: 100%; height: 640px;"
+              class="ag-theme-alpine"
+              [rowData]="employeeSalaries"
+              [columnDefs]="columnDefs"
+              [defaultColDef]="defaultColDef"
+              [gridOptions]="gridOptions"
+              (gridReady)="onGridReady($event)"
+              [pagination]="true"
+              [paginationPageSize]="20"
+              [suppressCellFocus]="true"
+              [animateRows]="true"
+              [rowSelection]="'single'"
+              [domLayout]="isMobile ? 'autoHeight' : 'normal'">
+            </ag-grid-angular>
+          </div>
+
+          <!-- Empty state -->
+          <div *ngIf="employeeSalaries.length === 0" class="text-center py-5">
+            <i class="mdi mdi-file-document-outline mdi-48px text-muted d-block mb-3"></i>
+            <p class="text-muted">No payslip records found.</p>
+          </div>
+        </div>
+
+        <!-- Card Footer -->
+        <div *ngIf="employeeSalaries.length > 0" class="card-footer bg-white border-top">
+          <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">
+              <span class="fw-medium">{{ getTotalRowsCount() }}</span> total records
+            </small>
+            <small class="text-muted">
+              <i class="mdi me-1"
+                 [class.mdi-cellphone]="isMobile"
+                 [class.mdi-monitor]="!isMobile"></i>
+              {{ isMobile ? 'Mobile' : 'Desktop' }}
+            </small>
+          </div>
+        </div>
+
+      </div>
     </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     OFF-SCREEN PDF RENDERER
+     Mounted only when needed, positioned far off-screen so it
+     never appears in the visible document layout.
+═══════════════════════════════════════════════════════════════ -->
+<div *ngIf="showPdfRenderer && selectedPayslipData"
+     style="position:fixed; top:-99999px; left:-99999px; z-index:-1; pointer-events:none;">
+  <app-payslip-pdf
+    [payslipData]="selectedPayslipData"
+    [mode]="pdfMode"
+    (onPdfGenerated)="onPdfGenerated()"
+    (onPdfBlobReady)="onPreviewReady($event)">
+  </app-payslip-pdf>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAYSLIP PREVIEW MODAL WITH LOADER
+═══════════════════════════════════════════════════════════════ -->
+<div *ngIf="showPreviewModal"
+     class="payslip-modal-backdrop"
+     (click)="closePreviewModal()">
+
+  <div class="payslip-modal-dialog" (click)="$event.stopPropagation()">
+
+    <!-- Modal Header -->
+    <div class="payslip-modal-header">
+      <div class="d-flex align-items-center gap-2">
+        <i class="mdi mdi-file-pdf-box text-danger" style="font-size:1.4rem;"></i>
+        <h6 class="mb-0 fw-semibold">Payslip Preview</h6>
+      </div>
+      <div class="d-flex gap-2 align-items-center">
+        <button class="btn btn-sm btn-outline-secondary" (click)="printPayslip()" title="Print" [disabled]="isPreviewLoading">
+          <i class="mdi mdi-printer me-1"></i> Print
+        </button>
+        <button class="btn btn-sm btn-primary" (click)="downloadFromPreview()" title="Download PDF" [disabled]="isPreviewLoading">
+          <i class="mdi mdi-download me-1"></i> Download PDF
+        </button>
+        <button class="btn btn-sm btn-outline-danger" (click)="closePreviewModal()" title="Close">
+          <i class="mdi mdi-close"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal Body with Loader -->
+    <div class="payslip-modal-body">
+      <div *ngIf="isPreviewLoading" class="preview-loader-container">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2 text-muted">Generating payslip preview...</p>
+      </div>
+      <img *ngIf="!isPreviewLoading && previewImageData"
+           [src]="previewImageData"
+           alt="Payslip Preview"
+           class="payslip-preview-img" />
+    </div>
+
+  </div>
 </div>

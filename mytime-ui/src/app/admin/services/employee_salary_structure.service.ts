@@ -16,15 +16,15 @@ export class EmployeeSalaryStructureService {
     }
 
     getEmployeeSalaryStructureByIdAsync(employee_salary_structure_id: number): Observable<EmployeeSalaryStructure> {
-        return this.apiService.send<EmployeeSalaryStructure>("GET", `${environment.UrlConstants.EmployeeSalaryStructure.GetEmployeeSalaryStructure}?employee_salary_structure_id=${employee_salary_structure_id}`);
+        return this.apiService.send<EmployeeSalaryStructure>("GET", `${environment.UrlConstants.EmployeeSalaryStructure.GetEmployeeSalaryStructure}/${employee_salary_structure_id}`);
     }
 
     getSalaryStructureByEmployeeAsync(employee_id: number): Observable<EmployeeSalaryStructure> {
-        return this.apiService.send<EmployeeSalaryStructure>("GET", `${environment.UrlConstants.EmployeeSalaryStructure.GetSalaryStructureByEmployee}?employee_id=${employee_id}`);
+        return this.apiService.send<EmployeeSalaryStructure>("GET", `${environment.UrlConstants.EmployeeSalaryStructure.GetSalaryStructureByEmployee}/${employee_id}`);
     }
 
     getAllSalaryStructuresByEmployeeAsync(employee_id: number): Observable<EmployeeSalaryStructure[]> {
-        return this.apiService.send<EmployeeSalaryStructure[]>("GET", `${environment.UrlConstants.EmployeeSalaryStructure.GetAllSalaryStructuresByEmployee}?employee_id=${employee_id}`);
+        return this.apiService.send<EmployeeSalaryStructure[]>("GET", `${environment.UrlConstants.EmployeeSalaryStructure.GetAllSalaryStructuresByEmployee}/${employee_id}`);
     }
 
     getActiveSalaryStructuresAsync(): Observable<EmployeeSalaryStructure[]> {
@@ -32,7 +32,7 @@ export class EmployeeSalaryStructureService {
     }
 
     getSalaryBreakdownAsync(employee_salary_structure_id: number): Observable<any> {
-        return this.apiService.send<any>("GET", `${environment.UrlConstants.EmployeeSalaryStructure.GetSalaryBreakdown}?employee_salary_structure_id=${employee_salary_structure_id}`);
+        return this.apiService.send<any>("GET", `${environment.UrlConstants.EmployeeSalaryStructure.GetSalaryBreakdown}/${employee_salary_structure_id}`);
     }
 
     getSalaryStatisticsAsync(): Observable<any> {
@@ -52,7 +52,7 @@ export class EmployeeSalaryStructureService {
     }
 
     calculateNetSalaryAsync(employee_id: number): Observable<any> {
-        return this.apiService.send<any>("GET", `${environment.UrlConstants.EmployeeSalaryStructure.CalculateNetSalary}?employee_id=${employee_id}`);
+        return this.apiService.send<any>("GET", `${environment.UrlConstants.EmployeeSalaryStructure.CalculateNetSalary}/${employee_id}`);
     }
 
     // POST methods
@@ -77,4 +77,5 @@ export class EmployeeSalaryStructureService {
     removeEmployeeSalaryStructureAsync(employee_salary_structure_id: number): Observable<any> {
         return this.apiService.send<any>("DELETE", `${environment.UrlConstants.EmployeeSalaryStructure.DeleteEmployeeSalaryStructure}?employee_salary_structure_id=${employee_salary_structure_id}`);
     }
+    
 }
