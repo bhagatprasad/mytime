@@ -20,7 +20,7 @@ except ImportError as e:
 
 # Import routers
 try:
-    from app.api.v1.routers import auth, user, roles, llm, vision, audio, embeddings, rss, country,state,city,designation,department,document_type,holiday_calendar,employee,employee_address,employee_education,employee_emergency_contact,employee_employment,employee_salary_structure,employee_document,backblaze_upload,employee_salary,monthly_salary
+    from app.api.v1.routers import auth, user, roles, llm, vision, audio, embeddings, rss, country,state,city,designation,department,document_type,holiday_calendar,employee,employee_address,employee_education,employee_emergency_contact,employee_employment,employee_salary_structure,employee_document,backblaze_upload,employee_salary,monthly_salary,project
     print("✅ All routers imported")
 except ImportError as e:
     print(f"❌ Router import error: {e}")
@@ -56,6 +56,7 @@ except ImportError as e:
     backblaze_upload = DummyRouter()
     employee_salary = DummyRouter()
     monthly_salary = DummyRouter()
+    project = DummyRouter()
 # Create main router
 api_router = APIRouter()
 
@@ -130,6 +131,9 @@ if HAS_AUTH:
             
     monthly_salary_protected = APIRouter(dependencies=[Depends(get_current_user)])
     monthly_salary_protected.include_router(monthly_salary.router)
+
+    project_protected = APIRouter(dependencies=[Depends(get_current_user)])
+    project_protected.include_router(project.router)
             
     # Include protected routes
     api_router.include_router(users_protected, prefix="/users", tags=["users"])
@@ -151,6 +155,7 @@ if HAS_AUTH:
     api_router.include_router(backblaze_upload_protected, prefix="/backblaze", tags=["backblaze"])
     api_router.include_router(monthly_salary_protected, prefix="/monthlysalary", tags=["monthlysalary"])
     api_router.include_router(employee_salary_protected, prefix="/employeesalary", tags=["employeesalary"])
+    api_router.include_router(project_protected, prefix="/project", tags=["project"])
 else:
     # Development mode - include without auth
     api_router.include_router(user.router, prefix="/users", tags=["users"])
@@ -172,6 +177,7 @@ else:
     api_router.include_router(backblaze_upload.router, prefix="/backblaze", tags=["backblaze"])
     api_router.include_router(employee_salary.router, prefix="/employeesalary", tags=["employeesalary"])
     api_router.include_router(monthly_salary.router, prefix="/monthlysalary", tags=["monthlysalary"])
+    api_router.include_router(project.router, prefix="/project", tags=["project"])
     
 # AI routes - decide if these should be public or protected
 # For now, making them public for development
