@@ -1,27 +1,27 @@
 from sqlalchemy import Column, BigInteger, Text, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
 from app.core.database import Base
+
+# IMPORTANT
+from app.models.task_Item import TaskItem
 
 
 class TaskCode(Base):
     __tablename__ = "TaskCode"
 
     TaskCodeId = Column(BigInteger, primary_key=True, index=True)
+
+    TaskItemId = Column(BigInteger, ForeignKey("TaskItem.TaskItemId"))
     Name = Column(Text, nullable=False)
+
     Code = Column(Text, nullable=False)
 
-    TaskItemId = Column(BigInteger, ForeignKey("TaskItem.TaskItemId"), nullable=True)
-
     CreatedBy = Column(BigInteger, nullable=True)
-    CreatedOn = Column(DateTime,   nullable=True)
+    CreatedOn = Column(DateTime, nullable=True)
     ModifiedBy = Column(BigInteger, nullable=True)
-    ModifiedOn = Column(DateTime,   nullable=True)
+    ModifiedOn = Column(DateTime, nullable=True)
+    # ProjectId = Column(BigInteger, nullable=True)
 
     IsActive = Column(Boolean, default=True)
 
-    # Relationship to TaskItem
-    task_item = relationship("TaskItem", backref="task_codes")
-
-    def __repr__(self):
-        return f"<TaskCode(TaskCodeId={self.TaskCodeId}, Name='{self.Name}', Code='{self.Code}')>"
+    task_item = relationship("TaskItem", back_populates="task_codes")
