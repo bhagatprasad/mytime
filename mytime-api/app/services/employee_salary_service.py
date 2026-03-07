@@ -22,3 +22,13 @@ class EmployeeSalaryService:
     ) -> List[EmployeeSalary]:
         """Get employee salaries by employee ID - matches getEmployeeSalariesByEmployeeId in C#"""
         return db.query(EmployeeSalary).filter(EmployeeSalary.EmployeeId == employee_id).all()
+    
+    @staticmethod
+    def create_employee_salaries_bulk(db: Session, salaries: List[Dict[str, Any]]) -> List[EmployeeSalary]:
+        """Bulk insert employee salaries - matches createEmployeeSalariesBulk in C#"""
+        employee_salaries = [EmployeeSalary(**salary) for salary in salaries]
+        db.add_all(employee_salaries)
+        db.commit()
+        for salary in employee_salaries:
+            db.refresh(salary)
+        return employee_salaries

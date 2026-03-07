@@ -9,10 +9,7 @@ from app.schemas.project_schemas import (
 )
 
 router = APIRouter()
-#router = APIRouter(prefix="/projects", tags=["Projects"])
 
-
-# Get project by ID
 @router.get("/{project_id}", response_model=ProjectResponse)
 def fetch_project_details(project_id: int, db: Session = Depends(get_db)):
     project = ProjectService.fetch_project_details(db, project_id)
@@ -24,7 +21,7 @@ def fetch_project_details(project_id: int, db: Session = Depends(get_db)):
 
 
 # Get all projects
-@router.get("/", response_model=ProjectListResponse)
+@router.get("/fetchallprojects", response_model=ProjectListResponse)
 def fetch_all_project_details(db: Session = Depends(get_db)):
 
     projects = ProjectService.fetch_all_project_details(db)
