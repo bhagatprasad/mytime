@@ -10,7 +10,7 @@ from app.schemas.project_schemas import (
 
 router = APIRouter()
 
-@router.get("/{project_id}", response_model=ProjectResponse)
+@router.get("/fetchproject/{project_id}", response_model=ProjectResponse)
 def fetch_project_details(project_id: int, db: Session = Depends(get_db)):
     project = ProjectService.fetch_project_details(db, project_id)
 
@@ -35,7 +35,7 @@ def fetch_all_project_details(db: Session = Depends(get_db)):
     }
 
 #insert or update project
-@router.post("/InsertOrUpdateProject")
+@router.post("/insetorupdateproject", response_model=ProjectResponse)
 async def insert_or_update_project(project: dict, db: Session = Depends(get_db)):
     """Insert or update project - matches C# InsertOrUpdateProject endpoint"""
     try:
@@ -52,7 +52,7 @@ async def insert_or_update_project(project: dict, db: Session = Depends(get_db))
             detail=str(e)
         )
     
-@router.delete("/DeleteProject/{project_id}", response_model=ProjectDeleteResponse)
+@router.delete("/deleteproject/{project_id}", response_model=ProjectDeleteResponse)
 async def delete_project(project_id: int, db: Session = Depends(get_db)):
     """Delete project - matches C# DeleteProject endpoint"""
     try:
