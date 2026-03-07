@@ -22,3 +22,37 @@ class EmployeeSalaryService:
     ) -> List[EmployeeSalary]:
         """Get employee salaries by employee ID - matches getEmployeeSalariesByEmployeeId in C#"""
         return db.query(EmployeeSalary).filter(EmployeeSalary.EmployeeId == employee_id).all()
+    
+    @staticmethod
+    def create_employee_salaries_bulk(db: Session, salaries: List[Dict[str, Any]]) -> List[EmployeeSalary]:
+        """Bulk insert employee salaries - matches createEmployeeSalariesBulk in C#"""
+        employee_salaries = [EmployeeSalary(**salary) for salary in salaries]
+        db.add_all(employee_salaries)
+        db.commit()
+        for salary in employee_salaries:
+            db.refresh(salary)
+        return employee_salaries
+    
+    @staticmethod
+    def create_employee_salary(db: Session, salary_data: Dict[str, Any]) -> EmployeeSalary:
+        """Create a single employee salary - matches createEmployeeSalary in C#"""
+        employee_salary = EmployeeSalary(**salary_data)
+        db.add(employee_salary)
+        db.commit()
+        db.refresh(employee_salary)
+        return employee_salary
+    
+    @staticmethod
+    def update_employee_salary(db: Session, employee_salary_id: int, salary_data: Dict[str, Any]) -> Optional[EmployeeSalary]:
+        """Update a single employee salary - matches updateEmployeeSalary in C#"""
+        db_salary = db.query(EmployeeSalary).filter(EmployeeSalary.EmployeeSalaryId == employee_salary_id).first()
+        if not db_salary:
+            return None
+        
+        for key, value in salary_data.items():
+            if key != 'EmployeeSalaryId' and value is not None:
+                setattr(db_salary, key, value)
+        
+        db.commit()
+        db.refresh(db_salary)
+        return db_salary

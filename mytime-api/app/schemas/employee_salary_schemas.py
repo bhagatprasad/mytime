@@ -140,3 +140,16 @@ class MonthlySalaryWithEmployeesListResponse(BaseModel):
     items: List[MonthlySalaryWithEmployees]
 
     model_config = ConfigDict(from_attributes=True)
+
+class EmployeeSalaryBulkCreate(BaseModel):
+    """Schema for bulk inserting employee salaries"""
+    salaries: List[EmployeeSalaryCreate]
+
+    model_config = ConfigDict(from_attributes=True)
+
+class EmployeeSalaryBulkResponse(BaseModel):
+    """Response schema for bulk insert"""
+    total_created: int
+    salaries: List[EmployeeSalaryInDB]
+
+    model_config = ConfigDict(from_attributes=True)

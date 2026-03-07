@@ -21,12 +21,6 @@ class ProjectResponse(ProjectBase):
     ModifiedBy: Optional[int] = None
     ModifiedOn: Optional[datetime] = None
     
-   
-    
-   
-    
-   
-    
     class Config:
         from_attributes = True
 

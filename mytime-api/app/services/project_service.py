@@ -14,7 +14,7 @@ class ProjectService:
     @staticmethod
     def fetch_all_project_details(db: Session) -> List[Project]:
         """Get all project details - matches fetchAllprojectdetails in C#"""
-        return db.query(Project).all()
+        return db.query(Project).filter(Project.IsActive == True).all()
 
     @staticmethod
     def insert_or_update_project(db: Session, project_data: dict) -> Dict[str, Any]:
@@ -23,7 +23,7 @@ class ProjectService:
         
         if project_id:
             # Update existing project
-            db_project = db.query(Project).filter(Project.Id == project_id).first()
+            db_project = db.query(Project).filter(Project.ProjectId == project_id).first()
             if not db_project:
                 return {"success": False, "message": "Project not found", "project": None}
             
@@ -39,8 +39,7 @@ class ProjectService:
                 "project": db_project
             }
         else:
-            # Create new projet
-            # Remove ProjectId if present in create mode
+           
             project_data.pop('ProjectId', None)
             db_project = Project(**project_data)
             db.add(db_project)
