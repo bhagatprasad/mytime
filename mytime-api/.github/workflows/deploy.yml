@@ -1,0 +1,54 @@
+# render.yaml
+services:
+  - type: web
+    name: mytime-fastapi
+    env: python
+    region: oregon  # Choose: oregon (US West), ohio (US East), frankfurt (EU), singapore (Asia)
+    plan: free
+    branch: main
+    rootDir: .  # Points to root directory
+    
+    # Build commands
+    buildCommand: |
+      echo "🐍 Installing Python dependencies..."
+      pip install --upgrade pip
+      pip install -r requirements.txt
+      echo "✅ Dependencies installed"
+    
+    # Start command
+    startCommand: |
+      echo "🚀 Starting FastAPI application..."
+      uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 2
+    
+    # Environment variables
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: PORT
+        value: 10000
+      - key: ENVIRONMENT
+        value: production
+      - key: SECRET_KEY
+        generateValue: true  # Render will generate a secure key
+      - key: DATABASE_URL
+        sync: false  # You'll set this manually in Render dashboard
+      - key: ALLOWED_ORIGINS
+        value: https://mytime-fastapi.onrender.com,http://localhost:3000,http://localhost:4200,http://localhost:8000
+      - key: DEBUG
+        value: "false"
+      - key: OPENAI_API_KEY
+        sync: false  # Set manually if you use OpenAI
+      - key: HUGGINGFACE_TOKEN
+        sync: false  # Set manually if you use HuggingFace
+    
+    # Health check endpoint
+    healthCheckPath: /health
+    
+    # Auto-deploy on Git push
+    autoDeploy: true
+    
+    # Advanced settings
+    disk:
+      name: data
+      mountPath: /data
+      sizeGB: 1

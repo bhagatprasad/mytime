@@ -1,0 +1,20 @@
+app = "mytime-api"  # Should match your app name
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "8080"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[http_service.checks]]
+  interval = "10s"
+  timeout = "2s"
+  method = "GET"
+  path = "/"

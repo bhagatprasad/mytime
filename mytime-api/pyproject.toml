@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "mytime-api"  # REQUIRED: Name of your package
+version = "0.1.0"    # REQUIRED: Version number
+description = "MyTime API Backend"
+authors = ["Prasad <bhagatprasad8@yahoo.com>"]
+readme = "README.md"  # Optional but good to have
+packages = [{include = "mytime_api"}]  # Optional: if you have a package
+
+[tool.poetry.dependencies]
+python = "^3.8"  # Specify your Python version
+fastapi = "^0.104.1"  # Your actual dependencies
+uvicorn = "^0.24.0"   # Your actual dependencies
+# Add all your other dependencies here
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

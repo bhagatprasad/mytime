@@ -1,0 +1,40 @@
+ <div class="global-spinner-overlay" 
+         *ngIf="isLoading"
+         [class.dark-theme]="config.showBackdrop"
+         [class.no-backdrop]="!config.showBackdrop">
+      
+      <div class="global-spinner-container" [class]="'size-' + config.size">
+        
+        <!-- Bounce Spinner -->
+        <div *ngIf="config.spinnerType === 'bounce'" class="spinner bounce-spinner">
+          <div class="spinner-inner">
+            <div class="spinner-circle"></div>
+            <div class="spinner-circle"></div>
+            <div class="spinner-circle"></div>
+            <div class="spinner-circle"></div>
+            <div class="spinner-circle"></div>
+            <div class="spinner-circle"></div>
+            <div class="spinner-circle"></div>
+            <div class="spinner-circle"></div>
+          </div>
+          <div class="spinner-text">{{ config.message }}</div>
+        </div>
+        
+        <!-- Ring Spinner -->
+        <div *ngIf="config.spinnerType === 'ring'" class="spinner ring-spinner">
+          <div class="spinner-inner"></div>
+          <div class="spinner-text">{{ config.message }}</div>
+        </div>
+        
+        <!-- Dots Spinner -->
+        <div *ngIf="config.spinnerType === 'dots'" class="spinner dots-spinner">
+          <div class="spinner-inner">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+          <div class="spinner-text">{{ config.message }}</div>
+        </div>
+        
+      </div>
+    </div>
