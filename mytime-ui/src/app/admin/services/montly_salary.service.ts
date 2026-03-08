@@ -11,20 +11,22 @@ import { MonthlySalaryDetails } from "../models/monlty_salary.details";
 export class MonthlySalaryService {
     constructor(private apiService: ApiService) { }
 
-    GetMonthlySalaryListAsync():Observable<MonthlySalary[]> {
-        return this.apiService.send<MonthlySalary[]>("GET",environment.UrlConstants.MonthlySalary.GetMonthySalaryList);    
+    GetMonthlySalaryListAsync(): Observable<MonthlySalary[]> {
+        return this.apiService.send<MonthlySalary[]>("GET", environment.UrlConstants.MonthlySalary.GetMonthySalaryList);
     }
 
-    GetMonthlySalaryAsync(monthlySalaryId: number):Observable<MonthlySalaryDetails> {
-        return this.apiService.send<MonthlySalaryDetails>("GET",`${environment.UrlConstants.MonthlySalary.GetMonthlySalaryAsync}/${monthlySalaryId}`);    
+    GetMonthlySalaryAsync(monthlySalaryId: number): Observable<MonthlySalaryDetails> {
+        return this.apiService.send<MonthlySalaryDetails>("GET", `${environment.UrlConstants.MonthlySalary.GetMonthlySalaryAsync}/${monthlySalaryId}`);
     }
 
-    InsertOrUpdateMonthlySalaryAsync(monthlySalary: MonthlySalary):Observable<MonthlySalary> {
-        return this.apiService.send<MonthlySalary>("POST",environment.UrlConstants.MonthlySalary.InsertOrUpdateMonthlySalaryAsync, monthlySalary);    
+    InsertOrUpdateMonthlySalaryAsync(monthlySalary: MonthlySalary): Observable<MonthlySalary> {
+        return this.apiService.send<MonthlySalary>("POST", environment.UrlConstants.MonthlySalary.InsertOrUpdateMonthlySalaryAsync, monthlySalary);
     }
 
-    DeleteMonthlySalaryAsync(monthlySalaryId: number):Observable<any> {
-        return this.apiService.send<any>("DELETE",`${environment.UrlConstants.MonthlySalary.DeleteMonthlySalaryAsync}/${monthlySalaryId}`);    
+    DeleteMonthlySalaryAsync(monthlySalaryId: number): Observable<any> {
+        return this.apiService.send<any>("DELETE", `${environment.UrlConstants.MonthlySalary.DeleteMonthlySalaryAsync}/${monthlySalaryId}`);
     }
-
+    publishMonthlySalaryAsync(monthlySalary: MonthlySalary): Observable<any> {
+        return this.apiService.send<any>("POST", `${environment.UrlConstants.MonthlySalary.PublishMonthlySalaryAsync}`, monthlySalary);
+    }
 }
