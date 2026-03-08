@@ -14,7 +14,7 @@ export class MonthlySalaryAddComponent implements OnChanges, OnInit {
 
   @Input() isVisible: boolean = false;
   @Input() monthlySalary: MonthlySalary | null = null;
-  
+
   @Output() closeSidebar = new EventEmitter<void>();
   @Output() saveMonthlySalary = new EventEmitter<MonthlySalary>();
 
@@ -78,7 +78,7 @@ export class MonthlySalaryAddComponent implements OnChanges, OnInit {
         this.resetToDefault();
       }
     }
-    
+
     if (changes['monthlySalary']) {
       const monthlySalary = changes['monthlySalary'].currentValue;
       if (this.isVisible && monthlySalary) {
@@ -90,10 +90,10 @@ export class MonthlySalaryAddComponent implements OnChanges, OnInit {
   calculateDays(): void {
     const month = this.monthlySalaryForm.get('SalaryMonth')?.value;
     const year = this.monthlySalaryForm.get('SalaryYear')?.value;
-    
+
     if (month && year) {
       const daysInMonth = this.getDaysInMonth(month, parseInt(year));
-      
+
       this.monthlySalaryForm.patchValue({
         StdDays: daysInMonth
       });
@@ -105,11 +105,11 @@ export class MonthlySalaryAddComponent implements OnChanges, OnInit {
   private updateDaysValidators(maxDays: number): void {
     const wrkDaysControl = this.monthlySalaryForm.get('WrkDays');
     const lopDaysControl = this.monthlySalaryForm.get('LopDays');
-    
+
     if (wrkDaysControl && lopDaysControl) {
       wrkDaysControl.setValidators([Validators.required, Validators.min(0), Validators.max(maxDays)]);
       lopDaysControl.setValidators([Validators.required, Validators.min(0), Validators.max(maxDays)]);
-      
+
       wrkDaysControl.updateValueAndValidity();
       lopDaysControl.updateValueAndValidity();
     }
@@ -121,17 +121,17 @@ export class MonthlySalaryAddComponent implements OnChanges, OnInit {
       'May': 4, 'June': 5, 'July': 6, 'August': 7,
       'September': 8, 'October': 9, 'November': 10, 'December': 11
     };
-    
+
     const monthIndex = monthMap[month];
     if (monthIndex === undefined) return 0;
-    
+
     return new Date(year, monthIndex + 1, 0).getDate();
   }
 
   getMonthDetails(): string {
     const month = this.monthlySalaryForm.get('SalaryMonth')?.value;
     const year = this.monthlySalaryForm.get('SalaryYear')?.value;
-    
+
     if (month === 'February' && year) {
       const isLeapYear = this.isLeapYear(parseInt(year));
       return isLeapYear ? 'Leap Year' : 'Non-Leap Year';
@@ -151,7 +151,7 @@ export class MonthlySalaryAddComponent implements OnChanges, OnInit {
 
   private patchForm(monthlySalary: MonthlySalary): void {
     this.monthlySalaryForm.get('StdDays')?.enable({ emitEvent: false });
-    
+
     this.monthlySalaryForm.patchValue({
       Title: monthlySalary.Title || '',
       SalaryMonth: monthlySalary.SalaryMonth || this.currentMonth,
@@ -161,9 +161,9 @@ export class MonthlySalaryAddComponent implements OnChanges, OnInit {
       WrkDays: monthlySalary.WrkDays || 0,
       LopDays: monthlySalary.LopDays || 0
     });
-    
+
     this.monthlySalaryForm.get('StdDays')?.disable({ emitEvent: false });
-    
+
     if (monthlySalary.StdDays) {
       this.updateDaysValidators(monthlySalary.StdDays);
     }
@@ -171,7 +171,7 @@ export class MonthlySalaryAddComponent implements OnChanges, OnInit {
 
   private resetToDefault(): void {
     this.monthlySalaryForm.get('StdDays')?.enable({ emitEvent: false });
-    
+
     this.monthlySalaryForm.reset({
       Title: '',
       SalaryMonth: this.currentMonth,
@@ -180,12 +180,12 @@ export class MonthlySalaryAddComponent implements OnChanges, OnInit {
       WrkDays: 0,
       LopDays: 0
     });
-    
+
     this.monthlySalaryForm.get('StdDays')?.disable({ emitEvent: false });
-    
+
     this.monthlySalaryForm.markAsPristine();
     this.monthlySalaryForm.markAsUntouched();
-    
+
     this.calculateDays();
   }
 
@@ -197,9 +197,9 @@ export class MonthlySalaryAddComponent implements OnChanges, OnInit {
   onSubmit(): void {
     if (this.monthlySalaryForm.valid) {
       this.monthlySalaryForm.get('StdDays')?.enable({ emitEvent: false });
-      
+
       const formValue = this.monthlySalaryForm.value;
-      
+
       const monthlySalaryData: MonthlySalary = {
         MonthlySalaryId: this.monthlySalary?.MonthlySalaryId || null,
         Title: formValue.Title,
@@ -213,11 +213,11 @@ export class MonthlySalaryAddComponent implements OnChanges, OnInit {
         CreatedBy: null,
         ModifiedOn: null,
         ModifiedBy: null,
-        IsActive: null
+        IsActive: true
       };
-      
+
       this.monthlySalaryForm.get('StdDays')?.disable({ emitEvent: false });
-      
+
       this.saveMonthlySalary.emit(monthlySalaryData);
       this.close();
     } else {
@@ -238,7 +238,7 @@ export class MonthlySalaryAddComponent implements OnChanges, OnInit {
     const stdDays = this.monthlySalaryForm.get('StdDays')?.value || 0;
     const wrkDays = this.monthlySalaryForm.get('WrkDays')?.value || 0;
     const lopDays = this.monthlySalaryForm.get('LopDays')?.value || 0;
-    
+
     return (wrkDays + lopDays) <= stdDays;
   }
 }
