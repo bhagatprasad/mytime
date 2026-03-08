@@ -342,7 +342,8 @@ export const environment = {
             GetMontlySalaryListAsync: 'monthlysalary/fetch-all-with-employees',
             GetMonthySalaryList: 'monthlysalary/fetch-all',
             InsertOrUpdateMonthlySalaryAsync: 'monthlysalary/InsertOrUpdateMonthlySalary',
-            DeleteMonthlySalaryAsync: 'monthlysalary/deleteMonthlySalary'
+            DeleteMonthlySalaryAsync: 'monthlysalary/deleteMonthlySalary',
+            PublishMonthlySalaryAsync: 'monthlysalary/publish'
         }
     }
 };

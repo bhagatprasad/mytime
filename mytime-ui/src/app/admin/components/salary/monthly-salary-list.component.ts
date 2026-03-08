@@ -12,7 +12,6 @@ import { MobileActionsRendererComponent } from '../../../common/components/mobil
 import { MonthlySalaryAddComponent } from './monthly-salary-add.component';
 import { MonthlySalaryDetails } from '../../models/monlty_salary.details';
 import { EmployeeSalary } from '../../models/employee_salary';
-import { EmployeeAddressDetails } from '../../models/employee_address_details';
 import { RouterModule } from '@angular/router';
 import { Employee } from '../../models/employee';
 import { forkJoin } from 'rxjs';
@@ -47,18 +46,10 @@ export class MonthlySalaryListComponent implements OnInit, OnDestroy {
 
   desktopColumnDefs: ColDef[] = [
     {
-      field: 'MonthlySalaryId',
-      headerName: 'Id',
-      width: 80,
-      filter: 'agTextColumnFilter',
-      sortable: true,
-      cellClass: 'text-left'
-    },
-    {
       field: 'Title',
       headerName: 'Title',
       cellRenderer: (params: any) => {
-        return `<span class="text-primary" style="cursor:pointer" title="View employees">
+        return `<span class="text-primary" style="cursor:pointer;color:blue !Important" title="View employees">
                 ${params.value}
               </span>`;
       },
@@ -72,7 +63,7 @@ export class MonthlySalaryListComponent implements OnInit, OnDestroy {
     },
     {
       field: 'SalaryMonth',
-      headerName: 'Salary Month',
+      headerName: 'Month',
       width: 100,
       filter: 'agTextColumnFilter',
       sortable: true,
@@ -80,7 +71,7 @@ export class MonthlySalaryListComponent implements OnInit, OnDestroy {
     },
     {
       field: 'SalaryYear',
-      headerName: 'Salary Year',
+      headerName: 'Year',
       width: 100,
       filter: 'agTextColumnFilter',
       sortable: true,
@@ -312,14 +303,14 @@ export class MonthlySalaryListComponent implements OnInit, OnDestroy {
 
     const monthlySalaryData = this.audit.appendAuditFields(monthlySalary);
 
-    this.monthlySalaryService.InsertOrUpdateMonthlySalaryAsync(monthlySalaryData).subscribe({
+    this.monthlySalaryService.publishMonthlySalaryAsync(monthlySalaryData).subscribe({
       next: (response) => {
-        this.toster.success('Monthly salary saved successfully.', 'Success');
+        this.toster.success('Monthly salary published successfully.', 'Success');
         this.onCloseSidebar();
         this.refreshData();
       },
       error: (error) => {
-        this.toster.error('Failed to save monthly salary. Please try again later.', 'Error');
+        this.toster.error('Failed to publish monthly salary. Please try again later.', 'Error');
         this.loader.hide();
       }
     });
