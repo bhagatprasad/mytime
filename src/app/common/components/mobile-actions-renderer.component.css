@@ -1,0 +1,61 @@
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  .mobile-actions-container .btn {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+  }
+  
+  .dropdown-menu {
+    font-size: 14px;
+    min-width: 160px;
+  }
+  
+  /* Make dropdown touch-friendly */
+  .dropdown-item {
+    padding: 12px 16px;
+    min-height: 44px; /* Minimum touch target size */
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Mobile action sheet animation */
+  .mobile-action-sheet {
+    animation: slideUp 0.3s ease;
+  }
+  
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Hide regular actions on mobile */
+@media (max-width: 768px) {
+  .desktop-actions {
+    display: none;
+  }
+}
+
+/* Show mobile actions on mobile */
+@media (min-width: 769px) {
+  .mobile-actions {
+    display: none;
+  }
+}
+
+ .dropdown-menu {
+      min-width: 180px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .dropdown-item {
+      cursor: pointer;
+      padding: 8px 16px;
+    }
+    .dropdown-item i {
+      width: 20px;
+      text-align: center;
+    }
