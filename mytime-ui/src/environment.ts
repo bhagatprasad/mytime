@@ -290,113 +290,84 @@ export const environment = {
         'employeeemployment/SoftDeleteEmployeeEmployment',
     },
 
-    EmployeeEmergencyContact: {
-      GetEmployeeEmergencyContact:
-        'employeeemergencycontact/fetchEmployeeEmergencyContact',
-      GetContactsByEmployee: 'employeeemergencycontact/fetchContactsByEmployee',
-      GetActiveContactsByEmployee:
-        'employeeemergencycontact/fetchActiveContactsByEmployee',
-      GetPrimaryEmergencyContact:
-        'employeeemergencycontact/fetchPrimaryEmergencyContact',
-      GetAllEmployeeEmergencyContacts:
-        'employeeemergencycontact/fetchAllEmployeeEmergencyContacts',
-      GetEmployeeEmergencyContacts:
-        'employeeemergencycontact/getEmployeeEmergencyContacts',
-      CheckEmployeeEmergencyContactExists:
-        'employeeemergencycontact/checkEmployeeEmergencyContactExists',
-      GetEmployeeEmergencyContactsSummary:
-        'employeeemergencycontact/getEmployeeEmergencyContactsSummary',
-      GetEmergencyContactStatistics:
-        'employeeemergencycontact/emergencyContactStatistics',
-      SearchByRelation: 'employeeemergencycontact/searchByRelation',
-      GetEmployeesWithoutEmergencyContacts:
-        'employeeemergencycontact/employeesWithoutEmergencyContacts',
-      InsertOrUpdateEmployeeEmergencyContact:
-        'employeeemergencycontact/InsertOrUpdateEmployeeEmergencyContact',
-      CreateBulkEmergencyContacts:
-        'employeeemergencycontact/createBulkEmergencyContacts',
-      CreateEmployeeEmergencyContact: 'employeeemergencycontact/create',
-      SearchEmployeeEmergencyContacts:
-        'employeeemergencycontact/searchEmployeeEmergencyContacts',
-      UpdateEmployeeEmergencyContact: 'employeeemergencycontact/update',
-      DeleteEmployeeEmergencyContact:
-        'employeeemergencycontact/DeleteEmployeeEmergencyContact',
-      SoftDeleteEmployeeEmergencyContact:
-        'employeeemergencycontact/SoftDeleteEmployeeEmergencyContact',
-      SetAsPrimaryContact: 'employeeemergencycontact/setAsPrimaryContact',
-    },
-    //employeesalarystructure/fetchEmployeeSalaryStructure
-    //employeesalarystructure/fetchSalaryStructureByEmployee
-    //employeesalarystructure/fetchEmployeeSalaryStructure/30
-    EmployeeSalaryStructure: {
-      GetEmployeeSalaryStructure:
-        'employeesalarystructure/fetchEmployeeSalaryStructure',
-      GetSalaryStructureByEmployee:
-        'employeesalarystructure/fetchSalaryStructureByEmployee',
-      GetAllSalaryStructuresByEmployee:
-        'employeesalarystructure/fetchAllSalaryStructuresByEmployee',
-      GetActiveSalaryStructures:
-        'employeesalarystructure/fetchActiveSalaryStructures',
-      GetAllEmployeeSalaryStructures:
-        'employeesalarystructure/fetchAllEmployeeSalaryStructures',
-      GetEmployeeSalaryStructures:
-        'employeesalarystructure/getEmployeeSalaryStructures',
-      CheckEmployeeSalaryStructureExists:
-        'employeesalarystructure/checkEmployeeSalaryStructureExists',
-      GetSalaryBreakdown: 'employeesalarystructure/getSalaryBreakdown',
-      GetSalaryStatistics: 'employeesalarystructure/salaryStatistics',
-      GetSalaryComparisonReport:
-        'employeesalarystructure/salaryComparisonReport',
-      GetEmployeesWithoutSalaryStructure:
-        'employeesalarystructure/employeesWithoutSalaryStructure',
-      CalculateNetSalary: 'employeesalarystructure/calculateNetSalary',
-      GetPayrollSummary: 'employeesalarystructure/payrollSummary',
-      InsertOrUpdateEmployeeSalaryStructure:
-        'employeesalarystructure/InsertOrUpdateEmployeeSalaryStructure',
-      CreateEmployeeSalaryStructure: 'employeesalarystructure/create',
-      SearchEmployeeSalaryStructures:
-        'employeesalarystructure/searchEmployeeSalaryStructures',
-      UpdateEmployeeSalaryStructure: 'employeesalarystructure/update',
-      DeleteEmployeeSalaryStructure:
-        'employeesalarystructure/DeleteEmployeeSalaryStructure',
-      SoftDeleteEmployeeSalaryStructure:
-        'employeesalarystructure/SoftDeleteEmployeeSalaryStructure',
-    },
-    Backblaze: {
-      endpoint: 's3.us-east-005.backblazeb2.com',
-      keyId: '005332633bece970000000001',
-      applicationKey: 'K005cLrGz7IuTxILb2g5225gK12jaCU',
-      bucketId: '9393a26623636bce9cce0917',
-      bucketName: 'mytime',
-      region: 'us-east-005',
-      publicUrl: 'https://mytime.s3.us-east-005.backblazeb2.com',
-    },
-    EmployeeDocuments: {
-      GetEmployeeDocuments: 'employeedocuments/fetchEmployeeDocuments',
-      GetEmployeeDocument: 'employeedocuments/fetchEmployeeDocument',
-      GetDocumentsByEmployee: 'employeedocuments/fetchDocumentsByEmployee',
-      InsertOrUpdateEmployeeDocument:
-        'employeedocuments/InsertOrUpdateEmployeeDocument',
-      DeleteEmployeeDocument: 'employeedocuments/DeleteEmployeeDocument',
-    },
-    BackblazeUpload: {
-      UploadEmployeeDocument: 'backblaze/upload',
-      GetDownloadUrl: 'backblaze/downloadurl',
-      DeleteFile: 'backblaze/delete',
-      GetFileInfo: 'backblaze/info',
-    },
-    EmployeeSalary: {
-      GetEmployeeSalaries: 'employeesalary/fetchEmployeeSalaries',
-      GetSalariesByEmployee: 'employeesalary/fetchEmployeeSalariesByEmployee',
-      GetEmployeeSalary: 'employeesalary/fetchEmployeeSalary',
-    },
-    MonthlySalary: {
-      GetMonthlySalaryAsync: 'monthlysalary/fetch-with-employees',
-      GetMontlySalaryListAsync: 'monthlysalary/fetch-all-with-employees',
-      GetMonthySalaryList: 'monthlysalary/fetch-all',
-      InsertOrUpdateMonthlySalaryAsync: 'monthlysalary/InsertOrUpdateMonthlySalary',
-      DeleteMonthlySalaryAsync: 'monthlysalary/deleteMonthlySalary',
-      PublishMonthlySalaryAsync: 'monthlysalary/publish'
-    },
-  },
+        EmployeeEmergencyContact: {
+            GetEmployeeEmergencyContact: 'employeeemergencycontact/fetchEmployeeEmergencyContact',
+            GetContactsByEmployee: 'employeeemergencycontact/fetchContactsByEmployee',
+            GetActiveContactsByEmployee: 'employeeemergencycontact/fetchActiveContactsByEmployee',
+            GetPrimaryEmergencyContact: 'employeeemergencycontact/fetchPrimaryEmergencyContact',
+            GetAllEmployeeEmergencyContacts: 'employeeemergencycontact/fetchAllEmployeeEmergencyContacts',
+            GetEmployeeEmergencyContacts: 'employeeemergencycontact/getEmployeeEmergencyContacts',
+            CheckEmployeeEmergencyContactExists: 'employeeemergencycontact/checkEmployeeEmergencyContactExists',
+            GetEmployeeEmergencyContactsSummary: 'employeeemergencycontact/getEmployeeEmergencyContactsSummary',
+            GetEmergencyContactStatistics: 'employeeemergencycontact/emergencyContactStatistics',
+            SearchByRelation: 'employeeemergencycontact/searchByRelation',
+            GetEmployeesWithoutEmergencyContacts: 'employeeemergencycontact/employeesWithoutEmergencyContacts',
+            InsertOrUpdateEmployeeEmergencyContact: 'employeeemergencycontact/InsertOrUpdateEmployeeEmergencyContact',
+            CreateBulkEmergencyContacts: 'employeeemergencycontact/createBulkEmergencyContacts',
+            CreateEmployeeEmergencyContact: 'employeeemergencycontact/create',
+            SearchEmployeeEmergencyContacts: 'employeeemergencycontact/searchEmployeeEmergencyContacts',
+            UpdateEmployeeEmergencyContact: 'employeeemergencycontact/update',
+            DeleteEmployeeEmergencyContact: 'employeeemergencycontact/DeleteEmployeeEmergencyContact',
+            SoftDeleteEmployeeEmergencyContact: 'employeeemergencycontact/SoftDeleteEmployeeEmergencyContact',
+            SetAsPrimaryContact: 'employeeemergencycontact/setAsPrimaryContact'
+        },
+//employeesalarystructure/fetchEmployeeSalaryStructure
+//employeesalarystructure/fetchSalaryStructureByEmployee
+//employeesalarystructure/fetchEmployeeSalaryStructure/30
+        EmployeeSalaryStructure: {
+            GetEmployeeSalaryStructure: 'employeesalarystructure/fetchEmployeeSalaryStructure',
+            GetSalaryStructureByEmployee: 'employeesalarystructure/fetchSalaryStructureByEmployee',
+            GetAllSalaryStructuresByEmployee: 'employeesalarystructure/fetchAllSalaryStructuresByEmployee',
+            GetActiveSalaryStructures: 'employeesalarystructure/fetchActiveSalaryStructures',
+            GetAllEmployeeSalaryStructures: 'employeesalarystructure/fetchAllEmployeeSalaryStructures',
+            GetEmployeeSalaryStructures: 'employeesalarystructure/getEmployeeSalaryStructures',
+            CheckEmployeeSalaryStructureExists: 'employeesalarystructure/checkEmployeeSalaryStructureExists',
+            GetSalaryBreakdown: 'employeesalarystructure/getSalaryBreakdown',
+            GetSalaryStatistics: 'employeesalarystructure/salaryStatistics',
+            GetSalaryComparisonReport: 'employeesalarystructure/salaryComparisonReport',
+            GetEmployeesWithoutSalaryStructure: 'employeesalarystructure/employeesWithoutSalaryStructure',
+            CalculateNetSalary: 'employeesalarystructure/calculateNetSalary',
+            GetPayrollSummary: 'employeesalarystructure/payrollSummary',
+            InsertOrUpdateEmployeeSalaryStructure: 'employeesalarystructure/InsertOrUpdateEmployeeSalaryStructure',
+            CreateEmployeeSalaryStructure: 'employeesalarystructure/create',
+            SearchEmployeeSalaryStructures: 'employeesalarystructure/searchEmployeeSalaryStructures',
+            UpdateEmployeeSalaryStructure: 'employeesalarystructure/update',
+            DeleteEmployeeSalaryStructure: 'employeesalarystructure/DeleteEmployeeSalaryStructure',
+            SoftDeleteEmployeeSalaryStructure: 'employeesalarystructure/SoftDeleteEmployeeSalaryStructure'
+        },
+        Backblaze: {
+            endpoint: 's3.us-east-005.backblazeb2.com',
+            keyId: '005332633bece970000000001',
+            applicationKey: 'K005cLrGz7IuTxILb2g5225gK12jaCU',
+            bucketId: '9393a26623636bce9cce0917',
+            bucketName: 'mytime',
+            region: 'us-east-005',
+            publicUrl: 'https://mytime.s3.us-east-005.backblazeb2.com'
+        },
+        EmployeeDocuments: {
+            GetEmployeeDocuments: 'employeedocuments/fetchEmployeeDocuments',
+            GetEmployeeDocument: 'employeedocuments/fetchEmployeeDocument',
+            GetDocumentsByEmployee: 'employeedocuments/fetchDocumentsByEmployee',
+            InsertOrUpdateEmployeeDocument: 'employeedocuments/InsertOrUpdateEmployeeDocument',
+            DeleteEmployeeDocument: 'employeedocuments/DeleteEmployeeDocument'
+        },
+        BackblazeUpload: {
+            UploadEmployeeDocument: 'backblaze/upload',
+            GetDownloadUrl: 'backblaze/downloadurl',
+            DeleteFile: 'backblaze/delete',
+            GetFileInfo: 'backblaze/info'
+        },
+        EmployeeSalary: {
+            GetEmployeeSalaries: 'employeesalary/fetchEmployeeSalaries',
+            GetSalariesByEmployee: 'employeesalary/fetchEmployeeSalariesByEmployee',
+            GetEmployeeSalary: 'employeesalary/fetchEmployeeSalary',
+        },
+        MonthlySalary: {
+            GetMonthlySalaryAsync: 'monthlysalary/fetch-with-employees',
+            GetMontlySalaryListAsync: 'monthlysalary/fetch-all-with-employees',
+            GetMonthySalaryList: 'monthlysalary/fetch-all',
+            InsertOrUpdateMonthlySalaryAsync: 'monthlysalary/InsertOrUpdateMonthlySalary',
+            DeleteMonthlySalaryAsync: 'monthlysalary/deleteMonthlySalary'
+        }
+    }
 };
