@@ -3,127 +3,174 @@ import { UserGuard } from './common/gurds/user.guard';
 import { AdminGuard } from './common/gurds/admin.guard';
 
 export const routes: Routes = [
-    {
-        path: 'login',
-        loadComponent: () => import('./common/components/login.component').then(m => m.LoginComponent)
-    },
-    {
-        path: 'user',
-        canActivate: [UserGuard],
-        children: [
-            {
-                path: 'dashboard',
-                loadComponent: () => import('./dashbaord/user-dashbaord.component').then(m => m.UserDashbaordComponent)
-            },
-            {
-                path: '',
-                redirectTo: 'dashboard',
-                pathMatch: 'full'
-            },
-            {
-                path: 'payslips',
-                loadComponent: () => import('./user/components/payslips/payslips.component').then(m => m.PayslipsComponent)
-            },
-        ]
-    },
-    {
-        path: 'admin',
-        canActivate: [AdminGuard],
-        children: [
-            {
-                path: 'cities',
-                loadComponent: () => import('./admin/components/core/city/city-list.component').then(m => m.CityListComponent)
-            },
-            {
-                path: 'countries',
-                loadComponent: () => import('./admin/components/core/country/country-list.component').then(m => m.CountryListComponent)
-            },
-            {
-                path: 'dashboard',
-                loadComponent: () => import('./dashbaord/admin-dashbaord.component').then(m => m.AdminDashbaordComponent)
-            },
-            {
-                path: 'departments',
-                loadComponent: () => import('./admin/components/core/department/department-list.component').then(m => m.DepartmentListComponent)
-            },
-            {
-                path: 'designations',
-                loadComponent: () => import('./admin/components/core/designation/designation-list.component').then(m => m.DesignationListComponent)
-            },
-            {
-                path: 'documenttypes',
-                loadComponent: () => import('./admin/components/core/documenttype/documenttype-list.component').then(m => m.DocumenttypeListComponent)
-            },
-            {
-                path: 'holydaycallenders',
-                loadComponent: () => import('./admin/components/core/holydaycallender/holydaycallender-list.component').then(m => m.HolydaycallenderListComponent)
-            },
-            {
-                path: 'roles',
-                loadComponent: () => import('./admin/components/core/role/role.component').then(m => m.RoleComponent)
-            },
-            {
-                path: 'states',
-                loadComponent: () => import('./admin/components/core/state/state-list.component').then(m => m.StateListComponent)
-            },
-            {
-                path: 'users',
-                loadComponent: () => import('./admin/components/user/user-list.component').then(m => m.UserListComponent)
-            },
-            {
-                path: 'employees',
-                children: [
-                    {
-                        path: '',
-                        loadComponent: () => import('./admin/components/employees/employee/employees-list.component').then(m => m.EmployeesListComponent)
-                    },
-                    {
-                        path: ':employeeId',
-                        loadComponent: () => import('./admin/components/employees/employee/employees-details.component').then(m => m.EmployeesDetailsComponent)
-                    }
-                ]
-            },
-            {
-                path: 'salary',
-                loadComponent: () => import('./admin/components/salary/salary-list.component').then(m => m.SalaryListComponent)
-            },
-            {
-                path: 'salary-structure',
-                loadComponent: () => import('./admin/components/salary/salary-structure-list.component').then(m => m.SalaryStructureListComponent)
-            },
-             {
-                path: 'monthly-salary',
-                loadComponent: () => import('./admin/components/salary/monthly-salary-list.component').then(m => m.MonthlySalaryListComponent)
-            },
-            {
-                path: '',
-                redirectTo: 'dashboard',
-                pathMatch: 'full'
-            }, 
-            
-            {
-                path: 'time',
-                children: [
-                    {
-                        path: 'taskcode',
-                        loadComponent: () => import('./admin/components/time/taskcode/taskcode.component').then(m => m.TaskcodeComponent)
-                    },
-                    // {
-                    //     path: ':employeeId',
-                    //     loadComponent: () => import('./admin/components/employees/employee/employees-details.component').then(m => m.EmployeesDetailsComponent)
-                    // }
-                ]
-            
-            }          
-        ]
-    },
-    {
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./common/components/login.component').then(
+        (m) => m.LoginComponent,
+      ),
+  },
+  {
+    path: 'user',
+    canActivate: [UserGuard],
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./dashbaord/user-dashbaord.component').then(
+            (m) => m.UserDashbaordComponent,
+          ),
+      },
+      {
         path: '',
-        redirectTo: 'login',
-        pathMatch: 'full'
-    },
-    {
-        path: '**',
-        redirectTo: 'login'
-    }
+        redirectTo: 'dashboard',
+        pathMatch: 'full',
+      },
+      {
+        path: 'payslips',
+        loadComponent: () =>
+          import('./user/components/payslips/payslips.component').then(
+            (m) => m.PayslipsComponent,
+          ),
+      },
+    ],
+  },
+  {
+    path: 'admin',
+    canActivate: [AdminGuard],
+    children: [
+      {
+        path: 'cities',
+        loadComponent: () =>
+          import('./admin/components/core/city/city-list.component').then(
+            (m) => m.CityListComponent,
+          ),
+      },
+      {
+        path: 'countries',
+        loadComponent: () =>
+          import('./admin/components/core/country/country-list.component').then(
+            (m) => m.CountryListComponent,
+          ),
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./dashbaord/admin-dashbaord.component').then(
+            (m) => m.AdminDashbaordComponent,
+          ),
+      },
+      {
+        path: 'departments',
+        loadComponent: () =>
+          import('./admin/components/core/department/department-list.component').then(
+            (m) => m.DepartmentListComponent,
+          ),
+      },
+      {
+        path: 'designations',
+        loadComponent: () =>
+          import('./admin/components/core/designation/designation-list.component').then(
+            (m) => m.DesignationListComponent,
+          ),
+      },
+      {
+        path: 'documenttypes',
+        loadComponent: () =>
+          import('./admin/components/core/documenttype/documenttype-list.component').then(
+            (m) => m.DocumenttypeListComponent,
+          ),
+      },
+      {
+        path: 'holydaycallenders',
+        loadComponent: () =>
+          import('./admin/components/core/holydaycallender/holydaycallender-list.component').then(
+            (m) => m.HolydaycallenderListComponent,
+          ),
+      },
+      {
+        path: 'roles',
+        loadComponent: () =>
+          import('./admin/components/core/role/role.component').then(
+            (m) => m.RoleComponent,
+          ),
+      },
+
+      {
+        path: 'states',
+        loadComponent: () =>
+          import('./admin/components/core/state/state-list.component').then(
+            (m) => m.StateListComponent,
+          ),
+      },
+      {
+        path: 'users',
+        loadComponent: () =>
+          import('./admin/components/user/user-list.component').then(
+            (m) => m.UserListComponent,
+          ),
+      },
+      {
+        path: 'employees',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./admin/components/employees/employee/employees-list.component').then(
+                (m) => m.EmployeesListComponent,
+              ),
+          },
+          {
+            path: ':employeeId',
+            loadComponent: () =>
+              import('./admin/components/employees/employee/employees-details.component').then(
+                (m) => m.EmployeesDetailsComponent,
+              ),
+          },
+        ],
+      },
+      {
+        path: 'salary',
+        loadComponent: () =>
+          import('./admin/components/salary/salary-list.component').then(
+            (m) => m.SalaryListComponent,
+          ),
+      },
+      {
+        path: 'project',
+        loadComponent: () =>
+          import('./admin/components/project/project-list.component').then(
+            (m) => m.ProjectListComponent,
+          ),
+      },
+      {
+        path: 'salary-structure',
+        loadComponent: () =>
+          import('./admin/components/salary/salary-structure-list.component').then(
+            (m) => m.SalaryStructureListComponent,
+          ),
+      },
+      {
+        path: 'monthly-salary',
+        loadComponent: () =>
+          import('./admin/components/salary/monthly-salary-list.component').then(
+            (m) => m.MonthlySalaryListComponent,
+          ),
+      },
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full',
+      },
+    ],
+  },
+  {
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full',
+  },
+  {
+    path: '**',
+    redirectTo: 'login',
+  },
 ];

@@ -1,269 +1,294 @@
 export const environment = {
-    production: false,
-    baseUrl: 'https://mytime-docker.onrender.com/api/v1',
-    UrlConstants: {
-        // Authentication endpoints
-        Authenticate: 'auth/AuthenticateUser',
-        GenerateUserClaims: 'auth/GenarateUserClaims',
-        ForgotPasswordAsync: 'auth/ForgotPasswordAsync',
-        ResetPasswordAsync: 'auth/ResetPasswordAsync',
-        ChangePasswordAsync: 'auth/ChangePasswordAsync',
+  production: false,
+  baseUrl: 'https://mytime-docker.onrender.com/api/v1',
+  UrlConstants: {
+    // Authentication endpoints
+    Authenticate: 'auth/AuthenticateUser',
+    GenerateUserClaims: 'auth/GenarateUserClaims',
+    ForgotPasswordAsync: 'auth/ForgotPasswordAsync',
+    ResetPasswordAsync: 'auth/ResetPasswordAsync',
+    ChangePasswordAsync: 'auth/ChangePasswordAsync',
 
-        // User endpoints
-        // User endpoints
-        Users: {
-            GetUsers: 'users/fetchAllUsers',
-            GetUserById: 'users/fetchUser',
-            RegisterUser: 'users/RegisterUser'
-        },
+    // User endpoints
+    // User endpoints
+    Users: {
+      GetUsers: 'users/fetchAllUsers',
+      GetUserById: 'users/fetchUser',
+      RegisterUser: 'users/RegisterUser',
+    },
 
-        // Role endpoints
-        Role: {
-            GetRoleListAsync: 'roles/fetchAllRoles',
-            GetRoleAsync: 'roles/fetchRole',
-            InsertOrUpdateRoleAsync: 'roles/InsertOrUpdateRole',
-            DeleteRoleAsync: 'roles/DeleteRole'
-        },
+    // Role endpoints
+    Role: {
+      GetRoleListAsync: 'roles/fetchAllRoles',
+      GetRoleAsync: 'roles/fetchRole',
+      InsertOrUpdateRoleAsync: 'roles/InsertOrUpdateRole',
+      DeleteRoleAsync: 'roles/DeleteRole',
+    },
 
-        // Country endpoints
-        Country: {
-            GetCountry: 'countries/fetchCountry',
-            GetAllCountries: 'countries/fetchAllCountries',
-            GetActiveCountries: 'countries/fetchActiveCountries',
-            GetCountries: 'countries/getCountries',
-            CheckCountryExists: 'countries/checkCountryExists',
-            GetCountryByCode: 'countries/getCountryByCode',
-            InsertOrUpdateCountry: 'countries/InsertOrUpdateCountry',
-            DeleteCountry: 'countries/DeleteCountry',
-            CreateCountry: 'countries/create',
-            UpdateCountry: 'countries/update',
-            ToggleActiveStatus: 'countries/toggleActiveStatus',
-            SearchCountries: 'countries/searchCountries',
-            GetCountriesByIds: 'countries/getCountriesByIds'
-        },
+    // Project endpoints
+    Project: {
+      GetProjectAsync: 'project/fetchproject',
+      GetProjectListAsync: 'project/fetchallprojects',
+      InsertOrUpdateProjectAsync: 'project/insertorupdateproject',
+      DeleteProjectAsync: 'project/deleteproject',
+    },
 
-        // State endpoints
-        State: {
-            GetState: 'states/fetchState',
-            GetAllStates: 'states/fetchAllStates',
-            GetStates: 'states/getStates',
-            InsertOrUpdateState: 'states/InsertOrUpdateState',
-            DeleteState: 'states/DeleteState',
-            CheckStateExists: 'states/checkStateExists',
-            GetStatesByCountry: 'states/getStatesByCountry/',
-            GetStatesByCountryCode: 'states/getStatesByCountryCode',
-            GetStateByCode: 'states/getStateByCode',
-            ToggleActiveStatus: 'states/toggleActiveStatus',
-            CreateState: 'states/create',
-            UpdateState: 'states/update'
-        },
+    // Country endpoints
+    Country: {
+      GetCountry: 'countries/fetchCountry',
+      GetAllCountries: 'countries/fetchAllCountries',
+      GetActiveCountries: 'countries/fetchActiveCountries',
+      GetCountries: 'countries/getCountries',
+      CheckCountryExists: 'countries/checkCountryExists',
+      GetCountryByCode: 'countries/getCountryByCode',
+      InsertOrUpdateCountry: 'countries/InsertOrUpdateCountry',
+      DeleteCountry: 'countries/DeleteCountry',
+      CreateCountry: 'countries/create',
+      UpdateCountry: 'countries/update',
+      ToggleActiveStatus: 'countries/toggleActiveStatus',
+      SearchCountries: 'countries/searchCountries',
+      GetCountriesByIds: 'countries/getCountriesByIds',
+    },
 
-        // City endpoints
-        City: {
-            GetCity: 'cities/fetchCity',
-            GetCityWithRelations: 'cities/fetchCityWithRelations',
-            GetAllCities: 'cities/fetchAllCities',
-            GetActiveCities: 'cities/fetchActiveCities',
-            GetCities: 'cities/getCities',
-            InsertOrUpdateCity: 'cities/InsertOrUpdateCity',
-            DeleteCity: 'cities/DeleteCity',
-            CheckCityExists: 'cities/checkCityExists',
-            GetCitiesByCountry: 'cities/getCitiesByCountry',
-            GetCitiesByState: 'cities/getCitiesByState',
-            GetCitiesByCountryAndState: 'cities/getCitiesByCountryAndState',
-            GetCityByCode: 'cities/getCityByCode',
-            ToggleActiveStatus: 'cities/toggleActiveStatus',
-            CreateCity: 'cities/create',
-            UpdateCity: 'cities/update',
-            SearchCities: 'cities/searchCities'
-        },
+    // State endpoints
+    State: {
+      GetState: 'states/fetchState',
+      GetAllStates: 'states/fetchAllStates',
+      GetStates: 'states/getStates',
+      InsertOrUpdateState: 'states/InsertOrUpdateState',
+      DeleteState: 'states/DeleteState',
+      CheckStateExists: 'states/checkStateExists',
+      GetStatesByCountry: 'states/getStatesByCountry/',
+      GetStatesByCountryCode: 'states/getStatesByCountryCode',
+      GetStateByCode: 'states/getStateByCode',
+      ToggleActiveStatus: 'states/toggleActiveStatus',
+      CreateState: 'states/create',
+      UpdateState: 'states/update',
+    },
 
-        // Department endpoints
-        Department: {
-            GetDepartment: 'departments/fetchDepartment',
-            GetAllDepartments: 'departments/fetchAllDepartments',
-            GetActiveDepartments: 'departments/fetchActiveDepartments',
-            GetDepartments: 'departments/getDepartments',
-            CheckDepartmentExists: 'departments/checkDepartmentExists',
-            GetDepartmentByCode: 'departments/getDepartmentByCode',
-            InsertOrUpdateDepartment: 'departments/InsertOrUpdateDepartment',
-            DeleteDepartment: 'departments/DeleteDepartment',
-            CreateDepartment: 'departments/create',
-            UpdateDepartment: 'departments/update',
-            ToggleActiveStatus: 'departments/toggleActiveStatus',
-            SearchDepartments: 'departments/searchDepartments',
-            GetDepartmentsByIds: 'departments/getDepartmentsByIds'
-        },
+    // City endpoints
+    City: {
+      GetCity: 'cities/fetchCity',
+      GetCityWithRelations: 'cities/fetchCityWithRelations',
+      GetAllCities: 'cities/fetchAllCities',
+      GetActiveCities: 'cities/fetchActiveCities',
+      GetCities: 'cities/getCities',
+      InsertOrUpdateCity: 'cities/InsertOrUpdateCity',
+      DeleteCity: 'cities/DeleteCity',
+      CheckCityExists: 'cities/checkCityExists',
+      GetCitiesByCountry: 'cities/getCitiesByCountry',
+      GetCitiesByState: 'cities/getCitiesByState',
+      GetCitiesByCountryAndState: 'cities/getCitiesByCountryAndState',
+      GetCityByCode: 'cities/getCityByCode',
+      ToggleActiveStatus: 'cities/toggleActiveStatus',
+      CreateCity: 'cities/create',
+      UpdateCity: 'cities/update',
+      SearchCities: 'cities/searchCities',
+    },
 
-        // Designation endpoints
-        Designation: {
-            GetDesignation: 'designations/fetchDesignation',
-            GetAllDesignations: 'designations/fetchAllDesignations',
-            GetActiveDesignations: 'designations/fetchActiveDesignations',
-            GetDesignations: 'designations/getDesignations',
-            CheckDesignationExists: 'designations/checkDesignationExists',
-            GetDesignationByCode: 'designations/getDesignationByCode',
-            InsertOrUpdateDesignation: 'designations/InsertOrUpdateDesignation',
-            DeleteDesignation: 'designations/DeleteDesignation',
-            CreateDesignation: 'designations/create',
-            UpdateDesignation: 'designations/update',
-            ToggleActiveStatus: 'designations/toggleActiveStatus',
-            SearchDesignations: 'designations/searchDesignations',
-            GetDesignationsByIds: 'designations/getDesignationsByIds'
-        },
+    // Department endpoints
+    Department: {
+      GetDepartment: 'departments/fetchDepartment',
+      GetAllDepartments: 'departments/fetchAllDepartments',
+      GetActiveDepartments: 'departments/fetchActiveDepartments',
+      GetDepartments: 'departments/getDepartments',
+      CheckDepartmentExists: 'departments/checkDepartmentExists',
+      GetDepartmentByCode: 'departments/getDepartmentByCode',
+      InsertOrUpdateDepartment: 'departments/InsertOrUpdateDepartment',
+      DeleteDepartment: 'departments/DeleteDepartment',
+      CreateDepartment: 'departments/create',
+      UpdateDepartment: 'departments/update',
+      ToggleActiveStatus: 'departments/toggleActiveStatus',
+      SearchDepartments: 'departments/searchDepartments',
+      GetDepartmentsByIds: 'departments/getDepartmentsByIds',
+    },
 
-        // DocumentType endpoints
-        DocumentType: {
-            GetDocumentType: 'documenttypes/fetchDocumentType',
-            GetAllDocumentTypes: 'documenttypes/fetchAllDocumentTypes',
-            InsertOrUpdateDocumentType: 'documenttypes/InsertOrUpdateDocumentType',
-            DeleteDocumentType: 'documenttypes/DeleteDocumentType'
-        },
+    // Designation endpoints
+    Designation: {
+      GetDesignation: 'designations/fetchDesignation',
+      GetAllDesignations: 'designations/fetchAllDesignations',
+      GetActiveDesignations: 'designations/fetchActiveDesignations',
+      GetDesignations: 'designations/getDesignations',
+      CheckDesignationExists: 'designations/checkDesignationExists',
+      GetDesignationByCode: 'designations/getDesignationByCode',
+      InsertOrUpdateDesignation: 'designations/InsertOrUpdateDesignation',
+      DeleteDesignation: 'designations/DeleteDesignation',
+      CreateDesignation: 'designations/create',
+      UpdateDesignation: 'designations/update',
+      ToggleActiveStatus: 'designations/toggleActiveStatus',
+      SearchDesignations: 'designations/searchDesignations',
+      GetDesignationsByIds: 'designations/getDesignationsByIds',
+    },
 
-        // HolidayCalendar endpoints
-        HolidayCalendar: {
-            GetHolidayCalendar: 'holiydacallender/fetchHolidayCalendar',
-            GetAllHolidayCalendars: 'holiydacallender/fetchAllHolidayCalendars',
-            GetActiveHolidayCalendars: 'holiydacallender/fetchActiveHolidayCalendars',
-            GetHolidayCalendars: 'holiydacallender/getHolidayCalendars',
-            CheckHolidayCalendarExists: 'holiydacallender/checkHolidayCalendarExists',
-            GetHolidaysByYear: 'holiydacallender/getHolidaysByYear',
-            GetHolidaysByDateRange: 'holiydacallender/getHolidaysByDateRange',
-            GetHolidaysByMonth: 'holiydacallender/getHolidaysByMonth',
-            GetUpcomingHolidays: 'holiydacallender/getUpcomingHolidays',
-            IsHoliday: 'holiydacallender/isHoliday',
-            InsertOrUpdateHolidayCalendar: 'holiydacallender/InsertOrUpdateHolidayCalendar',
-            DeleteHolidayCalendar: 'holiydacallender/DeleteHolidayCalendar',
-            CreateHolidayCalendar: 'holiydacallender/create',
-            UpdateHolidayCalendar: 'holiydacallender/update',
-            ToggleActiveStatus: 'holiydacallender/toggleActiveStatus',
-            SearchHolidayCalendars: 'holiydacallender/searchHolidayCalendars',
-            GetHolidayCalendarsByIds: 'holiydacallender/getHolidayCalendarsByIds'
-        },
-        // Employee endpoints
-        Employee: {
-            // GET endpoints
-            GetEmployee: 'employee/fetchEmployee',
-            GetEmployeeByCode: 'employee/fetchEmployeeByCode',
-            GetEmployeeByEmail: 'employee/fetchEmployeeByEmail',
-            GetEmployeeByUserId: 'employee/fetchEmployeeByUserId',
-            GetAllEmployees: 'employee/fetchAllEmployees',
-            GetEmployees: 'employee/getEmployees',
-            CheckEmployeeExists: 'employee/checkEmployeeExists',
-            GetEmployeesByDepartment: 'employee/getEmployeesByDepartment',
-            GetEmployeesByDesignation: 'employee/getEmployeesByDesignation',
-            GetEmployeeStatistics: 'employee/employeeStatistics',
-            GetActiveEmployees: 'employee/activeEmployees',
-            ExportEmployees: 'employee/exportEmployees',
+    // DocumentType endpoints
+    DocumentType: {
+      GetDocumentType: 'documenttypes/fetchDocumentType',
+      GetAllDocumentTypes: 'documenttypes/fetchAllDocumentTypes',
+      InsertOrUpdateDocumentType: 'documenttypes/InsertOrUpdateDocumentType',
+      DeleteDocumentType: 'documenttypes/DeleteDocumentType',
+    },
 
-            // POST endpoints
-            InsertOrUpdateEmployee: 'employee/InsertOrUpdateEmployee',
-            SearchEmployees: 'employee/searchEmployees',
-            CreateEmployee: 'employee/create',
-            BulkUpdateDepartment: 'employee/bulkUpdateDepartment',
+    // HolidayCalendar endpoints
+    HolidayCalendar: {
+      GetHolidayCalendar: 'holiydacallender/fetchHolidayCalendar',
+      GetAllHolidayCalendars: 'holiydacallender/fetchAllHolidayCalendars',
+      GetActiveHolidayCalendars: 'holiydacallender/fetchActiveHolidayCalendars',
+      GetHolidayCalendars: 'holiydacallender/getHolidayCalendars',
+      CheckHolidayCalendarExists: 'holiydacallender/checkHolidayCalendarExists',
+      GetHolidaysByYear: 'holiydacallender/getHolidaysByYear',
+      GetHolidaysByDateRange: 'holiydacallender/getHolidaysByDateRange',
+      GetHolidaysByMonth: 'holiydacallender/getHolidaysByMonth',
+      GetUpcomingHolidays: 'holiydacallender/getUpcomingHolidays',
+      IsHoliday: 'holiydacallender/isHoliday',
+      InsertOrUpdateHolidayCalendar:
+        'holiydacallender/InsertOrUpdateHolidayCalendar',
+      DeleteHolidayCalendar: 'holiydacallender/DeleteHolidayCalendar',
+      CreateHolidayCalendar: 'holiydacallender/create',
+      UpdateHolidayCalendar: 'holiydacallender/update',
+      ToggleActiveStatus: 'holiydacallender/toggleActiveStatus',
+      SearchHolidayCalendars: 'holiydacallender/searchHolidayCalendars',
+      GetHolidayCalendarsByIds: 'holiydacallender/getHolidayCalendarsByIds',
+    },
+    // Employee endpoints
+    Employee: {
+      // GET endpoints
+      GetEmployee: 'employee/fetchEmployee',
+      GetEmployeeByCode: 'employee/fetchEmployeeByCode',
+      GetEmployeeByEmail: 'employee/fetchEmployeeByEmail',
+      GetEmployeeByUserId: 'employee/fetchEmployeeByUserId',
+      GetAllEmployees: 'employee/fetchAllEmployees',
+      GetEmployees: 'employee/getEmployees',
+      CheckEmployeeExists: 'employee/checkEmployeeExists',
+      GetEmployeesByDepartment: 'employee/getEmployeesByDepartment',
+      GetEmployeesByDesignation: 'employee/getEmployeesByDesignation',
+      GetEmployeeStatistics: 'employee/employeeStatistics',
+      GetActiveEmployees: 'employee/activeEmployees',
+      ExportEmployees: 'employee/exportEmployees',
 
-            // PUT endpoint
-            UpdateEmployee: 'employee/update',
+      // POST endpoints
+      InsertOrUpdateEmployee: 'employee/InsertOrUpdateEmployee',
+      SearchEmployees: 'employee/searchEmployees',
+      CreateEmployee: 'employee/create',
+      BulkUpdateDepartment: 'employee/bulkUpdateDepartment',
 
-            // DELETE endpoints
-            DeleteEmployee: 'employee/DeleteEmployee',
-            SoftDeleteEmployee: 'employee/SoftDeleteEmployee',
+      // PUT endpoint
+      UpdateEmployee: 'employee/update',
 
-            // PATCH endpoint
-            UpdateActiveStatus: 'employee/updateActiveStatus'
-        },
+      // DELETE endpoints
+      DeleteEmployee: 'employee/DeleteEmployee',
+      SoftDeleteEmployee: 'employee/SoftDeleteEmployee',
 
-        // EmployeeAddress endpoints
-        EmployeeAddress: {
-            // GET endpoints
-            GetEmployeeAddress: 'employeeaddress/fetchEmployeeAddress',
-            GetAddressesByEmployee: 'employeeaddress/fetchAddressesByEmployee',
-            GetActiveAddressesByEmployee: 'employeeaddress/fetchActiveAddressesByEmployee',
-            GetAllEmployeeAddresses: 'employeeaddress/fetchAllEmployeeAddresses',
-            GetEmployeeAddresses: 'employeeaddress/getEmployeeAddresses',
-            CheckEmployeeAddressExists: 'employeeaddress/checkEmployeeAddressExists',
-            GetPrimaryAddress: 'employeeaddress/getPrimaryAddress',
+      // PATCH endpoint
+      UpdateActiveStatus: 'employee/updateActiveStatus',
+    },
 
-            // POST endpoints
-            InsertOrUpdateEmployeeAddress: 'employeeaddress/InsertOrUpdateEmployeeAddress',
-            CreateBulkAddresses: 'employeeaddress/createBulkAddresses',
-            CreateEmployeeAddress: 'employeeaddress/create',
-            SearchEmployeeAddresses: 'employeeaddress/searchEmployeeAddresses',
+    // EmployeeAddress endpoints
+    EmployeeAddress: {
+      // GET endpoints
+      GetEmployeeAddress: 'employeeaddress/fetchEmployeeAddress',
+      GetAddressesByEmployee: 'employeeaddress/fetchAddressesByEmployee',
+      GetActiveAddressesByEmployee:
+        'employeeaddress/fetchActiveAddressesByEmployee',
+      GetAllEmployeeAddresses: 'employeeaddress/fetchAllEmployeeAddresses',
+      GetEmployeeAddresses: 'employeeaddress/getEmployeeAddresses',
+      CheckEmployeeAddressExists: 'employeeaddress/checkEmployeeAddressExists',
+      GetPrimaryAddress: 'employeeaddress/getPrimaryAddress',
 
-            // PUT endpoint
-            UpdateEmployeeAddress: 'employeeaddress/update',
+      // POST endpoints
+      InsertOrUpdateEmployeeAddress:
+        'employeeaddress/InsertOrUpdateEmployeeAddress',
+      CreateBulkAddresses: 'employeeaddress/createBulkAddresses',
+      CreateEmployeeAddress: 'employeeaddress/create',
+      SearchEmployeeAddresses: 'employeeaddress/searchEmployeeAddresses',
 
-            // DELETE endpoint
-            DeleteEmployeeAddress: 'employeeaddress/DeleteEmployeeAddress',
+      // PUT endpoint
+      UpdateEmployeeAddress: 'employeeaddress/update',
 
-            // PATCH endpoints
-            SoftDeleteEmployeeAddress: 'employeeaddress/SoftDeleteEmployeeAddress',
-            SetPrimaryAddress: 'employeeaddress/setPrimaryAddress'
-        },
+      // DELETE endpoint
+      DeleteEmployeeAddress: 'employeeaddress/DeleteEmployeeAddress',
 
-        // EmployeeEducation endpoints
-        EmployeeEducation: {
-            // GET endpoints
-            GetEmployeeEducation: 'employeeeducation/fetchEmployeeEducation',
-            GetEducationsByEmployee: 'employeeeducation/fetchEducationsByEmployee',
-            GetActiveEducationsByEmployee: 'employeeeducation/fetchActiveEducationsByEmployee',
-            GetHighestEducationByEmployee: 'employeeeducation/fetchHighestEducationByEmployee',
-            GetAllEmployeeEducations: 'employeeeducation/fetchAllEmployeeEducations',
-            GetEmployeeEducations: 'employeeeducation/getEmployeeEducations',
-            CheckEmployeeEducationExists: 'employeeeducation/checkEmployeeEducationExists',
-            GetEmployeeEducationSummary: 'employeeeducation/getEmployeeEducationSummary',
-            GetEducationStatistics: 'employeeeducation/educationStatistics',
-            SearchByDegree: 'employeeeducation/searchByDegree',
-            SearchByInstitution: 'employeeeducation/searchByInstitution',
+      // PATCH endpoints
+      SoftDeleteEmployeeAddress: 'employeeaddress/SoftDeleteEmployeeAddress',
+      SetPrimaryAddress: 'employeeaddress/setPrimaryAddress',
+    },
 
-            // POST endpoints
-            InsertOrUpdateEmployeeEducation: 'employeeeducation/InsertOrUpdateEmployeeEducation',
-            CreateBulkEducations: 'employeeeducation/createBulkEducations',
-            CreateEmployeeEducation: 'employeeeducation/create',
-            SearchEmployeeEducations: 'employeeeducation/searchEmployeeEducations',
+    // EmployeeEducation endpoints
+    EmployeeEducation: {
+      // GET endpoints
+      GetEmployeeEducation: 'employeeeducation/fetchEmployeeEducation',
+      GetEducationsByEmployee: 'employeeeducation/fetchEducationsByEmployee',
+      GetActiveEducationsByEmployee:
+        'employeeeducation/fetchActiveEducationsByEmployee',
+      GetHighestEducationByEmployee:
+        'employeeeducation/fetchHighestEducationByEmployee',
+      GetAllEmployeeEducations: 'employeeeducation/fetchAllEmployeeEducations',
+      GetEmployeeEducations: 'employeeeducation/getEmployeeEducations',
+      CheckEmployeeEducationExists:
+        'employeeeducation/checkEmployeeEducationExists',
+      GetEmployeeEducationSummary:
+        'employeeeducation/getEmployeeEducationSummary',
+      GetEducationStatistics: 'employeeeducation/educationStatistics',
+      SearchByDegree: 'employeeeducation/searchByDegree',
+      SearchByInstitution: 'employeeeducation/searchByInstitution',
 
-            // PUT endpoint
-            UpdateEmployeeEducation: 'employeeeducation/update',
+      // POST endpoints
+      InsertOrUpdateEmployeeEducation:
+        'employeeeducation/InsertOrUpdateEmployeeEducation',
+      CreateBulkEducations: 'employeeeducation/createBulkEducations',
+      CreateEmployeeEducation: 'employeeeducation/create',
+      SearchEmployeeEducations: 'employeeeducation/searchEmployeeEducations',
 
-            // DELETE endpoint
-            DeleteEmployeeEducation: 'employeeeducation/DeleteEmployeeEducation',
+      // PUT endpoint
+      UpdateEmployeeEducation: 'employeeeducation/update',
 
-            // PATCH endpoint
-            SoftDeleteEmployeeEducation: 'employeeeducation/SoftDeleteEmployeeEducation'
-        },
+      // DELETE endpoint
+      DeleteEmployeeEducation: 'employeeeducation/DeleteEmployeeEducation',
 
-        // EmployeeEmployment endpoints
-        EmployeeEmployment: {
-            // GET endpoints
-            GetEmployeeEmployment: 'employeeemployment/fetchEmployeeEmployment',
-            GetEmploymentsByEmployee: 'employeeemployment/fetchEmploymentsByEmployee',
-            GetActiveEmploymentsByEmployee: 'employeeemployment/fetchActiveEmploymentsByEmployee',
-            GetLatestEmploymentByEmployee: 'employeeemployment/fetchLatestEmploymentByEmployee',
-            GetAllEmployeeEmployments: 'employeeemployment/fetchAllEmployeeEmployments',
-            GetEmployeeEmployments: 'employeeemployment/getEmployeeEmployments',
-            CheckEmployeeEmploymentExists: 'employeeemployment/checkEmployeeEmploymentExists',
-            GetEmployeeEmploymentSummary: 'employeeemployment/getEmployeeEmploymentSummary',
-            GetEmploymentStatistics: 'employeeemployment/employmentStatistics',
-            SearchByCompany: 'employeeemployment/searchByCompany',
-            SearchByDesignation: 'employeeemployment/searchByDesignation',
-            GetEmployeesByPreviousCompany: 'employeeemployment/employeesByPreviousCompany',
-            CalculateTotalExperience: 'employeeemployment/calculateTotalExperience',
+      // PATCH endpoint
+      SoftDeleteEmployeeEducation:
+        'employeeeducation/SoftDeleteEmployeeEducation',
+    },
 
-            // POST endpoints
-            InsertOrUpdateEmployeeEmployment: 'employeeemployment/InsertOrUpdateEmployeeEmployment',
-            CreateBulkEmployments: 'employeeemployment/createBulkEmployments',
-            CreateEmployeeEmployment: 'employeeemployment/create',
-            SearchEmployeeEmployments: 'employeeemployment/searchEmployeeEmployments',
+    // EmployeeEmployment endpoints
+    EmployeeEmployment: {
+      // GET endpoints
+      GetEmployeeEmployment: 'employeeemployment/fetchEmployeeEmployment',
+      GetEmploymentsByEmployee: 'employeeemployment/fetchEmploymentsByEmployee',
+      GetActiveEmploymentsByEmployee:
+        'employeeemployment/fetchActiveEmploymentsByEmployee',
+      GetLatestEmploymentByEmployee:
+        'employeeemployment/fetchLatestEmploymentByEmployee',
+      GetAllEmployeeEmployments:
+        'employeeemployment/fetchAllEmployeeEmployments',
+      GetEmployeeEmployments: 'employeeemployment/getEmployeeEmployments',
+      CheckEmployeeEmploymentExists:
+        'employeeemployment/checkEmployeeEmploymentExists',
+      GetEmployeeEmploymentSummary:
+        'employeeemployment/getEmployeeEmploymentSummary',
+      GetEmploymentStatistics: 'employeeemployment/employmentStatistics',
+      SearchByCompany: 'employeeemployment/searchByCompany',
+      SearchByDesignation: 'employeeemployment/searchByDesignation',
+      GetEmployeesByPreviousCompany:
+        'employeeemployment/employeesByPreviousCompany',
+      CalculateTotalExperience: 'employeeemployment/calculateTotalExperience',
 
-            // PUT endpoint
-            UpdateEmployeeEmployment: 'employeeemployment/update',
+      // POST endpoints
+      InsertOrUpdateEmployeeEmployment:
+        'employeeemployment/InsertOrUpdateEmployeeEmployment',
+      CreateBulkEmployments: 'employeeemployment/createBulkEmployments',
+      CreateEmployeeEmployment: 'employeeemployment/create',
+      SearchEmployeeEmployments: 'employeeemployment/searchEmployeeEmployments',
 
-            // DELETE endpoint
-            DeleteEmployeeEmployment: 'employeeemployment/DeleteEmployeeEmployment',
+      // PUT endpoint
+      UpdateEmployeeEmployment: 'employeeemployment/update',
 
-            // PATCH endpoint
-            SoftDeleteEmployeeEmployment: 'employeeemployment/SoftDeleteEmployeeEmployment'
-        },
+      // DELETE endpoint
+      DeleteEmployeeEmployment: 'employeeemployment/DeleteEmployeeEmployment',
+
+      // PATCH endpoint
+      SoftDeleteEmployeeEmployment:
+        'employeeemployment/SoftDeleteEmployeeEmployment',
+    },
 
         EmployeeEmergencyContact: {
             GetEmployeeEmergencyContact: 'employeeemergencycontact/fetchEmployeeEmergencyContact',
@@ -343,12 +368,6 @@ export const environment = {
             GetMonthySalaryList: 'monthlysalary/fetch-all',
             InsertOrUpdateMonthlySalaryAsync: 'monthlysalary/InsertOrUpdateMonthlySalary',
             DeleteMonthlySalaryAsync: 'monthlysalary/deleteMonthlySalary'
-        },
-        Taskcode: {
-            GetTaskcodeListAsync: 'taskcode/fetchAllTaskcodes',
-            GetTaskcodeAsync: 'taskcode/fetchtaskcode',
-            InsertOrUpdateTaskcodeAsync: 'taskcode/InsertOrUpdateTaskcode',
-            DeleteTaskcodeAsync: 'taskcode/DeleteTaskcode'
         }
     }
 };
