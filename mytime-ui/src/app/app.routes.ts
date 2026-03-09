@@ -99,7 +99,22 @@ export const routes: Routes = [
                 path: '',
                 redirectTo: 'dashboard',
                 pathMatch: 'full'
-            }
+            }, 
+            
+            {
+                path: 'time',
+                children: [
+                    {
+                        path: 'taskcode',
+                        loadComponent: () => import('./admin/components/time/taskcode/taskcode.component').then(m => m.TaskcodeComponent)
+                    },
+                    // {
+                    //     path: ':employeeId',
+                    //     loadComponent: () => import('./admin/components/employees/employee/employees-details.component').then(m => m.EmployeesDetailsComponent)
+                    // }
+                ]
+            
+            }          
         ]
     },
     {

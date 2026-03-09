@@ -343,6 +343,12 @@ export const environment = {
             GetMonthySalaryList: 'monthlysalary/fetch-all',
             InsertOrUpdateMonthlySalaryAsync: 'monthlysalary/InsertOrUpdateMonthlySalary',
             DeleteMonthlySalaryAsync: 'monthlysalary/deleteMonthlySalary'
+        },
+        Taskcode: {
+            GetTaskcodeListAsync: 'taskcode/fetchAllTaskcodes',
+            GetTaskcodeAsync: 'taskcode/fetchtaskcode',
+            InsertOrUpdateTaskcodeAsync: 'taskcode/InsertOrUpdateTaskcode',
+            DeleteTaskcodeAsync: 'taskcode/DeleteTaskcode'
         }
     }
 };
