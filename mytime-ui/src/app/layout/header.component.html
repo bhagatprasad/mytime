@@ -1,35 +1,35 @@
 <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
   <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
     <a class="navbar-brand brand-logo" routerLink="/admin/dashboard">
-      <img src="assets/images/logo.svg" alt="logo"/>
+      <img src="/assets/images/logo-blue-transparent.png" alt="logo"/>
     </a>
     <a class="navbar-brand brand-logo-mini" routerLink="/admin/dashboard">
-      <img src="assets/images/logo-mini.svg" alt="logo"/>
+      <img src="/assets/images/logo-blue-transparent.png" alt="logo"/>
     </a>
   </div>
   
   <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
-    <!-- Desktop toggle button (hidden) -->
+    <!-- Desktop toggle button (hidden) - KEEP THIS AS IS -->
     <button class="navbar-toggler navbar-toggler align-self-center d-none" type="button">
       <span class="icon-menu"></span>
     </button>
     
-    <!-- Mobile toggle button (only visible on mobile) -->
+    <!-- Mobile toggle button (only visible on mobile) - THIS WILL BE HIDDEN BY CSS -->
     <button class="navbar-toggler navbar-toggler align-self-center d-lg-none" 
             type="button" 
             (click)="toggleMobileMenu()">
       <span class="icon-menu"></span>
     </button>
     
-    <ul class="navbar-nav mr-lg-2">
-      <li class="nav-item nav-search d-none d-lg-block">
+    <ul class="navbar-nav mr-lg-2 d-none">
+      <li class="nav-item nav-search d-none">
         <div class="input-group">
           <div class="input-group-prepend">
             <span class="input-group-text" id="search">
               <i class="icon-search"></i>
             </span>
           </div>
-          <input type="text" class="form-control" placeholder="Search Projects.." 
+          <input type="text" class="form-control d-none" placeholder="Search Projects.." 
                  aria-label="search" aria-describedby="search">
         </div>
       </li>
@@ -52,10 +52,11 @@
       </li>
     </ul>
     
-    <!-- Mobile toggle button on right side -->
+    <!-- Mobile toggle button on right side - THIS IS THE ONE THAT WILL WORK -->
     <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" 
             type="button" 
-            (click)="toggleMobileMenu()">
+            (click)="toggleMobileMenu()"
+            [class.menu-open]="isMobileMenuOpen">
       <span class="icon-menu"></span>
     </button>
   </div>
