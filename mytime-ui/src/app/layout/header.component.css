@@ -1,3 +1,336 @@
+/* header.component.css - Complete File with Unique Icon Colors */
+
+:host {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+}
+
+.navbar {
+  background: linear-gradient(90deg, #1a2c3d 0%, #1e3347 100%);
+  height: 60px;
+  display: flex;
+  width: 100%;
+  border-bottom: 3px solid #14b89c;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+
+/* Top accent line */
+.navbar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #14b89c, #ffb347, #14b89c);
+  z-index: 1;
+}
+
 .navbar .navbar-brand-wrapper {
-    background: #5e7185 !important;
+  width: 280px;
+  height: 60px;
+  background: linear-gradient(135deg, #0F2A3F, #1a2c3d) !important;
+  border-right: 1px solid #2a4055;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* Divider between logo and menu */
+.navbar .navbar-brand-wrapper::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: 15%;
+  height: 70%;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, #14b89c, #ffb347, transparent);
+}
+
+.navbar .navbar-brand-wrapper img {
+  max-height: 35px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
+}
+
+.navbar .navbar-brand-wrapper img:hover {
+  transform: scale(1.05);
+}
+
+.navbar .navbar-menu-wrapper {
+  flex: 1;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 25px;
+  background: #1e3347;
+}
+
+/* ===== UNIQUE COLORS FOR EACH ICON ===== */
+
+/* Notifications Icon - Coral/Peach */
+::ng-deep app-notifications .nav-link {
+  background: rgba(255, 111, 97, 0.1) !important;
+  color: #ff8a7a !important;
+  width: 40px;
+  height: 40px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  margin: 0 3px;
+  position: relative;
+}
+
+::ng-deep app-notifications .nav-link i {
+  color: #ff6f61 !important;
+  font-size: 18px;
+}
+
+::ng-deep app-notifications .nav-link:hover {
+  background: #ff6f61 !important;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(255, 111, 97, 0.4);
+}
+
+::ng-deep app-notifications .nav-link:hover i {
+  color: white !important;
+}
+
+/* Settings Icon - Turquoise */
+::ng-deep app-settings .nav-link {
+  background: rgba(20, 184, 156, 0.1) !important;
+  color: #14b89c !important;
+  width: 40px;
+  height: 40px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  margin: 0 3px;
+  position: relative;
+}
+
+::ng-deep app-settings .nav-link i {
+  color: #14b89c !important;
+  font-size: 18px;
+}
+
+::ng-deep app-settings .nav-link:hover {
+  background: #14b89c !important;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(20, 184, 156, 0.4);
+}
+
+::ng-deep app-settings .nav-link:hover i {
+  color: white !important;
+}
+
+/* Grid Icon (if visible) - Purple */
+.navbar .nav-link .icon-grid {
+  color: #9b59b6 !important;
+}
+
+.navbar .nav-link:hover .icon-grid {
+  color: white !important;
+}
+
+/* Notification badge - keeps coral color */
+::ng-deep app-notifications .badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: #ff6f61 !important;
+  color: white;
+  font-size: 9px;
+  padding: 3px 5px;
+  border-radius: 10px;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #1e3347;
+}
+
+/* Search icon - Gold */
+.navbar .nav-search .input-group-text i {
+  color: #ffb347 !important;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.navbar .nav-search .input-group:hover .input-group-text i,
+.navbar .nav-search .input-group:focus-within .input-group-text i {
+  color: #ffc107 !important;
+  transform: scale(1.1);
+}
+
+/* Create New Button - Gold accent (already styled) */
+.navbar .btn-info {
+  background: #ffb347 !important;
+  border: none !important;
+  color: #0F2A3F !important;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 8px 22px;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(255, 179, 71, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-right: 15px;
+}
+
+.navbar .btn-info:hover {
+  background: #ffc107 !important;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(255, 179, 71, 0.4);
+}
+
+/* Mobile toggle button - Teal with special animation */
+.navbar .navbar-toggler-right {
+  background: rgba(20, 184, 156, 0.15);
+  border: 2px solid #14b89c;
+  border-radius: 8px;
+  color: white;
+  width: 45px;
+  height: 40px;
+  padding: 0;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  margin-left: 10px;
+  cursor: pointer;
+  position: relative;
+  z-index: 1050;
+  outline: none;
+}
+
+.navbar .navbar-toggler-right i {
+  color: #14b89c !important;
+  font-size: 22px;
+  transition: all 0.3s ease;
+}
+
+.navbar .navbar-toggler-right:hover {
+  background: #14b89c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(20, 184, 156, 0.3);
+}
+
+.navbar .navbar-toggler-right:hover i {
+  color: white !important;
+}
+
+/* Active state when sidebar is open */
+.navbar .navbar-toggler-right.menu-open {
+  background: #14b89c;
+  border-color: #ffb347;
+  transform: rotate(90deg);
+}
+
+.navbar .navbar-toggler-right.menu-open i {
+  color: white !important;
+}
+
+/* Hide the first mobile toggle button */
+.navbar .navbar-toggler.align-self-center.d-lg-none:not(.navbar-toggler-right) {
+  display: none !important;
+}
+
+/* Hide desktop toggle */
+.navbar .navbar-toggler.d-none {
+  display: none !important;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+  .navbar .navbar-brand-wrapper {
+    width: 120px !important;
+  }
+  
+  .navbar .navbar-brand-wrapper .brand-logo {
+    display: none;
+  }
+  
+  .navbar .navbar-brand-wrapper .brand-logo-mini {
+    display: block;
+  }
+  
+  .navbar .navbar-brand-wrapper .brand-logo-mini img {
+    max-height: 30px;
+  }
+  
+  .navbar .navbar-menu-wrapper {
+    padding: 0 10px;
+  }
+  
+  .navbar .nav-search {
+    display: none !important;
+  }
+  
+  .navbar .btn-info {
+    display: none !important;
+  }
+  
+  .navbar .navbar-toggler-right {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 576px) {
+  ::ng-deep app-notifications .nav-link,
+  ::ng-deep app-settings .nav-link {
+    width: 35px !important;
+    height: 35px !important;
+  }
+  
+  ::ng-deep app-notifications .nav-link i,
+  ::ng-deep app-settings .nav-link i {
+    font-size: 16px !important;
+  }
+  
+  .navbar .navbar-toggler-right {
+    width: 40px;
+    height: 36px;
+  }
+  
+  .navbar .navbar-toggler-right i {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 380px) {
+  ::ng-deep app-notifications .nav-link,
+  ::ng-deep app-settings .nav-link {
+    width: 32px !important;
+    height: 32px !important;
+    margin: 0 1px !important;
+  }
+  
+  .navbar .navbar-toggler-right {
+    width: 36px;
+    height: 34px;
+    margin-left: 5px;
+  }
+}
+
+.navbar .navbar-brand-wrapper .navbar-brand img {
+    width: calc(240px - 130px);
+    max-width: 100%;
+    height: 50px;
+    margin: auto;
+    vertical-align: middle;
 }

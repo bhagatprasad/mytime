@@ -15,26 +15,17 @@
 
     <!-- AUTHENTICATED LAYOUT -->
     <ng-container *ngIf="!ctx.isLoading && ctx.isAuthenticated">
-
-      <app-header></app-header>
-
+      <app-header></app-header> <!-- Header only shows when authenticated -->
       <div class="container-fluid page-body-wrapper">
-
         <app-sidebar></app-sidebar>
-
-        <div class="main-panel">
-          <!-- Panel Loader - will appear only inside main-panel -->
+        <div class="main-panel"> <!-- This is your main content -->
           <app-panel-loader></app-panel-loader>
-
           <div class="content-wrapper">
             <router-outlet></router-outlet>
           </div>
-
           <app-footer></app-footer>
         </div>
-
       </div>
-
     </ng-container>
 
     <!-- LOGIN LAYOUT -->
@@ -48,7 +39,7 @@
               <router-outlet></router-outlet>
             </div>
 
-            <div class="col-lg-6 login-half-bg d-flex flex-row">
+            <div class="col-lg-6 login-half-bg d-flex flex-row hide-on-mobile">
               <p class="text-white font-weight-medium text-center flex-grow align-self-end">
                 Copyright © 2020 All rights reserved.
               </p>

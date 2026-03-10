@@ -1,20 +1,31 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Inject, PLATFORM_ID } from '@angular/core';
 import { AccountService } from '../common/services/account.service';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { SidebarService } from '../common/services/sidebar.service';
+import { BaseSidebarComponent } from './base-sidebar.component';
 
 @Component({
   selector: 'app-admin-sidebar',
   standalone: true,
-  imports: [RouterModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './admin-sidebar.component.html',
-  styleUrl: './admin-sidebar.component.css'
+  styleUrls: ['./admin-sidebar.component.css']
 })
-export class AdminSidebarComponent {
-   @Input() isCollapsed = false;
-  constructor(private accountService: AccountService) {
+export class AdminSidebarComponent extends BaseSidebarComponent {
+  @Input() isCollapsed = false;
 
+  constructor(
+    private accountService: AccountService,
+    router: Router,
+    sidebarService: SidebarService,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    super(router, sidebarService, platformId);
   }
+
   logout(): void {
     this.accountService.logout();
+    this.closeSidebarOnMobile();
   }
 }
