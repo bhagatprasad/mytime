@@ -79,6 +79,7 @@ export class ProjectAddComponent implements OnInit, OnChanges {
     this.resetForm();
     this.closeSidebar.emit();
   }
+
   private patchForm(project: Project): void {
     this.projectForm.patchValue(
       {
