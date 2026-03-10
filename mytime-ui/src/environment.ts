@@ -29,7 +29,7 @@ export const environment = {
     Project: {
       GetProjectAsync: 'project/fetchproject',
       GetProjectListAsync: 'project/fetchallprojects',
-      InsertOrUpdateProjectAsync: 'project/insertorupdateproject',
+      InsertOrUpdateProjectAsync: 'project/insetorupdateproject',
       DeleteProjectAsync: 'project/deleteproject',
     },
 
@@ -394,9 +394,10 @@ export const environment = {
       GetMonthlySalaryAsync: 'monthlysalary/fetch-with-employees',
       GetMontlySalaryListAsync: 'monthlysalary/fetch-all-with-employees',
       GetMonthySalaryList: 'monthlysalary/fetch-all',
-      InsertOrUpdateMonthlySalaryAsync: 'monthlysalary/InsertOrUpdateMonthlySalary',
+      InsertOrUpdateMonthlySalaryAsync:
+        'monthlysalary/InsertOrUpdateMonthlySalary',
       DeleteMonthlySalaryAsync: 'monthlysalary/deleteMonthlySalary',
-      PublishMonthlySalaryAsync: 'monthlysalary/publish'
+      PublishMonthlySalaryAsync: 'monthlysalary/publish',
     },
   },
 };
