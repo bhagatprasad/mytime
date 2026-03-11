@@ -17,9 +17,10 @@ class TaskItem(Base):
     ModifiedOn = Column(DateTime,   nullable=True)
 
     IsActive = Column(Boolean, default=True)
-
-    # One-to-many relationship to TaskCode
-    task_codes = relationship("TaskCode", back_populates="task_item")
+    ProjectId = Column(BigInteger, nullable=True)
+  
+      # Relationship to Taskcode
+    task_item = relationship("Project", backref="Project")
 
     def __repr__(self):
         return f"<TaskItem(TaskItemId={self.TaskItemId}, Name='{self.Name}', Code='{self.Code}')>"
