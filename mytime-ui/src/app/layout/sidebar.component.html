@@ -10,10 +10,24 @@
   <ng-container *ngIf="userContext$ | async as ctx">
 
     <div class="user-profile">
+
+      <!--
+        .user-image wrapper preserved exactly — keeps your existing CSS:
+          width/height: 75px, border-radius: 50%, border: 3px solid #14b89c
+          box-shadow, hover scale(1.05), border-color: #ffb347
+        ProfileImageComponent inner <img> fills the wrapper via width/height 100%.
+        clickable=true → hover shows camera icon + opens file picker on click.
+      -->
       <div class="user-image">
-        <img src="assets/images/faces/face28.png" alt="User" />
+        <app-profile-image
+          size="large"
+          [clickable]="true"
+          altText="Profile Photo"
+        ></app-profile-image>
       </div>
+
       <div class="user-name">{{ ctx.user?.fullName }}</div>
+
       <div class="user-designation">
         {{ ctx.isAdmin ? 'Administrator' : 'User' }}
       </div>

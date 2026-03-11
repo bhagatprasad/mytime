@@ -14,6 +14,10 @@ import { authReducer } from './common/store/auth.reducer';
 import { metaReducers } from './common/store/auth.meta-reducer';
 import { AuthEffects } from './common/store/auth.effects';
 
+// Import profile image feature
+import { profileImageReducer } from './common/store/profile-image/profile-image.reducer';
+import { ProfileImageEffects } from './common/store/profile-image/profile-image.effects';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
@@ -29,11 +33,19 @@ export const appConfig: ApplicationConfig = {
       closeButton: true,
       progressBar: true,
     }),
+    // Register ALL reducers here
     provideStore(
-      { auth: authReducer },
+      { 
+        auth: authReducer,
+        profileImage: profileImageReducer  // ← Add this line
+      },
       { metaReducers }
     ),
-    provideEffects([AuthEffects]),
+    // Register ALL effects here
+    provideEffects([
+      AuthEffects,
+      ProfileImageEffects  // ← Add this line
+    ]),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: !isDevMode(),
