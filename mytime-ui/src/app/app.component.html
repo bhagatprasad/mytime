@@ -1,9 +1,9 @@
 <div class="container-scroller">
 
-  <ng-container *ngIf="userContext$ | async as ctx">
+  <ng-container *ngIf="authStatus$ | async as auth">
 
     <!-- LOADING STATE -->
-    <ng-container *ngIf="ctx.isLoading">
+    <ng-container *ngIf="auth.isLoading">
       <div class="container-fluid page-body-wrapper full-page-wrapper">
         <div class="content-wrapper-full d-flex align-items-center justify-content-center">
           <div class="spinner-border text-primary" role="status">
@@ -14,11 +14,11 @@
     </ng-container>
 
     <!-- AUTHENTICATED LAYOUT -->
-    <ng-container *ngIf="!ctx.isLoading && ctx.isAuthenticated">
-      <app-header></app-header> <!-- Header only shows when authenticated -->
+    <ng-container *ngIf="!auth.isLoading && auth.isAuthenticated">
+      <app-header></app-header>
       <div class="container-fluid page-body-wrapper">
         <app-sidebar></app-sidebar>
-        <div class="main-panel"> <!-- This is your main content -->
+        <div class="main-panel">
           <app-panel-loader></app-panel-loader>
           <div class="content-wrapper">
             <router-outlet></router-outlet>
@@ -28,23 +28,20 @@
       </div>
     </ng-container>
 
-    <!-- LOGIN LAYOUT -->
-    <ng-container *ngIf="!ctx.isLoading && !ctx.isAuthenticated">
+    <!-- LOGIN / PUBLIC LAYOUT -->
+    <ng-container *ngIf="!auth.isLoading && !auth.isAuthenticated">
       <div class="container-fluid page-body-wrapper full-page-wrapper">
         <div class="content-wrapper-full d-flex align-items-stretch auth auth-img-bg">
           <app-panel-loader></app-panel-loader>
           <div class="row flex-grow w-100">
-
             <div class="col-lg-6 d-flex align-items-center justify-content-center">
               <router-outlet></router-outlet>
             </div>
-
             <div class="col-lg-6 login-half-bg d-flex flex-row hide-on-mobile">
               <p class="text-white font-weight-medium text-center flex-grow align-self-end">
-                Copyright © 2020 All rights reserved.
+                Copyright &copy; 2024 All rights reserved.
               </p>
             </div>
-
           </div>
         </div>
       </div>

@@ -1,339 +1,155 @@
-import { Injectable, PLATFORM_ID, Inject, OnDestroy } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
-import { filter, distinctUntilChanged, takeUntil, map, delay, take } from 'rxjs/operators';
-import { Router } from '@angular/router';
-import { environment } from '../../../environment';
-import { AuthResponse } from '../models/auth-response';
-import { UserAuthentication } from '../models/user-authentication';
+import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { ApplicationUser } from '../models/application-user';
-import { ApiService } from './api.service';
-
+import { selectAuthError, selectAuthLoading, selectCurrentUser, selectIsAdmin, selectIsAuthenticated, selectIsRegularAdmin, selectIsAdministrator, selectUserContext, selectUserRoleName, selectAuthStatus, selectToken } from '../store/auth.selectors';
+import * as AuthActions from '../store/auth.actions';
+/**
+ * AccountService is a thin facade over the NgRx Store.
+ *
+ * - Components and guards interact with this service (not the Store directly)
+ * - This keeps the same public API your existing code already uses
+ * - All state lives in the Store; this service never reads/writes storage
+ */
 @Injectable({ providedIn: 'root' })
-export class AccountService implements OnDestroy {
-    private readonly authEndpoint = 'auth/AuthenticateUser';
-    private readonly claimsEndpoint = 'auth/GenarateUserClaims';
+export class AccountService {
 
-    // Role constants based on your data
-    private readonly ROLE_IDS = {
-        ADMINISTRATOR: 1000,
-        ADMIN: 1001,
-        USER: 1002 // Assuming regular users have roleId 1002
-    };
+  // ── Public observables ─────────────────────────────────────────────────
 
-    private authenticationState = new BehaviorSubject<boolean | null>(null);
-    private isBrowser: boolean;
-    private inactivityTimer: any;
-    private readonly INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes
-    private destroy$ = new Subject<void>();
+  /** Emits true/false when auth state changes */
+  readonly isAuthenticated$: Observable<boolean> =
+    this.store.select(selectIsAuthenticated);
 
-    // Add a loading state to track initialization
-    private initialized = new BehaviorSubject<boolean>(false);
+  /** Alias kept for any component still using the old name */
+  readonly authenticationState$ = this.isAuthenticated$;
 
-    // Public observable (using $ naming convention) - include loading state
-    authenticationState$ = this.authenticationState.asObservable().pipe(
-        distinctUntilChanged()
-    );
+  /** Emits { isAuthenticated, isLoading } */
+  readonly authStatus$ = this.store.select(selectAuthStatus);
 
-    // Public observable that includes loading state
-    authStatus$ = this.authenticationState$.pipe(
-        map(state => ({
-            isAuthenticated: state,
-            isLoading: state === null
-        }))
-    );
+  /** Emits the current ApplicationUser or null */
+  readonly currentUser$: Observable<ApplicationUser | null> =
+    this.store.select(selectCurrentUser);
 
-    // Add redirectUrl property with proper type
-    public redirectUrl: string | null = null; // Start with null
+  /** Composite context used by app shell, sidebar, header */
+  readonly userContext$ = this.store.select(selectUserContext);
 
-    constructor(
-        private apiService: ApiService,
-        private router: Router,
-        @Inject(PLATFORM_ID) platformId: Object
-    ) {
-        this.isBrowser = isPlatformBrowser(platformId);
-        this.initializeAuthState();
-        this.setupInactivityMonitoring();
+  /** Emits true while login API call is in-flight */
+  readonly loading$: Observable<boolean> =
+    this.store.select(selectAuthLoading);
+
+  /** Emits the latest login error message, or null */
+  readonly error$: Observable<string | null> =
+    this.store.select(selectAuthError);
+
+  /** Optional redirect URL set by AuthGuard before navigating to /login */
+  public redirectUrl: string | null = null;
+
+  constructor(private readonly store: Store) {}
+
+  // ── Actions ────────────────────────────────────────────────────────────
+
+  /**
+   * Dispatches the login action.
+   * AuthEffects handles the API calls, session persistence, and redirect.
+   */
+  login(credentials: { username: string; password: string }): void {
+    this.store.dispatch(AuthActions.login(credentials));
+  }
+
+  /**
+   * Dispatches the logout action.
+   * AuthEffects clears sessionStorage and navigates to /login.
+   */
+  logout(): void {
+    this.store.dispatch(AuthActions.logout());
+  }
+
+  // ── Synchronous snapshot reads (for guards & interceptors) ─────────────
+
+  /**
+   * Synchronous check — reads current Store state snapshot.
+   * Use the observable isAuthenticated$ in templates/components instead.
+   */
+  isAuthenticated(): boolean {
+    let value = false;
+    this.store.select(selectIsAuthenticated).pipe(take(1)).subscribe((v) => (value = v));
+    return value;
+  }
+
+  /**
+   * Returns the current user synchronously from Store snapshot.
+   * Use currentUser$ in templates/components instead.
+   */
+  getCurrentUser(): ApplicationUser | null {
+    let user: ApplicationUser | null = null;
+    this.store.select(selectCurrentUser).pipe(take(1)).subscribe((u) => (user = u));
+    return user;
+  }
+
+  /**
+   * Returns the JWT token synchronously.
+   * Used by the HTTP interceptor to attach Authorization header.
+   */
+  getAccessToken(): string | null {
+    let token: string | null = null;
+    this.store.select(selectToken).pipe(take(1)).subscribe((t) => (token = t));
+    return token;
+  }
+
+  // ── Role helpers ───────────────────────────────────────────────────────
+
+  isAdmin(user?: ApplicationUser): boolean {
+    if (user) return user.roleId === 1000 || user.roleId === 1001;
+    let value = false;
+    this.store.select(selectIsAdmin).pipe(take(1)).subscribe((v) => (value = v));
+    return value;
+  }
+
+  isAdministrator(user?: ApplicationUser): boolean {
+    if (user) return user.roleId === 1000;
+    let value = false;
+    this.store.select(selectIsAdministrator).pipe(take(1)).subscribe((v) => (value = v));
+    return value;
+  }
+
+  isRegularAdmin(user?: ApplicationUser): boolean {
+    if (user) return user.roleId === 1001;
+    let value = false;
+    this.store.select(selectIsRegularAdmin).pipe(take(1)).subscribe((v) => (value = v));
+    return value;
+  }
+
+  hasRole(roleId: number): boolean {
+    return this.getCurrentUser()?.roleId === roleId;
+  }
+
+  getUserRoleName(user?: ApplicationUser): string {
+    if (user) {
+      switch (user.roleId) {
+        case 1000: return 'administrator';
+        case 1001: return 'admin';
+        default:   return 'user';
+      }
     }
+    let name = 'user';
+    this.store.select(selectUserRoleName).pipe(take(1)).subscribe((v) => (name = v));
+    return name;
+  }
 
-    ngOnDestroy(): void {
-        this.destroy$.next();
-        this.destroy$.complete();
-        this.clearInactivityTimer();
-    }
+  getDefaultDashboard(): string {
+    return this.isAdmin() ? '/admin/dashboard' : '/user/dashboard';
+  }
 
-    private initializeAuthState(): void {
-        if (!this.isBrowser) {
-            this.authenticationState.next(false);
-            this.initialized.next(true);
-            return;
-        }
+  /**
+   * Kept for backward compatibility.
+   * Redirect logic is now handled by AuthEffects.redirectAfterLogin$.
+   */
+  redirectBasedOnRole(): void {
+    // No-op: effects handle redirect automatically after loginSuccess
+  }
 
-        // Use a small delay to ensure localStorage is checked properly
-        setTimeout(() => {
-            // Check authentication status
-            const isAuth = this.isAuthenticated();
-            this.authenticationState.next(isAuth);
-            this.initialized.next(true);
-
-            // Auto-redirect if authenticated and on login page
-            if (isAuth && this.isLoginPage()) {
-                this.redirectBasedOnRole();
-            }
-
-            if (isAuth) {
-                this.resetInactivityTimer();
-            }
-        }, 50); // Small delay to ensure DOM is ready
-    }
-
-    private isLoginPage(): boolean {
-        if (!this.isBrowser) return false;
-        return window.location.pathname.includes('/login');
-    }
-
-    public redirectBasedOnRole(): void {
-        const user = this.getCurrentUser();
-        if (!user) {
-            this.router.navigate(['/login']);
-            return;
-        }
-
-        // First, check if there's a stored redirect URL that's not a default route
-        if (this.redirectUrl &&
-            this.redirectUrl !== '/user/dashboard' &&
-            this.redirectUrl !== '/admin/dashboard' &&
-            this.redirectUrl !== '/app-user-dashboard') {
-            const redirectTo = this.redirectUrl;
-            this.clearRedirectUrl(); // Clear after use
-            this.router.navigateByUrl(redirectTo);
-            return;
-        }
-
-        // Otherwise, redirect based on role
-        const isAdmin = this.isAdmin(user);
-        const redirectRoute = isAdmin ? '/admin/dashboard' : '/user/dashboard';
-        this.clearRedirectUrl(); // Clear after use
-        this.router.navigate([redirectRoute]);
-    }
-
-    private setupInactivityMonitoring(): void {
-        if (!this.isBrowser) return;
-
-        const events = ['mousemove', 'keypress', 'scroll', 'click', 'touchstart'];
-        events.forEach(event => {
-            window.addEventListener(event, this.resetInactivityTimer.bind(this));
-        });
-
-        // Also monitor visibility change
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) {
-                this.resetInactivityTimer();
-            }
-        });
-    }
-
-    private resetInactivityTimer(): void {
-        this.clearInactivityTimer();
-        if (this.isAuthenticated()) {
-            this.inactivityTimer = setTimeout(
-                () => this.logout(),
-                this.INACTIVITY_TIMEOUT
-            );
-        }
-    }
-
-    private clearInactivityTimer(): void {
-        if (this.inactivityTimer) {
-            clearTimeout(this.inactivityTimer);
-            this.inactivityTimer = null;
-        }
-    }
-
-    isAuthenticated(): boolean {
-        if (!this.isBrowser) return false;
-        return !!this.getAccessToken() && !!this.getCurrentUser();
-    }
-
-    // Check if user has admin role (Administrator or Admin)
-    isAdmin(user?: ApplicationUser): boolean {
-        const currentUser = user || this.getCurrentUser();
-        if (!currentUser || !currentUser.roleId) return false;
-
-        // Check if roleId is Administrator (1000) or Admin (1001)
-        return currentUser.roleId === this.ROLE_IDS.ADMINISTRATOR ||
-            currentUser.roleId === this.ROLE_IDS.ADMIN;
-    }
-
-    // Check if user is Administrator specifically
-    isAdministrator(user?: ApplicationUser): boolean {
-        const currentUser = user || this.getCurrentUser();
-        if (!currentUser || !currentUser.roleId) return false;
-
-        return currentUser.roleId === this.ROLE_IDS.ADMINISTRATOR;
-    }
-
-    // Check if user is regular Admin (not Administrator)
-    isRegularAdmin(user?: ApplicationUser): boolean {
-        const currentUser = user || this.getCurrentUser();
-        if (!currentUser || !currentUser.roleId) return false;
-
-        return currentUser.roleId === this.ROLE_IDS.ADMIN;
-    }
-
-    // Check if user has specific role
-    hasRole(roleId: number): boolean {
-        const user = this.getCurrentUser();
-        return user?.roleId === roleId;
-    }
-
-    // Get user's role name
-    getUserRoleName(user?: ApplicationUser): string {
-        const currentUser = user || this.getCurrentUser();
-        if (!currentUser?.roleId) return 'user';
-
-        switch (currentUser.roleId) {
-            case this.ROLE_IDS.ADMINISTRATOR:
-                return 'administrator';
-            case this.ROLE_IDS.ADMIN:
-                return 'admin';
-            default:
-                return 'user';
-        }
-    }
-
-    // Updated localStorage methods with proper error handling
-    private getLocalStorageItem(key: string): string | null {
-        try {
-            return this.isBrowser ? localStorage.getItem(key) : null;
-        } catch {
-            return null;
-        }
-    }
-
-    private setLocalStorageItem(key: string, value: string): void {
-        try {
-            if (this.isBrowser) {
-                localStorage.setItem(key, value);
-            }
-        } catch (error) {
-            console.error('Error setting localStorage item:', error);
-        }
-    }
-
-    private removeLocalStorageItem(key: string): void {
-        try {
-            if (this.isBrowser) {
-                localStorage.removeItem(key);
-            }
-        } catch (error) {
-            console.error('Error removing localStorage item:', error);
-        }
-    }
-
-    // Authentication methods
-    authenticateUser(userAuthentication: UserAuthentication): Observable<AuthResponse> {
-        return this.apiService.send<AuthResponse>('POST', this.authEndpoint, userAuthentication);
-    }
-
-    generateUserClaims(authResponse: AuthResponse): Observable<ApplicationUser> {
-        return this.apiService.send<any>('POST', this.claimsEndpoint, authResponse).pipe(
-            map(data => {
-                return {
-                    id: data.id?.toString(), 
-                    fullName: `${data.first_name || ''} ${data.last_name || ''}`.trim(),
-                    firstName: data.first_name,
-                    lastName: data.last_name,
-                    email: data.email,
-                    phone: data.phone,
-                    roleId: data.role_id  // Map role_id to role_Id (number)
-                } as ApplicationUser;
-            }));
-    }
-
-    // Login process
-    login(userAuthentication: any): Observable<boolean> {
-        return new Observable<boolean>(observer => {
-            this.authenticateUser(userAuthentication).subscribe({
-                next: (authResponse) => {
-                    this.generateUserClaims(authResponse).subscribe({
-                        next: (user) => {
-                            this.storeUserSession(user, authResponse.jwt_token);
-                            observer.next(true);
-                            observer.complete();
-                        },
-                        error: (error) => {
-                            console.error('Error generating user claims:', error);
-                            observer.next(false);
-                            observer.complete();
-                        }
-                    });
-                },
-                error: (error) => {
-                    console.error('Authentication error:', error);
-                    observer.next(false);
-                    observer.complete();
-                }
-            });
-        });
-    }
-
-    storeUserSession(user: ApplicationUser, token: string): void {
-        this.setLocalStorageItem('ApplicationUser', JSON.stringify(user));
-        this.setLocalStorageItem('AccessToken', token);
-
-        this.authenticationState.next(true);
-        this.resetInactivityTimer();
-
-        // Redirect based on user role or stored redirect URL
-        this.redirectBasedOnRole();
-    }
-
-    logout(): void {
-        this.removeLocalStorageItem('ApplicationUser');
-        this.removeLocalStorageItem('AccessToken');
-        this.authenticationState.next(false);
-        this.clearInactivityTimer();
-        this.clearRedirectUrl();
-
-        // Navigate to login only if not already there
-        if (this.isBrowser && !this.router.url.includes('/login')) {
-            this.router.navigate(['/login']);
-        }
-    }
-
-    // Getters
-    getCurrentUser(): ApplicationUser | null {
-        try {
-            const user = this.getLocalStorageItem('ApplicationUser');
-            return user ? JSON.parse(user) : null;
-        } catch {
-            return null;
-        }
-    }
-
-    getAccessToken(): string | null {
-        return this.getLocalStorageItem('AccessToken');
-    }
-
-    // Helper method to clear redirect URL - set to null instead of a default
-    clearRedirectUrl(): void {
-        this.redirectUrl = null;
-    }
-
-    // Helper method to get the default dashboard based on role
-    getDefaultDashboard(): string {
-        const user = this.getCurrentUser();
-        if (!user) return '/login';
-
-        return this.isAdmin(user) ? '/admin/dashboard' : '/user/dashboard';
-    }
-
-    // New method to wait for initialization
-    waitForInitialization(): Observable<boolean> {
-        return this.initialized.asObservable().pipe(
-            filter(init => init === true),
-            take(1)
-        );
-    }
+  clearRedirectUrl(): void {
+    this.redirectUrl = null;
+  }
 }
