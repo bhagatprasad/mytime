@@ -8,11 +8,17 @@ import { SidebarService } from '../common/services/sidebar.service';
 import { AdminSidebarComponent } from './admin-sidebar.component';
 import { UserSidebarComponent } from './user-sidebar.component';
 import { selectUserContext } from '../common/store/auth.selectors';
+import { ProfileImageComponent } from './profile-image.component';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [AdminSidebarComponent, UserSidebarComponent, CommonModule],
+  imports: [
+    CommonModule,
+    AdminSidebarComponent,
+    UserSidebarComponent,
+    ProfileImageComponent, // ← added
+  ],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
 })
