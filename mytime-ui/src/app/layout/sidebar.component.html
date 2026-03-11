@@ -1,30 +1,36 @@
-<nav class="sidebar sidebar-offcanvas" id="sidebar">
-  
-  <div class="user-profile" *ngIf="userContext$ | async as ctx">
-    <div class="user-image">
-      <img src="assets/images/faces/face28.png" alt="User">
+<nav
+  class="sidebar sidebar-offcanvas"
+  id="sidebar"
+  [ngClass]="{
+    'mobile-visible':  isMobileScreen &&  isMobileMenuOpen,
+    'mobile-hidden':   isMobileScreen && !isMobileMenuOpen,
+    'desktop-visible': !isMobileScreen
+  }"
+>
+  <ng-container *ngIf="userContext$ | async as ctx">
+
+    <div class="user-profile">
+      <div class="user-image">
+        <img src="assets/images/faces/face28.png" alt="User" />
+      </div>
+      <div class="user-name">{{ ctx.user?.fullName }}</div>
+      <div class="user-designation">
+        {{ ctx.isAdmin ? 'Administrator' : 'User' }}
+      </div>
     </div>
 
-    <div class="user-name">
-      {{ ctx.user?.fullName }}
-    </div>
+    <!-- Admin sidebar -->
+    <app-admin-sidebar *ngIf="ctx.isAdmin"></app-admin-sidebar>
 
-    <div class="user-designation">
-      {{ ctx.isAdminUser ? 'Administrator' : 'User' }}
-    </div>
-  </div>
+    <!-- Regular user sidebar -->
+    <app-user-sidebar *ngIf="!ctx.isAdmin"></app-user-sidebar>
 
-  <!-- ADMIN SIDEBAR -->
-  <app-admin-sidebar
-    *ngIf="(userContext$ | async)?.isAdminUser">
-  </app-admin-sidebar>
-
-  <!-- USER SIDEBAR -->
-  <app-user-sidebar
-    *ngIf="!(userContext$ | async)?.isAdminUser">
-  </app-user-sidebar>
-
+  </ng-container>
 </nav>
 
-<!-- Mobile overlay (only shows on mobile when sidebar is open) -->
-<div class="sidebar-overlay" (click)="closeSidebarOnMobile()"></div>
+<!-- Mobile overlay — visible only when sidebar is open on mobile -->
+<div
+  class="sidebar-overlay"
+  [class.active]="isMobileScreen && isMobileMenuOpen"
+  (click)="closeSidebarOnMobile()"
+></div>
