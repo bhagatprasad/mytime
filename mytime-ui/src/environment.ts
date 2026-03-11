@@ -399,5 +399,17 @@ export const environment = {
       DeleteMonthlySalaryAsync: 'monthlysalary/deleteMonthlySalary',
       PublishMonthlySalaryAsync: 'monthlysalary/publish',
     },
+    UserProfileImage: {
+      FetchProfileImage: 'userprofileimage/fetchProfileImage',
+      FetchProfileImageByUser: 'userprofileimage/fetchProfileImageByUser',
+      FetchAllProfileImages: 'userprofileimage/fetchAllProfileImages',
+      GetProfileImagesWithPagination: 'userprofileimage/getProfileImagesWithPagination',
+      InsertOrUpdateProfileImage: 'userprofileimage/InsertOrUpdateProfileImage',
+      UploadProfileImage: 'userprofileimage/uploadProfileImage',
+      DeleteProfileImage: 'userprofileimage/DeleteProfileImage',
+      SoftDeleteProfileImage: 'userprofileimage/SoftDeleteProfileImage',
+      GetUserProfileImageUrl: 'userprofileimage/getUserProfileImageUrl',
+      CheckUserHasActiveImage: 'userprofileimage/checkUserHasActiveImage',
+    },
   },
 };

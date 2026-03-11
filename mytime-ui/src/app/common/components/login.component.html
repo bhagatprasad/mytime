@@ -7,6 +7,7 @@
     <h6 class="font-weight-light">Happy to see you again!</h6>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="pt-3" autocomplete="on">
+
         <!-- Username Field -->
         <div class="form-group">
             <label for="username">Username</label>
@@ -16,13 +17,15 @@
                         <i class="mdi mdi-account-outline text-primary"></i>
                     </span>
                 </div>
-                <input type="text" 
-                       class="form-control form-control-lg border-left-0" 
-                       id="username"
-                       formControlName="username" 
-                       placeholder="Username"
-                       autocomplete="username"
-                       [class.is-invalid]="hasError('username', 'required') || hasError('username', 'minlength')">
+                <input
+                    type="text"
+                    class="form-control form-control-lg border-left-0"
+                    id="username"
+                    formControlName="username"
+                    placeholder="Username"
+                    autocomplete="username"
+                    [class.is-invalid]="hasError('username', 'required') || hasError('username', 'minlength')"
+                />
             </div>
             <div *ngIf="hasError('username', 'required')" class="text-danger small mt-1">
                 Username is required
@@ -41,14 +44,16 @@
                         <i class="mdi mdi-lock-outline text-primary"></i>
                     </span>
                 </div>
-                <input type="password" 
-                       id="password" 
-                       class="form-control form-control-lg border-left-0"
-                       formControlName="password" 
-                       placeholder="Password" 
-                       autocomplete="current-password"
-                       appTogglePassword
-                       [class.is-invalid]="hasError('password', 'required') || hasError('password', 'minlength')">
+                <input
+                    type="password"
+                    id="password"
+                    class="form-control form-control-lg border-left-0"
+                    formControlName="password"
+                    placeholder="Password"
+                    autocomplete="current-password"
+                    appTogglePassword
+                    [class.is-invalid]="hasError('password', 'required') || hasError('password', 'minlength')"
+                />
             </div>
             <div *ngIf="hasError('password', 'required')" class="text-danger small mt-1">
                 Password is required
@@ -58,52 +63,29 @@
             </div>
         </div>
 
-        <!-- Remember Me & Forgot Password -->
-        <div class="my-3 d-flex justify-content-between align-items-center">
-            <div class="form-check">
-                <label class="form-check-label text-muted">
-                    <input type="checkbox" 
-                           class="form-check-input" 
-                           formControlName="rememberMe"
-                           id="rememberMe">
-                    Keep me signed in
-                </label>
-            </div>
+        <!-- Forgot Password -->
+        <div class="my-3 d-flex justify-content-end align-items-center">
             <a href="javascript:void(0)" class="auth-link text-black" (click)="onForgotPassword()">
                 Forgot password?
             </a>
         </div>
 
-        <!-- Error Message -->
-        <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
-            {{ errorMessage }}
+        <!-- Error from Store -->
+        <div *ngIf="error$ | async as error" class="alert alert-danger" role="alert">
+            {{ error }}
         </div>
 
-        <!-- Login Button -->
+        <!-- Login Button — disabled while API call is in-flight -->
         <div class="my-3">
-            <button type="submit" 
-                    class="btn btn-block btn-info btn-lg font-weight-medium auth-form-btn"
-                    [disabled]="loginForm.invalid">
-                LOGIN
+            <button
+                type="submit"
+                class="btn btn-block btn-info btn-lg font-weight-medium auth-form-btn"
+                [disabled]="loginForm.invalid || (loading$ | async)"
+            >
+                <span *ngIf="loading$ | async" class="spinner-border spinner-border-sm mr-2" role="status"></span>
+                {{ (loading$ | async) ? 'Signing in...' : 'LOGIN' }}
             </button>
         </div>
 
-        <!-- Social Login (Optional) -->
-        <div class="mb-2 d-flex">
-            <button type="button" 
-                    class="btn btn-facebook auth-form-btn flex-grow mr-1" 
-                    (click)="onSocialLogin('facebook')"
-                    [disabled]="loginForm.invalid">
-                <i class="mdi mdi-facebook mr-2"></i>
-                Facebook
-            </button>
-            <button type="button" 
-                    class="btn btn-google auth-form-btn flex-grow ml-1" 
-                    (click)="onSocialLogin('google')"
-                    [disabled]="loginForm.invalid">
-                <i class="mdi mdi-google mr-2"></i>
-                Google
-            </button>
-        </div>
     </form>
 </div>
