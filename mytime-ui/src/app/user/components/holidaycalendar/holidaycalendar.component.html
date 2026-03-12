@@ -16,7 +16,9 @@
 
     </div>
 
-    <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+    <div class="calendar-wrapper">
+        <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+    </div>
 
     <div class="popup-overlay" *ngIf="showPopup">
 

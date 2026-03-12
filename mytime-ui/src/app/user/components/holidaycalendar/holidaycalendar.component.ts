@@ -51,7 +51,7 @@ export class HolidaycalendarComponent implements OnInit {
       multiMonthYear: {
         type: 'multiMonth',
         duration: { years: 1 },
-        buttonText: 'Year'
+        buttonText: 'Year',
       }
     },
   };

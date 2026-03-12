@@ -25225,3 +25225,115 @@ dl li {
     width: 100%;
   }
 }
+
+
+
+/* Full width container */
+.calendar-container{
+  width:100%;
+  padding:10px;
+  box-sizing:border-box;
+}
+
+/* Calendar scroll box */
+.calendar-wrapper{
+  height:70vh;
+  overflow-y:auto;
+  border:1px solid #eee;
+  border-radius:10px;
+}
+
+/* Sticky toolbar */
+.fc-header-toolbar{
+  position:sticky;
+  top:0;
+  background:#fff;
+  z-index:10;
+  padding:6px 0;
+}
+
+/* Title */
+.fc-toolbar-title{
+  font-size:16px !important;
+  font-weight:600;
+  color:#222;
+}
+
+/* Remove default button styles */
+.fc-button{
+  background:transparent !important;
+  border:none !important;
+  box-shadow:none !important;
+  color:#333 !important;
+}
+
+/* Prev Next buttons */
+.fc-prev-button,
+.fc-next-button{
+  font-size:18px !important;
+  border-radius:50%;
+  padding:5px !important;
+}
+
+/* Hover circle */
+.fc-prev-button:hover,
+.fc-next-button:hover{
+  background:#f1f5f9 !important;
+}
+
+/* Today button */
+.fc-today-button{
+  background:#2563eb !important;
+  color:#fff !important;
+  border-radius:18px !important;
+  font-size:12px !important;
+  padding:4px 12px !important;
+}
+
+/* Remove today background box */
+.fc-day-today{
+  background:transparent !important;
+}
+
+/* Today blue circle */
+.fc-day-today .fc-daygrid-day-number{
+  background:#2563eb;
+  color: #ffffff !important;
+  width:22px;
+  height:22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+}
+
+/* Dates */
+.fc-daygrid-day-number{
+  color:#000 !important;
+  font-weight:500;
+}
+
+/* Week names */
+.fc-col-header-cell-cushion{
+  color:#000 !important;
+  font-weight:600;
+}
+
+/* Year view smaller */
+.fc-multimonth{
+  font-size:12px;
+}
+
+.fc-multimonth .fc-daygrid-day{
+  min-height:28px;
+}
+
+/* Scrollbar */
+.calendar-wrapper::-webkit-scrollbar{
+  width:6px;
+}
+
+.calendar-wrapper::-webkit-scrollbar-thumb{
+  background:#cbd5e1;
+  border-radius:10px;
+}
