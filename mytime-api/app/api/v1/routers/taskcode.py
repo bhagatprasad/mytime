@@ -2,19 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 
-from app.schemas.taskcode_schemas import (
-    TaskcodeResponse,
-    TaskcodeDeleteResponse,
-    TaskcodeCreate
-)
-
+from app.schemas.taskcode_schemas import TaskcodeResponse, TaskcodeDeleteResponse
 from app.core.database import get_db
 from app.services.taskcode_service import TaskcodeService
 
 router = APIRouter()
 
-
-# Fetch single taskcode
 @router.get("/fetchtaskcode/{taskcode_id}", response_model=TaskcodeResponse)
 async def fetch_taskcode(taskcode_id: int, db: Session = Depends(get_db)):
     try:
@@ -34,9 +27,6 @@ async def fetch_taskcode(taskcode_id: int, db: Session = Depends(get_db)):
             detail=f"Error fetching TaskCode: {str(e)}"
         )
 
-
-# Fetch all
-
 @router.get("/fetchAllTaskcodes", response_model=List[TaskcodeResponse])
 async def fetch_all_taskcodes(db: Session = Depends(get_db)):
     try:
@@ -50,15 +40,23 @@ async def fetch_all_taskcodes(db: Session = Depends(get_db)):
 
 @router.post("/InsertOrUpdateTaskcode")
 async def insert_or_update_taskcode(
-    taskcode: TaskcodeResponse,
+    taskcode: dict,
     db: Session = Depends(get_db)
 ):
-    response = TaskcodeService.insert_or_update_taskcode(
-        db, taskcode.dict()
-    )
-    return response
+    try:
+        response = TaskcodeService.insert_or_update_taskcode(db, taskcode)
+        if not response["success"]:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=response["message"]
+            )
+        return response
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error saving taskcode: {str(e)}"
+        )
 
-# Delete
 @router.delete("/DeleteTaskcode/{taskcode_id}", response_model=TaskcodeDeleteResponse)
 async def delete_taskcode(taskcode_id: int, db: Session = Depends(get_db)):
     try:
