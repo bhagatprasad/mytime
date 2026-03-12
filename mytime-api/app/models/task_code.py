@@ -11,7 +11,7 @@ class TaskCode(Base):
 
     TaskCodeId = Column(BigInteger, primary_key=True, index=True)
 
-    TaskItemId = Column(BigInteger, ForeignKey("TaskItem.TaskItemId"))
+    TaskItemId = Column(BigInteger, nullable=False)
     Name = Column(Text, nullable=False)
 
     Code = Column(Text, nullable=False)
@@ -23,5 +23,3 @@ class TaskCode(Base):
     # ProjectId = Column(BigInteger, nullable=True)
 
     IsActive = Column(Boolean, default=True)
-
-    task_item = relationship("TaskItem", back_populates="task_codes")
