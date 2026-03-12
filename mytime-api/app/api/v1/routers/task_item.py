@@ -60,7 +60,7 @@ async def insert_or_update_task_item(TaskItem: dict, db: Session = Depends(get_d
             detail=f"Error saving designation: {str(e)}"
         )
     
-@router.delete("/DeleteTaskItem/{taskitem_id)}", response_model=TaskItemDeleteResponse)
+@router.delete("/DeleteTaskItem/{taskitem_id}", response_model=TaskItemDeleteResponse)
 async def delete_taskitem(taskitem_id: int, db: Session = Depends(get_db)):
     """Delete TaskItem"""
     try:
