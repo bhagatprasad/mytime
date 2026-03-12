@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func, or_, asc, desc
 from typing import Optional, List, Tuple, Dict, Any
 
-from app.models.task_item import TaskItem
+from app.models.task_Item import TaskItem
 from app.schemas.task_item_schemas import TaskItemCreate, TaskItemUpdate
 
 class TaskItemService:
