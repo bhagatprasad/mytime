@@ -37,6 +37,20 @@ export const routes: Routes = [
         redirectTo: 'dashboard',
         pathMatch: 'full',
       },
+      {
+        path: 'holidaycalendar',
+        loadComponent: () =>
+          import('./user/components/holidaycalendar/holidaycalendar.component').then(
+            (m) => m.HolidaycalendarComponent,
+          ),
+      },
+      {
+        path: 'payslips',
+        loadComponent: () =>
+          import('./user/components/payslips/payslips.component').then(
+            (m) => m.PayslipsComponent,
+          ),
+      },
     ],
   },
 
