@@ -3,13 +3,17 @@ import { UserGuard } from './common/gurds/user.guard';
 import { AdminGuard } from './common/gurds/admin.guard';
 
 export const routes: Routes = [
+  // Public — no guard
   {
     path: 'login',
     loadComponent: () =>
       import('./common/components/login.component').then(
-        (m) => m.LoginComponent,
+        (m) => m.LoginComponent
       ),
   },
+
+  // User routes — protected by UserGuard
+  // UserGuard: must be authenticated AND not an admin
   {
     path: 'user',
     canActivate: [UserGuard],
@@ -18,7 +22,14 @@ export const routes: Routes = [
         path: 'dashboard',
         loadComponent: () =>
           import('./dashbaord/user-dashbaord.component').then(
-            (m) => m.UserDashbaordComponent,
+            (m) => m.UserDashbaordComponent
+          ),
+      },
+      {
+        path: 'payslips',
+        loadComponent: () =>
+          import('./user/components/payslips/payslips.component').then(
+            (m) => m.PayslipsComponent
           ),
       },
       {
@@ -42,79 +53,81 @@ export const routes: Routes = [
       },
     ],
   },
+
+  // Admin routes — protected by AdminGuard
+  // AdminGuard: must be authenticated AND have roleId 1000 or 1001
   {
     path: 'admin',
     canActivate: [AdminGuard],
     children: [
       {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./dashbaord/admin-dashbaord.component').then(
+            (m) => m.AdminDashbaordComponent
+          ),
+      },
+      {
         path: 'cities',
         loadComponent: () =>
           import('./admin/components/core/city/city-list.component').then(
-            (m) => m.CityListComponent,
+            (m) => m.CityListComponent
           ),
       },
       {
         path: 'countries',
         loadComponent: () =>
           import('./admin/components/core/country/country-list.component').then(
-            (m) => m.CountryListComponent,
-          ),
-      },
-      {
-        path: 'dashboard',
-        loadComponent: () =>
-          import('./dashbaord/admin-dashbaord.component').then(
-            (m) => m.AdminDashbaordComponent,
+            (m) => m.CountryListComponent
           ),
       },
       {
         path: 'departments',
         loadComponent: () =>
           import('./admin/components/core/department/department-list.component').then(
-            (m) => m.DepartmentListComponent,
+            (m) => m.DepartmentListComponent
           ),
       },
       {
         path: 'designations',
         loadComponent: () =>
           import('./admin/components/core/designation/designation-list.component').then(
-            (m) => m.DesignationListComponent,
+            (m) => m.DesignationListComponent
           ),
       },
       {
         path: 'documenttypes',
         loadComponent: () =>
           import('./admin/components/core/documenttype/documenttype-list.component').then(
-            (m) => m.DocumenttypeListComponent,
+            (m) => m.DocumenttypeListComponent
           ),
       },
       {
         path: 'holydaycallenders',
         loadComponent: () =>
           import('./admin/components/core/holydaycallender/holydaycallender-list.component').then(
-            (m) => m.HolydaycallenderListComponent,
+            (m) => m.HolydaycallenderListComponent
           ),
       },
       {
         path: 'roles',
         loadComponent: () =>
           import('./admin/components/core/role/role.component').then(
-            (m) => m.RoleComponent,
+            (m) => m.RoleComponent
           ),
       },
-
       {
         path: 'states',
         loadComponent: () =>
           import('./admin/components/core/state/state-list.component').then(
-            (m) => m.StateListComponent,
+            (m) => m.StateListComponent
           ),
       },
       {
         path: 'users',
         loadComponent: () =>
           import('./admin/components/user/user-list.component').then(
-            (m) => m.UserListComponent,
+            (m) => m.UserListComponent
           ),
       },
       {
@@ -124,14 +137,14 @@ export const routes: Routes = [
             path: '',
             loadComponent: () =>
               import('./admin/components/employees/employee/employees-list.component').then(
-                (m) => m.EmployeesListComponent,
+                (m) => m.EmployeesListComponent
               ),
           },
           {
             path: ':employeeId',
             loadComponent: () =>
               import('./admin/components/employees/employee/employees-details.component').then(
-                (m) => m.EmployeesDetailsComponent,
+                (m) => m.EmployeesDetailsComponent
               ),
           },
         ],
@@ -140,28 +153,28 @@ export const routes: Routes = [
         path: 'salary',
         loadComponent: () =>
           import('./admin/components/salary/salary-list.component').then(
-            (m) => m.SalaryListComponent,
+            (m) => m.SalaryListComponent
           ),
       },
       {
         path: 'project',
         loadComponent: () =>
           import('./admin/components/project/project-list.component').then(
-            (m) => m.ProjectListComponent,
+            (m) => m.ProjectListComponent
           ),
       },
       {
         path: 'salary-structure',
         loadComponent: () =>
           import('./admin/components/salary/salary-structure-list.component').then(
-            (m) => m.SalaryStructureListComponent,
+            (m) => m.SalaryStructureListComponent
           ),
       },
       {
         path: 'monthly-salary',
         loadComponent: () =>
           import('./admin/components/salary/monthly-salary-list.component').then(
-            (m) => m.MonthlySalaryListComponent,
+            (m) => m.MonthlySalaryListComponent
           ),
       },
       {
@@ -171,13 +184,8 @@ export const routes: Routes = [
       },
     ],
   },
-  {
-    path: '',
-    redirectTo: 'login',
-    pathMatch: 'full',
-  },
-  {
-    path: '**',
-    redirectTo: 'login',
-  },
+
+  // Fallbacks
+  { path: '',   redirectTo: 'login', pathMatch: 'full' },
+  { path: '**', redirectTo: 'login' },
 ];

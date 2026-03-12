@@ -15,4 +15,8 @@ export class SidebarService {
   closeMobileMenu(): void {
     this.isMobileMenuOpenSubject.next(false);
   }
+
+  openMobileMenu(): void {
+    this.isMobileMenuOpenSubject.next(true);
+  }
 }

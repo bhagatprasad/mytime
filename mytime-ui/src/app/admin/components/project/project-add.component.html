@@ -1,1 +1,72 @@
-<p>project-add works!</p>
+<!-- Overlay -->
+<div class="sidebar-overlay" *ngIf="isVisible" (click)="close()"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" [class.visible]="isVisible">
+  <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
+    <div class="sidebar-header">
+      <h5 class="sidebar-title">
+        {{
+          project?.ProjectId ? "Edit Project_Details" : "Add Project_Details"
+        }}
+      </h5>
+      <button type="button" class="close" (click)="close()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="sidebar-body">
+      <div class="form-group">
+        <label for="Name">Project Name</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <i class="mdi mdi-account-circle-outline"></i>
+            </span>
+          </div>
+          <input
+            type="text"
+            class="form-control"
+            id="Name"
+            formControlName="Name"
+            placeholder="Enter project name"
+          />
+        </div>
+        <!-- Validation messages for Name field -->
+        <div
+          *ngIf="
+            projectForm.get('Name')?.invalid && projectForm.get('Name')?.touched
+          "
+          class="text-danger small mt-1"
+        >
+          <span *ngIf="projectForm.get('Name')?.errors?.['required']">
+            Project name is required
+          </span>
+          <span *ngIf="projectForm.get('Name')?.errors?.['maxlength']">
+            Project name cannot exceed
+            {{ projectForm.get("Name")?.errors?.["maxlength"]?.requiredLength }}
+            characters
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="projectForm.invalid || projectForm.pristine"
+      >
+        <i
+          class="mdi"
+          [class.mdi-content-save]="!project?.ProjectId"
+          [class.mdi-pencil]="project?.ProjectId"
+        ></i>
+        {{ project?.ProjectId ? "Update" : "Save" }}
+      </button>
+      <button type="button" class="btn btn-secondary ml-2" (click)="close()">
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,32 +1,53 @@
-// guards/user.guard.ts
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { AccountService } from '../services/account.service';
+import { Store } from '@ngrx/store';
+import { take, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+import { AccountService } from '../services/account.service';
+import { selectIsAuthenticated } from '../store/auth.selectors';
+
+/**
+ * Protects /user/** routes.
+ *
+ * Rules:
+ *  - Not authenticated  → save attempted URL → redirect to /login
+ *  - Authenticated + regular user (roleId 1002) → allow ✅
+ *  - Authenticated + admin (roleId 1000 or 1001) → redirect to /admin/dashboard
+ *
+ * Reads state from NgRx Store — never touches storage.
+ */
+@Injectable({ providedIn: 'root' })
 export class UserGuard implements CanActivate {
+
   constructor(
-    private accountService: AccountService,
-    private router: Router
+    private readonly store:          Store,
+    private readonly router:         Router,
+    private readonly accountService: AccountService,
   ) {}
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    // Check if user is authenticated
-    if (!this.accountService.isAuthenticated()) {
-      this.accountService.redirectUrl = state.url;
-      this.router.navigate(['/login']);
-      return false;
-    }
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Observable<boolean> {
+    return this.store.select(selectIsAuthenticated).pipe(
+      take(1),
+      map((isAuthenticated) => {
+        if (!isAuthenticated) {
+          // Save the attempted URL so we can redirect back after login
+          this.accountService.redirectUrl = state.url;
+          this.router.navigate(['/login']);
+          return false;
+        }
 
-    // Check if user is NOT admin (regular user)
-    if (!this.accountService.isAdmin()) {
-      return true; // Allow regular users
-    }
+        // Admins should not access user routes — redirect to admin dashboard
+        if (this.accountService.isAdmin()) {
+          this.router.navigate(['/admin/dashboard']);
+          return false;
+        }
 
-    // Admins should be redirected to admin dashboard
-    this.router.navigate(['/app-admin-dashboard']);
-    return false;
+        return true;
+      })
+    );
   }
 }

@@ -93,21 +93,21 @@
                 </small>
               </div>
             </div>
-            <!-- <app-create-documenttype
+            <app-project-add
               [isVisible]="showSidebar"
-              [documenttype]="selecteDocumentType"
+              [project]="selectedProject"
               (closeSidebar)="onCloseSidebar()"
-              (saveDocumentType)="onSaveDocumentType($event)"
-            ></app-create-documenttype>
+              (saveProject)="onSaveProject($event)"
+            ></app-project-add>
 
             <app-delete-confirmation
               *ngIf="showDeletePopup"
-              title="Delete DocumentType"
-              message="Do you really want to delete this DocumentType?"
-              (confirm)="ddeletedocumenttype()"
+              title="Delete Project"
+              message="Do you really want to delete this Project?"
+              (confirm)="deleteproject()"
               (cancel)="closePopup()"
             >
-            </app-delete-confirmation> -->
+            </app-delete-confirmation>
           </div>
         </div>
       </div>

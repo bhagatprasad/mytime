@@ -17,13 +17,24 @@ import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from '../../../common/services/loader.service';
 import { AuditFieldsService } from '../../../common/services/auditfields.service';
 import { FormsModule } from '@angular/forms';
+import { ActionsRendererComponent } from '../../../common/components/actions-renderer.component';
+import { MobileActionsRendererComponent } from '../../../common/components/mobile-actions-renderer.component';
+import { ProjectAddComponent } from './project-add.component';
+import { DeleteConfirmationComponent } from '../../../common/components/delete.compunent';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-project-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, DatePipe, FormsModule],
+  imports: [
+    CommonModule,
+    AgGridAngular,
+    DatePipe,
+    FormsModule,
+    ProjectAddComponent,
+    DeleteConfirmationComponent,
+  ],
   templateUrl: './project-list.component.html',
   styleUrl: './project-list.component.css',
 })
@@ -37,9 +48,12 @@ export class ProjectListComponent implements OnInit, OnDestroy {
   // Responsive state
   isMobile: boolean = false;
 
-  // showDeletePopup = false;
+  showSidebar: boolean = false;
+  selectedProject: Project | null = null;
 
-  // selectedDeleteItem: Project | null = null;
+  showDeletePopup = false;
+
+  selectedDeleteItem: Project | null = null;
 
   constructor(
     private projectservice: ProjectService,
@@ -188,41 +202,41 @@ export class ProjectListComponent implements OnInit, OnDestroy {
       cellRenderer: this.statusRenderer.bind(this),
       cellClass: this.statusCellClass.bind(this),
     },
-    // {
-    //   field: 'Actions',
-    //   headerName: 'Actions',
-    //   width: 150,
-    //   sortable: false,
-    //   filter: false,
-    //   cellRenderer: ActionsRendererComponent,
-    //   cellRendererParams: {
-    //     onEditClick: (data: any) => this.requestRoleProcess(data),
-    //     onDeleteClick: (data: any) => this.deleteRole(data),
-    //   },
-    //   cellClass: 'text-center',
-    // },
+    {
+      field: 'Actions',
+      headerName: 'Actions',
+      width: 150,
+      sortable: false,
+      filter: false,
+      cellRenderer: ActionsRendererComponent,
+      cellRendererParams: {
+        onEditClick: (data: any) => this.requestProjectProcess(data),
+        onDeleteClick: (data: any) => this.deleteProject(data),
+      },
+      cellClass: 'text-left',
+    },
   ];
 
   mobileColumnDefs: ColDef[] = [
     {
       field: 'Name',
-      headerName: 'Pro_Name',
+      headerName: 'Project Name',
       width: 180,
       cellRenderer: this.mobileNameRenderer.bind(this),
     },
 
-    // {
-    //   field: 'Actions',
-    //   headerName: '',
-    //   width: 80,
-    //   sortable: false,
-    //   filter: false,
-    //   cellRenderer: MobileActionsRendererComponent,
-    //   cellRendererParams: {
-    //     onEditClick: (data: any) => this.requestRoleProcess(data),
-    //   },
-    //   cellClass: 'text-center',
-    // },
+    {
+      field: 'Actions',
+      headerName: 'Actions',
+      width: 80,
+      sortable: false,
+      filter: false,
+      cellRenderer: MobileActionsRendererComponent,
+      cellRendererParams: {
+        onEditClick: (data: any) => this.requestProjectProcess(data),
+      },
+      cellClass: 'text-left',
+    },
   ];
 
   columnDefs: ColDef[] = [];
@@ -239,7 +253,7 @@ export class ProjectListComponent implements OnInit, OnDestroy {
   gridOptions: GridOptions = {
     pagination: true,
     paginationPageSize: 10,
-    paginationPageSizeSelector: [10, 20, 30, 40, 100],
+    paginationPageSizeSelector: [20, 40, 60, 100],
     rowSelection: 'single',
     animateRows: true,
     enableCellTextSelection: true,
@@ -308,5 +322,77 @@ export class ProjectListComponent implements OnInit, OnDestroy {
   getInactiveProjectsCount(): number {
     return this.projectDetails.filter((project) => !project.IsActive).length;
   }
-  openAddEditProject() {}
+  openAddEditProject() {
+    this.showSidebar = true;
+    this.selectedProject = null;
+  }
+
+  requestProjectProcess(project: Project): void {
+    this.selectedProject = project;
+    this.showSidebar = true;
+  }
+
+  deleteProject(project: Project): void {
+    this.selectedDeleteItem = project;
+    this.showDeletePopup = true;
+    console.log(JSON.stringify(project));
+  }
+  onSaveProject(project: Project): void {
+    this.loader.show();
+    var _project = this.audit.appendAuditFields(project);
+    console.log('we have received project data ' + JSON.stringify(project));
+    this.projectservice.saveProjectAsync(_project).subscribe(
+      (response) => {
+        if (response) {
+          this.toaster.success('Project processed succeessfully');
+          this.showSidebar = false;
+          this.loader.hide();
+          this.refreshData();
+        }
+      },
+      (error) => {
+        this.toaster.error('something went wrong , please check and resubmit');
+        this.showSidebar = true;
+        this.loader.hide();
+      },
+    );
+  }
+
+  onCloseSidebar(): void {
+    this.showSidebar = false;
+  }
+  refreshData(): void {
+    this.loadProjectDetails();
+  }
+
+  deleteproject() {
+    if (!this.selectedDeleteItem) {
+      console.error('No item selected for delete');
+      return;
+    }
+
+    this.projectservice
+      .deleteProjectAsync(this.selectedDeleteItem.ProjectId)
+      .subscribe({
+        next: (res) => {
+          console.log('Delete success:', res);
+
+          this.refreshData(); // reload grid data
+          this.showDeletePopup = false;
+          this.selectedDeleteItem = null;
+        },
+        error: (err) => {
+          console.error('Delete failed:', err);
+          // keep popup open OR close — your choice
+          this.showDeletePopup = false;
+        },
+        complete: () => {
+          alert('Delete request completed');
+        },
+      });
+  }
+  closePopup(): void {
+    this.showDeletePopup = false;
+    this.selectedDeleteItem = null;
+  }
 }
