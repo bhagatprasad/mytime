@@ -10,9 +10,9 @@ class TaskItem(Base):
     CreatedBy = Column(BigInteger, nullable=True)
     CreatedOn = Column(DateTime(timezone=True), nullable=True)
     ModifiedBy = Column(BigInteger, nullable=True)
-    ModifiedOn = Column(DateTime(timezone=True), nullable=True)
-    IsActive = Column(Boolean, nullable=True)
-    ProjectId = Column(BigInteger, nullable=True)
+    ModifiedOn = Column(DateTime,   nullable=True)
+    IsActive = Column(Boolean, default=True)
+    ProjectId = Column(BigInteger, nullable=True)  
 
     def __repr__(self):
         return f"<TaskItem(TaskItemId={self.TaskItemId}, Name='{self.Name}', Code='{self.Code}')>"
