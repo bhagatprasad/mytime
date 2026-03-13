@@ -33,6 +33,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'ytdreports',
+        loadComponent: () =>
+          import('./user/components/ytdreports/ytdreports.component').then(
+            (m) => m.YtdreportsComponent
+          ),
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',
