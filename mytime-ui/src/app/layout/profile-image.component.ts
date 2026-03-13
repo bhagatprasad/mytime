@@ -10,9 +10,8 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil, tap } from 'rxjs/operators';
-
+import { Observable, Subject, combineLatest } from 'rxjs';
+import { takeUntil, distinctUntilChanged, map } from 'rxjs/operators';
 import {
   selectProfileImageUrl,
   selectProfileImageUploading,
@@ -31,41 +30,35 @@ import * as ProfileImageActions from '../common/store/profile-image/profile-imag
       <div
         class="profile-image-container"
         [class.clickable]="clickable"
-        [class.is-uploading]="uploading$ | async"
+        [class.uploading]="uploading$ | async"
         (click)="onContainerClick()"
-        [title]="clickable ? 'Click to change profile photo' : ''"
+        [attr.title]="clickable ? 'Click to change profile photo' : null"
       >
-        <!-- Profile image -->
         <img
-          [src]="imageUrl$ | async"
+          [src]="(imageUrl$ | async) || defaultImage"
           [alt]="altText"
           class="profile-image"
           [ngClass]="size"
-          (error)="onImageError($event)"
+          (error)="onImageError()"
         />
 
-        <!-- Spinner shown while uploading -->
         <div class="upload-overlay" *ngIf="uploading$ | async">
           <div class="spinner"></div>
         </div>
 
-        <!-- Camera icon shown on hover when idle and clickable -->
-        <div class="camera-overlay" *ngIf="clickable && !(uploading$ | async)">
-          <i class="mdi mdi-camera"></i>
-          <span>Change</span>
+        <div class="camera-overlay" *ngIf="showCamera$ | async">
+          <span class="camera-icon">📷</span>
+          <span class="camera-text">Change</span>
         </div>
 
-        <!-- Hidden file input -->
         <input
           #fileInput
           type="file"
           accept="image/jpeg,image/png,image/webp,image/gif"
-          style="display:none"
           (change)="onFileSelected($event)"
         />
       </div>
 
-      <!-- Upload error message -->
       <div *ngIf="error$ | async as err" class="upload-error">
         {{ err }}
       </div>
@@ -80,6 +73,8 @@ export class ProfileImageComponent implements OnInit, OnDestroy {
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
+  defaultImage = 'assets/images/faces/face28.png';
+  
   readonly imageUrl$: Observable<string> = this.store.select(
     selectProfileImageUrl
   );
@@ -90,20 +85,42 @@ export class ProfileImageComponent implements OnInit, OnDestroy {
     selectProfileImageError
   );
 
+  readonly showCamera$: Observable<boolean>;
+
   private currentUserId: number | null = null;
   private readonly destroy$ = new Subject<void>();
 
   constructor(
     private readonly store: Store,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) {
+    this.showCamera$ = combineLatest([
+      this.uploading$,
+      this.store.select(selectCurrentUser).pipe(map(user => !!user))
+    ]).pipe(
+      map(([uploading, isLoggedIn]) => 
+        this.clickable && !uploading && isLoggedIn
+      )
+    );
+  }
 
   ngOnInit(): void {
     this.store
       .select(selectCurrentUser)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        distinctUntilChanged((prev, curr) => prev?.id === curr?.id)
+      )
       .subscribe((user) => {
-        this.currentUserId = user ? Number(user.id) : null;
+        const userId = user ? Number(user.id) : null;
+        if (userId && this.currentUserId !== userId) {
+          setTimeout(() => {
+            this.store.dispatch(
+              ProfileImageActions.loadProfileImage({ userId })
+            );
+          }, 100);
+        }
+        this.currentUserId = userId;
         this.cdr.markForCheck();
       });
   }
@@ -124,19 +141,18 @@ export class ProfileImageComponent implements OnInit, OnDestroy {
     const file = input.files?.[0];
 
     if (!file) return;
+    
     if (!this.currentUserId) {
       alert('You must be logged in to upload a profile image');
       return;
     }
 
-    // Validate file type
     const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
     if (!validTypes.includes(file.type)) {
       alert('Please select a valid image file (JPEG, PNG, WEBP, or GIF)');
       return;
     }
 
-    // Validate file size (5MB max)
     if (file.size > 5 * 1024 * 1024) {
       alert('Image must be smaller than 5MB');
       return;
@@ -152,8 +168,8 @@ export class ProfileImageComponent implements OnInit, OnDestroy {
     input.value = '';
   }
 
-  onImageError(event: Event): void {
-    (event.target as HTMLImageElement).src = 'assets/images/faces/face28.png';
+  onImageError(): void {
+    console.log('Image failed to load, using default');
   }
 
   private get uploading(): boolean {
