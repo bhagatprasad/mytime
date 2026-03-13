@@ -185,6 +185,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'taskcode',
+        loadComponent: () =>
+          import('./admin/components/time/taskcode/taskcode.component').then(
+            (m) => m.TaskcodeComponent
+          ),
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',

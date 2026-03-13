@@ -25,6 +25,13 @@ export const environment = {
       DeleteRoleAsync: 'roles/DeleteRole',
     },
 
+    Taskcode: {
+      GetTaskcodeListAsync: 'taskcode/fetchAllTaskcodes',
+      GetTaskcodeAsync: 'taskcode/fetchtaskcode',
+      InsertOrUpdateTaskcodeAsync: 'taskcode/InsertOrUpdateTaskcode',
+      DeleteTaskcodeAsync: 'taskcode/DeleteTaskcode',
+    },
+
     // Project endpoints
     Project: {
       GetProjectAsync: 'project/fetchproject',
