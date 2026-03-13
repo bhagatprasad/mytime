@@ -19,17 +19,6 @@ export const initialProfileImageState: ProfileImageState = {
   error: null,
 };
 
-export function resolveImageUrl(record: any): string {
-  if (!record?.FileInfo) return DEFAULT_PROFILE_IMAGE;
-  
-  try {
-    const fileInfo = JSON.parse(record.FileInfo);
-    return fileInfo.downloadUrl || DEFAULT_PROFILE_IMAGE;
-  } catch {
-    return DEFAULT_PROFILE_IMAGE;
-  }
-}
-
 export const profileImageReducer = createReducer(
   initialProfileImageState,
 
@@ -42,7 +31,6 @@ export const profileImageReducer = createReducer(
   on(A.loadProfileImageSuccess, (state, { record }) => ({
     ...state,
     record,
-    imageUrl: resolveImageUrl(record),
     loading: false,
     error: null,
   })),
@@ -63,16 +51,29 @@ export const profileImageReducer = createReducer(
     error,
   })),
 
+  on(A.loadProfileImageUrlSuccess, (state, { imageUrl }) => ({
+    ...state,
+    imageUrl,
+    loading: false,
+    error: null,
+  })),
+
+  on(A.loadProfileImageUrlFailure, (state, { error }) => ({
+    ...state,
+    imageUrl: DEFAULT_PROFILE_IMAGE,
+    loading: false,
+    error,
+  })),
+
   on(A.uploadProfileImage, (state) => ({
     ...state,
     uploading: true,
     error: null,
   })),
 
-  // Don't update imageUrl here - wait for database save
   on(A.uploadProfileImageSuccess, (state) => ({
     ...state,
-    uploading: true, // Keep uploading true until database save completes
+    uploading: true,
     error: null,
   })),
 

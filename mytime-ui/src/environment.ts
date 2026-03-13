@@ -381,7 +381,7 @@ export const environment = {
     },
     BackblazeUpload: {
       UploadEmployeeDocument: 'backblaze/upload',
-      GetDownloadUrl: 'backblaze/downloadurl',
+      GetDownloadUrl: 'backblaze/download-url',
       DeleteFile: 'backblaze/delete',
       GetFileInfo: 'backblaze/info',
     },

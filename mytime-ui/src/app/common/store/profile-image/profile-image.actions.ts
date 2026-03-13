@@ -21,12 +21,21 @@ export const loadProfileImageFailure = createAction(
   props<{ error: string }>()
 );
 
+export const loadProfileImageUrlSuccess = createAction(
+  '[Profile Image] URL Success',
+  props<{ imageUrl: string }>()
+);
+
+export const loadProfileImageUrlFailure = createAction(
+  '[Profile Image] URL Failure',
+  props<{ error: string }>()
+);
+
 export const uploadProfileImage = createAction(
   '[Profile Image] Upload',
   props<{ file: File; userId: number }>()
 );
 
-// Updated to use the upload response directly
 export const uploadProfileImageSuccess = createAction(
   '[Profile Image] Upload Success',
   props<{ 
@@ -42,5 +51,3 @@ export const uploadProfileImageFailure = createAction(
 );
 
 export const clearProfileImage = createAction('[Profile Image] Clear');
-
-export { UploadResponse };
