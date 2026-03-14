@@ -39,6 +39,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private readonly router:  Router,
     private readonly toaster: NotifyService,
     public  readonly loaderService: LoaderService,
+    private accountService: AccountService
   ) {
     this.loginForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
@@ -47,13 +48,12 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.store.select(selectIsAuthenticated).pipe(
-      filter((isAuth) => isAuth),
-      takeUntil(this.destroy$)
-    ).subscribe(() => {
-      const accountService = inject(AccountService);
-      this.router.navigate([accountService.getDefaultDashboard()]);
-    });
+   this.store.select(selectIsAuthenticated).pipe(
+    filter((isAuth) => isAuth),
+    takeUntil(this.destroy$)
+  ).subscribe(() => {
+    this.router.navigate([this.accountService.getDefaultDashboard()]);
+  });
 
     this.error$.pipe(
       filter((err): err is string => !!err),
