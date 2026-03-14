@@ -28,22 +28,25 @@ class UserService:
         hash_salt = HashSalt.generate_salted_hash(register_user.password)
 
         db_user = User(
-            employee_id=register_user.employee_id,
-            first_name=register_user.first_name,
-            last_name=register_user.last_name,
-            role_id=register_user.role_id,
-            department_id=register_user.department_id,
-            email=register_user.email,
-            phone=register_user.phone,
-            password_hash=hash_salt["hash"],
-            password_salt=hash_salt["salt"],
-            created_by=-1,
-            created_on=datetime.utcnow(),
-            modified_by=-1,
-            modified_on=datetime.utcnow(),
-            is_active=True,
-            user_wrong_password_count=0,
-            is_blocked=False
+            EmployeeId=register_user.employee_id,
+            FirstName=register_user.first_name,
+            LastName=register_user.last_name,
+            RoleId=register_user.role_id,
+            DepartmentId=register_user.department_id,
+            Email=register_user.email,
+            Phone=register_user.phone,
+            PasswordHash=hash_salt["hash"],
+            PasswordSalt=hash_salt["salt"],
+            PasswordlastChangedOn=datetime.utcnow(),  # Set current time for password last changed
+            PasswordLastChangedBY=-1,  # System user ID
+            UserWorngPasswordCount=0,  # Initialize to 0 (note: typo in model - "Worng" instead of "Wrong")
+            UserLastWrongPasswordOn=None,  # Initialize as null
+            IsBlocked=False,
+            IsActive=True,
+            CreatedBy=-1,
+            CreatedOn=datetime.utcnow(),
+            ModifiedBy=-1,
+            ModifiedOn=datetime.utcnow()
         )
 
         db.add(db_user)
