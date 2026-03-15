@@ -9,8 +9,9 @@
 }
 
 .sidebar {
-  background: linear-gradient(180deg, #0F2A3F 0%, #0a1f2f 100%);
-  height: calc(100vh - 60px);
+  background: #00008f;
+  height: 100%; /* Changed from calc(100vh - 60px) */
+  min-height: 100%; /* Ensure it takes full height */
   position: sticky;
   top: 60px;
   overflow-y: auto;
@@ -19,7 +20,17 @@
   box-shadow: 2px 0 20px rgba(0, 0, 0, 0.2);
   font-family: "Karla", sans-serif;
   padding-top: 0;
+  padding-bottom: 0; /* Ensure no extra padding at bottom */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure sidebar content can scroll if needed */
+.sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* Desktop styles */
@@ -48,6 +59,7 @@
     right: 0;
     bottom: 0;
     height: 100%;
+    min-height: 100%;
     border-right: none;
     border-radius: 0 15px 15px 0;
     box-shadow: none;
