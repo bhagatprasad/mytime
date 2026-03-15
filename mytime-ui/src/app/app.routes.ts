@@ -155,6 +155,13 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'documents',
+            loadComponent: () =>
+              import('./admin/components/employees/documents/employee-documents-list.component').then(
+                (m) => m.EmployeeDocumentsListComponent
+              ),
+          },
+          {
             path: ':employeeId',
             loadComponent: () =>
               import('./admin/components/employees/employee/employees-details.component').then(
@@ -214,6 +221,6 @@ export const routes: Routes = [
   },
 
   // Fallbacks
-  { path: '',   redirectTo: 'login', pathMatch: 'full' },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' },
 ];

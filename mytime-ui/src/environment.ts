@@ -1,4 +1,3 @@
-import { TaskItem } from './app/admin/models/taskitem';
 export const environment = {
     production: false,
     baseUrl: 'https://mytime-docker.onrender.com/api/v1',
