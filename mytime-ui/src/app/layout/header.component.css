@@ -1,4 +1,4 @@
-/* header.component.css - Complete File with Unique Icon Colors */
+/* header.component.css - Complete File with Unique Icon Colors and #00008f Integration */
 
 :host {
   display: block;
@@ -10,7 +10,7 @@
 }
 
 .navbar {
-  background: #020e90 !important;
+  background: linear-gradient(90deg, #00008f 0%, #1a2c3d 100%);
   height: 60px;
   display: flex;
   width: 100%;
@@ -19,7 +19,7 @@
   position: relative;
 }
 
-/* Top accent line */
+/* Top accent line - updated with #00008f */
 .navbar::before {
   content: '';
   position: absolute;
@@ -41,9 +41,10 @@
   justify-content: center;
   flex-shrink: 0;
   position: relative;
+  box-shadow: inset 0 0 20px rgba(0, 0, 143, 0.3);
 }
 
-/* Divider between logo and menu */
+/* Divider between logo and menu - updated with #00008f */
 .navbar .navbar-brand-wrapper::after {
   content: '';
   position: absolute;
@@ -54,41 +55,11 @@
   background: linear-gradient(to bottom, transparent, #14b89c, #ffb347, #00008f, transparent);
 }
 
-/* Logo container styling */
-.navbar .navbar-brand-wrapper .navbar-brand {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-/* Desktop logo - visible by default */
-.navbar .navbar-brand-wrapper .brand-logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-/* Mobile logo - hidden by default */
-.navbar .navbar-brand-wrapper .brand-logo-mini {
-  display: none;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
 .navbar .navbar-brand-wrapper img {
-  max-width: 220px;
-  width: auto;
-  height: auto;
-  max-height: 40px;
-  object-fit: contain;
-  transition: transform 0.3s ease;
+  max-height: 35px;
   filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 143, 0.3));
 }
 
 .navbar .navbar-brand-wrapper img:hover {
@@ -102,7 +73,7 @@
   align-items: center;
   justify-content: flex-end;
   padding: 0 25px;
-  background: #020e90 !important;
+  background: linear-gradient(90deg, #00008f, #1e3347);
 }
 
 /* ===== UNIQUE COLORS FOR EACH ICON ===== */
@@ -120,6 +91,7 @@
   transition: all 0.3s ease;
   margin: 0 3px;
   position: relative;
+  border: 1px solid transparent;
 }
 
 ::ng-deep app-notifications .nav-link i {
@@ -131,6 +103,7 @@
   background: #ff6f61 !important;
   transform: translateY(-3px);
   box-shadow: 0 4px 12px rgba(255, 111, 97, 0.4);
+  border-color: #00008f;
 }
 
 ::ng-deep app-notifications .nav-link:hover i {
@@ -150,6 +123,7 @@
   transition: all 0.3s ease;
   margin: 0 3px;
   position: relative;
+  border: 1px solid transparent;
 }
 
 ::ng-deep app-settings .nav-link i {
@@ -161,15 +135,17 @@
   background: #14b89c !important;
   transform: translateY(-3px);
   box-shadow: 0 4px 12px rgba(20, 184, 156, 0.4);
+  border-color: #00008f;
 }
 
 ::ng-deep app-settings .nav-link:hover i {
   color: white !important;
 }
 
-/* Grid Icon (if visible) - Purple */
+/* Grid Icon (if visible) - Purple with #00008f glow */
 .navbar .nav-link .icon-grid {
   color: #9b59b6 !important;
+  filter: drop-shadow(0 0 5px rgba(0, 0, 143, 0.3));
 }
 
 .navbar .nav-link:hover .icon-grid {
@@ -191,10 +167,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #1e3347;
+  border: 2px solid #00008f;
 }
 
-/* Search icon - Gold */
+/* Search icon - Gold with #00008f accent */
+.navbar .nav-search .input-group-text {
+  background: rgba(0, 0, 143, 0.1) !important;
+  border-color: #00008f !important;
+}
+
 .navbar .nav-search .input-group-text i {
   color: #ffb347 !important;
   font-size: 16px;
@@ -207,7 +188,7 @@
   transform: scale(1.1);
 }
 
-/* Create New Button - Gold accent (already styled) */
+/* Create New Button - Gold with #00008f shadow */
 .navbar .btn-info {
   background: #ffb347 !important;
   border: none !important;
@@ -217,19 +198,36 @@
   padding: 8px 22px;
   border-radius: 30px;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(255, 179, 71, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 143, 0.3);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-right: 15px;
+  position: relative;
+  overflow: hidden;
+}
+
+.navbar .btn-info::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
 }
 
 .navbar .btn-info:hover {
   background: #ffc107 !important;
   transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(255, 179, 71, 0.4);
+  box-shadow: 0 6px 16px rgba(0, 0, 143, 0.4);
 }
 
-/* Mobile toggle button - Teal with special animation */
+.navbar .btn-info:hover::before {
+  left: 100%;
+}
+
+/* Mobile toggle button - Teal with #00008f accents */
 .navbar .navbar-toggler-right {
   background: rgba(20, 184, 156, 0.15);
   border: 2px solid #14b89c;
@@ -247,6 +245,7 @@
   position: relative;
   z-index: 1050;
   outline: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 143, 0.2);
 }
 
 .navbar .navbar-toggler-right i {
@@ -258,7 +257,8 @@
 .navbar .navbar-toggler-right:hover {
   background: #14b89c;
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(20, 184, 156, 0.3);
+  box-shadow: 0 4px 10px rgba(0, 0, 143, 0.4);
+  border-color: #00008f;
 }
 
 .navbar .navbar-toggler-right:hover i {
@@ -268,7 +268,7 @@
 /* Active state when sidebar is open */
 .navbar .navbar-toggler-right.menu-open {
   background: #14b89c;
-  border-color: #ffb347;
+  border-color: #00008f;
   transform: rotate(90deg);
 }
 
@@ -286,28 +286,22 @@
   display: none !important;
 }
 
-/* Responsive - ONLY ONE LOGO SHOWS AT A TIME */
+/* Responsive */
 @media (max-width: 991px) {
   .navbar .navbar-brand-wrapper {
     width: 120px !important;
   }
   
-  /* Hide desktop logo on mobile */
   .navbar .navbar-brand-wrapper .brand-logo {
-    display: none !important;
+    display: none;
   }
   
-  /* Show mobile logo on mobile */
   .navbar .navbar-brand-wrapper .brand-logo-mini {
-    display: flex !important;
+    display: block;
   }
   
   .navbar .navbar-brand-wrapper .brand-logo-mini img {
-    max-width: 100px;
     max-height: 30px;
-    width: auto;
-    height: auto;
-    object-fit: contain;
   }
   
   .navbar .navbar-menu-wrapper {
@@ -324,17 +318,6 @@
   
   .navbar .navbar-toggler-right {
     display: flex !important;
-  }
-}
-
-/* Desktop - ensure only desktop logo shows */
-@media (min-width: 992px) {
-  .navbar .navbar-brand-wrapper .brand-logo {
-    display: flex !important;
-  }
-  
-  .navbar .navbar-brand-wrapper .brand-logo-mini {
-    display: none !important;
   }
 }
 
@@ -358,11 +341,6 @@
   .navbar .navbar-toggler-right i {
     font-size: 20px;
   }
-  
-  .navbar .navbar-brand-wrapper .brand-logo-mini img {
-    max-width: 90px;
-    max-height: 28px;
-  }
 }
 
 @media (max-width: 380px) {
@@ -378,20 +356,12 @@
     height: 34px;
     margin-left: 5px;
   }
-  
-  .navbar .navbar-brand-wrapper .brand-logo-mini img {
-    max-width: 80px;
-    max-height: 25px;
-  }
 }
 
-/* Base logo styles */
 .navbar .navbar-brand-wrapper .navbar-brand img {
-  max-width: 220px;
-  max-height: 40px;
-  width: auto;
-  height: auto;
-  margin: auto;
-  vertical-align: middle;
-  object-fit: contain;
+    width: calc(240px - 130px);
+    max-width: 100%;
+    height: 50px;
+    margin: auto;
+    vertical-align: middle;
 }

@@ -1,18 +1,16 @@
-/* footer.component.css - Complete File */
+/* footer.component.css - COMPLETE WORKING VERSION */
 
 :host {
   display: block;
-  margin-top: auto;
+  flex-shrink: 0;
 }
 
 .footer {
-  background: #00008f !important;  /* Changed from gradient to solid #00008f */
+  background: #00008f !important;
   padding: 1.2rem 2.5rem !important;
-  transition: all 0.25s ease !important;
   font-size: 0.9rem !important;
   font-family: "Karla", sans-serif !important;
   border-top: 3px solid #14b89c !important;
-  position: relative;
   box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
 }
 
@@ -41,7 +39,6 @@
 
 .footer .text-muted {
   color: #9bb7d4 !important;
-  transition: color 0.3s ease;
 }
 
 .footer .text-muted:hover {
@@ -81,15 +78,6 @@
   .footer {
     padding: 1rem 1.5rem !important;
     text-align: center;
-  }
-  
-  .footer .d-sm-flex {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .footer a::after {
-    bottom: -2px;
   }
 }
 
