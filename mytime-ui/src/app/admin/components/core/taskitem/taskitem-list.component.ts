@@ -204,7 +204,7 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
 
   loadRoleData(): void {
     this.loader.show();
-        this.taskitemService.getTaskitemListAsync().subscribe({
+        this.taskitemService.GetTaskitemListAsync().subscribe({
       next: ( taskitem : TaskItem[] ) => {
          console.log('TaskItems', taskitem);
 
@@ -365,7 +365,7 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.taskitemService.deleteTaskitemAsync(this.selectedDeleteItem.TaskItemId)
+    this.taskitemService.DeleteTaskItemAsync(this.selectedDeleteItem.TaskItemId)
       .subscribe({
         next: (res) => {
           console.log("Delete success:", res);
@@ -399,7 +399,7 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
     this.loader.show();
     console.log(taskitem);
     const _taskitem = this.audit.appendAuditFields(taskitem);
-    this.taskitemService.insertOrUpdatetaskitemAsync(_taskitem).subscribe(reponse => {
+    this.taskitemService.InsertOrUpdateTaskItemAsync(_taskitem).subscribe(reponse => {
       if (reponse) {
         this.toster.success("taskitem processed succeessfully");
         this.showSidebar = false;

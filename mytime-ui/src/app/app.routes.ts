@@ -199,6 +199,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'taskitem',
+        loadComponent: () =>
+          import('./admin/components/core/taskitem/taskitem-list.component').then(
+            (m) => m.TaskItemListComponent
+          ),
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',

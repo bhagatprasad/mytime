@@ -10,22 +10,22 @@ import { TaskItem } from "../models/taskitem";
 export class TaskitemService {
     constructor(private apiService: ApiService) { }
 
-    getTaskitemListAsync(): Observable<TaskItem[]> {
-        return this.apiService.send<TaskItem[]>("GET", environment.UrlConstants.TaskItem.getTaskitemList);
+    GetTaskitemListAsync(): Observable<TaskItem[]> {
+        return this.apiService.send<TaskItem[]>("GET", environment.UrlConstants.TaskItem.GetTaskitemListAsync);
     }
 
-    getTaskitemAsync(TaskItemId: number): Observable<TaskItem> {
-        return this.apiService.send<TaskItem>("GET", `${environment.UrlConstants.TaskItem.getTaskitem}/${TaskItemId}`);
+    GetTaskitemAsync(TaskItemId: number): Observable<TaskItem> {
+        return this.apiService.send<TaskItem>("GET", `${environment.UrlConstants.TaskItem.GetTaskitemAsync}/${TaskItemId}`);
     }
 
 
-    deleteTaskitemAsync(TaskItemId: number): Observable<any> {
-        return this.apiService.send("DELETE", `${environment.UrlConstants.TaskItem.deleteTaskitem}/${TaskItemId}`
+    DeleteTaskItemAsync(TaskItemId: number): Observable<any> {
+        return this.apiService.send("DELETE", `${environment.UrlConstants.TaskItem.DeleteTaskItemAsync}/${TaskItemId}`
         );
     }
 
-    insertOrUpdatetaskitemAsync(TaskItem: TaskItem): Observable<TaskItem> {
-        return this.apiService.send<TaskItem>("POST", environment.UrlConstants.TaskItem.insertOrUpdatetaskitem,TaskItem);
+    InsertOrUpdateTaskItemAsync(TaskItem: TaskItem): Observable<TaskItem> {
+        return this.apiService.send<TaskItem>("POST", environment.UrlConstants.TaskItem.InsertOrUpdateTaskItemAsync,TaskItem);
     }
 
 }

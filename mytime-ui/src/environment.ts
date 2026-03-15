@@ -1,3 +1,4 @@
+import { TaskItem } from './app/admin/models/taskitem';
 export const environment = {
     production: false,
     baseUrl: 'https://mytime-docker.onrender.com/api/v1',
@@ -14,7 +15,7 @@ export const environment = {
         Users: {
             GetUsers: 'users/fetchAllUsers',
             GetUserById: 'users/fetchUser',
-            RegisterUser: 'users/RegisterUser'
+            RegisterUser: 'users/RegisterUser',
         },
 
         // Role endpoints
@@ -22,7 +23,22 @@ export const environment = {
             GetRoleListAsync: 'roles/fetchAllRoles',
             GetRoleAsync: 'roles/fetchRole',
             InsertOrUpdateRoleAsync: 'roles/InsertOrUpdateRole',
-            DeleteRoleAsync: 'roles/DeleteRole'
+            DeleteRoleAsync: 'roles/DeleteRole',
+        },
+
+        Taskcode: {
+            GetTaskcodeListAsync: 'taskcode/fetchAllTaskcodes',
+            GetTaskcodeAsync: 'taskcode/fetchtaskcode',
+            InsertOrUpdateTaskcodeAsync: 'taskcode/InsertOrUpdateTaskcode',
+            DeleteTaskcodeAsync: 'taskcode/DeleteTaskcode',
+        },
+
+        // Project endpoints
+        Project: {
+            GetProjectAsync: 'project/fetchproject',
+            GetProjectListAsync: 'project/fetchallprojects',
+            InsertOrUpdateProjectAsync: 'project/insetorupdateproject',
+            DeleteProjectAsync: 'project/deleteproject',
         },
 
         // Country endpoints
@@ -39,7 +55,7 @@ export const environment = {
             UpdateCountry: 'countries/update',
             ToggleActiveStatus: 'countries/toggleActiveStatus',
             SearchCountries: 'countries/searchCountries',
-            GetCountriesByIds: 'countries/getCountriesByIds'
+            GetCountriesByIds: 'countries/getCountriesByIds',
         },
 
         // State endpoints
@@ -55,7 +71,7 @@ export const environment = {
             GetStateByCode: 'states/getStateByCode',
             ToggleActiveStatus: 'states/toggleActiveStatus',
             CreateState: 'states/create',
-            UpdateState: 'states/update'
+            UpdateState: 'states/update',
         },
 
         // City endpoints
@@ -75,7 +91,7 @@ export const environment = {
             ToggleActiveStatus: 'cities/toggleActiveStatus',
             CreateCity: 'cities/create',
             UpdateCity: 'cities/update',
-            SearchCities: 'cities/searchCities'
+            SearchCities: 'cities/searchCities',
         },
 
         // Department endpoints
@@ -92,7 +108,7 @@ export const environment = {
             UpdateDepartment: 'departments/update',
             ToggleActiveStatus: 'departments/toggleActiveStatus',
             SearchDepartments: 'departments/searchDepartments',
-            GetDepartmentsByIds: 'departments/getDepartmentsByIds'
+            GetDepartmentsByIds: 'departments/getDepartmentsByIds',
         },
 
         // Designation endpoints
@@ -109,7 +125,7 @@ export const environment = {
             UpdateDesignation: 'designations/update',
             ToggleActiveStatus: 'designations/toggleActiveStatus',
             SearchDesignations: 'designations/searchDesignations',
-            GetDesignationsByIds: 'designations/getDesignationsByIds'
+            GetDesignationsByIds: 'designations/getDesignationsByIds',
         },
 
         // DocumentType endpoints
@@ -117,23 +133,7 @@ export const environment = {
             GetDocumentType: 'documenttypes/fetchDocumentType',
             GetAllDocumentTypes: 'documenttypes/fetchAllDocumentTypes',
             InsertOrUpdateDocumentType: 'documenttypes/InsertOrUpdateDocumentType',
-            DeleteDocumentType: 'documenttypes/DeleteDocumentType'
-        },
-        //TaskCode endpoints
-        Taskcode: {
-            GetTaskcodeListAsync: 'taskcode/fetchAllTaskcodes',
-            GetTaskcodeAsync: 'taskcode/fetchtaskcode',
-            InsertOrUpdateTaskcodeAsync: 'taskcode/InsertOrUpdateTaskcode',
-            DeleteTaskcodeAsync: 'taskcode/DeleteTaskcode',
-        },
-
-
-        //TaskItem endpoints
-        TaskItem: {
-            getTaskitemList: 'taskitem/fetchAllTaskItems',
-            getTaskitem: 'taskitem/fetchTaskItem',
-            deleteTaskitem: 'taskitem/DeleteTaskItem',
-            insertOrUpdatetaskitem: 'taskitem/InsertOrUpdateTaskItem'
+            DeleteDocumentType: 'documenttypes/DeleteDocumentType',
         },
 
         // HolidayCalendar endpoints
@@ -148,13 +148,14 @@ export const environment = {
             GetHolidaysByMonth: 'holiydacallender/getHolidaysByMonth',
             GetUpcomingHolidays: 'holiydacallender/getUpcomingHolidays',
             IsHoliday: 'holiydacallender/isHoliday',
-            InsertOrUpdateHolidayCalendar: 'holiydacallender/InsertOrUpdateHolidayCalendar',
+            InsertOrUpdateHolidayCalendar:
+                'holiydacallender/InsertOrUpdateHolidayCalendar',
             DeleteHolidayCalendar: 'holiydacallender/DeleteHolidayCalendar',
             CreateHolidayCalendar: 'holiydacallender/create',
             UpdateHolidayCalendar: 'holiydacallender/update',
             ToggleActiveStatus: 'holiydacallender/toggleActiveStatus',
             SearchHolidayCalendars: 'holiydacallender/searchHolidayCalendars',
-            GetHolidayCalendarsByIds: 'holiydacallender/getHolidayCalendarsByIds'
+            GetHolidayCalendarsByIds: 'holiydacallender/getHolidayCalendarsByIds',
         },
         // Employee endpoints
         Employee: {
@@ -186,7 +187,7 @@ export const environment = {
             SoftDeleteEmployee: 'employee/SoftDeleteEmployee',
 
             // PATCH endpoint
-            UpdateActiveStatus: 'employee/updateActiveStatus'
+            UpdateActiveStatus: 'employee/updateActiveStatus',
         },
 
         // EmployeeAddress endpoints
@@ -194,14 +195,16 @@ export const environment = {
             // GET endpoints
             GetEmployeeAddress: 'employeeaddress/fetchEmployeeAddress',
             GetAddressesByEmployee: 'employeeaddress/fetchAddressesByEmployee',
-            GetActiveAddressesByEmployee: 'employeeaddress/fetchActiveAddressesByEmployee',
+            GetActiveAddressesByEmployee:
+                'employeeaddress/fetchActiveAddressesByEmployee',
             GetAllEmployeeAddresses: 'employeeaddress/fetchAllEmployeeAddresses',
             GetEmployeeAddresses: 'employeeaddress/getEmployeeAddresses',
             CheckEmployeeAddressExists: 'employeeaddress/checkEmployeeAddressExists',
             GetPrimaryAddress: 'employeeaddress/getPrimaryAddress',
 
             // POST endpoints
-            InsertOrUpdateEmployeeAddress: 'employeeaddress/InsertOrUpdateEmployeeAddress',
+            InsertOrUpdateEmployeeAddress:
+                'employeeaddress/InsertOrUpdateEmployeeAddress',
             CreateBulkAddresses: 'employeeaddress/createBulkAddresses',
             CreateEmployeeAddress: 'employeeaddress/create',
             SearchEmployeeAddresses: 'employeeaddress/searchEmployeeAddresses',
@@ -214,7 +217,7 @@ export const environment = {
 
             // PATCH endpoints
             SoftDeleteEmployeeAddress: 'employeeaddress/SoftDeleteEmployeeAddress',
-            SetPrimaryAddress: 'employeeaddress/setPrimaryAddress'
+            SetPrimaryAddress: 'employeeaddress/setPrimaryAddress',
         },
 
         // EmployeeEducation endpoints
@@ -222,18 +225,23 @@ export const environment = {
             // GET endpoints
             GetEmployeeEducation: 'employeeeducation/fetchEmployeeEducation',
             GetEducationsByEmployee: 'employeeeducation/fetchEducationsByEmployee',
-            GetActiveEducationsByEmployee: 'employeeeducation/fetchActiveEducationsByEmployee',
-            GetHighestEducationByEmployee: 'employeeeducation/fetchHighestEducationByEmployee',
+            GetActiveEducationsByEmployee:
+                'employeeeducation/fetchActiveEducationsByEmployee',
+            GetHighestEducationByEmployee:
+                'employeeeducation/fetchHighestEducationByEmployee',
             GetAllEmployeeEducations: 'employeeeducation/fetchAllEmployeeEducations',
             GetEmployeeEducations: 'employeeeducation/getEmployeeEducations',
-            CheckEmployeeEducationExists: 'employeeeducation/checkEmployeeEducationExists',
-            GetEmployeeEducationSummary: 'employeeeducation/getEmployeeEducationSummary',
+            CheckEmployeeEducationExists:
+                'employeeeducation/checkEmployeeEducationExists',
+            GetEmployeeEducationSummary:
+                'employeeeducation/getEmployeeEducationSummary',
             GetEducationStatistics: 'employeeeducation/educationStatistics',
             SearchByDegree: 'employeeeducation/searchByDegree',
             SearchByInstitution: 'employeeeducation/searchByInstitution',
 
             // POST endpoints
-            InsertOrUpdateEmployeeEducation: 'employeeeducation/InsertOrUpdateEmployeeEducation',
+            InsertOrUpdateEmployeeEducation:
+                'employeeeducation/InsertOrUpdateEmployeeEducation',
             CreateBulkEducations: 'employeeeducation/createBulkEducations',
             CreateEmployeeEducation: 'employeeeducation/create',
             SearchEmployeeEducations: 'employeeeducation/searchEmployeeEducations',
@@ -245,7 +253,8 @@ export const environment = {
             DeleteEmployeeEducation: 'employeeeducation/DeleteEmployeeEducation',
 
             // PATCH endpoint
-            SoftDeleteEmployeeEducation: 'employeeeducation/SoftDeleteEmployeeEducation'
+            SoftDeleteEmployeeEducation:
+                'employeeeducation/SoftDeleteEmployeeEducation',
         },
 
         // EmployeeEmployment endpoints
@@ -253,20 +262,27 @@ export const environment = {
             // GET endpoints
             GetEmployeeEmployment: 'employeeemployment/fetchEmployeeEmployment',
             GetEmploymentsByEmployee: 'employeeemployment/fetchEmploymentsByEmployee',
-            GetActiveEmploymentsByEmployee: 'employeeemployment/fetchActiveEmploymentsByEmployee',
-            GetLatestEmploymentByEmployee: 'employeeemployment/fetchLatestEmploymentByEmployee',
-            GetAllEmployeeEmployments: 'employeeemployment/fetchAllEmployeeEmployments',
+            GetActiveEmploymentsByEmployee:
+                'employeeemployment/fetchActiveEmploymentsByEmployee',
+            GetLatestEmploymentByEmployee:
+                'employeeemployment/fetchLatestEmploymentByEmployee',
+            GetAllEmployeeEmployments:
+                'employeeemployment/fetchAllEmployeeEmployments',
             GetEmployeeEmployments: 'employeeemployment/getEmployeeEmployments',
-            CheckEmployeeEmploymentExists: 'employeeemployment/checkEmployeeEmploymentExists',
-            GetEmployeeEmploymentSummary: 'employeeemployment/getEmployeeEmploymentSummary',
+            CheckEmployeeEmploymentExists:
+                'employeeemployment/checkEmployeeEmploymentExists',
+            GetEmployeeEmploymentSummary:
+                'employeeemployment/getEmployeeEmploymentSummary',
             GetEmploymentStatistics: 'employeeemployment/employmentStatistics',
             SearchByCompany: 'employeeemployment/searchByCompany',
             SearchByDesignation: 'employeeemployment/searchByDesignation',
-            GetEmployeesByPreviousCompany: 'employeeemployment/employeesByPreviousCompany',
+            GetEmployeesByPreviousCompany:
+                'employeeemployment/employeesByPreviousCompany',
             CalculateTotalExperience: 'employeeemployment/calculateTotalExperience',
 
             // POST endpoints
-            InsertOrUpdateEmployeeEmployment: 'employeeemployment/InsertOrUpdateEmployeeEmployment',
+            InsertOrUpdateEmployeeEmployment:
+                'employeeemployment/InsertOrUpdateEmployeeEmployment',
             CreateBulkEmployments: 'employeeemployment/createBulkEmployments',
             CreateEmployeeEmployment: 'employeeemployment/create',
             SearchEmployeeEmployments: 'employeeemployment/searchEmployeeEmployments',
@@ -278,50 +294,81 @@ export const environment = {
             DeleteEmployeeEmployment: 'employeeemployment/DeleteEmployeeEmployment',
 
             // PATCH endpoint
-            SoftDeleteEmployeeEmployment: 'employeeemployment/SoftDeleteEmployeeEmployment'
+            SoftDeleteEmployeeEmployment:
+                'employeeemployment/SoftDeleteEmployeeEmployment',
         },
 
         EmployeeEmergencyContact: {
-            GetEmployeeEmergencyContact: 'employeeemergencycontact/fetchEmployeeEmergencyContact',
+            GetEmployeeEmergencyContact:
+                'employeeemergencycontact/fetchEmployeeEmergencyContact',
             GetContactsByEmployee: 'employeeemergencycontact/fetchContactsByEmployee',
-            GetActiveContactsByEmployee: 'employeeemergencycontact/fetchActiveContactsByEmployee',
-            GetPrimaryEmergencyContact: 'employeeemergencycontact/fetchPrimaryEmergencyContact',
-            GetAllEmployeeEmergencyContacts: 'employeeemergencycontact/fetchAllEmployeeEmergencyContacts',
-            GetEmployeeEmergencyContacts: 'employeeemergencycontact/getEmployeeEmergencyContacts',
-            CheckEmployeeEmergencyContactExists: 'employeeemergencycontact/checkEmployeeEmergencyContactExists',
-            GetEmployeeEmergencyContactsSummary: 'employeeemergencycontact/getEmployeeEmergencyContactsSummary',
-            GetEmergencyContactStatistics: 'employeeemergencycontact/emergencyContactStatistics',
+            GetActiveContactsByEmployee:
+                'employeeemergencycontact/fetchActiveContactsByEmployee',
+            GetPrimaryEmergencyContact:
+                'employeeemergencycontact/fetchPrimaryEmergencyContact',
+            GetAllEmployeeEmergencyContacts:
+                'employeeemergencycontact/fetchAllEmployeeEmergencyContacts',
+            GetEmployeeEmergencyContacts:
+                'employeeemergencycontact/getEmployeeEmergencyContacts',
+            CheckEmployeeEmergencyContactExists:
+                'employeeemergencycontact/checkEmployeeEmergencyContactExists',
+            GetEmployeeEmergencyContactsSummary:
+                'employeeemergencycontact/getEmployeeEmergencyContactsSummary',
+            GetEmergencyContactStatistics:
+                'employeeemergencycontact/emergencyContactStatistics',
             SearchByRelation: 'employeeemergencycontact/searchByRelation',
-            GetEmployeesWithoutEmergencyContacts: 'employeeemergencycontact/employeesWithoutEmergencyContacts',
-            InsertOrUpdateEmployeeEmergencyContact: 'employeeemergencycontact/InsertOrUpdateEmployeeEmergencyContact',
-            CreateBulkEmergencyContacts: 'employeeemergencycontact/createBulkEmergencyContacts',
+            GetEmployeesWithoutEmergencyContacts:
+                'employeeemergencycontact/employeesWithoutEmergencyContacts',
+            InsertOrUpdateEmployeeEmergencyContact:
+                'employeeemergencycontact/InsertOrUpdateEmployeeEmergencyContact',
+            CreateBulkEmergencyContacts:
+                'employeeemergencycontact/createBulkEmergencyContacts',
             CreateEmployeeEmergencyContact: 'employeeemergencycontact/create',
-            SearchEmployeeEmergencyContacts: 'employeeemergencycontact/searchEmployeeEmergencyContacts',
+            SearchEmployeeEmergencyContacts:
+                'employeeemergencycontact/searchEmployeeEmergencyContacts',
             UpdateEmployeeEmergencyContact: 'employeeemergencycontact/update',
-            DeleteEmployeeEmergencyContact: 'employeeemergencycontact/DeleteEmployeeEmergencyContact',
-            SoftDeleteEmployeeEmergencyContact: 'employeeemergencycontact/SoftDeleteEmployeeEmergencyContact',
-            SetAsPrimaryContact: 'employeeemergencycontact/setAsPrimaryContact'
+            DeleteEmployeeEmergencyContact:
+                'employeeemergencycontact/DeleteEmployeeEmergencyContact',
+            SoftDeleteEmployeeEmergencyContact:
+                'employeeemergencycontact/SoftDeleteEmployeeEmergencyContact',
+            SetAsPrimaryContact: 'employeeemergencycontact/setAsPrimaryContact',
         },
+        //employeesalarystructure/fetchEmployeeSalaryStructure
+        //employeesalarystructure/fetchSalaryStructureByEmployee
+        //employeesalarystructure/fetchEmployeeSalaryStructure/30
         EmployeeSalaryStructure: {
-            GetEmployeeSalaryStructure: 'employeesalarystructure/fetchEmployeeSalaryStructure',
-            GetSalaryStructureByEmployee: 'employeesalarystructure/fetchSalaryStructureByEmployee',
-            GetAllSalaryStructuresByEmployee: 'employeesalarystructure/fetchAllSalaryStructuresByEmployee',
-            GetActiveSalaryStructures: 'employeesalarystructure/fetchActiveSalaryStructures',
-            GetAllEmployeeSalaryStructures: 'employeesalarystructure/fetchAllEmployeeSalaryStructures',
-            GetEmployeeSalaryStructures: 'employeesalarystructure/getEmployeeSalaryStructures',
-            CheckEmployeeSalaryStructureExists: 'employeesalarystructure/checkEmployeeSalaryStructureExists',
+            GetEmployeeSalaryStructure:
+                'employeesalarystructure/fetchEmployeeSalaryStructure',
+            GetSalaryStructureByEmployee:
+                'employeesalarystructure/fetchSalaryStructureByEmployee',
+            GetAllSalaryStructuresByEmployee:
+                'employeesalarystructure/fetchAllSalaryStructuresByEmployee',
+            GetActiveSalaryStructures:
+                'employeesalarystructure/fetchActiveSalaryStructures',
+            GetAllEmployeeSalaryStructures:
+                'employeesalarystructure/fetchAllEmployeeSalaryStructures',
+            GetEmployeeSalaryStructures:
+                'employeesalarystructure/getEmployeeSalaryStructures',
+            CheckEmployeeSalaryStructureExists:
+                'employeesalarystructure/checkEmployeeSalaryStructureExists',
             GetSalaryBreakdown: 'employeesalarystructure/getSalaryBreakdown',
             GetSalaryStatistics: 'employeesalarystructure/salaryStatistics',
-            GetSalaryComparisonReport: 'employeesalarystructure/salaryComparisonReport',
-            GetEmployeesWithoutSalaryStructure: 'employeesalarystructure/employeesWithoutSalaryStructure',
+            GetSalaryComparisonReport:
+                'employeesalarystructure/salaryComparisonReport',
+            GetEmployeesWithoutSalaryStructure:
+                'employeesalarystructure/employeesWithoutSalaryStructure',
             CalculateNetSalary: 'employeesalarystructure/calculateNetSalary',
             GetPayrollSummary: 'employeesalarystructure/payrollSummary',
-            InsertOrUpdateEmployeeSalaryStructure: 'employeesalarystructure/InsertOrUpdateEmployeeSalaryStructure',
+            InsertOrUpdateEmployeeSalaryStructure:
+                'employeesalarystructure/InsertOrUpdateEmployeeSalaryStructure',
             CreateEmployeeSalaryStructure: 'employeesalarystructure/create',
-            SearchEmployeeSalaryStructures: 'employeesalarystructure/searchEmployeeSalaryStructures',
+            SearchEmployeeSalaryStructures:
+                'employeesalarystructure/searchEmployeeSalaryStructures',
             UpdateEmployeeSalaryStructure: 'employeesalarystructure/update',
-            DeleteEmployeeSalaryStructure: 'employeesalarystructure/DeleteEmployeeSalaryStructure',
-            SoftDeleteEmployeeSalaryStructure: 'employeesalarystructure/SoftDeleteEmployeeSalaryStructure'
+            DeleteEmployeeSalaryStructure:
+                'employeesalarystructure/DeleteEmployeeSalaryStructure',
+            SoftDeleteEmployeeSalaryStructure:
+                'employeesalarystructure/SoftDeleteEmployeeSalaryStructure',
         },
         Backblaze: {
             endpoint: 's3.us-east-005.backblazeb2.com',
@@ -330,20 +377,21 @@ export const environment = {
             bucketId: '9393a26623636bce9cce0917',
             bucketName: 'mytime',
             region: 'us-east-005',
-            publicUrl: 'https://mytime.s3.us-east-005.backblazeb2.com'
+            publicUrl: 'https://mytime.s3.us-east-005.backblazeb2.com',
         },
         EmployeeDocuments: {
             GetEmployeeDocuments: 'employeedocuments/fetchEmployeeDocuments',
             GetEmployeeDocument: 'employeedocuments/fetchEmployeeDocument',
             GetDocumentsByEmployee: 'employeedocuments/fetchDocumentsByEmployee',
-            InsertOrUpdateEmployeeDocument: 'employeedocuments/InsertOrUpdateEmployeeDocument',
-            DeleteEmployeeDocument: 'employeedocuments/DeleteEmployeeDocument'
+            InsertOrUpdateEmployeeDocument:
+                'employeedocuments/InsertOrUpdateEmployeeDocument',
+            DeleteEmployeeDocument: 'employeedocuments/DeleteEmployeeDocument',
         },
         BackblazeUpload: {
             UploadEmployeeDocument: 'backblaze/upload',
-            GetDownloadUrl: 'backblaze/downloadurl',
+            GetDownloadUrl: 'backblaze/download-url',
             DeleteFile: 'backblaze/delete',
-            GetFileInfo: 'backblaze/info'
+            GetFileInfo: 'backblaze/info',
         },
         EmployeeSalary: {
             GetEmployeeSalaries: 'employeesalary/fetchEmployeeSalaries',
@@ -354,8 +402,28 @@ export const environment = {
             GetMonthlySalaryAsync: 'monthlysalary/fetch-with-employees',
             GetMontlySalaryListAsync: 'monthlysalary/fetch-all-with-employees',
             GetMonthySalaryList: 'monthlysalary/fetch-all',
-            InsertOrUpdateMonthlySalaryAsync: 'monthlysalary/InsertOrUpdateMonthlySalary',
-            DeleteMonthlySalaryAsync: 'monthlysalary/deleteMonthlySalary'
+            InsertOrUpdateMonthlySalaryAsync:
+                'monthlysalary/InsertOrUpdateMonthlySalary',
+            DeleteMonthlySalaryAsync: 'monthlysalary/deleteMonthlySalary',
+            PublishMonthlySalaryAsync: 'monthlysalary/publish',
+        },
+        UserProfileImage: {
+            FetchProfileImage: 'userprofileimage/fetchProfileImage',
+            FetchProfileImageByUser: 'userprofileimage/fetchProfileImageByUser',
+            FetchAllProfileImages: 'userprofileimage/fetchAllProfileImages',
+            GetProfileImagesWithPagination: 'userprofileimage/getProfileImagesWithPagination',
+            InsertOrUpdateProfileImage: 'userprofileimage/InsertOrUpdateProfileImage',
+            UploadProfileImage: 'userprofileimage/uploadProfileImage',
+            DeleteProfileImage: 'userprofileimage/DeleteProfileImage',
+            SoftDeleteProfileImage: 'userprofileimage/SoftDeleteProfileImage',
+            GetUserProfileImageUrl: 'userprofileimage/getUserProfileImageUrl',
+            CheckUserHasActiveImage: 'userprofileimage/checkUserHasActiveImage',
+        },
+        TaskItem: {
+            GetTaskitemListAsync:'taskitem/fetchAllTaskItems',
+            InsertOrUpdateTaskItemAsync: 'taskitem/InsertOrUpdateTaskItem',
+            GetTaskitemAsync:'taskitem/fetchTaskItem',
+            DeleteTaskItemAsync:'taskitem/DeleteTaskItem',
         }
-    }
+    },
 };
