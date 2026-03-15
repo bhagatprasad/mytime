@@ -190,13 +190,6 @@ export class EmployeesListComponent implements OnInit, OnDestroy {
 
   mobileColumnDefs: ColDef[] = [
     {
-      headerName: 'Employee',
-      width: 180,
-      cellRenderer: this.mobileEmployeeInfoRenderer.bind(this),
-      sortable: true,
-      filter: 'agTextColumnFilter'
-    },
-    {
       field: 'FirstName',
       headerName: 'Full Name',
       width: 180,
@@ -205,15 +198,6 @@ export class EmployeesListComponent implements OnInit, OnDestroy {
       valueGetter: (params) => {
         return `${params.data.FirstName || ''} ${params.data.LastName || ''}`.trim();
       }
-    },
-    {
-      field: 'IsActive',
-      headerName: 'Status',
-      width: 80,
-      cellRenderer: this.mobileStatusRenderer.bind(this),
-      cellClass: 'text-center',
-      sortable: true,
-      filter: 'agTextColumnFilter'
     },
     {
       field: 'Actions',
