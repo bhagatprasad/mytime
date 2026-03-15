@@ -1,0 +1,51 @@
+<div class="calendar-container">
+    <div class="calendar-header">
+
+        <div class="calendar-title">
+            <span class="calendar-icon">📅</span>
+            Holiday Calendar
+        </div>
+
+        <div class="view-selector">
+            <select class="view-dropdown" (change)="changeView($event)">
+                <option value="dayGridMonth">Month</option>
+                <option value="timeGridWeek">Week</option>
+                <option value="multiMonthYear">Year</option>
+            </select>
+        </div>
+
+    </div>
+
+    <div class="calendar-wrapper">
+        <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+    </div>
+
+    <div class="popup-overlay" *ngIf="showPopup">
+
+        <div class="popup-card">
+
+            <!-- Header -->
+            <div class="popup-header">
+                <span>Add Holiday title</span>
+                <button class="close-btn" (click)="showPopup=false">✕</button>
+            </div>
+
+            <!-- Body -->
+            <div class="popup-body">
+                <label>Holiday Name</label>
+                <input #holidayInput type="text" placeholder="Enter holiday name" [(ngModel)]="holidayName" />
+            </div>
+
+            <!-- Footer -->
+            <div class="popup-footer">
+                <button class="cancel-btn" (click)="showPopup=false">Cancel</button>
+                <button class="save-btn" (click)="saveHoliday()" [disabled]="!holidayName || holidayName.trim() === ''">
+                    Save
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

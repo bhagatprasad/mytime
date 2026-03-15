@@ -6,13 +6,14 @@ import { switchMap, map, catchError, withLatestFrom } from 'rxjs/operators';
 import * as ProfileImageActions from './profile-image.actions';
 import * as AuthActions from '../auth.actions';
 import { selectProfileFileId } from './profile-image.selectors';
-
 import { UserProfileImageService } from '../../services/user-profile-image.service';
 import { StorageService } from '../../services/storage.service';
-import { UploadResponse } from './profile-image.actions';
 import { UserProfileImage } from '../../models/user-profile-image';
 import { environment } from '../../../../environment';
 import { AuditFieldsService } from '../../services/auditfields.service';
+import { UploadResponse } from '../../models/uploadfile_response';
+
+export const DEFAULT_PROFILE_IMAGE = 'assets/images/faces/face28.png';
 
 @Injectable()
 export class ProfileImageEffects {
@@ -20,8 +21,8 @@ export class ProfileImageEffects {
   private readonly store = inject(Store);
   private readonly dbService = inject(UserProfileImageService);
   private readonly storageService = inject(StorageService);
-  private readonly auditService= inject(AuditFieldsService);
-  // Load on login
+  private readonly auditService = inject(AuditFieldsService);
+
   loadOnLogin$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.loginSuccess),
@@ -31,7 +32,6 @@ export class ProfileImageEffects {
     )
   );
 
-  // Load profile image from database
   load$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ProfileImageActions.loadProfileImage),
@@ -44,7 +44,6 @@ export class ProfileImageEffects {
             return ProfileImageActions.loadProfileImageSuccess({ record });
           }),
           catchError((err) => {
-            console.error('Error loading profile image:', err);
             if (err?.status === 404) {
               return of(ProfileImageActions.loadProfileImageNotFound());
             }
@@ -59,20 +58,45 @@ export class ProfileImageEffects {
     )
   );
 
-  // Upload profile image - simplified since upload API returns downloadUrl
+  afterLoadSuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ProfileImageActions.loadProfileImageSuccess),
+      switchMap(({ record }) => {
+        const fileId = record?.FileId;
+        const fileName = record?.FileName;
+        
+        if (fileId) {
+          // Get a fresh signed URL from Backblaze using your working endpoint
+          return from(this.storageService.getDownloadUrl(fileId)).pipe(
+            map((response) => {
+              console.log('Got signed URL:', response.url);
+              return ProfileImageActions.loadProfileImageUrlSuccess({ 
+                imageUrl: response.url 
+              });
+            }),
+            catchError((err) => {
+              console.error('Failed to get download URL:', err);
+              return of(ProfileImageActions.loadProfileImageUrlFailure({ 
+                error: 'Failed to load profile image' 
+              }));
+            })
+          );
+        }
+        
+        return of(ProfileImageActions.loadProfileImageUrlSuccess({ 
+          imageUrl: DEFAULT_PROFILE_IMAGE 
+        }));
+      })
+    )
+  );
+
   upload$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ProfileImageActions.uploadProfileImage),
       withLatestFrom(this.store.select(selectProfileFileId)),
       switchMap(([{ file, userId }, existingFileId]) => {
-        console.log('Uploading profile image for user:', userId);
-        
-        // Upload directly to storage service
         return from(this.storageService.uploadFile(file, `profile_${userId}`)).pipe(
           map((uploadResponse: UploadResponse) => {
-            console.log('Upload successful, response:', uploadResponse);
-            
-            // Return success action with the upload response
             return ProfileImageActions.uploadProfileImageSuccess({
               uploadResponse,
               userId,
@@ -80,7 +104,6 @@ export class ProfileImageEffects {
             });
           }),
           catchError((err) => {
-            console.error('Upload error:', err);
             return of(
               ProfileImageActions.uploadProfileImageFailure({
                 error: err?.message ?? 'Upload failed. Please try again.',
@@ -92,21 +115,10 @@ export class ProfileImageEffects {
     )
   );
 
-  // Handle upload success - save to database and delete old file
   uploadSuccess$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ProfileImageActions.uploadProfileImageSuccess),
       switchMap(({ uploadResponse, userId, existingFileId }) => {
-        console.log('Processing upload success, saving to database...');
-        
-        // Build FileInfo JSON using the downloadUrl from upload response
-        const fileInfo = JSON.stringify({
-          downloadUrl: uploadResponse.downloadUrl,
-          storedFileName: uploadResponse.storedFileName,
-          uploadTimestamp: uploadResponse.uploadTimestamp,
-        });
-
-        // Prepare database payload
         const payload: Partial<UserProfileImage> = {
           UserId: userId,
           FileId: uploadResponse.fileId,
@@ -114,26 +126,21 @@ export class ProfileImageEffects {
           BucketId: environment.UrlConstants?.Backblaze?.bucketId || '',
           ContentLength: uploadResponse.contentLength,
           ContentType: uploadResponse.contentType,
-          FileInfo: fileInfo,
+          FileInfo: JSON.stringify({
+            downloadUrl: uploadResponse.downloadUrl,
+            storedFileName: uploadResponse.storedFileName,
+            uploadTimestamp: Date.now(),
+          }),
         };
 
-        // Save to database
         return from(this.upsertInDatabase(payload)).pipe(
           map((savedRecord: UserProfileImage) => {
-            console.log('Database record saved:', savedRecord);
-            
-            // Delete old file (fire and forget)
             if (existingFileId && existingFileId !== uploadResponse.fileId) {
-              this.storageService.deleteFile(existingFileId).catch((err) => {
-                console.warn('Could not delete old profile image:', err);
-              });
+              this.storageService.deleteFile(existingFileId).catch(() => {});
             }
-            
-            // Return the saved record to update store
             return ProfileImageActions.loadProfileImageSuccess({ record: savedRecord });
           }),
           catchError((err) => {
-            console.error('Database save error:', err);
             return of(
               ProfileImageActions.uploadProfileImageFailure({
                 error: 'Image uploaded but failed to save to database',
@@ -145,7 +152,6 @@ export class ProfileImageEffects {
     )
   );
 
-  // Clear on logout
   clearOnLogout$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.logout),
@@ -154,7 +160,6 @@ export class ProfileImageEffects {
   );
 
   private upsertInDatabase(payload: Partial<UserProfileImage>): Promise<UserProfileImage> {
-    
     return new Promise((resolve, reject) => {
       this.dbService.insertOrUpdateProfileImageAsync(this.auditService.appendAuditFields(payload)).subscribe({
         next: (record: UserProfileImage) => resolve(record),

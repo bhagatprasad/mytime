@@ -15,7 +15,6 @@ class TaskItem(Base):
     CreatedOn = Column(DateTime,   nullable=True)
     ModifiedBy = Column(BigInteger, nullable=True)
     ModifiedOn = Column(DateTime,   nullable=True)
-
     IsActive = Column(Boolean, default=True)
     ProjectId = Column(BigInteger, nullable=True)  
 

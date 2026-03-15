@@ -69,6 +69,7 @@
           </div>
         </div>
          <app-employees-create [isVisible]="showSidebar" [roles]="coreRoles" [employee]="selectedEmployee" [designations]="coreDesignations" [departments]="coreDepartments"  (closeSidebar)="onCloseSidebar()" (saveEmployee)="onSaveEmployee($event)"></app-employees-create>
+         <app-user-access [isVisible]="showUserAccessSidebar" [roles]="coreRoles" [employee]="selectedEmployee" [designations]="coreDesignations" [departments]="coreDepartments"  (closeSidebar)="onCloseUserAccessSidebar()" (saveUserAcess)="onSaveUserAccess($event)"></app-user-access>
       </div>
     </div>
   </div>

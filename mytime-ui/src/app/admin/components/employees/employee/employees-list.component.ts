@@ -31,13 +31,16 @@ import { EmployeesCreateComponent } from './employees-create.component';
 import { response } from 'express';
 import { EmployeeDTO } from '../../../models/employee.dto';
 import { Router } from '@angular/router';
+import { UserAccessComponent } from './user-access.component';
+import { RegisterUser } from '../../../models/register_user';
+import { UserService } from '../../../services/user.service';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-employees-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, FormsModule, EmployeesCreateComponent],
+  imports: [CommonModule, AgGridAngular, FormsModule, EmployeesCreateComponent, UserAccessComponent],
   templateUrl: './employees-list.component.html',
   styleUrls: ['./employees-list.component.css']
 })
@@ -61,6 +64,7 @@ export class EmployeesListComponent implements OnInit, OnDestroy {
 
   selectedEmployee: Employee | null = null;
   showSidebar: boolean = false;
+  showUserAccessSidebar: boolean = false;
 
   defaultColDef: ColDef = {
     flex: 1,
@@ -236,7 +240,8 @@ export class EmployeesListComponent implements OnInit, OnDestroy {
     private toastr: ToastrService,
     private audit: AuditFieldsService,
     private loader: LoaderService,
-    private routerService: Router
+    private routerService: Router,
+    private userService: UserService
   ) { }
 
   ngOnDestroy(): void {
@@ -318,7 +323,8 @@ export class EmployeesListComponent implements OnInit, OnDestroy {
     this.routerService.navigate(['/admin/employees', employee.EmployeeId]);
   }
   createUserAccess(employee: Employee): void {
-
+    this.showUserAccessSidebar = true;
+    this.selectedEmployee = employee;
   }
   activateEmployee(employee: Employee): void {
 
@@ -638,9 +644,32 @@ export class EmployeesListComponent implements OnInit, OnDestroy {
     this.selectedEmployee = null;
   }
 
+  onCloseUserAccessSidebar(): void {
+    this.showUserAccessSidebar = false;
+    this.selectedEmployee = null;
+  }
+
   editEmployee(employee: EmployeesDetails): void {
     console.log('Edit employee:', employee);
     // Implement edit logic
+  }
+
+
+  onSaveUserAccess(userAcess: RegisterUser) {
+    this.loader.show();
+    console.log(userAcess);
+    this.userService.RegisterUserAsync(userAcess).subscribe(reponse => {
+      if (reponse) {
+        this.toastr.success("user access given successfull");
+        this.showUserAccessSidebar = false;
+        this.selectedEmployee = null;
+        this.refreshData();
+      }
+    }, error => {
+      this.toastr.error("something went wrong , please check and resubmit");
+      this.showUserAccessSidebar = false;
+      this.loader.hide();
+    });
   }
 
   deleteEmployee(employee: EmployeesDetails): void {

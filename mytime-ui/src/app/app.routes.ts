@@ -33,9 +33,30 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'ytdreports',
+        loadComponent: () =>
+          import('./user/components/ytdreports/ytdreports.component').then(
+            (m) => m.YtdreportsComponent
+          ),
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',
+      },
+      {
+        path: 'holidaycalendar',
+        loadComponent: () =>
+          import('./user/components/holidaycalendar/holidaycalendar.component').then(
+            (m) => m.HolidaycalendarComponent,
+          ),
+      },
+      {
+        path: 'payslips',
+        loadComponent: () =>
+          import('./user/components/payslips/payslips.component').then(
+            (m) => m.PayslipsComponent,
+          ),
       },
     ],
   },
@@ -168,6 +189,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./admin/components/salary/monthly-salary-list.component').then(
             (m) => m.MonthlySalaryListComponent
+          ),
+      },
+      {
+        path: 'taskcode',
+        loadComponent: () =>
+          import('./admin/components/time/taskcode/taskcode.component').then(
+            (m) => m.TaskcodeComponent
           ),
       },
       {

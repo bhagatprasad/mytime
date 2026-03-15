@@ -1,0 +1,183 @@
+<!-- Overlay -->
+<div class="sidebar-overlay" *ngIf="isVisible" (click)="onClose()"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" [class.visible]="isVisible">
+  <form [formGroup]="userAccessForm" (ngSubmit)="onSubmit()" novalidate>
+    <!-- Header -->
+    <div class="sidebar-header">
+      <h5 class="sidebar-title">
+        {{ registerUser?.id ? 'Edit User Access' : 'Create User Access' }} - 
+        {{ employee?.FirstName }} {{ employee?.LastName }}
+      </h5>
+      <button type="button" class="close" (click)="onClose()">
+        <span>&times;</span>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="sidebar-body">
+      <div class="form-container">
+        <!-- Employee Code (Read-only) -->
+        <div class="form-group mb-3">
+          <label class="form-label">Employee Code</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="mdi mdi-badge-account"></i>
+            </span>
+            <input type="text" 
+                   class="form-control bg-light" 
+                   formControlName="employeeCode"
+                   readonly>
+          </div>
+        </div>
+
+        <!-- First Name (Read-only) -->
+        <div class="form-group mb-3">
+          <label class="form-label">First Name</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="mdi mdi-account"></i>
+            </span>
+            <input type="text" 
+                   class="form-control bg-light" 
+                   formControlName="firstName"
+                   readonly>
+          </div>
+        </div>
+
+        <!-- Last Name (Read-only) -->
+        <div class="form-group mb-3">
+          <label class="form-label">Last Name</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="mdi mdi-account"></i>
+            </span>
+            <input type="text" 
+                   class="form-control bg-light" 
+                   formControlName="lastName"
+                   readonly>
+          </div>
+        </div>
+
+        <!-- Email (Read-only) -->
+        <div class="form-group mb-3">
+          <label class="form-label">Email</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="mdi mdi-email"></i>
+            </span>
+            <input type="email" 
+                   class="form-control bg-light" 
+                   formControlName="email"
+                   readonly>
+          </div>
+        </div>
+
+        <!-- Phone (Read-only) -->
+        <div class="form-group mb-3">
+          <label class="form-label">Phone</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="mdi mdi-phone"></i>
+            </span>
+            <input type="text" 
+                   class="form-control bg-light" 
+                   formControlName="phone"
+                   readonly>
+          </div>
+        </div>
+
+        <!-- Role (Read-only display name) -->
+        <div class="form-group mb-3">
+          <label class="form-label">Role</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="mdi mdi-shield-account"></i>
+            </span>
+            <input type="text" 
+                   class="form-control bg-light" 
+                   formControlName="roleName"
+                   readonly>
+          </div>
+        </div>
+
+        <!-- Department (Read-only display name) -->
+        <div class="form-group mb-3">
+          <label class="form-label">Department</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="mdi mdi-domain"></i>
+            </span>
+            <input type="text" 
+                   class="form-control bg-light" 
+                   formControlName="departmentName"
+                   readonly>
+          </div>
+        </div>
+
+        <!-- Designation (Read-only display name) -->
+        <div class="form-group mb-3">
+          <label class="form-label">Designation</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="mdi mdi-badge-account-horizontal"></i>
+            </span>
+            <input type="text" 
+                   class="form-control bg-light" 
+                   formControlName="designationName"
+                   readonly>
+          </div>
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label">Password <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="mdi mdi-lock-outline text-primary"></i>
+            </span>
+            <input type="password" 
+                   class="form-control" 
+                   formControlName="password"
+                   placeholder="Enter password"
+                   appTogglePassword
+                   [class.is-invalid]="hasError('password', 'required') || hasError('password', 'minlength')">
+          </div>
+          <div *ngIf="hasError('password', 'required')" class="text-danger small mt-1">
+            Password is required
+          </div>
+          <div *ngIf="hasError('password', 'minlength')" class="text-danger small mt-1">
+            Password must be at least 6 characters
+          </div>
+          <small class="text-muted">
+            {{ registerUser?.id ? 'Update password for user access' : 'Set initial password for new user' }}
+          </small>
+        </div>
+
+        <!-- Hidden fields note (for debugging/info) -->
+        <div class="alert alert-info small" *ngIf="false">
+          <strong>Will be saved:</strong><br>
+          Employee ID: {{ employee?.EmployeeId }}<br>
+          Role ID: {{ employee?.RoleId }}<br>
+          Department ID: {{ employee?.DepartmentId }}<br>
+          Is Active: true
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="sidebar-footer">
+      <button type="submit" 
+              class="btn btn-primary" 
+              [disabled]="userAccessForm.invalid">
+        <i class="mdi mdi-content-save"></i>
+        {{ registerUser?.id ? 'Update User' : 'Create User' }}
+      </button>
+      <button type="button" 
+              class="btn btn-secondary ms-2" 
+              (click)="onClose()">
+        <i class="mdi mdi-close"></i>
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>

@@ -121,19 +121,19 @@ export const environment = {
         },
         //TaskCode endpoints
         Taskcode: {
-           GetTaskcodeListAsync: 'taskcode/fetchAllTaskcodes',
-           GetTaskcodeAsync: 'taskcode/fetchtaskcode',
-           InsertOrUpdateTaskcodeAsync: 'taskcode/InsertOrUpdateTaskcode',
-           DeleteTaskcodeAsync: 'taskcode/DeleteTaskcode',
-    },
- 
+            GetTaskcodeListAsync: 'taskcode/fetchAllTaskcodes',
+            GetTaskcodeAsync: 'taskcode/fetchtaskcode',
+            InsertOrUpdateTaskcodeAsync: 'taskcode/InsertOrUpdateTaskcode',
+            DeleteTaskcodeAsync: 'taskcode/DeleteTaskcode',
+        },
+
 
         //TaskItem endpoints
-        TaskItem : { 
-        getTaskitemList:'taskitem/fetchAllTaskItems',
-        getTaskitem:'taskitem/fetchTaskItem',
-        deleteTaskitem:'taskitem/DeleteTaskItem',
-        insertOrUpdatetaskitem:'taskitem/InsertOrUpdateTaskItem'
+        TaskItem: {
+            getTaskitemList: 'taskitem/fetchAllTaskItems',
+            getTaskitem: 'taskitem/fetchTaskItem',
+            deleteTaskitem: 'taskitem/DeleteTaskItem',
+            insertOrUpdatetaskitem: 'taskitem/InsertOrUpdateTaskItem'
         },
 
         // HolidayCalendar endpoints
@@ -302,9 +302,6 @@ export const environment = {
             SoftDeleteEmployeeEmergencyContact: 'employeeemergencycontact/SoftDeleteEmployeeEmergencyContact',
             SetAsPrimaryContact: 'employeeemergencycontact/setAsPrimaryContact'
         },
-//employeesalarystructure/fetchEmployeeSalaryStructure
-//employeesalarystructure/fetchSalaryStructureByEmployee
-//employeesalarystructure/fetchEmployeeSalaryStructure/30
         EmployeeSalaryStructure: {
             GetEmployeeSalaryStructure: 'employeesalarystructure/fetchEmployeeSalaryStructure',
             GetSalaryStructureByEmployee: 'employeesalarystructure/fetchSalaryStructureByEmployee',
