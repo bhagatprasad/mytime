@@ -23,9 +23,9 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     AgGridAngular,
     DatePipe,
     CreateTaskitemComponent,
-     FormsModule,
-      DeleteConfirmationComponent
-    ],
+    FormsModule,
+    DeleteConfirmationComponent
+  ],
   templateUrl: './taskitem-list.component.html',
   styleUrl: './taskitem-list.component.css'
 })
@@ -33,7 +33,7 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
 
   today = new Date();
 
-  taskitems : TaskItem[] = [];
+  taskitems: TaskItem[] = [];
 
   showDeletePopup: boolean = false;
 
@@ -72,7 +72,7 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
       width: 80,
       filter: 'agNumberColumnFilter',
       sortable: true,
-      cellClass: 'text-center'
+      cellClass: 'text-left'
     },
     {
       field: 'Name',
@@ -88,7 +88,15 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
       width: 120,
       filter: 'agTextColumnFilter',
       sortable: true,
-      cellClass: 'text-center'
+      cellClass: 'text-left'
+    },
+    {
+      field: 'ProjectId',
+      headerName: 'ProjectId',
+      width: 120,
+      filter: 'agTextColumnFilter',
+      sortable: true,
+      cellClass: 'text-left'
     },
     {
       field: 'CreatedBy',
@@ -96,7 +104,7 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
       width: 120,
       filter: 'agNumberColumnFilter',
       sortable: true,
-      cellClass: 'text-center'
+      cellClass: 'text-left'
     },
     {
       field: 'CreatedOn',
@@ -105,7 +113,7 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
       filter: 'agDateColumnFilter',
       sortable: true,
       valueFormatter: this.dateFormatter.bind(this),
-      cellClass: 'text-center'
+      cellClass: 'text-left'
     },
     {
       field: 'ModifiedBy',
@@ -113,7 +121,7 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
       width: 120,
       filter: 'agNumberColumnFilter',
       sortable: true,
-      cellClass: 'text-center'
+      cellClass: 'text-left'
     },
     {
       field: 'ModifiedOn',
@@ -122,9 +130,9 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
       filter: 'agDateColumnFilter',
       sortable: true,
       valueFormatter: this.dateFormatter.bind(this),
-      cellClass: 'text-center'
+      cellClass: 'text-left'
     },
-     {
+    {
       field: 'IsActive',
       headerName: 'Status',
       width: 120,
@@ -133,15 +141,7 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
       cellRenderer: this.statusRenderer.bind(this),
       cellClass: this.statusCellClass.bind(this)
     },
-     {
-      field: 'ProjectId',
-      headerName: 'ProjectId',
-      width: 120,
-      filter: 'agTextColumnFilter',
-      sortable: true,
-      cellRenderer: this.statusRenderer.bind(this),
-      cellClass: this.statusCellClass.bind(this)
-    },
+
     {
       field: 'Actions',
       headerName: 'Actions',
@@ -186,7 +186,7 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
 
   showSidebar: boolean = false;
 
-  selectedtaskitem : TaskItem| null = null;
+  selectedtaskitem: TaskItem | null = null;
   constructor(private taskitemService: TaskitemService,
     private loader: LoaderService,
     private toster: ToastrService,
@@ -197,16 +197,16 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
     this.showDeletePopup = true;
     this.selectedDeleteItem = taskitem;
   }
-  requestTaskitemProcess(taskitem : TaskItem): void {
+  requestTaskitemProcess(taskitem: TaskItem): void {
     this.selectedtaskitem = taskitem;
     this.showSidebar = true;
   }
 
   loadRoleData(): void {
     this.loader.show();
-        this.taskitemService.GetTaskitemListAsync().subscribe({
-      next: ( taskitem : TaskItem[] ) => {
-         console.log('TaskItems', taskitem);
+    this.taskitemService.GetTaskitemListAsync().subscribe({
+      next: (taskitem: TaskItem[]) => {
+        console.log('TaskItems', taskitem);
 
         this.taskitems = taskitem;
         this.loader.hide();
