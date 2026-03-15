@@ -6,7 +6,7 @@
 }
 
 .footer {
-  background: linear-gradient(90deg, #142837, #1a2c3d) !important;
+  background: #00008f !important;  /* Changed from gradient to solid #00008f */
   padding: 1.2rem 2.5rem !important;
   transition: all 0.25s ease !important;
   font-size: 0.9rem !important;
