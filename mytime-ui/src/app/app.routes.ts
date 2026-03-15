@@ -89,6 +89,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'taskitem',
+        loadComponent: () =>
+          import('./admin/components/core/taskitem/taskitem-list.component').then(
+            (m) => m.TaskItemListComponent
+          ),
+      },
+      {
         path: 'holydaycallenders',
         loadComponent: () =>
           import('./admin/components/core/holydaycallender/holydaycallender-list.component').then(
