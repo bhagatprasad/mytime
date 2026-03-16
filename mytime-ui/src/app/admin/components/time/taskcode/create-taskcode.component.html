@@ -5,7 +5,7 @@
 <div class="sidebar" [class.visible]="isVisible">
     <form [formGroup]="taskcodeForm" (ngSubmit)="onSubmit()">
         <div class="sidebar-header">
-            <h5 class="sidebar-title">{{ taskcode?.TaskCodeId ? 'Edit Role' : 'Add Role' }}</h5>
+            <h5 class="sidebar-title">{{ taskcode?.TaskCodeId ? 'Edit Taskcode' : 'Add Taskcode' }}</h5>
             <button type="button" class="close" (click)="close()" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -13,7 +13,27 @@
 
         <div class="sidebar-body">
             <div class="form-group">
-                <label for="Name">Taskcode Name</label>
+                <label>Task item *</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-office-building"></i>
+                        </span>
+                    </div>
+                    <select class="form-control" formControlName="TaskItemId">
+                        <option [ngValue]="null">Select task item</option>
+                        <option *ngFor="let c of taskitems" [ngValue]="c.TaskItemId">
+                            {{ c.Name }}
+                        </option>
+                    </select>
+                </div>
+                <small class="text-danger"
+                    *ngIf="taskcodeForm.get('TaskItemId')?.invalid && (taskcodeForm.get('TaskItemId')?.touched || taskcodeForm.get('TaskItemId')?.dirty)">
+                    Task item is required
+                </small>
+            </div>
+            <div class="form-group">
+                <label for="Name">Name</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text">
@@ -27,10 +47,10 @@
                 <div *ngIf="taskcodeForm.get('Name')?.invalid && taskcodeForm.get('Name')?.touched"
                     class="text-danger small mt-1">
                     <span *ngIf="taskcodeForm.get('Name')?.errors?.['required']">
-                        Taskcode name is required
+                        name is required
                     </span>
                     <span *ngIf="taskcodeForm.get('Name')?.errors?.['maxlength']">
-                        Taskcode name cannot exceed {{ taskcodeForm.get('Name')?.errors?.['maxlength']?.requiredLength
+                        name cannot exceed {{ taskcodeForm.get('Name')?.errors?.['maxlength']?.requiredLength
                         }} characters
                     </span>
                 </div>
@@ -44,48 +64,20 @@
                             <i class="mdi mdi-code-tags"></i>
                         </span>
                     </div>
-                    <input type="text" class="form-control" id="Code" formControlName="Code"
-                        placeholder="Enter code">
+                    <input type="text" class="form-control" id="Code" formControlName="Code" placeholder="Enter code">
                 </div>
                 <!-- Validation messages for Code field -->
                 <div *ngIf="taskcodeForm.get('Code')?.invalid && taskcodeForm.get('Code')?.touched"
                     class="text-danger small mt-1">
                     <span *ngIf="taskcodeForm.get('Code')?.errors?.['required']">
-                        Taskcode code is required
+                        code is required
                     </span>
                     <span *ngIf="taskcodeForm.get('Code')?.errors?.['maxlength']">
-                        Taskcode code cannot exceed {{
+                        code cannot exceed {{
                         taskcodeForm.get('Code')?.errors?.['maxlength']?.requiredLength }} characters
                     </span>
                     <span *ngIf="taskcodeForm.get('Code')?.errors?.['pattern']">
-                        TaskItem code code should contain only numbers
-                    </span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="Code">TaskItem Code</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">
-                            <i class="mdi mdi-code-tags"></i>
-                        </span>
-                    </div>
-                    <input type="text" class="form-control" id="TaskItemCode" formControlName="TaskItemId"
-                        placeholder="Enter code">
-                </div>
-                <!-- Validation messages for Code field -->
-                <div *ngIf="taskcodeForm.get('TaskItemId')?.invalid && taskcodeForm.get('TaskItemId')?.touched"
-                    class="text-danger small mt-1">
-                    <span *ngIf="taskcodeForm.get('TaskItemCode')?.errors?.['required']">
-                        TaskItem Id is required
-                    </span>
-                    <span *ngIf="taskcodeForm.get('TaskItemId')?.errors?.['maxlength']">
-                        TaskItem Id cannot exceed {{
-                        taskcodeForm.get('TaskItemId')?.errors?.['maxlength']?.requiredLength }} characters
-                    </span>
-                    <span *ngIf="taskcodeForm.get('TaskItemCode')?.errors?.['pattern']">
-                        TaskItem code code should contain only numbers
+                        code code should contain only numbers
                     </span>
                 </div>
             </div>

@@ -26,7 +26,8 @@ origins = [
     "http://localhost:3000",
     "http://localhost:8080",
     "http://localhost:8000",
-    "https://mytime-ui.netlify.app"
+    "https://mytime-ui.netlify.app",
+    "https://mytime-prod.netlify.app"
 ]
 
 print(f"✅ CORS Origins configured: {origins}")
