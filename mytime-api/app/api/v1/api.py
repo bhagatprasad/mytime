@@ -1,6 +1,8 @@
 # app/api/v1/api.py - Ensure this has authorization
 from fastapi import APIRouter, Depends
 
+from app.api.v1.routers import taskitem
+
 print("=" * 50)
 print("DEBUG: Loading api.py with authorization")
 print("=" * 50)
@@ -81,7 +83,7 @@ except ImportError as e:
     employee_salary = DummyRouter()
     monthly_salary = DummyRouter()
     project = DummyRouter()
-    task_item = DummyRouter()
+    taskitem = DummyRouter()
     taskcode =DummyRouter()
     user_profile_image = DummyRouter()
     leave_routes=DummyRouter()

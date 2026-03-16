@@ -10,10 +10,10 @@
             <div class="d-flex align-items-center">
               <h5 class="mb-0">
                 <i class="mdi mdi-account-group text-primary me-2"></i>
-                Designation Management
+                TaskItem Management
               </h5>
               <span class="badge bg-light text-dark ms-3">
-                <span class="text-primary fw-bold">{{ getTotalRowsCount() }}</span> designations
+                <span class="text-primary fw-bold">{{ getTotalRowsCount() }}</span> Taskitems
               </span>
             </div>
 
@@ -22,10 +22,9 @@
               <!-- Action Buttons -->
               <div class="d-flex gap-2 ms-3">
                 <!-- Add Button -->
-                <a class="btn-sm d-flex align-items-center" (click)="openAddEditDesignation()"
-                  title="Add new designation">
-                 <i class="mdi mdi-plus-circle-outline me-1"></i>
-              </a>
+                <a class="btn-sm d-flex align-items-center" (click)="openAddEditState()" title="Add new country">
+                  <i class="mdi mdi-plus-circle-outline me-1"></i>
+                </a>
               </div>
             </div>
           </div>
@@ -34,16 +33,25 @@
         <!-- Card Body with Grid -->
         <div class="card-body p-0">
           <!-- AG Grid -->
-          <div *ngIf="rowData.length > 0" class="ag-grid-container">
-            <ag-grid-angular style="width: 100%; height: 640px;" class="ag-theme-alpine" [rowData]="rowData"
-              [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [gridOptions]="gridOptions"
-              (gridReady)="onGridReady($event)" [pagination]="true" [paginationPageSize]="20" [suppressCellFocus]="true"
-              [animateRows]="true" [rowSelection]="'single'" [domLayout]="isMobile ? 'autoHeight' : 'normal'">
+          <div *ngIf="taskitems.length > 0" class="ag-grid-container">
+            <ag-grid-angular style="width: 100%; height: 640px;"
+              class="ag-theme-alpine" 
+              [rowData]="taskitems"
+              [columnDefs]="columnDefs"
+              [defaultColDef]="defaultColDef" 
+              [gridOptions]="gridOptions"
+              (gridReady)="onGridReady($event)" 
+              [pagination]="true" 
+              [paginationPageSize]="20" 
+              [suppressCellFocus]="true"
+              [animateRows]="true" 
+              [rowSelection]="'single'" 
+              [domLayout]="isMobile ? 'autoHeight' : 'normal'">
             </ag-grid-angular>
           </div>
 
           <!-- Grid Footer Stats -->
-          <div *ngIf="rowData.length > 0" class="card-footer bg-white border-top">
+          <div *ngIf="taskitems.length > 0" class="card-footer bg-white border-top">
             <div class="d-flex justify-content-between align-items-center">
               <div class="d-flex gap-3">
                 <small class="text-muted">
@@ -51,11 +59,11 @@
                 </small>
                 <small class="text-muted">
                   <i class="mdi mdi-check-circle-outline text-success me-1"></i>
-                  <span class="fw-medium">{{ getActiveRolesCount() }}</span> active
+                  <span class="fw-medium">{{ getActiveStatesCount() }}</span> active
                 </small>
                 <small class="text-muted">
                   <i class="mdi mdi-close-circle-outline text-danger me-1"></i>
-                  <span class="fw-medium">{{ getInactiveRolesCount() }}</span> inactive
+                  <span class="fw-medium">{{ getInactiveStatesCount() }}</span> inactive
                 </small>
               </div>
               <small class="text-muted">
@@ -64,16 +72,20 @@
               </small>
             </div>
           </div>
-
-          <app-create-designation [isVisible]="showSidebar" [designation]="selectedDes"
-            (closeSidebar)="onCloseSidebar()" (saveDesignation)="onSaveDesignation($event)"></app-create-designation>
-            
-          <app-delete-confirmation *ngIf="showDeletePopup" title="Delete Designation"
-            message="Do you really want to delete this designation?" (confirm)="confirmDelete()"
-            (cancel)="closePopup()">
-          </app-delete-confirmation>
-
         </div>
+        <app-create-taskitem
+            [isVisible]="showSidebar" 
+            [taskitem]="selectedtaskitem" 
+            (closeSidebar)="onCloseSidebar()" 
+            (saveTaskItem)="onSaveTaskItem($event)">
+        </app-create-taskitem>
+        <app-delete-confirmation 
+            *ngIf="showDeletePopup" 
+            title="Delete TaskItem"
+            message="Do you really want to delete this TaskItem?" 
+            (confirm)="confirmDelete()"
+            (cancel)="closePopup()">
+        </app-delete-confirmation> 
       </div>
     </div>
   </div>

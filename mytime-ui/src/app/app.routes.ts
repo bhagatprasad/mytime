@@ -117,6 +117,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'taskitem',
+        loadComponent: () =>
+          import('./admin/components/core/taskitem/taskitem-list.component').then(
+            (m) => m.TaskItemListComponent
+          ),
+      },
+      {
         path: 'holydaycallenders',
         loadComponent: () =>
           import('./admin/components/core/holydaycallender/holydaycallender-list.component').then(
@@ -152,6 +159,13 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./admin/components/employees/employee/employees-list.component').then(
                 (m) => m.EmployeesListComponent
+              ),
+          },
+          {
+            path: 'documents',
+            loadComponent: () =>
+              import('./admin/components/employees/documents/employee-documents-list.component').then(
+                (m) => m.EmployeeDocumentsListComponent
               ),
           },
           {
@@ -206,6 +220,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'taskitem',
+        loadComponent: () =>
+          import('./admin/components/core/taskitem/taskitem-list.component').then(
+            (m) => m.TaskItemListComponent
+          ),
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',
@@ -214,6 +235,6 @@ export const routes: Routes = [
   },
 
   // Fallbacks
-  { path: '',   redirectTo: 'login', pathMatch: 'full' },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' },
 ];

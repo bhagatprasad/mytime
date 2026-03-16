@@ -22,11 +22,10 @@
                             <!-- Action Buttons -->
                             <div class="d-flex gap-2 ms-3">
                                 <!-- Add Button -->
-                                <button class="btn btn-primary btn-sm d-flex align-items-center"
-                                    (click)="openAddDepartment()" title="Add new Department">
-                                    <i class="mdi mdi-plus me-1"></i>
-                                    <span>Add Department</span>
-                                </button>
+                                <a class="btn-sm d-flex align-items-center" (click)="openAddDepartment()"
+                                    title="Add new Department">
+                                    <i class="mdi mdi-plus-circle-outline me-1"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -67,7 +66,9 @@
                         </div>
                     </div>
 
-                    <app-create-department [isVisible]="showSidebar" [department]="selectedDepartment"  (closeSidebar)="onCloseSidebar()" (saveDepartment)="OnSaveDepartment($event)"></app-create-department>
+                    <app-create-department [isVisible]="showSidebar" [department]="selectedDepartment"
+                        (closeSidebar)="onCloseSidebar()"
+                        (saveDepartment)="OnSaveDepartment($event)"></app-create-department>
                 </div>
 
             </div>
