@@ -7,8 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { AuditFieldsService } from '../../../common/services/auditfields.service';
 import { LoaderService } from '../../../common/services/loader.service';
 import { AccountService } from '../../../common/services/account.service';
-
-import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-leaveapply',
@@ -51,7 +50,11 @@ export class LeaveapplyComponent implements OnInit {
   userId: number | undefined;
   snackBar: any;
 
-  constructor(private leaveService: LeaveService, private auditservice: AuditFieldsService, private loader: LoaderService, private accountService: AccountService, private toastr: ToastrService) { }
+  constructor(private leaveService: LeaveService,
+    private auditservice: AuditFieldsService,
+    private loader: LoaderService,
+    private accountService: AccountService,
+    private toastr: ToastrService) { }
 
   ngOnInit() {
     this.getLeaveTypes();
@@ -68,7 +71,7 @@ export class LeaveapplyComponent implements OnInit {
   }
 
   getLeaveTypes() {
-    this.leaveService.getLeaveTypes()
+    this.leaveService.GetleaveTypesAsync()
       .subscribe(res => {
         this.leaveTypes = res;
       });
@@ -85,7 +88,7 @@ export class LeaveapplyComponent implements OnInit {
 
     }
 
-    this.leaveService.getMyLeaves(user.id).subscribe({
+    this.leaveService.GetMyLeavesAsync(user.id).subscribe({
       next: (res: any) => {
         this.leaves = res;
         this.calculateDashboard();
@@ -154,7 +157,7 @@ export class LeaveapplyComponent implements OnInit {
       description: this.leave.Description || ""
     };
 
-    this.leaveService.applyLeave(payload).subscribe({
+    this.leaveService.ApplyleaveAsync(payload).subscribe({
       next: () => {
         // alert("Leave Applied Successfully");
         this.closeForm();
@@ -174,7 +177,7 @@ export class LeaveapplyComponent implements OnInit {
 
     if (!reason) return;
 
-    this.leaveService.cancelLeave(id, { cancelReason: reason })
+    this.leaveService.CancelLeaveAsync(id, { cancelReason: reason })
       .subscribe(() => {
 
         alert("Leave Cancelled");

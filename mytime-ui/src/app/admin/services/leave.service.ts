@@ -14,54 +14,54 @@ export class LeaveService {
 
     constructor(private apiService: ApiService) { }
 
-    getLeaveTypes(): Observable<LeaveType[]> {
+    GetleaveTypesAsync(): Observable<LeaveType[]> {
         return this.apiService.send<LeaveType[]>(
             "GET",
-            environment.UrlConstants.ApplyLeave.GetleaveTypes
+            environment.UrlConstants.ApplyLeave.GetleaveTypesAsync
         );
     }
 
-    getAllLeaveRequests(): Observable<any> {
+    GetAllleaveRequestsAsync(): Observable<any> {
         return this.apiService.send<any>(
             "GET",
-            environment.UrlConstants.ApplyLeave.GetAllleaveRequests
+            environment.UrlConstants.ApplyLeave.GetAllleaveRequestsAsync
         );
     }
 
-    applyLeave(data: any): Observable<any> {
+    ApplyleaveAsync(data: any): Observable<any> {
         return this.apiService.send<any>(
             "POST",
-            environment.UrlConstants.ApplyLeave.Applyleave,
+            environment.UrlConstants.ApplyLeave.ApplyleaveAsync,
             data
         );
     }
 
-    getMyLeaves(userId: number): Observable<any> {
+    GetMyLeavesAsync(userId: number): Observable<any> {
         return this.apiService.send<any>(
             "GET",
-            `${environment.UrlConstants.ApplyLeave.GetMyLeaves}/${userId}`
+            `${environment.UrlConstants.ApplyLeave.GetMyLeavesAsync}/${userId}`
         );
     }
 
-    approveLeave(id: number,data: any): Observable<any> {
+    ApproveLeaveAsync(id: number,data: any): Observable<any> {
         return this.apiService.send<any>(
             "PUT",
-            `${environment.UrlConstants.ApplyLeave.ApproveLeave}/${id}`,data
+            `${environment.UrlConstants.ApplyLeave.ApproveLeaveAsync}/${id}`,data
         );
     }
 
-    rejectLeave(id: number, data: any): Observable<any> {
+    RejectLeaveAsync(id: number, data: any): Observable<any> {
         return this.apiService.send<any>(
             "PUT",
-            `${environment.UrlConstants.ApplyLeave.RejectLeave}/${id}`,
+            `${environment.UrlConstants.ApplyLeave.RejectLeaveAsync}/${id}`,
             data
         );
     }
 
-    cancelLeave(id: number, data: any): Observable<any> {
+    CancelLeaveAsync(id: number, data: any): Observable<any> {
         return this.apiService.send<any>(
             "PUT",
-            `${environment.UrlConstants.ApplyLeave.CancelLeave}/${id}`,
+            `${environment.UrlConstants.ApplyLeave.CancelLeaveAsync}/${id}`,
             data
         );
     }

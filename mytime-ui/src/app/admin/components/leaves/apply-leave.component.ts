@@ -332,7 +332,7 @@ export class ApplyLeaveComponent implements OnInit {
   loadleaveData(): void {
     this.loader.show();
 
-    this.leaveService.getAllLeaveRequests().subscribe({
+    this.leaveService.GetAllleaveRequestsAsync().subscribe({
       next: (des: LeaveRequest[]) => {
         this.rowData = des;
         this.loader.hide();
@@ -460,7 +460,7 @@ export class ApplyLeaveComponent implements OnInit {
   }
 
   getLeaveTypes() {
-  this.leaveService.getLeaveTypes().subscribe(res => {
+  this.leaveService.GetleaveTypesAsync().subscribe(res => {
 
     this.leaveTypes = res;
 
@@ -481,7 +481,7 @@ export class ApplyLeaveComponent implements OnInit {
 
     if (this.actionType === 'reject') {
 
-      this.leaveService.rejectLeave(id, payload).subscribe(res => {
+      this.leaveService.RejectLeaveAsync(id, payload).subscribe(res => {
         this.closePopup()
         this.refreshData(); // reload grid;
 
@@ -491,7 +491,7 @@ export class ApplyLeaveComponent implements OnInit {
 
     if (this.actionType === 'approve') {
 
-      this.leaveService.approveLeave(id, payload).subscribe(res => {
+      this.leaveService.ApproveLeaveAsync(id, payload).subscribe(res => {
         this.closePopup();
         this.refreshData();
 

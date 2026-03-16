@@ -1,6 +1,6 @@
 export const environment = {
     production: false,
-    baseUrl: 'https://mytime-docker.onrender.com/api/v1',
+    baseUrl: 'http://localhost:8000/api/v1',
     UrlConstants: {
         // Authentication endpoints
         Authenticate: 'auth/AuthenticateUser',
@@ -419,10 +419,19 @@ export const environment = {
             CheckUserHasActiveImage: 'userprofileimage/checkUserHasActiveImage',
         },
         TaskItem: {
-            GetTaskitemListAsync:'taskitem/fetchAllTaskItems',
+            GetTaskitemListAsync: 'taskitem/fetchAllTaskItems',
             InsertOrUpdateTaskItemAsync: 'taskitem/InsertOrUpdateTaskItem',
-            GetTaskitemAsync:'taskitem/fetchTaskItem',
-            DeleteTaskItemAsync:'taskitem/DeleteTaskItem',
+            GetTaskitemAsync: 'taskitem/fetchTaskItem',
+            DeleteTaskItemAsync: 'taskitem/DeleteTaskItem',
+        },
+        ApplyLeave: {
+            GetleaveTypesAsync: 'leaves/fetchtypes',
+            GetAllleaveRequestsAsync: 'leaves/fecthallleaves',
+            ApplyleaveAsync: 'leaves/applyleave',
+            GetMyLeavesAsync: 'leaves/fetchleavesbyuser',
+            ApproveLeaveAsync:'leaves/approveleave',
+            RejectLeaveAsync:'leaves/rejectleave',
+            CancelLeaveAsync:'leaves/cancelleave'
         }
     },
 };
