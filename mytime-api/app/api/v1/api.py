@@ -24,7 +24,7 @@ except ImportError as e:
 try:
     from app.api.v1.routers import leave_routes,taskitem
      # Authentication & User Management
-    from app.api.v1.routers import auth, user, roles
+    from app.api.v1.routers import auth, user, roles,leavetype
     
     # AI & ML Features
     from app.api.v1.routers import llm, vision, audio, embeddings
@@ -87,6 +87,7 @@ except ImportError as e:
     taskcode =DummyRouter()
     user_profile_image = DummyRouter()
     leave_routes=DummyRouter()
+    leavetype=DummyRouter()
 # Create main router
 api_router = APIRouter()
 
@@ -177,6 +178,9 @@ if HAS_AUTH:
     leave_routes_protected = APIRouter(dependencies=[Depends(get_current_user)])
     leave_routes_protected.include_router(leave_routes.router)
 
+    leavetypes_protected = APIRouter(dependencies=[Depends(get_current_user)])
+    leavetypes_protected.include_router(leavetype.router)
+
             
     # Include protected routes
     api_router.include_router(users_protected, prefix="/users", tags=["users"])
@@ -203,6 +207,7 @@ if HAS_AUTH:
     api_router.include_router(user_profile_image_protected, prefix="/userprofileimage", tags=["userprofileimage"])
     api_router.include_router(task_item_protected, prefix="/itemitem", tags=["taskitem"])
     api_router.include_router(leave_routes_protected, prefix="/leaves", tags=["Leaves"])
+    api_router.include_router(leavetypes_protected, prefix="/leavetype", tags=["LeaveType"])
 else:
     # Development mode - include without auth
     api_router.include_router(user.router, prefix="/users", tags=["users"])
@@ -229,6 +234,7 @@ else:
     api_router.include_router(user_profile_image.router, prefix="/userprofileimage", tags=["userprofileimage"])
     api_router.include_router(taskitem.router, prefix="/taskitem", tags=["taskitem"])
     api_router.include_router(leave_routes.router, prefix="/leaves", tags=["leaves"])
+    api_router.include_router(leavetype.router, prefix="/leavetype", tags=["LeaveType"])
 
 # AI routes - decide if these should be public or protected
 # For now, making them public for development
