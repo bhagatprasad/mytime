@@ -1,0 +1,234 @@
+.leave-container {
+  max-width: 1400px;
+  margin: auto;
+  padding: 20px;
+  font-family: Segoe UI;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 25px;
+}
+
+/* DASHBOARD */
+
+.dashboard-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 25px;
+}
+
+.dashboard-card {
+  flex: 1 1 calc(20% - 12px);
+  padding: 18px;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+  transition: transform .2s, box-shadow .2s;
+}
+
+.dashboard-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, .15);
+}
+
+.total-card {
+  background: #636e72;
+}
+
+.approved-card {
+  background: #00b894;
+}
+
+.rejected-card {
+  background: #e17055;
+}
+
+.pending-card {
+  background: #fdcb6e;
+  color: black;
+}
+
+.cancelled-card {
+  background: #81ecec;
+  color: black;
+}
+
+/* APPLY BUTTON */
+
+.apply-section {
+  text-align: right;
+  margin-bottom: 20px;
+}
+
+.apply-button {
+  background: #0984e3;
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.apply-button:hover {
+  background: #1d3557;
+  transform: scale(1.00);
+}
+
+/* TABLE */
+
+.table-wrapper {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, .1);
+}
+
+.scroll-container {
+  max-height: 420px;
+  overflow: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.table th {
+  background: #d8eafc;
+  color: white;
+  padding: 12px;
+  text-align: center;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+}
+
+.table td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+/* COMMENT COLUMN */
+
+.comment-cell {
+  max-width: 180px;
+  text-align: left;
+  overflow: hidden;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 2;
+  text-overflow: ellipsis;
+}
+
+
+.reason-cell {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* STATUS */
+
+.status {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.status.pending {
+  background: #ffeaa7;
+}
+
+.status.approved {
+  background: #55efc4;
+}
+
+.status.rejected {
+  background: #fab1a0;
+}
+
+.status.cancelled {
+  background: #dfe6e9;
+}
+
+/* ACTIVE BADGE */
+
+.active-badge {
+  background: #00b894;
+  color: white;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.inactive-badge {
+  background: #b2bec3;
+  color: white;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+/* CANCEL BUTTON */
+
+.cancel-btn {
+  background: #636e72;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background .2s;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background: #e74c3c;
+}
+
+.cancel-btn:disabled {
+  background: #b2bec3;
+  cursor: not-allowed;
+}
+
+/* FORM */
+
+.form-card {
+  background: #f7f7f7;
+  padding: 25px;
+  border-radius: 10px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 9px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.save-btn {
+  background: #00b894;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+}
+
+.cancel-form-btn {
+  background: #636e72;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+}

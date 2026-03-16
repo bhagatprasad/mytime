@@ -406,6 +406,17 @@ export const environment = {
       DeleteMonthlySalaryAsync: 'monthlysalary/deleteMonthlySalary',
       PublishMonthlySalaryAsync: 'monthlysalary/publish',
     },
+
+    ApplyLeave: {
+      GetleaveTypes:'leaves/leaves/types',
+      GetAllleaveRequests: 'leaves/leaves/admin',
+      Applyleave: 'leaves/leaves/apply',
+      GetMyLeaves:'leaves/leaves/user',
+      ApproveLeave:'leaves/leaves/approve',
+      RejectLeave:'leaves/leaves/reject',
+      CancelLeave:'leaves/leaves/cancel',
+      
+    },
     UserProfileImage: {
       FetchProfileImage: 'userprofileimage/fetchProfileImage',
       FetchProfileImageByUser: 'userprofileimage/fetchProfileImageByUser',
