@@ -10,7 +10,7 @@ import { Taskcode } from "../models/taskcode";
 export class TaskcodeService {
     constructor(private apiService: ApiService) { }
 
-    getTaskcodeListAsync(): Observable<Taskcode[]> {
+    getTaskcodeListAsync(): Observable<any> {
         return this.apiService.send<Taskcode[]>("GET", environment.UrlConstants.Taskcode.GetTaskcodeListAsync);
     }
 

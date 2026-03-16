@@ -10,7 +10,7 @@ import { TaskItem } from "../models/taskitem";
 export class TaskitemService {
     constructor(private apiService: ApiService) { }
 
-    GetTaskitemListAsync(): Observable<TaskItem[]> {
+    GetTaskitemListAsync(): Observable<any> {
         return this.apiService.send<TaskItem[]>("GET", environment.UrlConstants.TaskItem.GetTaskitemListAsync);
     }
 
