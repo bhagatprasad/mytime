@@ -52,6 +52,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'leaveapply',
+        loadComponent: () =>
+          import('./user/components/leaveapply/leaveapply.component').then(
+            (m) => m.LeaveapplyComponent
+          ),
+      },
+      {
         path: 'payslips',
         loadComponent: () =>
           import('./user/components/payslips/payslips.component').then(
@@ -203,6 +210,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./admin/components/time/taskcode/taskcode.component').then(
             (m) => m.TaskcodeComponent
+          ),
+      },
+      {
+        path: 'leaves',
+        loadComponent: () =>
+          import('./admin/components/leaves/apply-leave.component').then(
+            (m) => m.ApplyLeaveComponent
           ),
       },
       {

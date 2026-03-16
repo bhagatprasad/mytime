@@ -22,7 +22,7 @@ except ImportError as e:
 
 # Import routers
 try:
-    from app.api.v1.routers import auth, user, roles, llm, vision, audio, embeddings, rss, country,state,city,designation,department,document_type,holiday_calendar,employee,employee_address,employee_education,employee_emergency_contact,employee_employment,employee_salary_structure,employee_document,backblaze_upload,employee_salary,monthly_salary,project,taskcode
+    from app.api.v1.routers import leave_routes,taskitem
      # Authentication & User Management
     from app.api.v1.routers import auth, user, roles
     
@@ -86,6 +86,7 @@ except ImportError as e:
     taskitem = DummyRouter()
     taskcode =DummyRouter()
     user_profile_image = DummyRouter()
+    leave_routes=DummyRouter()
 # Create main router
 api_router = APIRouter()
 
@@ -173,6 +174,9 @@ if HAS_AUTH:
     task_item_protected = APIRouter(dependencies=[Depends(get_current_user)])
     task_item_protected.include_router(taskitem.router)
 
+    leave_routes_protected = APIRouter(dependencies=[Depends(get_current_user)])
+    leave_routes_protected.include_router(leave_routes.router)
+
             
     # Include protected routes
     api_router.include_router(users_protected, prefix="/users", tags=["users"])
@@ -197,7 +201,8 @@ if HAS_AUTH:
     api_router.include_router(project_protected, prefix="/project", tags=["project"])
     api_router.include_router(taskcode_protected, prefix="/taskcode", tags=["taskcode"])
     api_router.include_router(user_profile_image_protected, prefix="/userprofileimage", tags=["userprofileimage"])
-    api_router.include_router(task_item_protected, prefix="/taskitem", tags=["taskitem"])
+    api_router.include_router(task_item_protected, prefix="/itemitem", tags=["taskitem"])
+    api_router.include_router(leave_routes_protected, prefix="/leaves", tags=["Leaves"])
 else:
     # Development mode - include without auth
     api_router.include_router(user.router, prefix="/users", tags=["users"])
@@ -223,6 +228,7 @@ else:
     api_router.include_router(taskcode.router, prefix="/taskcode", tags=["taskcode"])
     api_router.include_router(user_profile_image.router, prefix="/userprofileimage", tags=["userprofileimage"])
     api_router.include_router(taskitem.router, prefix="/taskitem", tags=["taskitem"])
+    api_router.include_router(leave_routes.router, prefix="/leaves", tags=["leaves"])
 
 # AI routes - decide if these should be public or protected
 # For now, making them public for development
