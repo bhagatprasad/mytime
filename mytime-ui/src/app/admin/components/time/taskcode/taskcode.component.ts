@@ -11,28 +11,31 @@ import { CommonModule } from '@angular/common';
 import { DeleteConfirmationComponent } from '../../../../common/components/delete.compunent';
 import { AgGridAngular } from 'ag-grid-angular';
 import { CreateTaskcodeComponent } from './create-taskcode.component';
+import { TaskItem } from '../../../models/taskitem';
+import { forkJoin } from 'rxjs';
+import { TaskitemService } from '../../../services/taskitem.service';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-taskcode',
   standalone: true,
-  imports: [CommonModule,DeleteConfirmationComponent,AgGridAngular,CreateTaskcodeComponent],
+  imports: [CommonModule, DeleteConfirmationComponent, AgGridAngular, CreateTaskcodeComponent],
   templateUrl: './taskcode.component.html',
   styleUrl: './taskcode.component.css'
 })
-export class TaskcodeComponent implements OnInit , OnDestroy{
+export class TaskcodeComponent implements OnInit, OnDestroy {
 
-today = new Date();
-
-
-taskcodes: Taskcode[] = [];
+  today = new Date();
 
 
-  showDeletePopup:boolean=false;
+  taskcodes: Taskcode[] = [];
+
+
+  showDeletePopup: boolean = false;
   selectedDeleteItem: Taskcode | null = null;
 
-   showSidebar: boolean = false;
+  showSidebar: boolean = false;
 
   selectedtaskcode: Taskcode | null = null;
 
@@ -91,11 +94,15 @@ taskcodes: Taskcode[] = [];
     },
     {
       field: 'TaskItemId',
-      headerName: 'ItemID',
-      width: 80,
-      filter: 'agNumberColumnFilter',
+      headerName: 'Item Name',
+      width: 120,
+      filter: 'agTextColumnFilter',
       sortable: true,
-      cellClass: 'text-center'
+      cellClass: 'text-center',
+      valueGetter: (params: any) => {
+        const item = this.taskitems.find(x => x.TaskItemId === params.data.TaskItemId);
+        return item ? item.Name : '';
+      }
     },
     {
       field: 'CreatedBy',
@@ -181,38 +188,43 @@ taskcodes: Taskcode[] = [];
       cellClass: 'text-center'
     }
   ];
+  taskitems: TaskItem[] = [];
   constructor(private taskcodeservice: TaskcodeService,
     private loader: LoaderService,
     private toster: ToastrService,
-    private audit: AuditFieldsService) {
+    private audit: AuditFieldsService,private taskitemservice: TaskitemService) {
 
   }
 
   deletetaskcode(taskcode: Taskcode): void {
-    this.showDeletePopup=true;
-    this.selectedDeleteItem=taskcode;
+    this.showDeletePopup = true;
+    this.selectedDeleteItem = taskcode;
 
   }
   requesttaskcodeProcess(taskcode: Taskcode): void {
-    this.showSidebar =true;
+    this.showSidebar = true;
     this.selectedtaskcode = taskcode;
   }
 
   loadTaskcodeData(): void {
     this.loader.show();
-    
-    this.taskcodeservice.getTaskcodeListAsync().subscribe({
-      next: (data) => {
-        this.taskcodes = data;
+    forkJoin({
+      taskitems: this.taskitemservice.GetTaskitemListAsync(),
+      taskcode: this.taskcodeservice.getTaskcodeListAsync(),
+    }).subscribe({
+      next: ({ taskitems, taskcode }) => {
+        this.taskitems = taskitems;
+        this.taskcodes = taskcode;
         this.loader.hide();
-      },
-      error: (error) => {
-        console.error('Error loading data:', error);
-        this.loader.hide();
-        this.toster.error('Failed to load data', 'Error');
+        if (this.gridApi) {
+          setTimeout(() => {
+            this.gridApi.sizeColumnsToFit();
+          }, 100);
+        }
       }
     });
   }
+
   ngOnDestroy(): void {
     window.removeEventListener('resize', this.onResize.bind(this));
   }
@@ -373,11 +385,11 @@ taskcodes: Taskcode[] = [];
   refreshData() {
     this.loadTaskcodeData();
   }
-  onCloseSidebar():void{
+  onCloseSidebar(): void {
     this.showSidebar = false;
-    this.selectedtaskcode =null;
+    this.selectedtaskcode = null;
   }
-   openAddEditTaskcode(): void {
+  openAddEditTaskcode(): void {
     this.showSidebar = true;
     this.selectedtaskcode = null;
   }
@@ -397,6 +409,6 @@ taskcodes: Taskcode[] = [];
       this.showSidebar = true;
       this.loader.hide();
     });
-  }  
+  }
 
 }

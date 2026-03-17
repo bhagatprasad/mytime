@@ -1,8 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, OnInit, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Role } from '../../../models/role';
 import { Taskcode } from '../../../models/taskcode';
+import { TaskItem } from '../../../models/taskitem';
+import { forkJoin } from 'rxjs';
+import { TaskcodeService } from '../../../services/taskcode.service';
+import { TaskitemService } from '../../../services/taskitem.service';
 
 @Component({
   selector: 'app-create-taskcode',
@@ -15,13 +19,14 @@ export class CreateTaskcodeComponent implements OnChanges, OnInit {
 
   @Input() isVisible: boolean = false;
   @Input() taskcode: Taskcode | null = null;
+  @Input() taskitems:TaskItem[]=[]
   
   @Output() closeSidebar = new EventEmitter<void>();
   @Output() saveTaskcode = new EventEmitter<Taskcode>();
 
   taskcodeForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder,private taskcodeservice:TaskcodeService,private taskitemservice:TaskitemService) {
     this.taskcodeForm = this.fb.group({
       Name: ['', [Validators.required, Validators.maxLength(100)]],
       Code: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[a-zA-Z0-9_]+$/)]],
@@ -34,6 +39,7 @@ export class CreateTaskcodeComponent implements OnChanges, OnInit {
     if (this.taskcode) {
       this.patchForm(this.taskcode);
     }
+    this.loadIntialData()
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -60,7 +66,21 @@ export class CreateTaskcodeComponent implements OnChanges, OnInit {
       }
     }
   }
+loadIntialData(): void {
 
+    forkJoin({
+      taskitems: this.taskitemservice.GetTaskitemListAsync(),
+      taskcode: this.taskcodeservice.getTaskcodeListAsync()
+    }).subscribe({
+      next: ({ taskitems, taskcode }) => {
+        this.taskitems = taskitems;
+        this.taskcode = taskcode;
+      },
+      error: (error) => {
+        console.error('Error loading data:', error);
+      }
+    });
+  }
   private patchForm(taskcode: Taskcode): void {
     this.taskcodeForm.patchValue({
       Name: taskcode.Name || '',
