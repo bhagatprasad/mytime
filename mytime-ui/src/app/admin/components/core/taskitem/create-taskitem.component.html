@@ -16,20 +16,22 @@
            <div class="form-group">
            <label>Project Name</label>
 
-              <select formControlName="ProjectId" class="form-control">
+              <select formControlName="ProjectId" class="form-control" (change)="onProjectSelected($event)">
 
                  <option value="">Select Project</option>
 
                  <option *ngFor="let project of projects"
-                  [value]="project.ProjectId">
+                  [ngValue]="project.ProjectId">
 
                   {{ project.Name }}
 
                  </option>
-
               </select>
-
              </div>
+              <small class="text-danger"
+                    *ngIf="taskitemForm.get('ProjectId')?.invalid && (taskitemForm.get('ProjectId')?.touched || taskitemForm.get('ProjectId')?.dirty)">
+                    Project is required
+                </small>
 
               <!-- Task Item Name -->
                 <div class="form-group">
