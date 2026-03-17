@@ -112,27 +112,10 @@
                         <i class="mdi mdi-alert-circle me-1"></i>
                         Code should contain only letters, numbers, and underscores
                     </div>
-                </div>
-
-                <!-- Character count -->
-                <small class="text-muted float-end mt-1">
-                    {{ taskitemForm.get('Code')?.value?.length || 0 }}/50
-                </small>
-            </div>
-
-            <!-- Form Info -->
-            <div class="form-info mt-3 p-2 bg-light rounded">
-                <small class="text-muted d-block">
-                    <i class="mdi mdi-information-outline me-1"></i>
-                    Fields marked with <span class="text-danger">*</span> are required
-                </small>
-                <small class="text-muted d-block mt-1" *ngIf="taskitem?.TaskItemId">
-                    <i class="mdi mdi-clock-outline me-1"></i>
-                    Last modified: {{ taskitem?.ModifiedOn | date:'medium' }}
-                </small>
-            </div>
+                </div>                
+            </div>           
         </div>
-
+        
         <!-- Sidebar Footer -->
         <div class="sidebar-footer">
             <button type="submit" class="btn btn-primary" [disabled]="taskitemForm.invalid || taskitemForm.pristine">
