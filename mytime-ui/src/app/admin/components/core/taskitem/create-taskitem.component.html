@@ -70,12 +70,7 @@
                         Task item name cannot exceed
                         {{ taskitemForm.get('Name')?.errors?.['maxlength']?.requiredLength }} characters
                     </div>
-                </div>
-
-                <!-- Character count -->
-                <small class="text-muted float-end mt-1">
-                    {{ taskitemForm.get('Name')?.value?.length || 0 }}/100
-                </small>
+                </div>               
             </div>
 
             <!-- Code -->
