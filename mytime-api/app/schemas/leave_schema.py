@@ -22,7 +22,7 @@ class LeaveApprove(BaseModel):
 
 class LeaveReject(BaseModel):
     adminComment: str = Field(..., max_length=500)
-    rejectedBy: Optional[int] = None
+    # adminId : Optional[int] 
 
 class LeaveCancel(BaseModel):
     cancelReason: str = Field(..., max_length=500)
