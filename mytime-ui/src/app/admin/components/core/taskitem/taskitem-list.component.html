@@ -76,6 +76,7 @@
         <app-create-taskitem
             [isVisible]="showSidebar" 
             [taskitem]="selectedtaskitem" 
+            [projects]="projects"
             (closeSidebar)="onCloseSidebar()" 
             (saveTaskItem)="onSaveTaskItem($event)">
         </app-create-taskitem>

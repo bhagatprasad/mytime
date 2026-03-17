@@ -24,10 +24,10 @@ import { Project } from '../../../models/project';
   templateUrl: './create-taskitem.component.html',
   styleUrl: './create-taskitem.component.css',
 })
-export class CreateTaskitemComponent implements  OnChanges {
+export class CreateTaskitemComponent implements OnChanges {
   @Input() isVisible: boolean = false;
   @Input() taskitem: TaskItem | null = null;
-  @Input() projects : Project[] | null =null;
+  @Input() projects: Project[] = [];
 
   @Output() closeSidebar = new EventEmitter<void>();
   @Output() saveTaskItem = new EventEmitter<TaskItem>();
@@ -74,7 +74,7 @@ export class CreateTaskitemComponent implements  OnChanges {
     this.taskitemForm.patchValue(
       {
         Name: taskitem.Name || '',
-         Code: taskitem.Code || ''
+        Code: taskitem.Code || ''
       },
       { emitEvent: false },
     );
@@ -117,10 +117,10 @@ export class CreateTaskitemComponent implements  OnChanges {
   }
   onProjectSelected(event: any): void {
     const selectedProjectId = event.target.value;
-    console.log('Selected Project Id:', selectedProjectId);  
+    console.log('Selected Project Id:', selectedProjectId);
     const extractedId = typeof selectedProjectId === 'string' ? selectedProjectId.split(':')[1] : selectedProjectId;
     console.log('Extracted ID:', extractedId);
-   // this.populateCountryCode(extractedId);
+    // this.populateCountryCode(extractedId);
   }
-  
+
 }
