@@ -105,7 +105,7 @@ export class CreateTaskitemComponent implements OnChanges {
     if (this.taskitemForm.valid) {
       const taskitemData: TaskItem = {
         ...this.taskitemForm.value,
-        Id: this.taskitem?.TaskItemId || 0,
+        TaskItemId: this.taskitem?.TaskItemId || 0,
       };
 
       this.saveTaskItem.emit(taskitemData);
