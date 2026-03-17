@@ -15,6 +15,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { TaskItem } from '../../../models/taskitem';
+import { Project } from '../../../models/project';
 
 @Component({
   selector: 'app-create-taskitem',
@@ -23,9 +24,10 @@ import { TaskItem } from '../../../models/taskitem';
   templateUrl: './create-taskitem.component.html',
   styleUrl: './create-taskitem.component.css',
 })
-export class CreateTaskitemComponent implements OnInit, OnChanges {
+export class CreateTaskitemComponent implements  OnChanges {
   @Input() isVisible: boolean = false;
   @Input() taskitem: TaskItem | null = null;
+  @Input() projects : Project[] | null =null;
 
   @Output() closeSidebar = new EventEmitter<void>();
   @Output() saveTaskItem = new EventEmitter<TaskItem>();
@@ -34,6 +36,7 @@ export class CreateTaskitemComponent implements OnInit, OnChanges {
 
   constructor(private fb: FormBuilder) {
     this.taskitemForm = this.fb.group({
+      ProjectId: [null, Validators.required],
       Name: ['', [Validators.required, Validators.maxLength(100)]],
       Code: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[a-zA-Z0-9_]+$/)]],
 
@@ -41,12 +44,14 @@ export class CreateTaskitemComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // Handle visibility changes
-    if (changes['isVisible'] && changes['isVisible'].currentValue) {
-      // Reset form when sidebar becomes visible for new role
-      if (!this.taskitem?.TaskItemId) {
-        this.resetForm();
-      }
+
+    if (changes['taskitem'] && this.taskitem) {
+
+      this.taskitemForm.patchValue({
+        ProjectId: this.taskitem.ProjectId,
+        Name: this.taskitem.Name,
+        Code: this.taskitem.Code
+      });
 
       // If document data is provided, patch it
       if (this.taskitem) {
@@ -110,4 +115,12 @@ export class CreateTaskitemComponent implements OnInit, OnChanges {
       this.taskitemForm.markAllAsTouched();
     }
   }
+  onProjectSelected(event: any): void {
+    const selectedProjectId = event.target.value;
+    console.log('Selected Project Id:', selectedProjectId);  
+    const extractedId = typeof selectedProjectId === 'string' ? selectedProjectId.split(':')[1] : selectedProjectId;
+    console.log('Extracted ID:', extractedId);
+   // this.populateCountryCode(extractedId);
+  }
+  
 }

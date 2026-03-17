@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { AgGridAngular } from 'ag-grid-angular';
 import { AllCommunityModule, ColDef, GridApi, GridOptions, GridReadyEvent, ICellRendererParams, ModuleRegistry, ValueFormatterParams } from 'ag-grid-community';
 import { TaskItem } from '../../../models/taskitem';
+import { Project } from '../../../models/project';
+import { ProjectService} from '../../../services/project_service';
 import { TaskitemService } from '../../../services/taskitem.service';
 import { LoaderService } from '../../../../common/services/loader.service';
 import { ToastrService } from 'ngx-toastr';
@@ -12,6 +14,7 @@ import { ActionsRendererComponent } from '../../../../common/components/actions-
 import { MobileActionsRendererComponent } from '../../../../common/components/mobile-actions-renderer.component';
 import { DeleteConfirmationComponent } from '../../../../common/components/delete.compunent';
 import { CreateTaskitemComponent } from './create-taskitem.component';
+import { forkJoin } from 'rxjs';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -34,6 +37,8 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
   today = new Date();
 
   taskitems: TaskItem[] = [];
+
+  projects: Project[] = [];
 
   showDeletePopup: boolean = false;
 
@@ -187,7 +192,9 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
   showSidebar: boolean = false;
 
   selectedtaskitem: TaskItem | null = null;
-  constructor(private taskitemService: TaskitemService,
+  constructor(
+    private taskitemService: TaskitemService,
+    private projectService: ProjectService,
     private loader: LoaderService,
     private toster: ToastrService,
     private audit: AuditFieldsService) {
@@ -204,11 +211,12 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
 
   loadRoleData(): void {
     this.loader.show();
-    this.taskitemService.GetTaskitemListAsync().subscribe({
-      next: (taskitem: TaskItem[]) => {
-        console.log('TaskItems', taskitem);
-
+    forkJoin({    
+     project: this.projectService. getProjectListAsync(), 
+     taskitem:this.taskitemService.GetTaskitemListAsync()}).subscribe({
+      next: ({project,taskitem}) => {
         this.taskitems = taskitem;
+        this.projects = project;        
         this.loader.hide();
         if (this.gridApi) {
           setTimeout(() => {
