@@ -10,41 +10,84 @@
             </button>
         </div>
 
-        <div class="sidebar-body">
-            <div class="form-group">
-                <label for="Name">TaskItem Name</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">
-                            <i class="mdi mdi-account-circle-outline"></i>
-                        </span>
-                    </div>
-                    <input type="text" class="form-control" id="Name" formControlName="Name"
-                        placeholder="Enter Taskitem name">
-                </div>
-                <!-- Validation messages for Name field -->
-                <div *ngIf="taskitemForm.get('Name')?.invalid && taskitemForm.get('Name')?.touched" 
-                     class="text-danger small mt-1">
-                    <span *ngIf="taskitemForm.get('Name')?.errors?.['required']">
-                        TaskItem name is required
-                    </span>
-                    <span *ngIf="taskitemForm.get('Name')?.errors?.['maxlength']">
-                        TaskItem name cannot exceed {{ taskitemForm.get('Name')?.errors?.['maxlength']?.requiredLength }} characters
-                    </span>
-                </div>
-            </div>
+      <div class="sidebar-body">
 
-            <div class="form-group">
-                <label for="Code">TaskItem Code</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">
-                            <i class="mdi mdi-code-tags"></i>
-                        </span>
+        <!-- Project Dropdown -->
+           <div class="form-group">
+           <label>Project Name</label>
+
+              <select formControlName="ProjectId" class="form-control">
+
+                 <option value="">Select Project</option>
+
+                 <option *ngFor="let project of projects"
+                  [value]="project.ProjectId">
+
+                  {{ project.Name }}
+
+                 </option>
+
+              </select>
+
+             </div>
+
+              <!-- Task Item Name -->
+                <div class="form-group">
+                <label>Task Item Name</label>
+
+                 <input type="text"
+                    formControlName="Name"
+                    class="form-control"
+                    placeholder="Enter Task Item Name">
+
+                 </div>
+
+                  <!-- Code -->
+                  <div class="form-group">
+                    <label>Code</label>
+
+                           <input type="text"
+                            formControlName="Code"
+                            class="form-control"
+                            placeholder="Enter Code">
+
+                  </div>
+
+                <div class="sidebar-body">
+                    <div class="form-group">
+                        <label for="Name"> Name</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="mdi mdi-account-circle-outline"></i>
+                                </span>
+                            </div>
+                            <input type="text" class="form-control" id="Name" formControlName="Name"
+                                placeholder="Enter Taskitem name">
+                        </div>
+                        <!-- Validation messages for Name field -->
+                        <div *ngIf="taskitemForm.get('Name')?.invalid && taskitemForm.get('Name')?.touched" 
+                            class="text-danger small mt-1">
+                            <span *ngIf="taskitemForm.get('Name')?.errors?.['required']">
+                                TaskItem name is required
+                            </span>
+                            <span *ngIf="taskitemForm.get('Name')?.errors?.['maxlength']">
+                                TaskItem name cannot exceed {{ taskitemForm.get('Name')?.errors?.['maxlength']?.requiredLength }} characters
+                            </span>
+                        </div>
                     </div>
-                    <input type="text" class="form-control" id="Code" formControlName="Code"
-                        placeholder="Enter designation code">
-                </div>
+
+                    <div class="form-group">
+                        <label for="Code">TaskItem Code</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="mdi mdi-code-tags"></i>
+                                </span>
+                            </div>
+                            <input type="text" class="form-control" id="Code" formControlName="Code"
+                                placeholder="Enter TaskItem code">
+                        </div>
                 <!-- Validation messages for Code field -->
                 <div *ngIf="taskitemForm.get('Code')?.invalid && taskitemForm.get('Code')?.touched" 
                      class="text-danger small mt-1">
@@ -71,5 +114,5 @@
             </button>
             <button type="button" class="btn btn-secondary ml-2" (click)="close()">Cancel</button>
         </div>
-    </form>
+    
 </div>
