@@ -1,120 +1,149 @@
+<!-- Overlay -->
 <div class="sidebar-overlay" *ngIf="isVisible" (click)="close()"></div>
 
 <!-- Sidebar -->
 <div class="sidebar" [class.visible]="isVisible">
     <form [formGroup]="taskitemForm" (ngSubmit)="onSubmit()">
+        <!-- Sidebar Header -->
         <div class="sidebar-header">
-            <h5 class="sidebar-title">{{ taskitem?.TaskItemId ? 'Edit Taskitem' : 'Add Taskitem' }}</h5>
-            <button type="button" class="close" (click)="close()" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <h5 class="sidebar-title">
+                <i class="mdi" [class.mdi-plus-circle]="!taskitem?.TaskItemId"
+                    [class.mdi-pencil]="taskitem?.TaskItemId"></i>
+                {{ taskitem?.TaskItemId ? 'Edit Task Item' : 'Add New Task Item' }}
+            </h5>
+            <a  class="close-btn" (click)="close()" aria-label="Close">
+                X
+            </a>
         </div>
 
-      <div class="sidebar-body">
+        <!-- Sidebar Body -->
+        <div class="sidebar-body">
+            <!-- Project Dropdown -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="mdi mdi-folder-outline me-1"></i>
+                    Project <span class="text-danger">*</span>
+                </label>
+                <select formControlName="ProjectId" class="form-control"
+                    [class.is-invalid]="taskitemForm.get('ProjectId')?.invalid && (taskitemForm.get('ProjectId')?.touched || taskitemForm.get('ProjectId')?.dirty)"
+                    (change)="onProjectSelected($event)">
+                    <option [ngValue]="null">-- Select Project --</option>
+                    <option *ngFor="let project of projects" [ngValue]="project?.ProjectId">
+                        {{ project?.Name }}
+                    </option>
+                </select>
 
-        <!-- Project Dropdown -->
-           <div class="form-group">
-           <label>Project Name</label>
-
-              <select formControlName="ProjectId" class="form-control" (change)="onProjectSelected($event)">
-
-                 <option value="">Select Project</option>
-
-                 <option *ngFor="let project of projects"
-                  [ngValue]="project.ProjectId">
-
-                  {{ project.Name }}
-
-                 </option>
-              </select>
-             </div>
-              <small class="text-danger"
+                <!-- Validation message for Project -->
+                <div class="invalid-feedback"
                     *ngIf="taskitemForm.get('ProjectId')?.invalid && (taskitemForm.get('ProjectId')?.touched || taskitemForm.get('ProjectId')?.dirty)">
+                    <i class="mdi mdi-alert-circle me-1"></i>
                     Project is required
-                </small>
-
-              <!-- Task Item Name -->
-                <div class="form-group">
-                <label>Task Item Name</label>
-
-                 <input type="text"
-                    formControlName="Name"
-                    class="form-control"
-                    placeholder="Enter Task Item Name">
-
-                 </div>
-
-                  <!-- Code -->
-                  <div class="form-group">
-                    <label>Code</label>
-
-                           <input type="text"
-                            formControlName="Code"
-                            class="form-control"
-                            placeholder="Enter Code">
-
-                  </div>
-
-                <div class="sidebar-body">
-                    <div class="form-group">
-                        <label for="Name"> Name</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">
-                                    <i class="mdi mdi-account-circle-outline"></i>
-                                </span>
-                            </div>
-                            <input type="text" class="form-control" id="Name" formControlName="Name"
-                                placeholder="Enter Taskitem name">
-                        </div>
-                        <!-- Validation messages for Name field -->
-                        <div *ngIf="taskitemForm.get('Name')?.invalid && taskitemForm.get('Name')?.touched" 
-                            class="text-danger small mt-1">
-                            <span *ngIf="taskitemForm.get('Name')?.errors?.['required']">
-                                TaskItem name is required
-                            </span>
-                            <span *ngIf="taskitemForm.get('Name')?.errors?.['maxlength']">
-                                TaskItem name cannot exceed {{ taskitemForm.get('Name')?.errors?.['maxlength']?.requiredLength }} characters
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="Code">TaskItem Code</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">
-                                    <i class="mdi mdi-code-tags"></i>
-                                </span>
-                            </div>
-                            <input type="text" class="form-control" id="Code" formControlName="Code"
-                                placeholder="Enter TaskItem code">
-                        </div>
-                <!-- Validation messages for Code field -->
-                <div *ngIf="taskitemForm.get('Code')?.invalid && taskitemForm.get('Code')?.touched" 
-                     class="text-danger small mt-1">
-                    <span *ngIf="taskitemForm.get('Code')?.errors?.['required']">
-                        TaskItem code is required
-                    </span>
-                    <span *ngIf="taskitemForm.get('Code')?.errors?.['maxlength']">
-                        TaskItem code cannot exceed {{ taskitemForm.get('Code')?.errors?.['maxlength']?.requiredLength }} characters
-                    </span>
-                    <span *ngIf="taskitemForm.get('Code')?.errors?.['pattern']">
-                        TaskItem code should contain only letters, numbers, and underscores
-                    </span>
                 </div>
             </div>
+
+            <!-- Task Item Name -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="mdi mdi-format-title me-1"></i>
+                    Task Item Name <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-account-circle-outline"></i>
+                        </span>
+                    </div>
+                    <input type="text" class="form-control"
+                        [class.is-invalid]="taskitemForm.get('Name')?.invalid && taskitemForm.get('Name')?.touched"
+                        id="Name" formControlName="Name" placeholder="Enter task item name">
+                </div>
+
+                <!-- Validation messages for Name field -->
+                <div class="invalid-feedback d-block"
+                    *ngIf="taskitemForm.get('Name')?.invalid && taskitemForm.get('Name')?.touched">
+                    <div *ngIf="taskitemForm.get('Name')?.errors?.['required']">
+                        <i class="mdi mdi-alert-circle me-1"></i>
+                        Task item name is required
+                    </div>
+                    <div *ngIf="taskitemForm.get('Name')?.errors?.['maxlength']">
+                        <i class="mdi mdi-alert-circle me-1"></i>
+                        Task item name cannot exceed
+                        {{ taskitemForm.get('Name')?.errors?.['maxlength']?.requiredLength }} characters
+                    </div>
+                </div>
+
+                <!-- Character count -->
+                <small class="text-muted float-end mt-1">
+                    {{ taskitemForm.get('Name')?.value?.length || 0 }}/100
+                </small>
+            </div>
+
+            <!-- Code -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="mdi mdi-code-tags me-1"></i>
+                    Task Item Code <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-pound"></i>
+                        </span>
+                    </div>
+                    <input type="text" class="form-control"
+                        [class.is-invalid]="taskitemForm.get('Code')?.invalid && taskitemForm.get('Code')?.touched"
+                        id="Code" formControlName="Code"
+                        placeholder="Enter task item code (letters, numbers, underscores)">
+                </div>
+
+                <!-- Validation messages for Code field -->
+                <div class="invalid-feedback d-block"
+                    *ngIf="taskitemForm.get('Code')?.invalid && taskitemForm.get('Code')?.touched">
+                    <div *ngIf="taskitemForm.get('Code')?.errors?.['required']">
+                        <i class="mdi mdi-alert-circle me-1"></i>
+                        Task item code is required
+                    </div>
+                    <div *ngIf="taskitemForm.get('Code')?.errors?.['maxlength']">
+                        <i class="mdi mdi-alert-circle me-1"></i>
+                        Task item code cannot exceed
+                        {{ taskitemForm.get('Code')?.errors?.['maxlength']?.requiredLength }} characters
+                    </div>
+                    <div *ngIf="taskitemForm.get('Code')?.errors?.['pattern']">
+                        <i class="mdi mdi-alert-circle me-1"></i>
+                        Code should contain only letters, numbers, and underscores
+                    </div>
+                </div>
+
+                <!-- Character count -->
+                <small class="text-muted float-end mt-1">
+                    {{ taskitemForm.get('Code')?.value?.length || 0 }}/50
+                </small>
+            </div>
+
+            <!-- Form Info -->
+            <div class="form-info mt-3 p-2 bg-light rounded">
+                <small class="text-muted d-block">
+                    <i class="mdi mdi-information-outline me-1"></i>
+                    Fields marked with <span class="text-danger">*</span> are required
+                </small>
+                <small class="text-muted d-block mt-1" *ngIf="taskitem?.TaskItemId">
+                    <i class="mdi mdi-clock-outline me-1"></i>
+                    Last modified: {{ taskitem?.ModifiedOn | date:'medium' }}
+                </small>
+            </div>
         </div>
-        
+
+        <!-- Sidebar Footer -->
         <div class="sidebar-footer">
-            <button type="submit" class="btn btn-primary" 
-                    [disabled]="taskitemForm.invalid || taskitemForm.pristine">
-                <i class="mdi"
-                [class.mdi-content-save]="!taskitem?.TaskItemId" 
-                [class.mdi-pencil]="taskitem?.TaskItemId"></i>
-                {{ taskitem?.TaskItemId ? 'Update' : 'Save' }}
+            <button type="submit" class="btn btn-primary" [disabled]="taskitemForm.invalid || taskitemForm.pristine">
+                <i class="mdi" [class.mdi-content-save]="!taskitem?.TaskItemId"
+                    [class.mdi-pencil]="taskitem?.TaskItemId"></i>
+                {{ taskitem?.TaskItemId ? 'Update Task Item' : 'Save Task Item' }}
             </button>
-            <button type="button" class="btn btn-secondary ml-2" (click)="close()">Cancel</button>
+            <button type="button" class="btn btn-outline-secondary" (click)="close()">
+                <i class="mdi mdi-close me-1"></i>
+                Cancel
+            </button>
         </div>
-    
+    </form>
 </div>

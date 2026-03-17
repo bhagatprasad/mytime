@@ -5,7 +5,7 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { AllCommunityModule, ColDef, GridApi, GridOptions, GridReadyEvent, ICellRendererParams, ModuleRegistry, ValueFormatterParams } from 'ag-grid-community';
 import { TaskItem } from '../../../models/taskitem';
 import { Project } from '../../../models/project';
-import { ProjectService} from '../../../services/project_service';
+import { ProjectService } from '../../../services/project_service';
 import { TaskitemService } from '../../../services/taskitem.service';
 import { LoaderService } from '../../../../common/services/loader.service';
 import { ToastrService } from 'ngx-toastr';
@@ -72,14 +72,6 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
 
   desktopColumnDefs: ColDef[] = [
     {
-      field: 'TaskItemId',
-      headerName: 'ID',
-      width: 80,
-      filter: 'agNumberColumnFilter',
-      sortable: true,
-      cellClass: 'text-left'
-    },
-    {
       field: 'Name',
       headerName: 'Name',
       width: 120,
@@ -97,11 +89,13 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
     },
     {
       field: 'ProjectId',
-      headerName: 'ProjectId',
-      width: 120,
+      headerName: 'Project',
+      width: 150,
       filter: 'agTextColumnFilter',
       sortable: true,
-      cellClass: 'text-left'
+      valueGetter: (params) => {
+        return this.getProjectNameByProjectId(params.data);
+      }
     },
     {
       field: 'CreatedBy',
@@ -192,6 +186,7 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
   showSidebar: boolean = false;
 
   selectedtaskitem: TaskItem | null = null;
+
   constructor(
     private taskitemService: TaskitemService,
     private projectService: ProjectService,
@@ -209,14 +204,15 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
     this.showSidebar = true;
   }
 
-  loadRoleData(): void {
+  loadInitalData(): void {
     this.loader.show();
-    forkJoin({    
-     project: this.projectService. getProjectListAsync(), 
-     taskitem:this.taskitemService.GetTaskitemListAsync()}).subscribe({
-      next: ({project,taskitem}) => {
+    forkJoin({
+      projectResponse: this.projectService.getProjectListsAsync(),
+      taskitem: this.taskitemService.GetTaskitemListAsync()
+    }).subscribe({
+      next: ({ projectResponse, taskitem }) => {
         this.taskitems = taskitem;
-        this.projects = project;        
+        this.projects = projectResponse.items;
         this.loader.hide();
         if (this.gridApi) {
           setTimeout(() => {
@@ -237,7 +233,7 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.checkScreenSize();
     this.setupResponsiveColumns();
-    this.loadRoleData();
+    this.loadInitalData();
     window.addEventListener('resize', this.onResize.bind(this));
   }
   onGridReady(params: GridReadyEvent): void {
@@ -395,12 +391,19 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
       });
   }
   refreshData() {
-    this.loadRoleData();
+    this.loadInitalData();
   }
 
   onCloseSidebar(): void {
     this.showSidebar = false;
     this.selectedtaskitem = null;
+  }
+  getProjectNameByProjectId(taskitem: TaskItem): string {
+    if (taskitem.ProjectId === null || taskitem.ProjectId === undefined) {
+      return 'N/A';
+    }
+    const project = this.projects.find(x => x.ProjectId === taskitem.ProjectId);
+    return project ? project.Name : 'Unknown Project';
   }
 
   onSaveTaskItem(taskitem: TaskItem): void {
