@@ -65,6 +65,13 @@ export const routes: Routes = [
             (m) => m.PayslipsComponent,
           ),
       },
+      {
+        path: 'documentcenter',
+        loadComponent: () =>
+          import('./user/components/documents/list-document.component').then(
+            (m) => m.ListDocumentComponent,
+          ),
+      },
     ],
   },
 
