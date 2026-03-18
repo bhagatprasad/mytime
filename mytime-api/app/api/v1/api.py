@@ -20,7 +20,7 @@ except ImportError as e:
 
 # Import routers
 try:
-    from app.api.v1.routers import leave_routes,taskitem
+    from app.api.v1.routers import leave_routes,taskitem,leave_balance_router
      # Authentication & User Management
     from app.api.v1.routers import auth, user, roles
     
@@ -86,6 +86,7 @@ except ImportError as e:
     user_profile_image = DummyRouter()
     leave_routes=DummyRouter()
     leavetype=DummyRouter()
+    leave_balance_router=DummyRouter()
 # Create main router
 api_router = APIRouter()
 
@@ -179,6 +180,9 @@ if HAS_AUTH:
 
     leavetype_protected = APIRouter(dependencies=[Depends(get_current_user)])
     leavetype_protected.include_router(leavetype.router)
+
+    leave_balance_router_protected = APIRouter(dependencies=[Depends(get_current_user)])
+    leave_balance_router_protected.include_router(leave_balance_router.router)
             
     # Include protected routes
     api_router.include_router(users_protected, prefix="/users", tags=["users"])
@@ -206,6 +210,8 @@ if HAS_AUTH:
     api_router.include_router(task_item_protected, prefix="/itemitem", tags=["taskitem"])
     api_router.include_router(leave_routes_protected, prefix="/leaves", tags=["Leaves"])
     api_router.include_router(leavetype_protected, prefix="/leavetype", tags=["leavetype"])
+    api_router.include_router(leave_balance_router_protected, prefix="/leavebalance", tags=["leavebalance"])
+
 else:
     # Development mode - include without auth
     api_router.include_router(user.router, prefix="/users", tags=["users"])
@@ -233,6 +239,7 @@ else:
     api_router.include_router(taskitem.router, prefix="/taskitem", tags=["taskitem"])
     api_router.include_router(leave_routes.router, prefix="/leaves", tags=["leaves"])
     api_router.include_router(leavetype.router, prefix="/leavetype", tags=["leavetype"])
+    api_router.include_router(leave_balance_router.router, prefix="/leavebalance", tags=["leavebalance"])
 
 # AI routes - decide if these should be public or protected
 # For now, making them public for development
