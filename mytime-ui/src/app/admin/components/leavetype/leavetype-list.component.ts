@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import {
@@ -18,17 +18,36 @@ import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from '../../../common/services/loader.service';
 import { AuditFieldsService } from '../../../common/services/auditfields.service';
 import { ActionsRendererComponent } from '../../../common/components/actions-renderer.component';
+import { FormsModule } from '@angular/forms';
+import { LeavetypeAddComponent } from './leavetype-add.component';
+import { DeleteConfirmationComponent } from '../../../common/components/delete.compunent';
 ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
   selector: 'app-leavetype-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular],
+  imports: [
+    CommonModule,
+    AgGridAngular,
+    DatePipe,
+    FormsModule,
+    LeavetypeAddComponent,
+    DeleteConfirmationComponent,
+  ],
   templateUrl: './leavetype-list.component.html',
   styleUrl: './leavetype-list.component.css',
 })
 export class LeavetypeListComponent implements OnInit, OnDestroy {
-  deleteLeaveType(leavetype: LeaveType): void {}
-  requestLeaveTypeProcess(leavetype: LeaveType): void {}
+  selectedDeleteItem: LeaveType | null = null;
+
+  deleteLeaveType(leavetype: LeaveType): void {
+    this.selectedDeleteItem = leavetype;
+    this.showDeletePopup = true;
+  }
+
+  requestLeaveTypeProcess(leavetype: LeaveType): void {
+    this.selectedLeaveType = leavetype;
+    this.showSidebar = true;
+  }
   leavetype: LeaveType[] = [];
 
   today = new Date();
@@ -76,7 +95,12 @@ export class LeavetypeListComponent implements OnInit, OnDestroy {
   getTotalRowsCount(): number {
     return this.leavetype.length;
   }
-  openAddEditLeaveType() {}
+
+  openAddEditLeaveType(): void {
+    this.selectedLeaveType = null;
+    this.showSidebar = true;
+  }
+
   columnDefs: ColDef[] = [];
   defaultColDef: ColDef = {
     flex: 1,
@@ -278,5 +302,62 @@ export class LeavetypeListComponent implements OnInit, OnDestroy {
       month: 'short',
       day: 'numeric',
     });
+  }
+
+  showSidebar: boolean = false;
+  selectedLeaveType: LeaveType | null = null;
+
+  onCloseSidebar(): void {
+    this.showSidebar = false;
+  }
+
+  onSaveLeaveType(leavetype: LeaveType): void {
+    this.loader.show();
+    var _leavetype = this.audit.appendAuditFields(leavetype);
+    console.log('we have received leavetype data ' + JSON.stringify(leavetype));
+    this.leavetypeService.InsertOrUpdateLeaveTypeAsync(_leavetype).subscribe(
+      (response) => {
+        if (response) {
+          this.toastr.success('LeaveType processed Successfully');
+          this.showSidebar = false;
+          this.refreshData();
+        }
+      },
+      (error) => {
+        this.toastr.error('something went wrong,please CHECK and RESUBMIT');
+        this.showSidebar = true;
+        this.loader.hide();
+      },
+    );
+  }
+  showDeletePopup = false;
+  deleteleavetype() {
+    if (!this.selectedDeleteItem) {
+      console.error('No item selected for delete');
+      return;
+    }
+    this.leavetypeService
+      .DeleteLeaveTypeAsync(this.selectedDeleteItem.Id)
+      .subscribe({
+        next: (res) => {
+          console.log('Delete success:', res);
+          this.refreshData(); // reload grid data
+          this.showDeletePopup = false;
+          this.selectedDeleteItem = null;
+        },
+        error: (err) => {
+          console.error('Delete failed:', err);
+          // keep popup open OR close — your choice
+          this.showDeletePopup = false;
+        },
+        complete: () => {
+          alert('Delete request completed');
+        },
+      });
+  }
+
+  closePopup(): void {
+    this.showDeletePopup = false;
+    this.selectedDeleteItem = null;
   }
 }
