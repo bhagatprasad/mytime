@@ -1,7 +1,6 @@
 export const environment = {
   production: false,
   baseUrl: 'https://mytime-docker.onrender.com/api/v1',
-  //baseUrl: 'https://localhost:8000/api/v1',
   UrlConstants: {
     // Authentication endpoints
     Authenticate: 'auth/AuthenticateUser',
@@ -411,8 +410,7 @@ export const environment = {
       FetchProfileImage: 'userprofileimage/fetchProfileImage',
       FetchProfileImageByUser: 'userprofileimage/fetchProfileImageByUser',
       FetchAllProfileImages: 'userprofileimage/fetchAllProfileImages',
-      GetProfileImagesWithPagination:
-        'userprofileimage/getProfileImagesWithPagination',
+      GetProfileImagesWithPagination: 'userprofileimage/getProfileImagesWithPagination',
       InsertOrUpdateProfileImage: 'userprofileimage/InsertOrUpdateProfileImage',
       UploadProfileImage: 'userprofileimage/uploadProfileImage',
       DeleteProfileImage: 'userprofileimage/DeleteProfileImage',
@@ -428,14 +426,13 @@ export const environment = {
     },
     ApplyLeave: {
       GetleaveTypesAsync: 'leaves/fetchtypes',
-      GetAllleaveRequestsAsync: 'leaves/fecthallleaves',
+      GetAllleaveRequestsAsync: 'leaves/fetchallleaves',
       ApplyleaveAsync: 'leaves/applyleave',
       GetMyLeavesAsync: 'leaves/fetchleavesbyuser',
       ApproveLeaveAsync: 'leaves/approveleave',
       RejectLeaveAsync: 'leaves/rejectleave',
-      CancelLeaveAsync: 'leaves/cancelleave',
+      CancelLeaveAsync: 'leaves/cancelleave'
     },
-
     LeaveType: {
       GetLeaveTypeAsync: 'leavetype/fetchLeaveType',
       InsertOrUpdateLeaveTypeAsync: 'leavetype/InsertOrUpdateLeaveType',
@@ -443,6 +440,6 @@ export const environment = {
       GetLeaveTypeExistsAsync: 'leavetype/CheckLeaveTypeExists',
       GetLeaveTypeNameAsync: 'leavetype/GetLeaveTypeByName',
       GetLeaveTypeListAsync: 'leavetype/fetchAllLeaveTypes',
-    },
+    }
   },
 };

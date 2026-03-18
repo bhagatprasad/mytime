@@ -6,7 +6,7 @@ import { Project } from '../models/project';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService) { }
 
   getProjectListAsync(): Observable<Project[]> {
     return this.apiService.send<Project[]>(
@@ -14,6 +14,14 @@ export class ProjectService {
       environment.UrlConstants.Project.GetProjectListAsync,
     );
   }
+
+  getProjectListsAsync(): Observable<any> {
+    return this.apiService.send<any>(
+      'GET',
+      environment.UrlConstants.Project.GetProjectListAsync,
+    );
+  }
+
 
   saveProjectAsync(project: Project): Observable<any> {
     return this.apiService.send<any>(
