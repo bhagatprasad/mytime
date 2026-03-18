@@ -89,6 +89,23 @@
               </small>
             </div>
           </div>
+
+          <app-leavetype-add
+            [isVisible]="showSidebar"
+            [leavetype]="selectedLeaveType"
+            (closeSidebar)="onCloseSidebar()"
+            (saveLeaveType)="onSaveLeaveType($event)"
+          >
+          </app-leavetype-add>
+
+          <app-delete-confirmation
+            *ngIf="showDeletePopup"
+            title="Delete LeaveType"
+            message="Do you really want to delete this leavetype?"
+            (confirm)="deleteleavetype()"
+            (cancel)="closePopup()"
+          >
+          </app-delete-confirmation>
         </div>
       </div>
     </div>
