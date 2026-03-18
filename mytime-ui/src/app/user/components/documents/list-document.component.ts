@@ -1,40 +1,110 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { AgGridAngular } from 'ag-grid-angular';
 import { AllCommunityModule, ColDef, GridApi, GridOptions, GridReadyEvent, ModuleRegistry } from 'ag-grid-community';
-import { EmployeeDocument } from '../../../admin/models/employee_document';
-import { MobileActionsDocumentRendererComponent } from '../../../common/components/mobile-actions-document.renderer.component';
-import { ActionsDocumentRendererComponent } from '../../../common/components/actions-document.renderer.component';
 import { DocumentService } from '../../../admin/services/document.service';
 import { LoaderService } from '../../../common/services/loader.service';
+import { EmployeeDocument } from '../../../admin/models/employee_document';
+import { ActionsDocumentRendererComponent } from '../../../common/components/actions-document.renderer.component';
+import { MobileActionsDocumentRendererComponent } from '../../../common/components/mobile-actions-document.renderer.component';
 import { ToastrService } from 'ngx-toastr';
 import { AuditFieldsService } from '../../../common/services/auditfields.service';
 import { StorageService } from '../../../common/services/storage.service';
+import { EmployeeService } from '../../../admin/services/employee.service';
 import { forkJoin } from 'rxjs';
+import { Employee } from '../../../admin/models/employee';
 import { AccountService } from '../../../common/services/account.service';
 import { ApplicationUser } from '../../../common/models/application-user';
-import { EmployeeService } from '../../../admin/services/employee.service';
-import { Employee } from '../../../admin/models/employee';
-import { AgGridAngular } from 'ag-grid-angular';
+import { UploadDocumentComponent } from './upload-document.component';
+import { response } from 'express';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-list-document',
   standalone: true,
-  imports: [CommonModule, AgGridAngular],
+  imports: [CommonModule, AgGridAngular, UploadDocumentComponent],
   templateUrl: './list-document.component.html',
   styleUrl: './list-document.component.css'
 })
 export class ListDocumentComponent implements OnInit, OnDestroy {
-  applicationUser: ApplicationUser | null = null;
-  employee: Employee | null = null;
+
   private documentsGridApi!: GridApi;
+
   isMobile: boolean = false;
+
   documents: EmployeeDocument[] = [];
+
+  employees: Employee[] = [];
+
   showDocumentForm = false;
+
   selectedDocument: EmployeeDocument | null = null;
 
+  applicationUser: ApplicationUser | null = null;
+
+  employee: Employee | null = null;
+
+  private employeeMap: Map<number, Employee> = new Map();
+
+  employeeId: number = 0;
+
   desktopColumnDefs: ColDef[] = [
+    {
+      field: 'employeeInfo',
+      headerName: 'Employee',
+      width: 200,
+      filter: 'agTextColumnFilter',
+      sortable: true,
+      filterParams: {
+        filterOptions: ['contains', 'notContains'],
+        textFormatter: (r: any) => {
+          if (r == null) return null;
+          const document = r as EmployeeDocument;
+          const employee = document.EmployeeId ? this.employeeMap.get(document.EmployeeId) : null;
+          if (employee) {
+            return `${employee.FirstName || ''} ${employee.LastName || ''} ${employee.EmployeeCode || ''}`.toLowerCase();
+          }
+          return 'unknown employee';
+        }
+      },
+      valueGetter: (params) => {
+        const document = params.data as EmployeeDocument;
+        const employee = document.EmployeeId ? this.employeeMap.get(document.EmployeeId) : null;
+
+        if (employee) {
+          const employeeName = `${employee.FirstName || ''} ${employee.LastName || ''}`.trim();
+          const employeeCode = employee.EmployeeCode ? ` (${employee.EmployeeCode})` : '';
+          return `${employeeName}${employeeCode}`;
+        }
+        return 'Unknown Employee';
+      },
+      cellRenderer: (params: any) => {
+        const document = params.data as EmployeeDocument;
+        const employee = document.EmployeeId ? this.employeeMap.get(document.EmployeeId) : null;
+
+        if (employee) {
+          const employeeName = `${employee.FirstName || ''} ${employee.LastName || ''}`.trim() || 'Unknown Employee';
+          const employeeCode = employee.EmployeeCode || '';
+          const department = employee.DepartmentId ? 'Department ' + employee.DepartmentId : '';
+
+          return `<div class="employee-info">
+            <div class="employee-name"><strong>${employeeName}</strong></div>
+            <div class="employee-details text-muted small">
+              ${employeeCode ? `<span>Code: ${employeeCode}</span>` : ''}
+              ${employeeCode && department ? ' • ' : ''}
+              ${department ? `<span>${department}</span>` : ''}
+            </div>
+          </div>`;
+        }
+
+        return `<div class="employee-info">
+          <div class="employee-name"><strong>Unknown Employee</strong></div>
+          <div class="employee-details text-muted small">No employee assigned</div>
+        </div>`;
+      },
+      cellClass: 'employee-desktop-cell'
+    },
     {
       field: 'FileName',
       headerName: 'File Name',
@@ -85,10 +155,22 @@ export class ListDocumentComponent implements OnInit, OnDestroy {
       width: 200,
       cellRenderer: (params: any) => {
         const document = params.data as EmployeeDocument;
-        return `<div class="employee-document-info">
+        const employee = document.EmployeeId ? this.employeeMap.get(document.EmployeeId) : null;
+
+        if (employee) {
+          const employeeName = `${employee.FirstName || ''} ${employee.LastName || ''}`.trim() || 'Unknown Employee';
+          return `<div class="employee-document-info">
+            <div class="employee-name"><strong>${employeeName}</strong></div>
             <div class="document-name">${document.FileName || 'No file name'}</div>
             <div class="document-type text-muted">${document.DocumentType || 'No type'}</div>
           </div>`;
+        }
+
+        return `<div class="employee-document-info">
+          <div class="employee-name"><strong>Unknown Employee</strong></div>
+          <div class="document-name">${document.FileName || 'No file name'}</div>
+          <div class="document-type text-muted">${document.DocumentType || 'No type'}</div>
+        </div>`;
       },
       cellClass: 'employee-document-cell'
     },
@@ -130,12 +212,12 @@ export class ListDocumentComponent implements OnInit, OnDestroy {
 
   constructor(
     private documentService: DocumentService,
+    private employeeService: EmployeeService,
     private loader: LoaderService,
     private notify: ToastrService,
     private audit: AuditFieldsService,
     private storageService: StorageService,
-    private accountService: AccountService,
-    private employeeService: EmployeeService
+    private accountService: AccountService
   ) { }
 
   ngOnDestroy(): void {
@@ -144,61 +226,12 @@ export class ListDocumentComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.applicationUser = this.accountService.getCurrentUser();
-    if (this.applicationUser?.id) {
-      this.loadEmployeeData();
-    } else {
-      this.loader.show();
-      this.notify.error('User not authenticated', 'Error');
-      this.loader.hide();
-    }
 
     this.checkScreenSize();
     this.setupResponsiveColumns();
+    this.loadDocumentsData();
+
     window.addEventListener('resize', this.onResize.bind(this));
-  }
-
-  loadEmployeeData(): void {
-    this.loader.show();
-    this.employeeService.GetEmployeeByUserIdAsync(this.applicationUser?.id).subscribe({
-      next: (response) => {
-        this.employee = response;
-        this.loadDocumentsData();
-      },
-      error: (error) => {
-        console.error('Error loading employee data:', error);
-        this.loader.hide();
-        this.notify.error('Failed to load employee information', 'Error');
-      }
-    });
-  }
-
-  loadDocumentsData(): void {
-    if (!this.employee?.EmployeeId) {
-      this.loader.hide();
-      this.notify.warning('Employee ID not found', 'Warning');
-      return;
-    }
-
-    this.loader.show();
-    forkJoin({
-      documents: this.documentService.getDocumentsByEmployeeAsync(this.employee.EmployeeId)
-    }).subscribe({
-      next: (result: { documents: EmployeeDocument[] }) => {
-        this.documents = result.documents;
-
-        if (this.documentsGridApi) {
-          setTimeout(() => {
-            this.documentsGridApi.sizeColumnsToFit();
-          }, 100);
-        }
-        this.loader.hide();
-      },
-      error: (error) => {
-        console.error('Error loading documents:', error);
-        this.loader.hide();
-        this.notify.error('Failed to load employee documents', 'Error');
-      }
-    });
   }
 
   private checkScreenSize(): void {
@@ -207,13 +240,6 @@ export class ListDocumentComponent implements OnInit, OnDestroy {
 
     if (wasMobile !== this.isMobile) {
       this.setupResponsiveColumns();
-
-      if (this.documentsGridApi) {
-        setTimeout(() => {
-          this.documentsGridApi.refreshHeader();
-          this.documentsGridApi.sizeColumnsToFit();
-        }, 100);
-      }
     }
   }
 
@@ -237,6 +263,52 @@ export class ListDocumentComponent implements OnInit, OnDestroy {
       this.documentsGridApi.refreshHeader();
       this.documentsGridApi.sizeColumnsToFit();
     }, 100);
+  }
+
+  loadDocumentsData(): void {
+    if (!this.applicationUser?.id) {
+      this.notify.error('User not authenticated', 'Error');
+      return;
+    }
+
+    this.loader.show();
+
+    // First get the employee for the current user
+    this.employeeService.GetEmployeeByUserIdAsync(this.applicationUser.id).subscribe({
+      next: (employee) => {
+        this.employee = employee;
+        if (!employee?.EmployeeId) {
+          this.loader.hide();
+          this.notify.error('Employee ID not found', 'Error');
+          return;
+        }
+        this.employeeId = employee.EmployeeId;
+        
+        this.documentService.getDocumentsByEmployeeAsync(employee.EmployeeId).subscribe({
+          next: (response) => {
+            if (response) {
+              this.documents = response;
+              this.loader.hide();
+              if (this.documentsGridApi) {
+                setTimeout(() => {
+                  this.documentsGridApi.sizeColumnsToFit();
+                }, 100);
+              }
+            }
+          },
+          error: (error) => {
+            console.error('Error saving education:', error);
+            this.notify.error('Failed to save education');
+            this.loader.hide();
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error loading employee data:', error);
+        this.loader.hide();
+        this.notify.error('Failed to load employee information', 'Error');
+      }
+    });
   }
 
   onGridReady(params: GridReadyEvent): void {
@@ -273,17 +345,21 @@ export class ListDocumentComponent implements OnInit, OnDestroy {
 
     this.storageService.deleteFile(eDocument.FileId)
       .then(() => {
-        return this.documentService.removeEmployeeDocumentAsync(eDocument.EmployeeDocumentId).toPromise();
-      })
-      .then(() => {
-        this.notify.success('Document deleted successfully');
-        this.loadDocumentsData();
+        this.documentService.removeEmployeeDocumentAsync(eDocument.EmployeeDocumentId).subscribe({
+          next: () => {
+            this.notify.success('Document deleted successfully');
+            this.loadDocumentsData();
+          },
+          error: (error) => {
+            console.error('Error deleting from database:', error);
+            this.notify.error('File deleted from cloud but failed to remove from database');
+            this.loader.hide();
+          }
+        });
       })
       .catch((error) => {
-        console.error('Error deleting document:', error);
-        this.notify.error('Failed to delete the document');
-      })
-      .finally(() => {
+        console.error('Error deleting file from cloud:', error);
+        this.notify.error('Failed to delete the file');
         this.loader.hide();
       });
   }
@@ -326,9 +402,8 @@ export class ListDocumentComponent implements OnInit, OnDestroy {
     link.href = url;
     link.download = filename;
     link.target = '_blank';
-    document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
+    link.remove();
   }
 
   onFirstDataRendered(params: any): void {
@@ -338,6 +413,40 @@ export class ListDocumentComponent implements OnInit, OnDestroy {
       }
     }, 100);
   }
+
   uploadDocument(): void {
+    // Implement upload document logic
+    this.showDocumentForm = true;
+    this.selectedDocument = null;
+  }
+
+  onSaveEmployeeDocument(employeeDocument: EmployeeDocument): void {
+    console.log(employeeDocument);
+    this.loader.show();
+    if (!employeeDocument.EmployeeDocumentId && this.employee?.EmployeeId) {
+      employeeDocument.EmployeeId = this.employee?.EmployeeId;
+    }
+
+    const _contact = this.audit.appendAuditFields(employeeDocument);
+    this.documentService.insertOrUpdateEmployeeDocumentAsync(_contact).subscribe({
+      next: (response) => {
+        if (response) {
+          this.notify.success('Education saved successfully');
+          this.showDocumentForm = false;
+          this.selectedDocument = null;
+          this.loadDocumentsData();
+        }
+      },
+      error: (error) => {
+        console.error('Error saving education:', error);
+        this.notify.error('Failed to save education');
+        this.loader.hide();
+      }
+    });
+  }
+  onCloseEmployeeDocumentForm(): void {
+    // Implement upload document logic
+    this.showDocumentForm = false;
+    this.selectedDocument = null;
   }
 }

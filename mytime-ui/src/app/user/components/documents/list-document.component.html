@@ -22,8 +22,7 @@
                             <!-- Action Buttons -->
                             <div class="d-flex gap-2 ms-3">
                                 <!-- Add Button -->
-                                <a class="d-flex align-items-center" (click)="uploadDocument()"
-                                    title="Add new country">
+                                <a class="d-flex align-items-center" (click)="uploadDocument()" title="Add new country">
                                     <i class="mdi mdi-plus-circle-outline me-1"></i>
                                 </a>
                             </div>
@@ -62,11 +61,11 @@
                             </small>
                         </div>
                     </div>
-
-                    <!-- <app-create-role [isVisible]="showSidebar" [role]="selectedRole"  (closeSidebar)="onCloseSidebar()" (saveRole)="onSaveRole($event)"></app-create-role> -->
                 </div>
-                <!-- <app-create-country [isVisible]="showSidebar" [country]="selectedCountry"
-                    (closeSidebar)="onCloseSidebar()" (saveCountry)="onSaveCountry($event)"></app-create-country> -->
+                <app-upload-document *ngIf="showDocumentForm" [employeeId]="employeeId" [isMobile]="isMobile"
+                    [employeeDocument]="selectedDocument" [isVisible]="showDocumentForm"
+                    (save)="onSaveEmployeeDocument($event)" (close)="onCloseEmployeeDocumentForm()">
+                </app-upload-document>
             </div>
         </div>
     </div>
