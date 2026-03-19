@@ -124,94 +124,103 @@
   <!-- APPLY FORM -->
 
   <div class="form-card" *ngIf="showForm">
+    <div class="message-popup" *ngIf="errorMessage || successMessage">
+      <div class="popup-content" [ngClass]="{
+         'error': errorMessage,
+         'success': successMessage
+       }">
+        <span>{{ errorMessage || successMessage }}</span>
+        <button class="close-btn" (click)="errorMessage=''; successMessage=''">✖</button>
+      </div>
+    </div>
 
-    <h5 class="form-title">Apply Leave</h5>
+  <h5 class="form-title">Apply Leave</h5>
 
-    <form (ngSubmit)="submitLeave()" #leaveForm="ngForm">
+  <form (ngSubmit)="submitLeave()" #leaveForm="ngForm">
 
-      <div class="row">
+    <div class="row">
 
-        <div class="col-md-6 form-group">
+      <div class="col-md-6 form-group">
 
-          <label>Leave Type</label>
+        <label>Leave Type</label>
 
-          <select class="form-control" [(ngModel)]="leave.LeaveTypeId" name="LeaveTypeId" required>
+        <select class="form-control" [(ngModel)]="leave.LeaveTypeId" name="LeaveTypeId" required>
 
-            <option value="">Select</option>
+          <option value="">Select</option>
 
-            <option *ngFor="let type of leaveTypes" [value]="type.Id">
+          <option *ngFor="let type of leaveTypes" [value]="type.Id">
 
-              {{type.Name}}
+            {{type.Name}}
 
-            </option>
+          </option>
 
-          </select>
+        </select>
 
-        </div>
+      </div>
 
-        <div class="col-md-6 form-group">
+      <div class="col-md-6 form-group">
 
-          <label>Total Days</label>
+        <label>Total Days</label>
 
-          <input class="form-control" [value]="leave.TotalDays" readonly>
+        <input class="form-control" [value]="leave.TotalDays" readonly>
 
-        </div>
+      </div>
 
-        <div class="col-md-6 form-group">
+      <div class="col-md-6 form-group">
 
-          <label>From Date</label>
+        <label>From Date</label>
 
-          <input type="date" class="form-control" [(ngModel)]="leave.FromDate" name="FromDate"
-            (change)="calculateDays()" required>
+        <input type="date" class="form-control" [(ngModel)]="leave.FromDate" name="FromDate" (change)="calculateDays()"
+          required>
 
-        </div>
+      </div>
 
-        <div class="col-md-6 form-group">
+      <div class="col-md-6 form-group">
 
-          <label>To Date</label>
+        <label>To Date</label>
 
-          <input type="date" class="form-control" [(ngModel)]="leave.ToDate" name="ToDate" (change)="calculateDays()"
-            required>
+        <input type="date" class="form-control" [(ngModel)]="leave.ToDate" name="ToDate" (change)="calculateDays()"
+          required>
 
-        </div>
+      </div>
 
-        <div class="col-md-12 form-group">
+      <div class="col-md-12 form-group">
 
-          <label>Reason</label>
+        <label>Reason</label>
 
-          <input class="form-control" [(ngModel)]="leave.Reason" name="Reason" required>
+        <input class="form-control" [(ngModel)]="leave.Reason" name="Reason" required>
 
-        </div>
+      </div>
 
-        <div class="col-md-12 form-group">
+      <div class="col-md-12 form-group">
 
-          <label>Description</label>
+        <label>Description</label>
 
-          <textarea class="form-control" rows="3" [(ngModel)]="leave.Description" name="Description">
+        <textarea class="form-control" rows="3" [(ngModel)]="leave.Description" name="Description">
 </textarea>
 
-        </div>
-
       </div>
 
-      <div class="form-buttons">
+    </div>
 
-        <button class="save-btn" type="submit" [disabled]="leaveForm.invalid">
+    <div class="form-buttons">
 
-          Save
+      <button class="save-btn" type="submit" [disabled]="leaveForm.invalid">
 
-        </button>
+        Save
 
-        <button type="button" class="cancel-form-btn" (click)="closeForm()">
+      </button>
 
-          Cancel
+      <button type="button" class="cancel-form-btn" (click)="closeForm()">
 
-        </button>
+        Cancel
 
-      </div>
+      </button>
 
-    </form>
+    </div>
 
-  </div>
+  </form>
+
+</div>
 
 </div>
