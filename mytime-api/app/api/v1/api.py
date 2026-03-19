@@ -44,7 +44,7 @@ try:
     from app.api.v1.routers import employee_salary, monthly_salary
     
     # Project Management
-    from app.api.v1.routers import project, taskcode,user_profile_image, leavetype
+    from app.api.v1.routers import project, taskcode,user_profile_image, leavetype,attendence
     print("✅ All routers imported")
 except ImportError as e:
     print(f"❌ Router import error: {e}")
@@ -87,6 +87,7 @@ except ImportError as e:
     leave_routes=DummyRouter()
     leavetype=DummyRouter()
     leave_balance_router=DummyRouter()
+    attendence = DummyRouter()
 # Create main router
 api_router = APIRouter()
 
@@ -183,6 +184,10 @@ if HAS_AUTH:
 
     leave_balance_router_protected = APIRouter(dependencies=[Depends(get_current_user)])
     leave_balance_router_protected.include_router(leave_balance_router.router)
+
+    attendence_protected= APIRouter(dependencies=[Depends(get_current_user)])
+    attendence_protected.include_router(attendence.router)
+    
             
     # Include protected routes
     api_router.include_router(users_protected, prefix="/users", tags=["users"])
@@ -211,6 +216,7 @@ if HAS_AUTH:
     api_router.include_router(leave_routes_protected, prefix="/leaves", tags=["Leaves"])
     api_router.include_router(leavetype_protected, prefix="/leavetype", tags=["leavetype"])
     api_router.include_router(leave_balance_router_protected, prefix="/leavebalance", tags=["leavebalance"])
+    api_router.include_router(attendence_protected, prefix="/attendence", tags=["attendence"])
 
 else:
     # Development mode - include without auth
@@ -240,6 +246,7 @@ else:
     api_router.include_router(leave_routes.router, prefix="/leaves", tags=["leaves"])
     api_router.include_router(leavetype.router, prefix="/leavetype", tags=["leavetype"])
     api_router.include_router(leave_balance_router.router, prefix="/leavebalance", tags=["leavebalance"])
+    api_router.include_router(attendence.router, prefix="/attendence", tags=["attendence"])
 
 # AI routes - decide if these should be public or protected
 # For now, making them public for development

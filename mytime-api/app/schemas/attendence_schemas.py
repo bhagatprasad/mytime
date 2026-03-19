@@ -1,108 +1,115 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, List
-from datetime import date, time, datetime
+from datetime import datetime, date, time
 
-class AttendanceBase(BaseModel):
-    EmployeeId: int
-    AttendanceDate: date
-    CheckInTime: Optional[time] = None
-    CheckOutTime: Optional[time] = None
-    Status: str
-    WorkHours: Optional[float] = None
-    Description: Optional[str] = None
 
-class AttendanceCreate(AttendanceBase):
-    CreatedBy: Optional[int] = None
+# ✅ Base Schema
+class AttendenceBase(BaseModel):
+    """Base schema for Employee Attendence data"""
+    EmployeeId: Optional[int] = Field(None, description="Employee ID")
+    AttendenceDate: Optional[date] = Field(None, description="Attendence date")
 
-class AttendanceUpdate(BaseModel):
+    CheckInTime: Optional[time] = Field(None, description="Check-in time")
+    CheckOutTime: Optional[time] = Field(None, description="Check-out time")
+
+    Status: Optional[str] = Field(None, max_length=20, description="Attendence status")
+    WorkHours: Optional[float] = Field(None, description="Total work hours")
+    Description: Optional[str] = Field(None, description="Remarks / description")
+
+    ApprovalStatus: Optional[str] = Field(
+        "Pending", max_length=20, description="Approval status"
+    )
+
+
+# ✅ Create Schema
+class AttendenceCreate(AttendenceBase):
+    """Schema for creating a new Attendence"""
+    CreatedBy: Optional[int] = Field(
+        None, description="User ID who created the record"
+    )
+
+
+# ✅ Update Schema
+class AttendenceUpdate(BaseModel):
+    """Schema for updating an existing Attendence"""
+
+    EmployeeId: Optional[int] = Field(None, description="Employee ID")
+    AttendenceDate: Optional[date] = Field(None, description="Attendence date")
+
+    CheckInTime: Optional[time] = Field(None, description="Check-in time")
+    CheckOutTime: Optional[time] = Field(None, description="Check-out time")
+
+    Status: Optional[str] = Field(None, max_length=20, description="Attendence status")
+    WorkHours: Optional[float] = Field(None, description="Total work hours")
+    Description: Optional[str] = Field(None, description="Remarks / description")
+
+    ModifiedBy: Optional[int] = Field(
+        None, description="User ID who modified the record"
+    )
+
+    # Approval Fields
+    ApprovalStatus: Optional[str] = Field(
+        None, max_length=20, description="Approval status"
+    )
+    ApprovedBy: Optional[int] = Field(None, description="Approved by user ID")
+    ApprovedOn: Optional[datetime] = Field(None, description="Approved date")
+
+    RejectedBy: Optional[int] = Field(None, description="Rejected by user ID")
+    RejectedOn: Optional[datetime] = Field(None, description="Rejected date")
+    RejectionReason: Optional[str] = Field(
+        None, description="Reason for rejection"
+    )
+
+
+# ✅ Response Schema
+class AttendenceResponse(BaseModel):
+    """Schema for Attendence response (read operations)"""
+
+    AttendenceId: int
     EmployeeId: Optional[int] = None
-    AttendanceDate: Optional[date] = None
+    AttendenceDate: Optional[date] = None
+
     CheckInTime: Optional[time] = None
     CheckOutTime: Optional[time] = None
+
     Status: Optional[str] = None
     WorkHours: Optional[float] = None
     Description: Optional[str] = None
 
+    CreatedBy: Optional[int] = None
+    CreatedOn: Optional[datetime] = None
     ModifiedBy: Optional[int] = None
+    ModifiedOn: Optional[datetime] = None
 
-    # Approval Fields
     ApprovalStatus: Optional[str] = None
     ApprovedBy: Optional[int] = None
     ApprovedOn: Optional[datetime] = None
+
     RejectedBy: Optional[int] = None
     RejectedOn: Optional[datetime] = None
     RejectionReason: Optional[str] = None
 
-class AttendanceResponse(AttendanceBase):
-    AttendanceId: int
-
-    CreatedOn: Optional[datetime]
-    CreatedBy: Optional[int]
-    ModifiedOn: Optional[datetime]
-    ModifiedBy: Optional[int]
-
-    ApprovalStatus: Optional[str]
-    ApprovedBy: Optional[int]
-    ApprovedOn: Optional[datetime]
-    RejectedBy: Optional[int]
-    RejectedOn: Optional[datetime]
-    RejectionReason: Optional[str]
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
-from datetime import date, time, datetime
-from typing import Optional,List
-
-class AttendanceBase(BaseModel):
-    """Base schema for Attendance data"""
-    EmployeeId     : int
-    AttendanceDate : date
-    CheckInTime    : Optional[time] = None
-    CheckOutTime   : Optional[time] = None
-    Status         : str
-    WorkHours      : Optional[float] = None
-    Description    : Optional[str] = None
-
-class AttendanceCreate(AttendanceBase):
-    """Schema for creating a new Attendance"""
-    CreatedBy      : Optional[int] = None
-
-class AttendanceUpdate(BaseModel):
-    """Schema for updating an existing Attendance"""
-    EmployeeId     : Optional[int] = None
-    AttendanceDate : Optional[date] = None
-    CheckInTime    : Optional[time] = None
-    CheckOutTime   : Optional[time] = None
-    Status         : Optional[str] = None
-    WorkHours      : Optional[float] = None
-    Description    : Optional[str] = None
-    ModifiedBy     : Optional[int] = None
-
-class AttendanceResponse(AttendanceBase):
-    """Schema for Attendance response (read operations)"""
-    AttendanceId  : int
-    CreatedOn     : datetime
-    CreatedBy     : Optional[int]
-    ModifiedOn    : Optional[datetime]
-    ModifiedBy    : Optional[int]
-
-class AttendanceListResponse(BaseModel):
-    """Schema for listing multiple Attendances with pagination"""
-    """Schema for listing multiple Attendance records with pagination"""
+# ✅ List Response Schema (Pagination)
+class AttendenceListResponse(BaseModel):
+    """Schema for listing multiple Attendence records with pagination"""
     total: int
-    items: List[AttendanceResponse]
+    items: List[AttendenceResponse]
     page: int
     size: int
     pages: int
 
-class AttendanceExistsResponse(BaseModel):
-    """Response for Attendance existence check"""
+
+# ✅ Exists Response
+class AttendenceExistsResponse(BaseModel):
+    """Response for Attendence existence check"""
     exists: bool
-   
-class AttendanceDeleteResponse(BaseModel):
+
+
+# ✅ Delete Response
+class AttendenceDeleteResponse(BaseModel):
     """Response for delete operation"""
     success: bool
-    message: str = "Attendance deleted successfully"
-    deletedId: int
+    message: str = "Attendence deleted successfully"
