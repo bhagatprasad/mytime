@@ -47,7 +47,7 @@ def fetch_all_attendence(db: Session = Depends(get_db)):
 
 # Pagination + Search
 @router.get("/list", response_model=AttendenceListResponse)
-def get_attendence_list(
+def get_attendence_with_pagination(
     skip: int = 0,
     limit: int = 10,
     search: Optional[str] = None,
@@ -114,7 +114,7 @@ def update_attendence(attendence_id: int, attendence: AttendenceUpdate, db: Sess
 
 # Check if Attendence Exists
 @router.get("/exists/{attendence_id}", response_model=AttendenceExistsResponse)
-def attendence_exists(attendence_id: int, db: Session = Depends(get_db)):
+def check_attendence_exists(attendence_id: int, db: Session = Depends(get_db)):
     try:
         exists = AttendenceService.exists(db, attendence_id)
         return AttendenceExistsResponse(exists=exists)
@@ -128,7 +128,7 @@ def attendence_exists(attendence_id: int, db: Session = Depends(get_db)):
 @router.delete("/delete/{attendence_id}", response_model=AttendenceDeleteResponse)
 def delete_attendence(attendence_id: int, db: Session = Depends(get_db)):
     try:
-        success, message = AttendenceService.delete(db, attendence_id)
+        success, message = AttendenceService.delete_attendence(db, attendence_id)
         if not success:
             raise HTTPException(status_code=404, detail=message)
         return AttendenceDeleteResponse(success=success, message=message)
@@ -152,10 +152,7 @@ def approve_attendence(attendence_id: int, user_id: int, db: Session = Depends(g
             detail=f"Error approving attendence: {str(e)}"
         )
 
-
-# ------------------------------
 # Reject Attendence
-# ------------------------------
 @router.put("/reject/{attendence_id}")
 def reject_attendence(attendence_id: int, user_id: int, reason: str, db: Session = Depends(get_db)):
     try:
