@@ -14,7 +14,7 @@ from app.schemas.attendence_schemas import (
 from app.core.database import get_db
 from app.services.attendence_service import AttendenceService
 
-router = APIRouter(prefix="/attendence", tags=["Attendence"])
+router = APIRouter()
 
 # Fetch Single Attendence
 @router.get("/fetch/{attendence_id}", response_model=AttendenceResponse)
