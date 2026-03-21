@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, DateTime, Text, BigInteger, Date, Time, String, func, DECIMAL
+from sqlalchemy import Column, DateTime, BigInteger, Date, Time, String, DECIMAL, func
 from app.core.database import Base
 
 class Attendence(Base):
@@ -15,9 +15,16 @@ class Attendence(Base):
     WorkHours      = Column(DECIMAL(5, 2), nullable=True)
     Description    = Column(String(255), nullable=True)
 
-    CreatedOn      = Column(DateTime, nullable=True)
+    ApprovalStatus = Column(String(20), nullable=True, default="Pending")
+    ApprovedBy     = Column(BigInteger, nullable=True)
+    ApprovedOn     = Column(DateTime, nullable=True)
+    RejectedBy     = Column(BigInteger, nullable=True)
+    RejectedOn     = Column(DateTime, nullable=True)
+    RejectionReason = Column(String(255), nullable=True)
+
+    CreatedOn      = Column(DateTime, nullable=False, server_default=func.now())
     CreatedBy      = Column(BigInteger, nullable=True)
-    ModifiedOn     = Column(DateTime, nullable=True)
+    ModifiedOn     = Column(DateTime, nullable=True, onupdate=func.now())
     ModifiedBy     = Column(BigInteger, nullable=True)
 
     def __repr__(self):

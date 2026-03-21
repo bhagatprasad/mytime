@@ -1,57 +1,53 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from typing import Optional, List
+from datetime import datetime
 
 from app.schemas.attendence_schemas import (
-    AttendenceCreate, AttendenceUpdate, AttendenceResponse,
-    AttendenceListResponse, AttendenceExistsResponse,
+    AttendenceCreate,
+    AttendenceUpdate,
+    AttendenceResponse,
+    AttendenceListResponse,
+    AttendenceExistsResponse,
     AttendenceDeleteResponse
 )
 from app.core.database import get_db
 from app.services.attendence_service import AttendenceService
 
-router = APIRouter()
+router = APIRouter(prefix="/attendence", tags=["Attendence"])
 
-
-# ✅ Fetch Single Attendence
-@router.get("/fetchAttendence/{attendence_id}", response_model=AttendenceResponse)
-async def fetch_attendence(attendence_id: int, db: Session = Depends(get_db)):
+# Fetch Single Attendence
+@router.get("/fetch/{attendence_id}", response_model=AttendenceResponse)
+def fetch_attendence(attendence_id: int, db: Session = Depends(get_db)):
     try:
         attendence = AttendenceService.fetch_attendence(db, attendence_id)
-
         if not attendence:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Attendence with ID {attendence_id} not found"
             )
-
         return attendence
-
-    except HTTPException:
-        raise
+    
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error fetching attendence: {str(e)}"
         )
 
-
-# ✅ Fetch All
-@router.get("/fetchAllAttendence", response_model=List[AttendenceResponse])
-async def fetch_all_attendence(db: Session = Depends(get_db)):
+# Fetch All Attendence
+@router.get("/fetchAll", response_model=List[AttendenceResponse])
+def fetch_all_attendence(db: Session = Depends(get_db)):
     try:
         return AttendenceService.fetch_all_attendence(db)
-
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error fetching attendence list: {str(e)}"
         )
 
-
-# ✅ Pagination + Search
-@router.get("/getAttendenceList", response_model=AttendenceListResponse)
-async def get_attendence_list(
+# Pagination + Search
+@router.get("/list", response_model=AttendenceListResponse)
+def get_attendence_list(
     skip: int = 0,
     limit: int = 10,
     search: Optional[str] = None,
@@ -74,9 +70,7 @@ async def get_attendence_list(
             sort_by=sort_by,
             sort_order=sort_order
         )
-
         pages = (total // limit) + (1 if total % limit > 0 else 0)
-
         return AttendenceListResponse(
             total=total,
             items=items,
@@ -84,126 +78,74 @@ async def get_attendence_list(
             size=limit,
             pages=pages
         )
-
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error fetching attendence list: {str(e)}"
         )
 
-
-# ✅ Insert or Update
-@router.post("/InsertOrUpdateAttendence")
-async def insert_or_update_attendence(data: dict, db: Session = Depends(get_db)):
-    try:
-        response = AttendenceService.insert_or_update_attendence(db, data)
-
-        if not response["success"]:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=response["message"]
-            )
-
-        return response
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error saving attendence: {str(e)}"
-        )
-
-
-# ✅ Delete
-@router.delete("/DeleteAttendence/{attendence_id}", response_model=AttendenceDeleteResponse)
-async def delete_attendence(attendence_id: int, db: Session = Depends(get_db)):
-    try:
-        response = AttendenceService.delete_attendence(db, attendence_id)
-
-        if not response["success"]:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=response["message"]
-            )
-
-        return response
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error deleting attendence: {str(e)}"
-        )
-
-
-# ✅ Create (Strict Schema)
-@router.post("/createAttendence", response_model=AttendenceResponse)
-async def create_attendence(attendence: AttendenceCreate, db: Session = Depends(get_db)):
+# Create Attendence
+@router.post("/create", response_model=AttendenceResponse)
+def create_attendence(attendence: AttendenceCreate, db: Session = Depends(get_db)):
     try:
         return AttendenceService.create_attendence(db, attendence)
-
-    except ValueError as ve:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(ve)
-        )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error creating attendence: {str(e)}"
         )
 
-
-# ✅ Update
-@router.put("/updateAttendence/{attendence_id}", response_model=AttendenceResponse)
-async def update_attendence(
-    attendence_id: int,
-    attendence: AttendenceUpdate,
-    db: Session = Depends(get_db)
-):
+# Update Attendence
+@router.put("/update/{attendence_id}", response_model=AttendenceResponse)
+def update_attendence(attendence_id: int, attendence: AttendenceUpdate, db: Session = Depends(get_db)):
     try:
         updated = AttendenceService.update_attendence(db, attendence_id, attendence)
-
         if not updated:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Attendence not found"
             )
-
         return updated
-
-    except ValueError as ve:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(ve)
-        )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error updating attendence: {str(e)}"
         )
 
+# Check if Attendence Exists
+@router.get("/exists/{attendence_id}", response_model=AttendenceExistsResponse)
+def attendence_exists(attendence_id: int, db: Session = Depends(get_db)):
+    try:
+        exists = AttendenceService.exists(db, attendence_id)
+        return AttendenceExistsResponse(exists=exists)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error checking attendence existence: {str(e)}"
+        )
 
-# ✅ Approve
-@router.put("/approveAttendence/{attendence_id}")
-async def approve_attendence(
-    attendence_id: int,
-    user_id: int,
-    db: Session = Depends(get_db)
-):
+# Delete Attendence
+@router.delete("/delete/{attendence_id}", response_model=AttendenceDeleteResponse)
+def delete_attendence(attendence_id: int, db: Session = Depends(get_db)):
+    try:
+        success, message = AttendenceService.delete(db, attendence_id)
+        if not success:
+            raise HTTPException(status_code=404, detail=message)
+        return AttendenceDeleteResponse(success=success, message=message)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error deleting attendence: {str(e)}"
+        )
+        
+# Approve Attendence
+@router.put("/approve/{attendence_id}")
+def approve_attendence(attendence_id: int, user_id: int, db: Session = Depends(get_db)):
     try:
         result = AttendenceService.approve_attendence(db, attendence_id, user_id)
-
         if not result:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Attendence not found"
-            )
-
+            raise HTTPException(status_code=404, detail="Attendence not found")
         return {"message": "Attendence approved successfully"}
-
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -211,27 +153,16 @@ async def approve_attendence(
         )
 
 
-# ✅ Reject
-@router.put("/rejectAttendence/{attendence_id}")
-async def reject_attendence(
-    attendence_id: int,
-    user_id: int,
-    reason: str,
-    db: Session = Depends(get_db)
-):
+# ------------------------------
+# Reject Attendence
+# ------------------------------
+@router.put("/reject/{attendence_id}")
+def reject_attendence(attendence_id: int, user_id: int, reason: str, db: Session = Depends(get_db)):
     try:
-        result = AttendenceService.reject_attendence(
-            db, attendence_id, user_id, reason
-        )
-
+        result = AttendenceService.reject_attendence(db, attendence_id, user_id, reason)
         if not result:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Attendence not found"
-            )
-
+            raise HTTPException(status_code=404, detail="Attendence not found")
         return {"message": "Attendence rejected successfully"}
-
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

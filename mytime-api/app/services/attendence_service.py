@@ -3,7 +3,7 @@ from sqlalchemy import or_, asc, desc, func
 from typing import Optional, List, Tuple, Dict, Any
 
 from app.models.attendence import Attendence
-from app.schemas.attendence_schemas import AttendenceCreate, AttendenceUpdate
+from app.schemas.attendence_schemas import AttendenceCreate, AttendenceUpdate,AttendenceCreate
 
 
 class AttendenceService:
@@ -18,7 +18,7 @@ class AttendenceService:
     @staticmethod
     def fetch_all_attendence(db: Session) -> List[Attendence]:
         return db.query(Attendence).order_by(
-            Attendence.AttendanceDate.desc()
+            Attendence.AttendenceDate.desc()
         ).all()
 
     @staticmethod
@@ -56,11 +56,7 @@ class AttendenceService:
 
         total = query.count()
 
-        try:
-            sort_column = getattr(Attendence, sort_by, Attendence.AttendenceId)
-        except AttributeError:
-            sort_column = Attendence.AttendenceId
-
+        sort_column = getattr(Attendence, sort_by, Attendence.AttendenceId)
         if sort_order.lower() == "asc":
             query = query.order_by(asc(sort_column))
         else:
@@ -74,13 +70,13 @@ class AttendenceService:
     def check_attendence_exists(
         db: Session,
         employee_id: int,
-        attendance_date,
+        attendence_date,
         exclude_id: Optional[int] = None
     ) -> bool:
 
         query = db.query(Attendence).filter(
             Attendence.EmployeeId == employee_id,
-            Attendence.AttendanceDate == attendance_date
+            Attendence.AttendenceDate == attendence_date
         )
 
         if exclude_id:
@@ -89,65 +85,46 @@ class AttendenceService:
         return query.first() is not None
 
     @staticmethod
-    def insert_or_update_attendence(db: Session, attendence_data: dict) -> Dict[str, Any]:
+    def create_attendence(db: Session, attendence: AttendenceCreate) -> Attendence:
 
-        attendence_id = attendence_data.get('AttendenceId')
+        if AttendenceService.check_attendence_exists(
+            db, attendence.EmployeeId, attendence.AttendenceDate
+        ):
+            raise ValueError("Attendence already exists for this employee on this date")
 
-        if attendence_id:
-            db_attendence = db.query(Attendence).filter(
-                Attendence.AttendenceId == attendence_id
-            ).first()
+        db_attendence = Attendence(**attendence.dict(exclude_none=True))
+        db.add(db_attendence)
+        db.commit()
+        db.refresh(db_attendence)
+        return db_attendence
 
-            if not db_attendence:
-                return {"success": False, "message": "Attendence not found", "attendence": None}
+    @staticmethod
+    def update_attendence(
+        db: Session,
+        attendence_id: int,
+        attendence: AttendenceUpdate
+    ) -> Optional[Attendence]:
 
-            emp_id = attendence_data.get('EmployeeId')
-            date = attendence_data.get('AttendanceDate')
+        db_attendence = db.query(Attendence).filter(
+            Attendence.AttendenceId == attendence_id
+        ).first()
 
-            if emp_id and date:
-                if AttendenceService.check_attendence_exists(db, emp_id, date, attendence_id):
-                    return {
-                        "success": False,
-                        "message": "Attendence already exists for this employee on this date",
-                        "attendence": None
-                    }
+        if db_attendence:
+            update_data = attendence.dict(exclude_none=True)
 
-            for key, value in attendence_data.items():
-                if key != 'AttendenceId' and value is not None:
-                    setattr(db_attendence, key, value)
+            emp_id = update_data.get('EmployeeId', db_attendence.EmployeeId)
+            date = update_data.get('AttendenceDate', db_attendence.AttendenceDate)
+
+            if AttendenceService.check_attendence_exists(db, emp_id, date, attendence_id):
+                raise ValueError("Attendence already exists for this employee on this date")
+
+            for key, value in update_data.items():
+                setattr(db_attendence, key, value)
 
             db.commit()
             db.refresh(db_attendence)
 
-            return {
-                "success": True,
-                "message": "Attendence updated successfully",
-                "attendence": db_attendence
-            }
-
-        else:
-            emp_id = attendence_data.get('EmployeeId')
-            date = attendence_data.get('AttendanceDate')
-
-            if AttendenceService.check_attendence_exists(db, emp_id, date):
-                return {
-                    "success": False,
-                    "message": "Attendence already exists for this employee on this date",
-                    "attendence": None
-                }
-
-            attendence_data.pop('AttendenceId', None)
-
-            db_attendence = Attendence(**attendence_data)
-            db.add(db_attendence)
-            db.commit()
-            db.refresh(db_attendence)
-
-            return {
-                "success": True,
-                "message": "Attendence created successfully",
-                "attendence": db_attendence
-            }
+        return db_attendence
 
     @staticmethod
     def delete_attendence(db: Session, attendence_id: int) -> Dict[str, Any]:
@@ -164,51 +141,7 @@ class AttendenceService:
         return {"success": True, "message": "Attendence deleted successfully"}
 
     @staticmethod
-    def create_attendence(db: Session, attendence: AttendenceCreate) -> Attendence:
-
-        if AttendenceService.check_attendence_exists(
-            db, attendence.EmployeeId, attendence.AttendanceDate
-        ):
-            raise ValueError("Attendence already exists for this employee on this date")
-
-        db_attendence = Attendence(**attendence.model_dump(exclude_none=True))
-        db.add(db_attendence)
-        db.commit()
-        db.refresh(db_attendence)
-
-        return db_attendence
-
-    @staticmethod
-    def update_attendence(
-        db: Session,
-        attendence_id: int,
-        attendence: AttendenceUpdate
-    ) -> Optional[Attendence]:
-
-        db_attendence = db.query(Attendence).filter(
-            Attendence.AttendenceId == attendence_id
-        ).first()
-
-        if db_attendence:
-            update_data = attendence.model_dump(exclude_none=True)
-
-            emp_id = update_data.get('EmployeeId', db_attendence.EmployeeId)
-            date = update_data.get('AttendanceDate', db_attendence.AttendanceDate)
-
-            if AttendenceService.check_attendence_exists(db, emp_id, date, attendence_id):
-                raise ValueError("Attendence already exists for this employee on this date")
-
-            for key, value in update_data.items():
-                setattr(db_attendence, key, value)
-
-            db.commit()
-            db.refresh(db_attendence)
-
-        return db_attendence
-
-    @staticmethod
     def approve_attendence(db: Session, attendence_id: int, user_id: int):
-
         db_attendence = db.query(Attendence).filter(
             Attendence.AttendenceId == attendence_id
         ).first()
@@ -217,7 +150,6 @@ class AttendenceService:
             db_attendence.ApprovalStatus = "Approved"
             db_attendence.ApprovedBy = user_id
             db_attendence.ApprovedOn = func.now()
-
             db.commit()
             db.refresh(db_attendence)
 
@@ -225,7 +157,6 @@ class AttendenceService:
 
     @staticmethod
     def reject_attendence(db: Session, attendence_id: int, user_id: int, reason: str):
-
         db_attendence = db.query(Attendence).filter(
             Attendence.AttendenceId == attendence_id
         ).first()
@@ -235,7 +166,6 @@ class AttendenceService:
             db_attendence.RejectedBy = user_id
             db_attendence.RejectedOn = func.now()
             db_attendence.RejectionReason = reason
-
             db.commit()
             db.refresh(db_attendence)
 
