@@ -1,29 +1,38 @@
-from sqlalchemy import Boolean, Column, DateTime, Text, BigInteger, Date,Time,String,func,DECIMAL
+from sqlalchemy import Column, DateTime, BigInteger, Date, Time, String, DECIMAL, func
 from app.core.database import Base
 
-class Attendance(Base):
-    __tablename__    = "Attendance"
+class Attendence(Base):
+    __tablename__ = "Attendence"
 
-    AttendanceId     = Column(BigInteger, primary_key=True, index=True)
-    EmployeeId       = Column(BigInteger, nullable=False)
-    AttendanceDate   = Column(Date, nullable=False)
-    CheckInTime      = Column(Time, nullable=True)
-    CheckOutTime     = Column(Time, nullable=True)
-    Status           = Column(String(20), nullable=False)
-    WorkHours        = Column(DECIMAL(5,2), nullable=True)
-    Description      = Column(String(255), nullable=True)
+    AttendenceId   = Column(BigInteger, primary_key=True, index=True)
+    EmployeeId     = Column(BigInteger, nullable=False)
+    AttendenceDate = Column(Date, nullable=False)
 
-    CreatedOn        = Column(DateTime, nullable=True)
-    CreatedBy        = Column(BigInteger, nullable=True)
-    ModifiedOn       = Column(DateTime, nullable=True)
-    ModifiedBy       = Column(BigInteger, nullable=True)
+    CheckInTime    = Column(Time, nullable=True)
+    CheckOutTime   = Column(Time, nullable=True)
+
+    Status         = Column(String(20), nullable=False)
+    WorkHours      = Column(DECIMAL(5, 2), nullable=True)
+    Description    = Column(String(255), nullable=True)
+
+    ApprovalStatus = Column(String(20), nullable=True, default="Pending")
+    ApprovedBy     = Column(BigInteger, nullable=True)
+    ApprovedOn     = Column(DateTime, nullable=True)
+    RejectedBy     = Column(BigInteger, nullable=True)
+    RejectedOn     = Column(DateTime, nullable=True)
+    RejectionReason = Column(String(255), nullable=True)
+
+    CreatedOn      = Column(DateTime, nullable=False, server_default=func.now())
+    CreatedBy      = Column(BigInteger, nullable=True)
+    ModifiedOn     = Column(DateTime, nullable=True, onupdate=func.now())
+    ModifiedBy     = Column(BigInteger, nullable=True)
 
     def __repr__(self):
         return (
-            f"<EmployeeAttendance("
-            f"AttendanceId={self.AttendanceId}, "
+            f"<Attendence("
+            f"AttendenceId={self.AttendenceId}, "
             f"EmployeeId={self.EmployeeId}, "
-            f"Date={self.AttendanceDate}, "
+            f"Date={self.AttendenceDate}, "
             f"Status='{self.Status}', "
             f"WorkHours={self.WorkHours}"
             f")>"
