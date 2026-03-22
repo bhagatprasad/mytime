@@ -3,7 +3,7 @@ from sqlalchemy import or_, asc, desc, func
 from typing import Optional, List, Tuple, Dict, Any
 
 from app.models.attendence import Attendence
-from app.schemas.attendence_schemas import AttendenceCreate, AttendenceUpdate,AttendenceCreate
+from app.schemas.attendence_schemas import AttendenceCreate, AttendenceUpdate
 
 
 class AttendenceService:
@@ -84,47 +84,68 @@ class AttendenceService:
 
         return query.first() is not None
 
+    # (INSERT + UPATE)
     @staticmethod
-    def create_attendence(db: Session, attendence: AttendenceCreate) -> Attendence:
-
-        if AttendenceService.check_attendence_exists(
-            db, attendence.EmployeeId, attendence.AttendenceDate
-        ):
-            raise ValueError("Attendence already exists for this employee on this date")
-
-        db_attendence = Attendence(**attendence.dict(exclude_none=True))
-        db.add(db_attendence)
-        db.commit()
-        db.refresh(db_attendence)
-        return db_attendence
-
-    @staticmethod
-    def update_attendence(
+    def insert_or_update_attendence(
         db: Session,
-        attendence_id: int,
-        attendence: AttendenceUpdate
-    ) -> Optional[Attendence]:
+        attendence_data: dict
+    ) -> Dict[str, Any]:
 
-        db_attendence = db.query(Attendence).filter(
-            Attendence.AttendenceId == attendence_id
-        ).first()
+        attendence_id = attendence_data.get("AttendenceId")
 
-        if db_attendence:
-            update_data = attendence.dict(exclude_none=True)
+        # UPDATE
+        if attendence_id:
+            db_attendence = db.query(Attendence).filter(
+                Attendence.AttendenceId == attendence_id
+            ).first()
 
-            emp_id = update_data.get('EmployeeId', db_attendence.EmployeeId)
-            date = update_data.get('AttendenceDate', db_attendence.AttendenceDate)
+            if not db_attendence:
+                return {"success": False, "message": "Attendence not found"}
+
+            emp_id = attendence_data.get('EmployeeId', db_attendence.EmployeeId)
+            date = attendence_data.get('AttendenceDate', db_attendence.AttendenceDate)
 
             if AttendenceService.check_attendence_exists(db, emp_id, date, attendence_id):
                 raise ValueError("Attendence already exists for this employee on this date")
 
-            for key, value in update_data.items():
-                setattr(db_attendence, key, value)
+            for key, value in attendence_data.items():
+                if key not in ['AttendenceId', 'CreatedBy', 'CreatedOn'] and value is not None:
+                    setattr(db_attendence, key, value)
+
+            db_attendence.ModifiedOn = func.now()
 
             db.commit()
             db.refresh(db_attendence)
 
-        return db_attendence
+            return {
+                "success": True,
+                "message": "Attendence updated successfully",
+                "data": db_attendence
+            }
+
+        #CREATE
+        else:
+            if AttendenceService.check_attendence_exists(
+                db,
+                attendence_data.get("EmployeeId"),
+                attendence_data.get("AttendenceDate")
+            ):
+                raise ValueError("Attendence already exists for this employee on this date")
+
+            attendence_data.pop("AttendenceId", None)
+            attendence_data["CreatedOn"] = func.now()
+
+            db_attendence = Attendence(**attendence_data)
+
+            db.add(db_attendence)
+            db.commit()
+            db.refresh(db_attendence)
+
+            return {
+                "success": True,
+                "message": "Attendence created successfully",
+                "data": db_attendence
+            }
 
     @staticmethod
     def delete_attendence(db: Session, attendence_id: int) -> Dict[str, Any]:

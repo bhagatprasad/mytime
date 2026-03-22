@@ -440,6 +440,16 @@ export const environment = {
       GetLeaveTypeExistsAsync: 'leavetype/CheckLeaveTypeExists',
       GetLeaveTypeNameAsync: 'leavetype/GetLeaveTypeByName',
       GetLeaveTypeListAsync: 'leavetype/fetchAllLeaveTypes',
-    }
+    },
+  Attendence: {
+      GetAllAttendence: 'attendence/fetch_all_attendence',
+      GetAttendenceById: 'attendence/fetch_attendence',
+      InsertOrUpdateAttendence: 'attendence/insert_or_update_attendence',
+      DeleteAttendence: 'attendence/delete_attendence',
+      ApproveAttendence: 'attendence/approve_attendence',
+      RejectAttendence: 'attendence/reject_attendence',
+      GetAttendenceByEmployee: 'attendence/check_attendence_exists',
+      GetAttendenceByDate: 'attendence/get_attendence_by_date_range'
+}
   },
 };
