@@ -10,12 +10,6 @@ import { AgGridAngular } from 'ag-grid-angular';
   styleUrl: './list-timesheet.component.css'
 })
 export class ListTimesheetComponent implements OnInit, OnDestroy {
-//list if taskcodes
-//list of taskitenm
-//list of timesheets for use
-// list of tiemsheettasks for user
-//InsertOrUpdateTimesheet
-//remove timesheet
 
   ngOnDestroy(): void {
 
