@@ -24,6 +24,8 @@ export class LeaveapplyComponent implements OnInit {
 
   showForm = false;
   selectedFile: any;
+  errorMessage: string = '';
+  successMessage: any = '';
 
   // userId = 20;
 
@@ -132,26 +134,38 @@ export class LeaveapplyComponent implements OnInit {
     this.loader.show();
 
     if (!this.leave.LeaveTypeId || !this.leave.FromDate || !this.leave.ToDate || !this.leave.Reason) {
-      alert("Please fill all required fields");
+      this.errorMessage = "Please fill all required fields";
+      this.loader.hide();
       return;
     }
 
-    // Calculate totalDays
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); 
+
+    const From = new Date(this.leave.FromDate);
+    const To = new Date(this.leave.ToDate);
+
+    if (From < today || To < today) {
+      this.errorMessage = "Past dates are not allowed";
+      this.loader.hide();
+      return;
+    }
+
     const from = new Date(this.leave.FromDate);
     const to = new Date(this.leave.ToDate);
     const totalDays = (to.getTime() - from.getTime()) / (1000 * 3600 * 24) + 1;
 
     if (totalDays <= 0) {
-      alert("Invalid date range");
+      this.errorMessage = "Invalid date range";
+      this.loader.hide();
       return;
     }
 
-    // Prepare API payload with lowercase keys as backend expects
     const payload = {
       userId: this.userId,
-      leaveTypeId: +this.leave.LeaveTypeId, // string -> number
-      fromDate: this.leave.FromDate,        // string OK
-      toDate: this.leave.ToDate,            // string OK
+      leaveTypeId: +this.leave.LeaveTypeId,
+      fromDate: this.leave.FromDate,
+      toDate: this.leave.ToDate,
       totalDays: totalDays,
       reason: this.leave.Reason,
       description: this.leave.Description || ""
@@ -159,15 +173,34 @@ export class LeaveapplyComponent implements OnInit {
 
     this.leaveService.ApplyleaveAsync(payload).subscribe({
       next: () => {
-        // alert("Leave Applied Successfully");
+         this.showToast("Leave Applied Successfully", "success");
         this.closeForm();
         this.loadLoggedInUserLeaves();
-        this.loader.hide();// refresh grid
+        this.loader.hide();
       },
       error: err => {
-        console.error("Error applying leave", err);
-        alert("Error applying leave: " + (err.error?.message || "Check your data"));
+        this.errorMessage = err?.error?.detail || "Something went wrong";
+        this.loader.hide();
       }
+    });
+  }
+
+  showToast(message: string, type: 'success' | 'error') {
+
+    const toast = document.createElement('div');
+    toast.className = `custom-toast ${type}`;
+
+    toast.innerHTML = `
+    <div class="toast-content">
+      <span>${message}</span>
+      <button class="close-btn">✖</button>
+    </div>
+    <div class="progress-bar"></div>
+  `;
+
+    document.body.appendChild(toast);
+    toast.querySelector('.close-btn')?.addEventListener('click', () => {
+      toast.remove();
     });
   }
 
