@@ -150,7 +150,7 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
       cellRenderer: ActionsRendererComponent,
       cellRendererParams: {
         onEditClick: (data: any) => this.requestTaskitemProcess(data),
-        onDeleteClick: (data: any) => this.deleteState(data)
+        onDeleteClick: (data: any) => this.deleteTaskItem(data)
       },
       cellClass: 'text-center'
     }
@@ -195,7 +195,7 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
     private audit: AuditFieldsService) {
 
   }
-  deleteState(taskitem: TaskItem): void {
+  deleteTaskItem(taskitem: TaskItem): void {
     this.showDeletePopup = true;
     this.selectedDeleteItem = taskitem;
   }
@@ -422,7 +422,7 @@ export class TaskItemListComponent implements OnInit, OnDestroy {
       this.loader.hide();
     });
   }
-  openAddEditState(): void {
+  openAddTaskItemSideBar(): void {
     this.showSidebar = true;
     this.selectedtaskitem = null;
   }

@@ -1,0 +1,138 @@
+<!-- Overlay -->
+<div class="sidebar-overlay" *ngIf="isVisible" (click)="close()"></div>
+
+<div class="sidebar" [class.visible]="isVisible">
+  <form [formGroup]="leavetypeForm" (ngSubmit)="onSubmit()">
+    <!-- Header -->
+    <div class="sidebar-header">
+      <h5 class="sidebar-title">
+        {{ leavetype?.Id ? "Edit LeaveType" : "Add LeaveType" }}
+      </h5>
+      <button type="button" class="close" (click)="close()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="sidebar-body">
+      <!--  Name (TEXT) -->
+      <div class="form-group">
+        <label for="Name">LeaveType Name</label>
+
+        <input
+          type="text"
+          class="form-control"
+          id="Name"
+          formControlName="Name"
+          placeholder="Enter leave type name"
+        />
+
+        <!-- Validation -->
+        <div
+          *ngIf="
+            leavetypeForm.get('Name')?.touched &&
+            leavetypeForm.get('Name')?.invalid
+          "
+          class="text-danger small mt-1"
+        >
+          <span *ngIf="leavetypeForm.get('Name')?.errors?.['required']">
+            Name is required
+          </span>
+
+          <span *ngIf="leavetypeForm.get('Name')?.errors?.['maxlength']">
+            Max
+            {{
+              leavetypeForm.get("Name")?.errors?.["maxlength"]?.requiredLength
+            }}
+            characters allowed
+          </span>
+        </div>
+      </div>
+
+      <!-- MaxDaysPerYear (NUMBER) -->
+      <div class="form-group">
+        <label for="MaxDaysPerYear">Max Days Per Year</label>
+
+        <input
+          type="number"
+          class="form-control"
+          id="MaxDaysPerYear"
+          formControlName="MaxDaysPerYear"
+          placeholder="Enter max days"
+        />
+
+        <!-- Validation -->
+        <div
+          *ngIf="
+            leavetypeForm.get('MaxDaysPerYear')?.touched &&
+            leavetypeForm.get('MaxDaysPerYear')?.invalid
+          "
+          class="text-danger small mt-1"
+        >
+          <span
+            *ngIf="leavetypeForm.get('MaxDaysPerYear')?.errors?.['required']"
+          >
+            Max days is required
+          </span>
+
+          <span *ngIf="leavetypeForm.get('MaxDaysPerYear')?.errors?.['min']">
+            Minimum value should be 1
+          </span>
+
+          <span *ngIf="leavetypeForm.get('MaxDaysPerYear')?.errors?.['max']">
+            Maximum value should be 365
+          </span>
+        </div>
+      </div>
+
+      <!-- Description (TEXTAREA) -->
+      <div class="form-group">
+        <label for="Description">Description</label>
+
+        <textarea
+          class="form-control"
+          id="Description"
+          formControlName="Description"
+          rows="3"
+          placeholder="Enter description"
+        ></textarea>
+
+        <!-- Validation -->
+        <div
+          *ngIf="
+            leavetypeForm.get('Description')?.invalid &&
+            (leavetypeForm.get('Description')?.dirty ||
+              leavetypeForm.get('Description')?.touched)
+          "
+          class="text-danger small mt-1"
+        >
+          <span *ngIf="leavetypeForm.get('Description')?.errors?.['required']">
+            Description is required
+          </span>
+
+          <span *ngIf="leavetypeForm.get('Description')?.errors?.['minlength']">
+            Minimum 11 characters required
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="leavetypeForm.invalid || leavetypeForm.pristine"
+      >
+        <i
+          class="mdi"
+          [class.mdi-content-save]="!leavetype?.Id"
+          [class.mdi-pencil]="leavetype?.Id"
+        ></i>
+        {{ leavetype?.Id ? "Update" : "Save" }}
+      </button>
+      <!-- <button type="button" class="btn btn-secondary ml-2" (click)="close()">
+        Cancel
+      </button> -->
+    </div>
+  </form>
+</div>
