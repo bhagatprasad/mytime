@@ -1,0 +1,73 @@
+<div class="container mt-3">
+
+  <!-- Title -->
+  <h2 class="text-center mb-4">Attendance Management</h2>
+
+  <!-- Add / Check-In Button -->
+  <div class="d-flex justify-content-between mb-3">
+    <button class="btn btn-success" (click)="checkI n()">
+      Check In
+    </button>
+
+    <button class="btn btn-danger" (click)="checkOut()">
+      Check Out
+    </button>
+  </div>
+
+  <!-- Responsive View -->
+  <!-- 📱 Mobile View -->
+  <div *ngIf="isMobile; else desktopView">
+
+    <div *ngFor="let item of attendenceList" class="card mb-3 shadow-sm">
+      <div class="card-body">
+        <p><strong>Date:</strong> {{ item.AttendenceDate }}</p>
+        <p><strong>Check In:</strong> {{ item.CheckInTime }}</p>
+        <p><strong>Check Out:</strong> {{ item.CheckOutTime }}</p>
+        <p><strong>Status:</strong> {{ item.Status }}</p>
+        <p><strong>Hours:</strong> {{ item.WorkHours }}</p>
+
+        <button class="btn btn-sm btn-danger"
+                (click)="deleteAttendence(item.EmployeeId)">
+          Delete
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 💻 Desktop View -->
+  <ng-template #desktopView>
+    <table class="table table-bordered table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Date</th>
+          <th>Check In</th>
+          <th>Check Out</th>
+          <th>Status</th>
+          <th>Work Hours</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let item of attendenceList">
+          <td>{{ item.EmployeeId }}</td>
+          <td>{{ item.AttendenceDate }}</td>
+          <td>{{ item.CheckInTime }}</td>
+          <td>{{ item.CheckOutTime }}</td>
+          <td>{{ item.Status }}</td>
+          <td>{{ item.WorkHours }}</td>
+
+          <td>
+            <button class="btn btn-sm btn-danger"
+                    (click)="deleteAttendence(item.EmployeeId)">
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </ng-template>
+
+</div>
