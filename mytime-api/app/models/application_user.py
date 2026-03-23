@@ -11,3 +11,4 @@ class ApplicationUser(BaseModel):
 
     department_id: Optional[int] = None
     role_id: Optional[int] = None
+    employee_id: Optional[int] = None
