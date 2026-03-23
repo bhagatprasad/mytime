@@ -9,7 +9,6 @@ import { AccountService } from '../../../common/services/account.service';
 import { LeaveService } from '../../../admin/services/leave.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import Chart from 'chart.js/auto';
 
 @Component({
   selector: 'app-leavebalance',
