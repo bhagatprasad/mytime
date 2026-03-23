@@ -1,47 +1,345 @@
-  <div class="row mt-3">
-          <div class="col-xl-3 flex-column d-flex grid-margin stretch-card">
-            <div class="row flex-grow">
-              <div class="col-sm-12 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Customers</h4>
-                    <p>23% increase in conversion</p>
-                    <h4 class="text-dark font-weight-bold mb-2">43,981</h4>
-                    <canvas id="customers"></canvas>
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-12 stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Orders</h4>
-                    <p>6% decrease in earnings</p>
-                    <h4 class="text-dark font-weight-bold mb-2">55,543</h4>
-                    <canvas id="orders"></canvas>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-xl-9 d-flex grid-margin stretch-card">
-            <div class="card">
+<!-- user-dashboard.component.html -->
+<div class="dashboard-wrapper">
+  <div class="container-fluid px-0">
+    <div class="row g-4">
+      
+      <!-- Left Column -->
+      <div class="col-xl-4 col-lg-12">
+        <div class="row g-4">
+          
+          <!-- Review Card -->
+          <div class="col-12">
+            <div class="card review-card">
               <div class="card-body">
-                <h4 class="card-title">Website Audience Metrics</h4>
-                <div class="row">
-                  <div class="col-lg-5">
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit amet cumque cupiditate</p>
+                <div class="card-header-row">
+                  <h4 class="card-title">
+                    <i class="bi bi-star-fill text-warning me-2"></i>
+                    Performance Review
+                  </h4>
+                  <button class="view-btn" (click)="navigateTo('performance-review')">
+                    <i class="bi bi-box-arrow-up-right"></i> View Details
+                  </button>
+                </div>
+                <div class="review-content">
+                  <div class="rating-section">
+                    <div class="stars">
+                      <i class="bi bi-star-fill" *ngFor="let star of getStars(reviewData.rating)"></i>
+                      <i class="bi bi-star" *ngFor="let star of getEmptyStars(reviewData.rating)"></i>
+                      <span class="rating-number">{{ reviewData.rating }}/{{ reviewData.maxRating }}</span>
+                    </div>
+                    <div class="progress-bar-custom mt-2">
+                      <div class="progress-fill" [style.width.%]="reviewData.percentage"></div>
+                    </div>
                   </div>
-                  <div class="col-lg-7">
-                    <div class="chart-legends d-lg-block d-none" id="chart-legends"></div>
+                  <div class="review-meta mt-3">
+                    <p class="reviewer"><i class="bi bi-person-circle"></i> Reviewed by: {{ reviewData.reviewer }}</p>
+                    <p class="review-date"><i class="bi bi-calendar3"></i> Last: {{ reviewData.lastReview }} | Next: {{ reviewData.nextReview }}</p>
+                    <p class="review-comments"><i class="bi bi-chat-dots"></i> {{ reviewData.comments }}</p>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-sm-12">
-                    <canvas id="web-audience-metrics-satacked" class="mt-3"></canvas>
-                  </div>
-                </div>
-
               </div>
             </div>
           </div>
+          
+          <!-- Current Date, Location & Shift Card -->
+          <div class="col-12">
+            <div class="card location-card">
+              <div class="card-body">
+                <div class="card-header-row">
+                  <h4 class="card-title">
+                    <i class="bi bi-geo-alt-fill text-danger me-2"></i>
+                    Current Context
+                  </h4>
+                  <button class="view-btn" (click)="navigateTo('attendance')">
+                    <i class="bi bi-clock-history"></i> View Attendance
+                  </button>
+                </div>
+                <div class="info-container">
+                  <div class="info-item">
+                    <i class="bi bi-calendar3 text-primary"></i>
+                    <div>
+                      <span class="info-label">Date</span>
+                      <span class="info-value">{{ currentDate }}</span>
+                    </div>
+                  </div>
+                  <div class="info-item">
+                    <i class="bi bi-clock text-success"></i>
+                    <div>
+                      <span class="info-label">Time</span>
+                      <span class="info-value">{{ currentTime }} IST</span>
+                    </div>
+                  </div>
+                  <div class="info-item">
+                    <i class="bi bi-calendar-day text-info"></i>
+                    <div>
+                      <span class="info-label">Day</span>
+                      <span class="info-value day-highlight">{{ currentDay }}</span>
+                    </div>
+                  </div>
+                  <div class="info-item">
+                    <i class="bi bi-building text-warning"></i>
+                    <div>
+                      <span class="info-label">Location</span>
+                      <span class="info-value">{{ currentLocation }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="shift-container">
+                  <div class="shift-badge">
+                    <i class="bi bi-briefcase-fill"></i>
+                    {{ shiftType }}: {{ shiftTiming }}
+                  </div>
+                  <div class="shift-note">
+                    <i class="bi bi-info-circle"></i> Flexible working hours available
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Upcoming Holidays Card -->
+          <div class="col-12">
+            <div class="card holidays-card">
+              <div class="card-body">
+                <div class="card-header-row">
+                  <h4 class="card-title">
+                    <i class="bi bi-calendar-heart-fill text-danger me-2"></i>
+                    Upcoming Holidays
+                  </h4>
+                  <button class="view-btn" (click)="navigateTo('holidays')">
+                    <i class="bi bi-calendar3"></i> View Calendar
+                  </button>
+                </div>
+                <div class="holidays-list">
+                  <div class="holiday-item" *ngFor="let holiday of upcomingHolidays">
+                    <div class="holiday-info">
+                      <i class="bi bi-gift-fill"></i>
+                      <span class="holiday-name">{{ holiday.name }}</span>
+                    </div>
+                    <div class="holiday-date">
+                      <i class="bi bi-calendar-check"></i>
+                      {{ holiday.date }} ({{ holiday.day }})
+                    </div>
+                  </div>
+                  <div class="more-holidays" (click)="navigateTo('holidays')">
+                    <i class="bi bi-plus-circle"></i> View all holidays
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
         </div>
+      </div>
+      
+      <!-- Middle Column -->
+      <div class="col-xl-4 col-lg-6">
+        <div class="row g-4">
+          
+          <!-- Payslips Card -->
+          <div class="col-12">
+            <div class="card payslip-card">
+              <div class="card-body">
+                <div class="card-header-row">
+                  <h4 class="card-title">
+                    <i class="bi bi-receipt text-primary me-2"></i>
+                    Payslips
+                  </h4>
+                  <button class="view-btn" (click)="navigateTo('payslips')">
+                    <i class="bi bi-download"></i> View All
+                  </button>
+                </div>
+                <div class="payslip-list">
+                  <div class="payslip-item" *ngFor="let slip of payslips">
+                    <div class="payslip-info">
+                      <i class="bi bi-file-text-fill"></i>
+                      <span class="payslip-month">{{ slip.month }}</span>
+                    </div>
+                    <div class="payslip-right">
+                      <span class="payslip-amount">{{ slip.amount }}</span>
+                      <i class="bi bi-download download-icon" (click)="navigateTo('payslips', slip.month)"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="footer-link" (click)="navigateTo('payslips')">
+                  <i class="bi bi-chevron-right"></i> View complete payslip history
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- IT Declarations Card -->
+          <div class="col-12">
+            <div class="card declarations-card">
+              <div class="card-body">
+                <div class="card-header-row">
+                  <h4 class="card-title">
+                    <i class="bi bi-file-earmark-spreadsheet text-success me-2"></i>
+                    IT Declarations
+                  </h4>
+                  <button class="view-btn" (click)="navigateTo('declarations')">
+                    <i class="bi bi-pencil-square"></i> Submit New
+                  </button>
+                </div>
+                <div class="declarations-list">
+                  <div class="declaration-item" *ngFor="let dec of declarations">
+                    <div class="declaration-info">
+                      <span class="declaration-name">{{ dec.name }}</span>
+                      <span class="declaration-deadline" *ngIf="dec.deadline">
+                        <i class="bi bi-hourglass-split"></i> Due: {{ dec.deadline }}
+                      </span>
+                    </div>
+                    <div class="declaration-status">
+                      <span class="status-badge" [ngClass]="dec.statusClass">{{ dec.status }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="footer-link" (click)="navigateTo('declarations')">
+                  <i class="bi bi-chevron-right"></i> Manage all declarations
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- POI / Documents Card -->
+          <div class="col-12">
+            <div class="card poi-card">
+              <div class="card-body">
+                <div class="card-header-row">
+                  <h4 class="card-title">
+                    <i class="bi bi-folder-check text-info me-2"></i>
+                    POI / Documents
+                  </h4>
+                  <button class="view-btn" (click)="navigateTo('documents')">
+                    <i class="bi bi-upload"></i> Upload
+                  </button>
+                </div>
+                <div class="poi-list">
+                  <div class="poi-item" *ngFor="let doc of poiDocuments">
+                    <div class="poi-info">
+                      <i [class]="'bi bi-' + doc.icon" [ngClass]="doc.statusClass"></i>
+                      <span class="poi-name">{{ doc.name }}</span>
+                    </div>
+                    <div class="poi-status" [ngClass]="doc.statusClass">
+                      {{ doc.status }}
+                    </div>
+                  </div>
+                </div>
+                <div class="footer-link" (click)="navigateTo('documents')">
+                  <i class="bi bi-chevron-right"></i> Manage documents
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+      <!-- Right Column -->
+      <div class="col-xl-4 col-lg-6">
+        <div class="row g-4">
+          
+          <!-- Quick Access Card -->
+          <div class="col-12">
+            <div class="card quick-access-card">
+              <div class="card-body">
+                <div class="card-header-row">
+                  <h4 class="card-title">
+                    <i class="bi bi-lightning-charge-fill text-warning me-2"></i>
+                    Quick Access
+                  </h4>
+                  <button class="view-btn" (click)="navigateTo('quick-access')">
+                    <i class="bi bi-grid-3x3-gap-fill"></i> Customize
+                  </button>
+                </div>
+                <div class="quick-access-grid">
+                  <div class="quick-access-item" *ngFor="let item of quickAccessItems" 
+                       (click)="navigateTo(item.route)">
+                    <div class="quick-icon" [style.background]="item.color + '20'">
+                      <i [class]="'bi bi-' + item.icon" [style.color]="item.color"></i>
+                    </div>
+                    <span class="quick-name">{{ item.name }}</span>
+                  </div>
+                </div>
+                <div class="footer-link" (click)="navigateTo('quick-access')">
+                  <i class="bi bi-chevron-right"></i> Explore all features
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Track Requests Card -->
+          <div class="col-12">
+            <div class="card track-card">
+              <div class="card-body">
+                <div class="card-header-row">
+                  <h4 class="card-title">
+                    <i class="bi bi-truck text-secondary me-2"></i>
+                    Track Requests
+                  </h4>
+                  <button class="view-btn" (click)="navigateTo('track')">
+                    <i class="bi bi-search"></i> Track All
+                  </button>
+                </div>
+                <div class="track-list">
+                  <div class="track-item" *ngFor="let req of trackRequests">
+                    <div class="track-info">
+                      <div class="track-icon" [ngClass]="req.statusClass">
+                        <i class="bi bi-chevron-right"></i>
+                      </div>
+                      <div class="track-details">
+                        <div class="track-title">{{ req.item }}</div>
+                        <div class="track-id-date">{{ req.id }} • {{ req.date }}</div>
+                      </div>
+                    </div>
+                    <div class="track-status">
+                      <span class="track-badge" [ngClass]="req.statusClass">{{ req.status }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="footer-link" (click)="navigateTo('track')">
+                  <i class="bi bi-chevron-right"></i> View all requests
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Additional Info Card -->
+          <div class="col-12">
+            <div class="card info-card">
+              <div class="card-body">
+                <div class="card-header-row">
+                  <h4 class="card-title">
+                    <i class="bi bi-megaphone-fill text-purple me-2"></i>
+                    Announcements
+                  </h4>
+                  <button class="view-btn" (click)="navigateTo('announcements')">
+                    <i class="bi bi-envelope"></i> View All
+                  </button>
+                </div>
+                <div class="announcements-list">
+                  <div class="announcement-item">
+                    <i class="bi bi-megaphone"></i>
+                    <div class="announcement-content">
+                      <p class="announcement-text">Town Hall meeting scheduled for March 28th at 3:00 PM</p>
+                      <span class="announcement-time">2 days ago</span>
+                    </div>
+                  </div>
+                  <div class="announcement-item">
+                    <i class="bi bi-trophy"></i>
+                    <div class="announcement-content">
+                      <p class="announcement-text">Employee of the Month nominations now open</p>
+                      <span class="announcement-time">5 days ago</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
