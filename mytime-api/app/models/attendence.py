@@ -26,6 +26,7 @@ class Attendence(Base):
     CreatedBy      = Column(BigInteger, nullable=True)
     ModifiedOn     = Column(DateTime, nullable=True, onupdate=func.now())
     ModifiedBy     = Column(BigInteger, nullable=True)
+    WorkType       = Column(String(50), nullable=False, default='Office')
 
     def __repr__(self):
         return (
