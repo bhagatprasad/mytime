@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
-from typing import Optional, List
+from typing import Optional, List,Dict,Any
 from datetime import datetime
 
 from app.schemas.attendence_schemas import (
@@ -84,32 +84,32 @@ def get_attendence_with_pagination(
             detail=f"Error fetching attendence list: {str(e)}"
         )
 
-# Create Attendence
-@router.post("/create", response_model=AttendenceResponse)
-def create_attendence(attendence: AttendenceCreate, db: Session = Depends(get_db)):
+@router.post("/insert-or-update", response_model=Dict[str, Any])
+def insert_or_update_attendence(
+    attendence: dict,
+    db: Session = Depends(get_db)
+):
     try:
-        return AttendenceService.create_attendence(db, attendence)
-    except Exception as e:
+        result = AttendenceService.insert_or_update_attendence(db, attendence)
+
+        if not result.get("success"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=result.get("message")
+            )
+
+        return result
+
+    except ValueError as ve:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error creating attendence: {str(e)}"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(ve)
         )
 
-# Update Attendence
-@router.put("/update/{attendence_id}", response_model=AttendenceResponse)
-def update_attendence(attendence_id: int, attendence: AttendenceUpdate, db: Session = Depends(get_db)):
-    try:
-        updated = AttendenceService.update_attendence(db, attendence_id, attendence)
-        if not updated:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Attendence not found"
-            )
-        return updated
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error updating attendence: {str(e)}"
+            detail=f"Error saving attendence: {str(e)}"
         )
 
 # Check if Attendence Exists

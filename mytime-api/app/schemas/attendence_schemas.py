@@ -12,14 +12,18 @@ class AttendenceBase(BaseModel):
     Status: Optional[str] = Field(None, max_length=20, description="Attendence status")
     WorkHours: Optional[float] = Field(None, description="Total work hours")
     Description: Optional[str] = Field(None, description="Remarks / description")
+    WorkType: Optional[str] = Field("Office", max_length=50, description="Work type (Office/WFH/Hybrid)")
+    
     ApprovalStatus: str = Field("Pending", max_length=20, description="Approval status")
 
     model_config = {"from_attributes": True}
+
 
 # Create Schema
 class AttendenceCreate(AttendenceBase):
     """Schema for creating a new Attendence"""
     CreatedBy: Optional[int] = Field(None, description="User ID who created the record")
+
 
 # Update Schema
 class AttendenceUpdate(BaseModel):
@@ -31,8 +35,8 @@ class AttendenceUpdate(BaseModel):
     Status: Optional[str] = Field(None, max_length=20, description="Attendence status")
     WorkHours: Optional[float] = Field(None, description="Total work hours")
     Description: Optional[str] = Field(None, description="Remarks / description")
+    WorkType: Optional[str] = Field(None, max_length=50, description="Work type (Office/WFH/Hybrid)")
     ModifiedBy: Optional[int] = Field(None, description="User ID who modified the record")
-    
     # Approval Fields
     ApprovalStatus: Optional[str] = Field(None, max_length=20, description="Approval status")
     ApprovedBy: Optional[int] = Field(None, description="Approved by user ID")
@@ -42,6 +46,7 @@ class AttendenceUpdate(BaseModel):
     RejectionReason: Optional[str] = Field(None, description="Reason for rejection")
 
     model_config = {"from_attributes": True}
+
 
 # Response Schema
 class AttendenceResponse(AttendenceBase):
@@ -59,6 +64,7 @@ class AttendenceResponse(AttendenceBase):
 
     model_config = {"from_attributes": True}
 
+
 # List Response Schema (Pagination)
 class AttendenceListResponse(BaseModel):
     total: int
@@ -69,10 +75,12 @@ class AttendenceListResponse(BaseModel):
 
     model_config = {"from_attributes": True}
 
+
 # Exists Response
 class AttendenceExistsResponse(BaseModel):
     exists: bool
     model_config = {"from_attributes": True}
+
 
 # Delete Response
 class AttendenceDeleteResponse(BaseModel):

@@ -10,13 +10,10 @@ import { MobileActionsDocumentRendererComponent } from '../../../common/componen
 import { ToastrService } from 'ngx-toastr';
 import { AuditFieldsService } from '../../../common/services/auditfields.service';
 import { StorageService } from '../../../common/services/storage.service';
-import { EmployeeService } from '../../../admin/services/employee.service';
-import { forkJoin } from 'rxjs';
 import { Employee } from '../../../admin/models/employee';
 import { AccountService } from '../../../common/services/account.service';
 import { ApplicationUser } from '../../../common/models/application-user';
 import { UploadDocumentComponent } from './upload-document.component';
-import { response } from 'express';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -212,7 +209,6 @@ export class ListDocumentComponent implements OnInit, OnDestroy {
 
   constructor(
     private documentService: DocumentService,
-    private employeeService: EmployeeService,
     private loader: LoaderService,
     private notify: ToastrService,
     private audit: AuditFieldsService,
@@ -266,25 +262,14 @@ export class ListDocumentComponent implements OnInit, OnDestroy {
   }
 
   loadDocumentsData(): void {
-    if (!this.applicationUser?.id) {
+    if (!this.applicationUser?.employeeId) {
       this.notify.error('User not authenticated', 'Error');
       return;
     }
 
     this.loader.show();
 
-    // First get the employee for the current user
-    this.employeeService.GetEmployeeByUserIdAsync(this.applicationUser.id).subscribe({
-      next: (employee) => {
-        this.employee = employee;
-        if (!employee?.EmployeeId) {
-          this.loader.hide();
-          this.notify.error('Employee ID not found', 'Error');
-          return;
-        }
-        this.employeeId = employee.EmployeeId;
-        
-        this.documentService.getDocumentsByEmployeeAsync(employee.EmployeeId).subscribe({
+    this.documentService.getDocumentsByEmployeeAsync(this.applicationUser?.employeeId).subscribe({
           next: (response) => {
             if (response) {
               this.documents = response;
@@ -302,13 +287,6 @@ export class ListDocumentComponent implements OnInit, OnDestroy {
             this.loader.hide();
           }
         });
-      },
-      error: (error) => {
-        console.error('Error loading employee data:', error);
-        this.loader.hide();
-        this.notify.error('Failed to load employee information', 'Error');
-      }
-    });
   }
 
   onGridReady(params: GridReadyEvent): void {

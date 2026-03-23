@@ -33,10 +33,10 @@ ModuleRegistry.registerModules([AllCommunityModule]);
   templateUrl: './ytdreports.component.html',
   styleUrl: './ytdreports.component.css'
 })
-export class YtdreportsComponent implements OnInit,OnDestroy {
+export class YtdreportsComponent implements OnInit, OnDestroy {
   @ViewChild('payslipPdfContainer', { read: ViewContainerRef })
   payslipPdfContainer!: ViewContainerRef;
-
+  employeeId: any = 0;
   today = new Date();
   employeeSalaries: EmployeeSalary[] = [];
   employee: Employee | null = null;
@@ -77,7 +77,7 @@ export class YtdreportsComponent implements OnInit,OnDestroy {
   };
 
   desktopColumnDefs: ColDef[] = [
-    {field:'SalaryYear', headerName: 'Month/Year', width: 110, filter: 'agTextColumnFilter', sortable: true, cellClass: 'text-center',valueGetter: (p) => `${p.data.SalaryMonth}/${p.data.SalaryYear}` },
+    { field: 'SalaryYear', headerName: 'Month/Year', width: 110, filter: 'agTextColumnFilter', sortable: true, cellClass: 'text-center', valueGetter: (p) => `${p.data.SalaryMonth}/${p.data.SalaryYear}` },
     { field: 'Earning_YTD_Basic', headerName: 'Basic', width: 110, filter: 'agTextColumnFilter', sortable: true, cellClass: 'text-left' },
     { field: 'Earning_YTD_HRA', headerName: 'HRA', width: 110, filter: 'agTextColumnFilter', sortable: true, cellClass: 'text-left' },
     // { field: 'Earning_YTD_CONVEYANCE', headerName: 'CONVEYANCE', width: 100, filter: 'agTextColumnFilter', sortable: true, cellClass: 'text-left' },
@@ -98,18 +98,18 @@ export class YtdreportsComponent implements OnInit,OnDestroy {
   mobileColumnDefs: ColDef[] = [
     { field: 'Earning_YTD_GROSSEARNINGS', headerName: 'Total Earning', width: 130, filter: 'agTextColumnFilter', sortable: true, cellClass: 'text-left' },
     { field: 'Deduction_YTD_GROSSSDeduction', headerName: 'Total Deduction', width: 130, filter: 'agTextColumnFilter', sortable: true, cellClass: 'text-center' },
-    { 
-      field: 'Actions', 
-      headerName: 'Actions', 
-      width: 130, 
-      sortable: false, 
-      filter: false, 
-      cellRenderer: UserMobileActionsComponent, 
-      cellRendererParams: { 
-        onDownloadClick: (d: any) => this.onDownloadClick(d), 
-        onViewClick: (d: any) => this.onViewClick(d) 
-      }, 
-      cellClass: 'text-left' 
+    {
+      field: 'Actions',
+      headerName: 'Actions',
+      width: 130,
+      sortable: false,
+      filter: false,
+      cellRenderer: UserMobileActionsComponent,
+      cellRendererParams: {
+        onDownloadClick: (d: any) => this.onDownloadClick(d),
+        onViewClick: (d: any) => this.onViewClick(d)
+      },
+      cellClass: 'text-left'
     }
   ];
 
@@ -119,7 +119,6 @@ export class YtdreportsComponent implements OnInit,OnDestroy {
     private loader: LoaderService,
     private toster: ToastrService,
     private userService: UserService,
-    private router: Router,
     private employeeService: EmployeeService,
     private employeeSalaryStructureService: EmployeeSalaryStructureService,
     private departmentService: DepartmentService,
@@ -140,14 +139,12 @@ export class YtdreportsComponent implements OnInit,OnDestroy {
   private loadLoggedInUserSalary(): void {
     this.loader.show();
     const user = this.accountService.getCurrentUser();
-    if (!user) { 
-      this.loader.hide(); 
-      return; 
+    if (!user) {
+      this.loader.hide();
+      return;
     }
-    this.userService.GetUserByIdAsync(user.id).subscribe({
-      next: (employee: any) => this.loadEmployeeSalary(employee.EmployeeId),
-      error: () => this.loader.hide()
-    });
+    this.employeeId = user.employeeId;
+    this.loadEmployeeSalary(this.employeeId);
   }
 
   loadEmployeeSalary(id: any): void {
@@ -166,16 +163,16 @@ export class YtdreportsComponent implements OnInit,OnDestroy {
         this.designations = res.designations;
         this.loader.hide();
       },
-      error: (err) => { 
-        this.toster.error('Error loading employee details', err); 
-        this.loader.hide(); 
+      error: (err) => {
+        this.toster.error('Error loading employee details', err);
+        this.loader.hide();
       }
     });
   }
 
   @HostListener('window:resize', ['$event'])
-  onResize(_event: any): void { 
-    this.checkScreenSize(); 
+  onResize(_event: any): void {
+    this.checkScreenSize();
   }
 
   private checkScreenSize(): void {
@@ -197,9 +194,9 @@ export class YtdreportsComponent implements OnInit,OnDestroy {
   private refreshGridColumns(): void {
     if (!this.gridApi) return;
     this.gridApi.setGridOption('columnDefs', this.columnDefs);
-    setTimeout(() => { 
-      this.gridApi.refreshHeader(); 
-      this.gridApi.sizeColumnsToFit(); 
+    setTimeout(() => {
+      this.gridApi.refreshHeader();
+      this.gridApi.sizeColumnsToFit();
     }, 100);
   }
 
@@ -208,26 +205,26 @@ export class YtdreportsComponent implements OnInit,OnDestroy {
     setTimeout(() => this.gridApi.sizeColumnsToFit(), 300);
   }
 
-  getTotalRowsCount(): number { 
-    return this.employeeSalaries.length; 
+  getTotalRowsCount(): number {
+    return this.employeeSalaries.length;
   }
-  
-  getActiveEmployeesSalariesCount(): number { 
-    return this.employeeSalaries.filter(s => s.IsActive).length; 
+
+  getActiveEmployeesSalariesCount(): number {
+    return this.employeeSalaries.filter(s => s.IsActive).length;
   }
-  
-  getInActiveEmployeesSalariesCount(): number { 
-    return this.employeeSalaries.filter(s => !s.IsActive).length; 
+
+  getInActiveEmployeesSalariesCount(): number {
+    return this.employeeSalaries.filter(s => !s.IsActive).length;
   }
-  
-  getEmployeesCount(): number { 
-    return new Set(this.employeeSalaries.map(s => s.EmployeeId)).size; 
+
+  getEmployeesCount(): number {
+    return new Set(this.employeeSalaries.map(s => s.EmployeeId)).size;
   }
-  
+
   openAddSalary(): void { }
 
   private sortMonthlySalariesByYearDesc(salaries: any[]): any[] {
-    return [...salaries].sort((a, b) => 
+    return [...salaries].sort((a, b) =>
       b.SalaryYear !== a.SalaryYear ? b.SalaryYear - a.SalaryYear : b.SalaryMonth - a.SalaryMonth
     );
   }
@@ -251,7 +248,7 @@ export class YtdreportsComponent implements OnInit,OnDestroy {
     this.isPreviewLoading = true;
     this.previewImageData = null;
     this.loader.show();
-    
+
     // Prepare data in background
     setTimeout(() => {
       this.selectedPayslipData = this.buildPayslipVM(salary);
@@ -265,7 +262,7 @@ export class YtdreportsComponent implements OnInit,OnDestroy {
     this.previewImageData = imgData;
     this.isPreviewLoading = false;
     this.loader.hide();
-    
+
     // Force modal to stay open on mobile
     if (this.isMobile) {
       setTimeout(() => {
