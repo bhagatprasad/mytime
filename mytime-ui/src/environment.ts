@@ -441,7 +441,7 @@ export const environment = {
       GetLeaveTypeNameAsync: 'leavetype/GetLeaveTypeByName',
       GetLeaveTypeListAsync: 'leavetype/fetchAllLeaveTypes',
     },
-    leavebalance:{
+    leavebalance: {
       GetLeaveBalanceAsync: 'leavebalance/fetallleavebalance',
       GetLeaveBalanceByUserAsync: 'leavebalance/fetchleavebalancebyuser',
     },
@@ -456,7 +456,7 @@ export const environment = {
       DeleteUserAsync: 'user/DeleteUser',
       ChangePasswordAsync: 'user/ChangePassword',
       ForgotPasswordAsync: 'user/ForgotPassword',
-
+    },
     Attendence: {
       GetAllAttendence: 'attendence/fetch_all_attendence',
       GetAttendenceById: 'attendence/fetch_attendence',
@@ -488,5 +488,5 @@ export const environment = {
       GetTimesheetReport: 'timesheet/get_timesheet_report',
       GetTimesheetSummary: 'timesheet/get_timesheet_summary'
     }
-  },
+  }
 };
