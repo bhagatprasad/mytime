@@ -440,6 +440,23 @@ export const environment = {
       GetLeaveTypeExistsAsync: 'leavetype/CheckLeaveTypeExists',
       GetLeaveTypeNameAsync: 'leavetype/GetLeaveTypeByName',
       GetLeaveTypeListAsync: 'leavetype/fetchAllLeaveTypes',
+    },
+    leavebalance:{
+      GetLeaveBalanceAsync: 'leavebalance/fetallleavebalance',
+      GetLeaveBalanceByUserAsync: 'leavebalance/fetchleavebalancebyuser',
+    },
+    User: {
+      LoginAsync: 'user/login',
+      LogoutAsync: 'user/logout',
+      RegisterAsync: 'user/register',
+      GetUsersAsync: 'user/fetchUsers',
+      GetUsersByRoleAsync: 'user/fetchUsersByRole',
+      GetUserByIdAsync: 'user/fetchUserById',
+      InsertOrUpdateUserAsync: 'user/InsertOrUpdateUser',
+      DeleteUserAsync: 'user/DeleteUser',
+      ChangePasswordAsync: 'user/ChangePassword',
+      ForgotPasswordAsync: 'user/ForgotPassword',
+
     }
   },
 };

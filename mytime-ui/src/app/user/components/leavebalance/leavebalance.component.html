@@ -1,0 +1,57 @@
+<div class="leave-dashboard">
+
+    <div class="dashboard-header">
+        <h2>My Leave Balance</h2>
+        <p>Track your leave usage</p>
+    </div>
+
+    <div class="leave-cards">
+
+        <div class="leave-card" *ngFor="let leave of getAllLeaveCards()">
+
+            <h3>{{ leave.Name }}</h3>
+
+            <div class="circle-chart">
+
+                <svg viewBox="0 0 36 36" class="circular-chart">
+
+                    <!-- Background -->
+                    <path class="circle-bg" d="M18 2.0845
+               a 15.9155 15.9155 0 0 1 0 31.831
+               a 15.9155 15.9155 0 0 1 0 -31.831" />
+
+                    <!-- Progress -->
+                    <path class="circle" [attr.stroke]="getCircleColor(leave)"
+                        [attr.stroke-dasharray]="(leave.UsedLeaves / leave.TotalLeaves * 100) + ', 100'" d="M18 2.0845
+     a 15.9155 15.9155 0 0 1 0 31.831
+     a 15.9155 15.9155 0 0 1 0 -31.831">
+                    </path>
+
+                    <!-- Percentage -->
+                    <text x="18" y="20.35" class="percentage">
+                        {{ (leave.UsedLeaves / leave.TotalLeaves * 100) | number:'1.0-0' }}%
+                    </text>
+
+                </svg>
+
+            </div>
+
+            <div class="leave-info">
+
+                <p>Total: {{leave.TotalLeaves}}</p>
+
+                <p class="used">
+                    Used: {{leave.UsedLeaves}}
+                </p>
+
+                <p class="remaining">
+                    Remaining: {{leave.RemainingLeaves}}
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

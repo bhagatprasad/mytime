@@ -59,6 +59,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'leavebalance',
+        loadComponent: () =>
+          import('./user/components/leavebalance/leavebalance.component').then(
+            (m) => m.LeavebalanceComponent,
+          ),
+      },
+      {
         path: 'payslips',
         loadComponent: () =>
           import('./user/components/payslips/payslips.component').then(
