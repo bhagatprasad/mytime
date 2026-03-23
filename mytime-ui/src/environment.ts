@@ -441,6 +441,22 @@ export const environment = {
       GetLeaveTypeNameAsync: 'leavetype/GetLeaveTypeByName',
       GetLeaveTypeListAsync: 'leavetype/fetchAllLeaveTypes',
     },
+    leavebalance: {
+      GetLeaveBalanceAsync: 'leavebalance/fetallleavebalance',
+      GetLeaveBalanceByUserAsync: 'leavebalance/fetchleavebalancebyuser',
+    },
+    User: {
+      LoginAsync: 'user/login',
+      LogoutAsync: 'user/logout',
+      RegisterAsync: 'user/register',
+      GetUsersAsync: 'user/fetchUsers',
+      GetUsersByRoleAsync: 'user/fetchUsersByRole',
+      GetUserByIdAsync: 'user/fetchUserById',
+      InsertOrUpdateUserAsync: 'user/InsertOrUpdateUser',
+      DeleteUserAsync: 'user/DeleteUser',
+      ChangePasswordAsync: 'user/ChangePassword',
+      ForgotPasswordAsync: 'user/ForgotPassword',
+    },
     Attendence: {
       GetAllAttendence: 'attendence/fetch_all_attendence',
       GetAttendenceById: 'attendence/fetch_attendence',
@@ -472,5 +488,5 @@ export const environment = {
       GetTimesheetReport: 'timesheet/get_timesheet_report',
       GetTimesheetSummary: 'timesheet/get_timesheet_summary'
     }
-  },
+  }
 };
