@@ -22,7 +22,7 @@ export const routes: Routes = [
         path: 'dashboard',
         loadComponent: () =>
           import('./dashbaord/user-dashbaord.component').then(
-            (m) => m.UserDashbaordComponent,
+            (m) => m.UserDashboardComponent,
           ),
       },
       {
