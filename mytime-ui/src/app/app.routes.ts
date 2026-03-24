@@ -79,6 +79,13 @@ export const routes: Routes = [
             (m) => m.ListDocumentComponent,
           ),
       },
+       {
+        path: 'attendence',
+        loadComponent: () =>
+          import('./user/components/attendence/attendence.component').then(
+            (m) => m.AttendenceComponent,
+          ),
+      },
     ],
   },
 

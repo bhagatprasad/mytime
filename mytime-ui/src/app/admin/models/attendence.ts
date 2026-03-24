@@ -27,4 +27,6 @@ export interface Attendence {
   RejectedOn?: string;
 
   RejectionReason?: string;
+  
+  Worktype?: string;
 }
