@@ -114,8 +114,8 @@ constructor(
     this.loadEmployeeAttendence(user.employeeId);
   }
 
-  loadEmployeeAttendence(id: any): void {
-    this.attendenceService.getAttendenceByIdAsync(id).subscribe({ 
+  loadEmployeeAttendence(employeeId: any): void {
+    this.attendenceService.getAttendenceListByEmployeeAsync(employeeId).subscribe({ 
       next: (res : any) => {
       this.employeeAttendence = res; 
       this.rowData = res;
@@ -127,34 +127,41 @@ constructor(
       }
     });
   }
-    @HostListener('window:resize', ['$event'])
-  onResize(_event: any): void {
+    
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any): void {
     this.checkScreenSize();
   }
 
   private checkScreenSize(): void {
     const wasMobile = this.isMobile;
     this.isMobile = window.innerWidth < 768;
+
     if (wasMobile !== this.isMobile) {
       this.setupResponsiveColumns();
     }
-  }  
+  }
+
   private setupResponsiveColumns(): void {
-    this.columnDefs = this.isMobile ? [...this.mobileColumnDefs] : [...this.desktopColumnDefs];
-    this.gridOptions.domLayout = this.isMobile ? 'autoHeight' : 'normal';
+    if (this.isMobile) {
+      this.columnDefs = [...this.mobileColumnDefs];
+      this.gridOptions.domLayout = 'autoHeight';
+    } else {
+      this.columnDefs = [...this.desktopColumnDefs];
+      this.gridOptions.domLayout = 'normal';
+    }
     if (this.gridApi) {
       this.refreshGridColumns();
     }
   }
   private refreshGridColumns(): void {
     if (!this.gridApi) return;
-    this.gridApi.setGridOption('columnDefs', this.columnDefs);
-  setTimeout(() => {
+    const newColumnDefs = JSON.parse(JSON.stringify(this.columnDefs));
+    setTimeout(() => {
       this.gridApi.refreshHeader();
       this.gridApi.sizeColumnsToFit();
     }, 100);
   }
-  
 
 onGridReady(params: GridReadyEvent): void {
     this.gridApi = params.api;
