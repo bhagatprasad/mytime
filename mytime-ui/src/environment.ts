@@ -459,6 +459,7 @@ export const environment = {
     },
     Attendence: {
       GetAllAttendence: 'attendence/fetchAll',
+      GetAllAttendenceByEmployee:'attendence/fetchattendencebyemployee',
       GetAttendenceById: 'attendence/fetch',
       InsertOrUpdateAttendence: 'attendence/insert_or_update_attendence',
       DeleteAttendence: 'attendence/delete_attendence',

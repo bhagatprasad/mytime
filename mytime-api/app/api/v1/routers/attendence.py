@@ -33,6 +33,23 @@ def fetch_attendence(attendence_id: int, db: Session = Depends(get_db)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error fetching attendence: {str(e)}"
         )
+    
+@router.get("/fetchattendencebyemployee/{employee_id}", response_model=List[AttendenceResponse])
+def fetch_attendence(employee_id: int, db: Session = Depends(get_db)):
+    try:
+        attendence = AttendenceService.fetch_attendence_by_employee(db, employee_id)
+        if not attendence:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Attendence with ID {employee_id} not found"
+            )
+        return attendence
+    
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error fetching attendence: {str(e)}"
+        )
 
 # Fetch All Attendence
 @router.get("/fetchAll", response_model=List[AttendenceResponse])

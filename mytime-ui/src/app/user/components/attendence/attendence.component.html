@@ -1,73 +1,68 @@
-<div class="container mt-3">
+<div class="container-fluid py-3">
+  <div class="row">
+    <div class="col">
+      <div class="card">
 
-  <!-- Title -->
-  <h2 class="text-center mb-4">Attendance Management</h2>
+        <!-- Card Header -->
+        <div class="card-header bg-white border-bottom">
+          <div class="d-flex justify-content-between align-items-center py-1">
+            <div class="d-flex align-items-center">
+              <h5 class="mb-0">
+                <i class="mdi mdi-file-document-outline text-primary me-2"></i>Attnedence
+              </h5>
+              <span class="badge bg-light text-dark ms-3">
+                <span class="text-primary fw-bold">{{ getTotalRowsCount() }}</span>
+              </span>
+            </div>
+          </div>
+        </div>
 
-  <!-- Add / Check-In Button -->
-  <div class="d-flex justify-content-between mb-3">
-    <button class="btn btn-success" (click)="checkI n()">
-      Check In
-    </button>
+        <!-- Card Body -->
+        <div class="card-body p-0">
+          <div *ngIf="employeeAttendence.length > 0" class="ag-grid-container">
+            <ag-grid-angular
+              style="width: 100%; height: 640px;"
+              class="ag-theme-alpine"
+              [rowData]="employeeAttendence"
+              [columnDefs]="columnDefs"
+              [defaultColDef]="defaultColDef"
+              [gridOptions]="gridOptions"
+              (gridReady)="onGridReady($event)"
+              [pagination]="true"
+              [paginationPageSize]="20"
+              [suppressCellFocus]="true"
+              [animateRows]="true"
+              [rowSelection]="'single'"
+              [domLayout]="isMobile ? 'autoHeight' : 'normal'">
+            </ag-grid-angular>
+          </div>
 
-    <button class="btn btn-danger" (click)="checkOut()">
-      Check Out
-    </button>
-  </div>
+          <!-- Empty state -->
+          <div *ngIf="employeeAttendence?.length === 0" class="text-center py-5">
+            <i class="mdi mdi-file-document-outline mdi-48px text-muted d-block mb-3"></i>
+            <p class="text-muted">No attendence records found.</p>
+          </div>
+        </div>
 
-  <!-- Responsive View -->
-  <!-- 📱 Mobile View -->
-  <div *ngIf="isMobile; else desktopView">
+        <!-- Card Footer -->
+        <div *ngIf="employeeAttendence.length > 0" class="card-footer bg-white border-top">
+          <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">
+              <span class="fw-medium">{{ getTotalRowsCount() }}</span> total records
+            </small>
+            <small class="text-muted">
+              <i class="mdi me-1"
+                 [class.mdi-cellphone]="isMobile"
+                 [class.mdi-monitor]="!isMobile"></i>
+              {{ isMobile ? 'Mobile' : 'Desktop' }}
+            </small>
+          </div>
+        </div>
 
-    <div *ngFor="let item of attendenceList" class="card mb-3 shadow-sm">
-      <div class="card-body">
-        <p><strong>Date:</strong> {{ item.AttendenceDate }}</p>
-        <p><strong>Check In:</strong> {{ item.CheckInTime }}</p>
-        <p><strong>Check Out:</strong> {{ item.CheckOutTime }}</p>
-        <p><strong>Status:</strong> {{ item.Status }}</p>
-        <p><strong>Hours:</strong> {{ item.WorkHours }}</p>
-
-        <button class="btn btn-sm btn-danger"
-                (click)="deleteAttendence(item.EmployeeId)">
-          Delete
-        </button>
       </div>
     </div>
-
   </div>
-
-  <!-- 💻 Desktop View -->
-  <ng-template #desktopView>
-    <table class="table table-bordered table-striped">
-      <thead class="table-dark">
-        <tr>
-          <th>ID</th>
-          <th>Date</th>
-          <th>Check In</th>
-          <th>Check Out</th>
-          <th>Status</th>
-          <th>Work Hours</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <tr *ngFor="let item of attendenceList">
-          <td>{{ item.EmployeeId }}</td>
-          <td>{{ item.AttendenceDate }}</td>
-          <td>{{ item.CheckInTime }}</td>
-          <td>{{ item.CheckOutTime }}</td>
-          <td>{{ item.Status }}</td>
-          <td>{{ item.WorkHours }}</td>
-
-          <td>
-            <button class="btn btn-sm btn-danger"
-                    (click)="deleteAttendence(item.EmployeeId)">
-              Delete
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </ng-template>
-
 </div>
+
+
+
