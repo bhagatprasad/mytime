@@ -1,0 +1,86 @@
+/* 🔹 Card Styling */
+.card {
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff;
+}
+
+/* 🔹 Label */
+label {
+  font-weight: 600;
+  font-size: 13px;
+  color: #374151;
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* 🔹 Inputs & Select */
+.form-control {
+  height: 38px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+/* 🔹 Focus Effect */
+.form-control:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+/* 🔹 Readonly Field */
+.form-control[readonly] {
+  background-color: #f9fafb;
+  cursor: not-allowed;
+}
+
+/* 🔹 Validation Error */
+.text-danger {
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* 🔹 Button */
+.btn-primary {
+  background-color: #3b82f6;
+  border: none;
+  padding: 6px 18px;
+  font-size: 13px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+/* 🔹 Button Hover */
+.btn-primary:hover {
+  background-color: #2563eb;
+}
+
+/* 🔹 Disabled Button */
+.btn-primary:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* 🔹 Spacing Improve */
+.row.g-3 > div {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 🔹 Responsive (Mobile) */
+@media (max-width: 768px) {
+  .form-control {
+    height: 36px;
+    font-size: 12px;
+  }
+
+  label {
+    font-size: 12px;
+  }
+
+  .btn-primary {
+    width: 100%;
+  }
+}

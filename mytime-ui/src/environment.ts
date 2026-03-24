@@ -458,8 +458,8 @@ export const environment = {
       ForgotPasswordAsync: 'user/ForgotPassword',
     },
     Attendence: {
-      GetAllAttendence: 'attendence/fetch_all_attendence',
-      GetAttendenceById: 'attendence/fetch_attendence',
+      GetAllAttendence: 'attendence/fetchAll',
+      GetAttendenceById: 'attendence/fetch',
       InsertOrUpdateAttendence: 'attendence/insert_or_update_attendence',
       DeleteAttendence: 'attendence/delete_attendence',
       ApproveAttendence: 'attendence/approve_attendence',
