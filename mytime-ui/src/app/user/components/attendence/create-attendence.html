@@ -14,6 +14,33 @@
     </div>
 
     <div class="sidebar-body">
+      <!-- Date Field (NEW) -->
+      <div class="form-group">
+        <label for="AttendanceDate">Date</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">📅</span>
+          </div>
+          <input 
+            type="date" 
+            class="form-control" 
+            id="AttendanceDate" 
+            formControlName="AttendanceDate"
+            [max]="maxDate"
+            [min]="minDate"
+          />
+        </div>
+        <small *ngIf="attendanceForm.get('AttendanceDate')?.touched && attendanceForm.get('AttendanceDate')?.invalid"
+          class="text-danger">
+          <span *ngIf="attendanceForm.get('AttendanceDate')?.errors?.['required']">
+            Date is required
+          </span>
+          <span *ngIf="attendanceForm.get('AttendanceDate')?.errors?.['futureDate']">
+            Cannot select future dates (tomorrow onwards)
+          </span>
+        </small>
+      </div>
+
       <!-- Work Type Field -->
       <div class="form-group">
         <label for="WorkType">Work Type</label>
@@ -27,7 +54,6 @@
             <option value="Office">Office</option>
             <option value="Hybrid">Hybrid</option>
           </select>
-
         </div>
         <small *ngIf="attendanceForm.get('WorkType')?.touched && attendanceForm.get('WorkType')?.invalid"
           class="text-danger">
@@ -44,8 +70,8 @@
           </div>
           <input type="time" class="form-control" id="CheckInTime" formControlName="CheckInTime" #timeInput />
         </div>
-        <!-- Removed duplicate Work Type validation message -->
       </div>
+
       <!-- Description Field -->
       <div class="form-group">
         <label for="Description">Description</label>
@@ -55,7 +81,7 @@
           </div>
           <textarea class="form-control" id="Description" formControlName="Description" rows="3"
             placeholder="Enter description">
-                    </textarea>
+          </textarea>
         </div>
       </div>
     </div>
