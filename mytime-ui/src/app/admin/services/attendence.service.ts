@@ -18,6 +18,13 @@ export class AttendenceService {
     );
   }
 
+  getAttendenceListByEmployeeAsync(employeeId: number): Observable<Attendence[]> {
+    return this.apiService.send<Attendence[]>(
+      "GET",
+      `${environment.UrlConstants.Attendence.GetAllAttendenceByEmployee}/${employeeId}`
+    );
+  }
+
   getAttendenceByIdAsync(id: number): Observable<Attendence> {
     return this.apiService.send<Attendence>(
       "GET",

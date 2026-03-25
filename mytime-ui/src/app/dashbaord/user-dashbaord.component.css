@@ -1,0 +1,684 @@
+/* user-dashboard.component.css */
+
+.dashboard-wrapper {
+  background: #f8fafc;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+/* Card Base Styles - ALL PANELS HAVE 5px PADDING */
+.card {
+  border: none;
+  border-radius: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+  background: #ffffff;
+  height: 100%;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+/* EVERY PANEL - 5px padding */
+.card-body {
+  padding: 5px !important;
+}
+
+/* Inner containers also maintain consistent spacing */
+.card-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  margin-top: 4px;
+  margin-left: 4px;
+  margin-right: 4px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.card-title {
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 0;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+}
+
+.card-title i {
+  font-size: 1.1rem;
+}
+
+/* View Button */
+.view-btn {
+  background: #f1f5f9;
+  border: none;
+  border-radius: 40px;
+  padding: 4px 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #2563eb;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.view-btn:hover {
+  background: #e2e8f0;
+  transform: scale(0.98);
+  color: #1d4ed8;
+}
+
+.view-btn i {
+  font-size: 0.75rem;
+}
+
+/* Review Card */
+.review-content {
+  margin-top: 4px;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.stars {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.stars i {
+  font-size: 1rem;
+  color: #fbbf24;
+}
+
+.rating-number {
+  margin-left: 6px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #f59e0b;
+}
+
+.progress-bar-custom {
+  background: #e2e8f0;
+  border-radius: 10px;
+  height: 6px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.3s;
+}
+
+.review-meta p {
+  font-size: 0.7rem;
+  margin-bottom: 6px;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.review-meta p i {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.review-comments {
+  background: #f8fafc;
+  padding: 8px;
+  border-radius: 12px;
+  font-style: italic;
+  font-size: 0.7rem;
+  color: #334155;
+}
+
+/* Location Card */
+.info-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.info-item i {
+  font-size: 1rem;
+  width: 28px;
+  color: #3b82f6;
+}
+
+.info-item div {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-label {
+  font-size: 0.7rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.day-highlight {
+  color: #8b5cf6;
+}
+
+.shift-container {
+  background: #fef9e6;
+  padding: 8px;
+  border-radius: 12px;
+  margin-top: 4px;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.shift-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #b45309;
+  font-size: 0.75rem;
+  margin-bottom: 4px;
+}
+
+.shift-note {
+  font-size: 0.65rem;
+  color: #78716c;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Holidays Card */
+.holidays-list {
+  max-height: 260px;
+  overflow-y: auto;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.holiday-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.holiday-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.holiday-info i {
+  color: #ef4444;
+  font-size: 0.9rem;
+}
+
+.holiday-name {
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: #1e293b;
+}
+
+.holiday-date {
+  font-size: 0.7rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.more-holidays {
+  text-align: center;
+  padding: 8px;
+  color: #3b82f6;
+  cursor: pointer;
+  font-size: 0.75rem;
+  margin-top: 4px;
+}
+
+/* Payslip Card */
+.payslip-list {
+  max-height: 260px;
+  overflow-y: auto;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.payslip-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.payslip-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.payslip-info i {
+  color: #3b82f6;
+  font-size: 1rem;
+}
+
+.payslip-month {
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+.payslip-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.payslip-amount {
+  font-weight: 700;
+  color: #10b981;
+  font-size: 0.8rem;
+}
+
+.download-icon {
+  color: #3b82f6;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: transform 0.2s;
+}
+
+.download-icon:hover {
+  transform: scale(1.1);
+}
+
+/* Declarations Card */
+.declarations-list {
+  max-height: 280px;
+  overflow-y: auto;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.declaration-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.declaration-info {
+  flex: 1;
+}
+
+.declaration-name {
+  display: block;
+  font-weight: 500;
+  font-size: 0.75rem;
+  margin-bottom: 2px;
+}
+
+.declaration-deadline {
+  font-size: 0.65rem;
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-badge {
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.status-badge.pending {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.status-badge.approved {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-badge.review {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+/* POI Card */
+.poi-list {
+  max-height: 260px;
+  overflow-y: auto;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.poi-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.poi-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.poi-info i {
+  font-size: 0.9rem;
+}
+
+.poi-info i.verified {
+  color: #10b981;
+}
+
+.poi-info i.pending {
+  color: #f59e0b;
+}
+
+.poi-info i.warning {
+  color: #ef4444;
+}
+
+.poi-name {
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+.poi-status {
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.poi-status.verified {
+  color: #10b981;
+}
+
+.poi-status.pending {
+  color: #f59e0b;
+}
+
+.poi-status.not-submitted {
+  color: #94a3b8;
+}
+
+.poi-status.warning {
+  color: #ef4444;
+}
+
+/* Quick Access Card */
+.quick-access-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 8px 0;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.quick-access-item {
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.quick-access-item:hover {
+  transform: translateY(-2px);
+}
+
+.quick-icon {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 4px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.quick-icon i {
+  font-size: 1.2rem;
+}
+
+.quick-name {
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: #334155;
+}
+
+/* Track Card */
+.track-list {
+  max-height: 280px;
+  overflow-y: auto;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.track-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.track-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.track-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+}
+
+.track-icon i {
+  font-size: 0.8rem;
+}
+
+.track-details {
+  flex: 1;
+}
+
+.track-title {
+  font-weight: 600;
+  font-size: 0.75rem;
+  margin-bottom: 2px;
+}
+
+.track-id-date {
+  font-size: 0.6rem;
+  color: #94a3b8;
+}
+
+.track-badge {
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.track-badge.in-transit {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.track-badge.approved {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.track-badge.pending {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.track-badge.in-progress {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+/* Footer Link */
+.footer-link {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid #f1f5f9;
+  text-align: center;
+  font-size: 0.7rem;
+  color: #3b82f6;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.footer-link:hover {
+  color: #2563eb;
+}
+
+/* Announcements Card */
+.announcements-list {
+  max-height: 180px;
+  overflow-y: auto;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.announcement-item {
+  display: flex;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.announcement-item i {
+  font-size: 1rem;
+  color: #8b5cf6;
+}
+
+.announcement-content {
+  flex: 1;
+}
+
+.announcement-text {
+  font-size: 0.75rem;
+  margin-bottom: 2px;
+  color: #1e293b;
+}
+
+.announcement-time {
+  font-size: 0.6rem;
+  color: #94a3b8;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .dashboard-wrapper {
+    padding: 16px;
+  }
+  
+  .quick-access-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-wrapper {
+    padding: 12px;
+  }
+  
+  .card-body {
+    padding: 5px !important;
+  }
+  
+  .quick-access-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+  
+  .quick-icon {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .quick-icon i {
+    font-size: 1rem;
+  }
+  
+  .holiday-item, .payslip-item, .declaration-item, .poi-item, .track-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .track-status {
+    align-self: flex-start;
+  }
+}

@@ -14,6 +14,12 @@ class AttendenceService:
         return db.query(Attendence).filter(
             Attendence.AttendenceId == attendence_id
         ).first()
+    
+    @staticmethod
+    def fetch_attendence_by_employee(db: Session,employee_id: int) -> List[Attendence]:
+        return db.query(Attendence).filter(Attendence.EmployeeId==employee_id). order_by(
+            Attendence.AttendenceDate.desc()
+        ).all()
 
     @staticmethod
     def fetch_all_attendence(db: Session) -> List[Attendence]:

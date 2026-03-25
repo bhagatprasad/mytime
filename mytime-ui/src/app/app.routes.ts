@@ -22,7 +22,7 @@ export const routes: Routes = [
         path: 'dashboard',
         loadComponent: () =>
           import('./dashbaord/user-dashbaord.component').then(
-            (m) => m.UserDashbaordComponent,
+            (m) => m.UserDashboardComponent,
           ),
       },
       {
@@ -77,6 +77,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./user/components/documents/list-document.component').then(
             (m) => m.ListDocumentComponent,
+          ),
+      },
+       {
+        path: 'attendence',
+        loadComponent: () =>
+          import('./user/components/attendence/attendence.component').then(
+            (m) => m.AttendenceComponent,
           ),
       },
     ],
