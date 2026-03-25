@@ -1,0 +1,76 @@
+<div class="sidebar-overlay" *ngIf="isVisible" (click)="close()"></div>
+<!-- Sidebar -->
+<div class="sidebar" [class.visible]="isVisible">
+  <form [formGroup]="attendanceForm" (ngSubmit)="onSubmit()">
+    
+    <div class="sidebar-header">
+      <h5 class="sidebar-title">
+        {{ isCheckedIn ? 'Attendance Log Out' : 'Attendance Log In' }}
+      </h5>
+      
+      <button type="button" class="btn-icon-only" (click)="close()">
+          <span aria-hidden="true" >&times;</span>
+      </button>
+    </div>s
+
+    <div class="sidebar-body" style="padding: 20px;">
+      
+      <button *ngIf="!isCheckedIn" 
+              type="submit" 
+              class="btn btn-primary d-flex align-items-center gap-2" 
+              [disabled]="attendanceForm.invalid">
+        <span class="icon-base mdi mdi-account-circle"></span>
+        <span>Confirm Check-In</span>
+      </button>
+
+      <button *ngIf="isCheckedIn"
+              type="button" 
+              class="btn btn-danger d-flex align-items-center gap-2" 
+              (click)="onLogout()">
+       <span class="mdi mdi-account-off"></span>
+        <span>Confirm Check-Out</span>
+      </button>
+
+  </div>   
+        <div class="form-group">
+          <label for="WorkType">Work Type</label>
+            <div class="input-group">
+                <select class="form-control" id="WorkType" formControlName="WorkType">
+                    <option value="">Select WorkType</option>
+                    <option value="WFH">Work From Home</option>
+                    <option value="Office">Office</option>
+                    <option value="Hybrid">Hybrid</option>
+                  </select>                   
+                      <span class="input-group-text"> ▼
+                     </span>
+            </div>
+               <small *ngIf="attendanceForm.get('WorkType')?.touched && attendanceForm.get('WorkType')?.invalid" class="text-danger"> Work Type is required
+                 </small>
+        </div>
+        <div class="form-group">
+           <label for="CheckInTime">Check-In Time</label> 
+             <div class="input-group">
+                <input type="time" class="form-control" id="CheckInTime" formControlName="CheckInTime" #timeInput />
+                    <button type="button" class="btn btn-outline-secondary" (click)="timeInput.showPicker()" >⏰
+                    </button>
+            </div>
+                <small *ngIf="attendanceForm.get('WorkType')?.touched && attendanceForm.get('WorkType')?.invalid" class="text-danger">
+                    Work Type is required
+              </small>
+        </div>
+        <div class="form-group">
+          <label for="Description">Description</label>
+            <div class="input-group align-items-start">
+              <span class="input-group-text"> 📝 </span>
+                    <textarea class="form-control" id="Description" formControlName="Description" rows="3" placeholder="Enter description" >
+                  </textarea>
+            </div>
+        </div>
+        <div class="button-group">       
+          <button type="button" class="btn btn-secondary" (click)="close()"> Cancel
+            </button>
+             <button type="submit" class="btn btn-primary" [disabled]="attendanceForm.invalid" > Submit </button>
+        </div>
+
+    </form>
+</div>

@@ -1,0 +1,70 @@
+/* Base style for all PNG icons */
+.icon-base {
+  display: inline-block;
+  width: 24px;  /* Standard size for UI icons */
+  height: 24px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  vertical-align: middle;
+}
+
+
+.sidebar {
+  position: fixed;
+  right: -350px; /* Hidden by default */
+  top: 0;
+  width: 350px;
+  height: 100vh;
+  background-color: #ffffff;
+  box-shadow: -2px 0 15px rgba(0, 0, 0, 0.1);
+  transition: right 0.3s ease-in-out;
+  z-index: 1050;
+}
+
+.sidebar.visible {
+  right: 0; /* Slides in when [class.visible]="true" */
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.sidebar-title {
+  margin: 0;
+  font-weight: 600;
+  color: #333;
+}
+/* Transparent button for the Close Icon */
+.btn-icon-only {
+  background: transparent;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+
+.btn-icon-only:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Flexbox for Action Buttons to align Icon + Text */
+.btn-primary, .btn-danger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px; /* Space between icon and text */
+  width: 100%;
+  padding: 12px;
+  font-weight: 500;
+  border-radius: 8px;
+  margin-top: 20px;
+}

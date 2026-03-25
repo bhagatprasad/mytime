@@ -8,6 +8,8 @@ import { ToastrService } from 'ngx-toastr';
 import { AgGridAngular,  } from 'ag-grid-angular';
 import { Router, RouterModule } from '@angular/router';
 import { UserService } from '../../../admin/services/user.service';
+import { CreateAttendance } from './create-attendance';
+import { AuditFieldsService } from '../../../common/services/auditfields.service';
 import { UserActionComponent } from '../common/user-action-component';
 import { UserMobileActionsComponent } from '../common/user-mobile-action-component';
 import { Attendence } from '../../../admin/models/attendence';
@@ -16,26 +18,30 @@ import { AttendenceService } from '../../../admin/services/attendence.service';
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
-  selector: 'app-payslips',
+  selector: 'app-attendence',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, RouterModule, ],
+  imports: [CommonModule, AgGridAngular, RouterModule, CreateAttendance],
   templateUrl: './attendence.component.html',
   styleUrl: './attendence.component.css'
 })
 export class AttendenceComponent implements OnInit, OnDestroy {
 
   employeeId: any = 0;
-  isMobile: boolean = false;  
+  isMobile: boolean = false;   
 
   private gridApi!: GridApi;
   columnDefs: ColDef[] = [];
 
+  showSidebar: boolean = false;
+
   employeeAttendence: Attendence[] =[];
   rowData: any[] = [];
+
+
   
   
 
-  selectedAttendence!: Attendence;
+  selectedAttendence: Attendence | null = null;
   showAttendenceView: boolean = false;
   showAttendenceForm: boolean = false;
   attendenceForm!: FormGroup;
@@ -91,6 +97,7 @@ constructor(
     private attendenceService: AttendenceService,
     private loader: LoaderService,
     private toster: ToastrService,
+    private audit: AuditFieldsService,
   ) { }
   ngOnInit(): void {
     this.checkScreenSize();
@@ -184,6 +191,37 @@ openEditForm(data: any): void {
 }
   getAttendenceCount(): number {
     return new Set(this.employeeAttendence.map(s => s.EmployeeId)).size;
+  }
+  openAddAttendenceSideBar(): void {
+    this.showAttendenceView = true;
+    this.selectedAttendence = null;
+  }
+  onSaveAttendance(att: Attendence): void {
+  this.loader.show();
+
+  const _att = this.audit.appendAuditFields(att);
+
+  console.log("Received attendance data:", _att);
+  this.attendenceService.insertOrUpdateAttendence(_att).subscribe(
+    response => {
+      this.loader.hide(); 
+
+      if (response) {
+        this.toster.success("Attendance processed successfully");
+        this.showSidebar = false;   // close sidebar after save
+        this.refreshData();       
+      }
+    },
+    error => {
+      this.loader.hide();           
+      console.error(error);
+      this.toster.error("Something went wrong, please check and resubmit");
+      this.showSidebar = true;      
+    }
+  );
+}
+ refreshData(): void {
+    this.loadAttendence();
   }
 
 }

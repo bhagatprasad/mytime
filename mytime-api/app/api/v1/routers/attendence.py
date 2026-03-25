@@ -101,7 +101,7 @@ def get_attendence_with_pagination(
             detail=f"Error fetching attendence list: {str(e)}"
         )
 
-@router.post("/insert-or-update", response_model=Dict[str, Any])
+@router.post("/insert_or_update_attendence", response_model=Dict[str, Any])
 def insert_or_update_attendence(
     attendence: dict,
     db: Session = Depends(get_db)
@@ -130,7 +130,7 @@ def insert_or_update_attendence(
         )
 
 # Check if Attendence Exists
-@router.get("/exists/{attendence_id}", response_model=AttendenceExistsResponse)
+@router.get("/check_attendence_exists/{attendence_id}", response_model=AttendenceExistsResponse)
 def check_attendence_exists(attendence_id: int, db: Session = Depends(get_db)):
     try:
         exists = AttendenceService.exists(db, attendence_id)
@@ -142,7 +142,7 @@ def check_attendence_exists(attendence_id: int, db: Session = Depends(get_db)):
         )
 
 # Delete Attendence
-@router.delete("/delete/{attendence_id}", response_model=AttendenceDeleteResponse)
+@router.delete("/delete_attendence/{attendence_id}", response_model=AttendenceDeleteResponse)
 def delete_attendence(attendence_id: int, db: Session = Depends(get_db)):
     try:
         success, message = AttendenceService.delete_attendence(db, attendence_id)
@@ -156,7 +156,7 @@ def delete_attendence(attendence_id: int, db: Session = Depends(get_db)):
         )
         
 # Approve Attendence
-@router.put("/approve/{attendence_id}")
+@router.put("/approve_attendence/{attendence_id}")
 def approve_attendence(attendence_id: int, user_id: int, db: Session = Depends(get_db)):
     try:
         result = AttendenceService.approve_attendence(db, attendence_id, user_id)
@@ -170,7 +170,7 @@ def approve_attendence(attendence_id: int, user_id: int, db: Session = Depends(g
         )
 
 # Reject Attendence
-@router.put("/reject/{attendence_id}")
+@router.put("/reject_attendence/{attendence_id}")
 def reject_attendence(attendence_id: int, user_id: int, reason: str, db: Session = Depends(get_db)):
     try:
         result = AttendenceService.reject_attendence(db, attendence_id, user_id, reason)
@@ -183,7 +183,7 @@ def reject_attendence(attendence_id: int, user_id: int, reason: str, db: Session
             detail=f"Error rejecting attendence: {str(e)}"
         )
 # get Attendence by Date
-@router.put("/date-range", response_model=List[AttendenceResponse])
+@router.put("/get_attendence_by_date_range", response_model=List[AttendenceResponse])
 def get_attendence_by_date_range(attendence_id: int, user_id: int, reason: str, db: Session = Depends(get_db)):
     try:
         result = AttendenceService.get_attendence_by_date_range(db, attendence_id, user_id, reason)
