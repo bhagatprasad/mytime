@@ -176,10 +176,8 @@ export class AttendenceComponent implements OnInit, OnDestroy {
   onSaveAttendance(att: Attendence): void {
     this.loader.show();
 
-    const _att = this.audit.appendAuditFields(att);
-
-    console.log("Received attendance data:", _att);
-    this.attendenceService.insertOrUpdateAttendence(_att).subscribe(
+    console.log("Received attendance data:", att);
+    this.attendenceService.insertOrUpdateAttendence(att).subscribe(
       response => {
         this.loader.hide();
 

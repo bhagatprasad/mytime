@@ -1,23 +1,21 @@
-import { Time } from "@angular/common";
-
 export interface Attendence {
   AttendenceId?: number;
   EmployeeId?: number;
   AttendenceDate?: Date;
-  CheckInTime?: Time;
-  CheckOutTime: Time;
-  Status: string;
-  WorkHours: number;
+  CheckInTime?: string;
+  CheckOutTime?: string;
+  Status?: string;
+  WorkHours?: string;
   Description?: string;
-  ApprovalStatus: string;
-  CreatedBy: number;
-  CreatedOn: string;
+  ApprovalStatus?: string;
+  CreatedBy?: number;
+  CreatedOn?: Date;
   ModifiedBy?: number;
-  ModifiedOn?: string;
+  ModifiedOn?: Date;
   ApprovedBy?: number;
-  ApprovedOn?: string;
+  ApprovedOn?: Date;
   RejectedBy?: number;
-  RejectedOn?: string;
+  RejectedOn?: Date;
   RejectionReason?: string;
-  Worktype?: string;
+  WorkType?: string;
 }
