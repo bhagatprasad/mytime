@@ -10,11 +10,10 @@ class AttendenceBase(BaseModel):
     CheckInTime: Optional[time] = Field(None, description="Check-in time")
     CheckOutTime: Optional[time] = Field(None, description="Check-out time")
     Status: Optional[str] = Field(None, max_length=20, description="Attendence status")
-    WorkHours: Optional[float] = Field(None, description="Total work hours")
+    WorkHours: Optional[time] = Field(None, description="Total work hours")
     Description: Optional[str] = Field(None, description="Remarks / description")
     WorkType: Optional[str] = Field("Office", max_length=50, description="Work type (Office/WFH/Hybrid)")
-    
-    ApprovalStatus: str = Field("Pending", max_length=20, description="Approval status")
+    ApprovalStatus: Optional[str] = Field("Pending", max_length=20, description="Approval status")
 
     model_config = {"from_attributes": True}
 
@@ -33,7 +32,7 @@ class AttendenceUpdate(BaseModel):
     CheckInTime: Optional[time] = Field(None, description="Check-in time")
     CheckOutTime: Optional[time] = Field(None, description="Check-out time")
     Status: Optional[str] = Field(None, max_length=20, description="Attendence status")
-    WorkHours: Optional[float] = Field(None, description="Total work hours")
+    WorkHours: Optional[time] = Field(None, description="Total work hours")
     Description: Optional[str] = Field(None, description="Remarks / description")
     WorkType: Optional[str] = Field(None, max_length=50, description="Work type (Office/WFH/Hybrid)")
     ModifiedBy: Optional[int] = Field(None, description="User ID who modified the record")
@@ -50,12 +49,12 @@ class AttendenceUpdate(BaseModel):
 
 # Response Schema
 class AttendenceResponse(AttendenceBase):
+    """Response schema for Attendence"""
     AttendenceId: int
     CreatedBy: Optional[int] = None
     CreatedOn: Optional[datetime] = None
     ModifiedBy: Optional[int] = None
     ModifiedOn: Optional[datetime] = None
-    ApprovalStatus: Optional[str] = None
     ApprovedBy: Optional[int] = None
     ApprovedOn: Optional[datetime] = None
     RejectedBy: Optional[int] = None
@@ -67,6 +66,7 @@ class AttendenceResponse(AttendenceBase):
 
 # List Response Schema (Pagination)
 class AttendenceListResponse(BaseModel):
+    """Paginated response schema"""
     total: int
     items: List[AttendenceResponse]
     page: int
@@ -78,12 +78,26 @@ class AttendenceListResponse(BaseModel):
 
 # Exists Response
 class AttendenceExistsResponse(BaseModel):
+    """Check existence response"""
     exists: bool
+
     model_config = {"from_attributes": True}
 
 
 # Delete Response
 class AttendenceDeleteResponse(BaseModel):
+    """Delete operation response"""
     success: bool
     message: str = "Attendence deleted successfully"
+
+    model_config = {"from_attributes": True}
+
+
+# Insert/Update Operation Response
+class AttendenceOperationResponse(BaseModel):
+    """Response for insert/update operations"""
+    success: bool
+    message: str
+    data: Optional[AttendenceResponse] = None
+
     model_config = {"from_attributes": True}

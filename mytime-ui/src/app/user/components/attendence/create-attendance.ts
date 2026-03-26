@@ -39,7 +39,7 @@ export class CreateAttendance implements OnChanges, OnInit {
         Validators.required,
         this.futureDateValidator.bind(this)
       ]],
-      WorkType: [this.attendence?.Worktype || '', Validators.required],
+      WorkType: [this.attendence?.WorkType || '', Validators.required],
       CheckInTime: [this.attendence?.CheckInTime || this.getCurrentISTTime(), Validators.required],
       CheckOutTime: [this.attendence?.CheckOutTime || ''],
       Description: [this.attendence?.Description || '']
@@ -59,7 +59,7 @@ export class CreateAttendance implements OnChanges, OnInit {
       if (attendence) {
         this.attendanceForm.patchValue({
           AttendanceDate: attendence.AttendanceDate || this.getTodayDate(),
-          WorkType: attendence.Worktype || '',
+          WorkType: attendence.WorkType || '',
           Description: attendence.Description || '',
           CheckInTime: attendence.CheckInTime || this.getCurrentISTTime(),
           CheckOutTime: attendence.CheckOutTime || ''
@@ -80,14 +80,14 @@ export class CreateAttendance implements OnChanges, OnInit {
 
     const selectedDate = new Date(control.value);
     const today = new Date();
-    
+
     selectedDate.setHours(0, 0, 0, 0);
     today.setHours(0, 0, 0, 0);
-    
+
     if (selectedDate > today) {
       return { futureDate: true };
     }
-    
+
     return null;
   }
 
@@ -95,7 +95,7 @@ export class CreateAttendance implements OnChanges, OnInit {
     this.attendanceForm.patchValue(
       {
         AttendanceDate: attendence.AttendenceDate || this.getTodayDate(),
-        WorkType: attendence.Worktype || '',
+        WorkType: attendence.WorkType || '',
         Description: attendence.Description || ''
       },
       { emitEvent: false }
@@ -126,17 +126,43 @@ export class CreateAttendance implements OnChanges, OnInit {
 
   onSubmit(): void {
     if (this.attendanceForm.valid) {
-      const attendenceData: Attendence = {
-        ...this.attendanceForm.value,
-        EmployeeId: this.employeeId,
-      };
+        const checkInTime = this.attendanceForm.value["CheckInTime"];
+        const checkOutTime = this.attendanceForm.value["CheckOutTime"];
+        const attendanceDate = this.attendanceForm.value["AttendanceDate"];
 
-      this.saveAttendance.emit(attendenceData);
-      this.resetForm();
+        let workHours = "";
+        if (checkInTime && checkOutTime) {
+            workHours = this.getTimeDuration(checkInTime, checkOutTime);
+        }
+        
+        const attendenceData: Attendence = {
+            AttendenceId: this.attendence?.AttendenceId ? this.attendence.AttendenceId : 0,
+            EmployeeId: this.employeeId,
+            AttendenceDate: attendanceDate ? new Date(attendanceDate) : new Date(),
+            CheckInTime: checkInTime ? checkInTime : "",
+            CheckOutTime: checkOutTime ? checkOutTime : "",
+            Status: this.attendence?.AttendenceId ? "Logged Out" : "Logged Inn",
+            WorkHours: workHours,
+            Description: this.attendanceForm.value["Description"],
+            ApprovalStatus: this.attendence?.AttendenceId ? this.attendence.ApprovalStatus : "",
+            ApprovedBy: this.attendence?.AttendenceId ? this.attendence.ApprovedBy : undefined,
+            WorkType: this.attendanceForm.value["WorkType"],
+            CreatedBy: this.attendence?.AttendenceId ? this.attendence.CreatedBy : undefined,
+            CreatedOn: this.attendence?.AttendenceId ? this.attendence.CreatedOn : new Date(),
+            ModifiedBy: this.attendence?.AttendenceId ? this.attendence.ModifiedBy : undefined,
+            ModifiedOn: this.attendence?.AttendenceId ? new Date() : undefined,
+            ApprovedOn: this.attendence?.AttendenceId ? this.attendence.ApprovedOn : undefined,
+            RejectedBy: this.attendence?.AttendenceId ? this.attendence.RejectedBy : undefined,
+            RejectedOn: this.attendence?.AttendenceId ? this.attendence.RejectedOn : undefined,
+            RejectionReason: this.attendence?.AttendenceId ? this.attendence.RejectionReason : undefined
+        };
+
+        this.saveAttendance.emit(attendenceData);
+        this.resetForm();
     } else {
-      this.attendanceForm.markAllAsTouched();
+        this.attendanceForm.markAllAsTouched();
     }
-  }
+}
 
   onLogout(): void {
     const logoutData: Attendence = {
@@ -167,5 +193,24 @@ export class CreateAttendance implements OnChanges, OnInit {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  getTimeDuration(checkingTime: string, checkOutTime: string): string {
+    const [checkinHours, checkinMinutes] = checkingTime.split(':').map(Number);
+    const [checkoutHours, checkoutMinutes] = checkOutTime.split(':').map(Number);
+
+    const checkinTotalMinutes = (checkinHours * 60) + checkinMinutes;
+    let checkoutTotalMinutes = (checkoutHours * 60) + checkoutMinutes;
+
+    if (checkoutTotalMinutes <= checkinTotalMinutes) {
+      checkoutTotalMinutes += 24 * 60;
+    }
+
+    const durationInMinutes = checkoutTotalMinutes - checkinTotalMinutes;
+
+    const hours = Math.floor(durationInMinutes / 60);
+    const minutes = durationInMinutes % 60;
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   }
 }
