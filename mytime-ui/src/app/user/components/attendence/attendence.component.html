@@ -21,7 +21,7 @@
               <!-- Action Buttons -->
               <div class="d-flex gap-2 ms-3">
                 <!-- Add Button -->
-                <a class="d-flex align-items-center" (click)="openAddAttendenceSideBar()" title="Add new Attendance">
+                <a class="d-flex align-items-center" (click)="openAddAttendenceSideBar()" title="Add new country">
                   <i class="mdi mdi-plus-circle-outline me-1"></i>
                 </a>
               </div>
@@ -55,9 +55,8 @@
             </small>
           </div>
         </div>
+
       </div>
-        <app-create-attendence [isVisible]="showAttendenceView" [attendence]="selectedAttendence" 
-          (closeSidebar)="onCloseSidebar()" (saveAttendance)="onSaveAttendance($event)"></app-create-attendence>
     </div>
   </div>
 </div>

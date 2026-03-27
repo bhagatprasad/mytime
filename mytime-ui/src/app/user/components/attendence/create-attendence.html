@@ -6,7 +6,7 @@
   <form [formGroup]="attendanceForm" (ngSubmit)="onSubmit()">
     <div class="sidebar-header">
       <h5 class="sidebar-title">
-        {{ isCheckedIn ? 'Attendance Log Out' : 'Attendance Log In' }}
+        {{ attendence?.AttendenceId ? 'Attendance Log Out' : 'Attendance Log In' }}
       </h5>
       <button type="button" class="close" (click)="close()" aria-label="Close">
         <span aria-hidden="true">&times;</span>
@@ -14,7 +14,7 @@
     </div>
 
     <div class="sidebar-body">
-      <!-- Date Field (NEW) -->
+      <!-- Date Field - Disabled for Edit Mode -->
       <div class="form-group">
         <label for="AttendanceDate">Date</label>
         <div class="input-group">
@@ -28,9 +28,10 @@
             formControlName="AttendanceDate"
             [max]="maxDate"
             [min]="minDate"
+            [disabled]="isEditMode"
           />
         </div>
-        <small *ngIf="attendanceForm.get('AttendanceDate')?.touched && attendanceForm.get('AttendanceDate')?.invalid"
+        <small *ngIf="attendanceForm.get('AttendanceDate')?.touched && attendanceForm.get('AttendanceDate')?.invalid && !isEditMode"
           class="text-danger">
           <span *ngIf="attendanceForm.get('AttendanceDate')?.errors?.['required']">
             Date is required
@@ -41,7 +42,7 @@
         </small>
       </div>
 
-      <!-- Work Type Field -->
+      <!-- Work Type Field - Always Enabled -->
       <div class="form-group">
         <label for="WorkType">Work Type</label>
         <div class="input-group">
@@ -61,15 +62,47 @@
         </small>
       </div>
 
-      <!-- Check-In Time Field -->
+      <!-- Check-In Time Field - Always Required -->
       <div class="form-group">
         <label for="CheckInTime">Check-In Time</label>
         <div class="input-group">
           <div class="input-group-append">
-            <button type="button" class="btn btn-outline-secondary" (click)="timeInput.showPicker()">⏰</button>
+            <button type="button" class="btn btn-outline-secondary" (click)="openTimePicker('checkInTime')">⏰</button>
           </div>
-          <input type="time" class="form-control" id="CheckInTime" formControlName="CheckInTime" #timeInput />
+          <input 
+            type="time" 
+            class="form-control" 
+            id="CheckInTime" 
+            formControlName="CheckInTime"
+            step="60"
+            pattern="[0-9]{2}:[0-9]{2}"
+            (input)="validateTimeFormat('CheckInTime')"
+          />
         </div>
+        <small *ngIf="attendanceForm.get('CheckInTime')?.touched && attendanceForm.get('CheckInTime')?.invalid"
+          class="text-danger">
+          Check-In time is required
+        </small>
+      </div>
+
+      <!-- Check-Out Time Field - Only in Edit Mode -->
+      <div class="form-group" *ngIf="isEditMode">
+        <label for="CheckOutTime">Check-Out Time</label>
+        <div class="input-group">
+          <div class="input-group-append">
+            <button type="button" class="btn btn-outline-secondary" (click)="openTimePicker('checkOutTime')">⏰</button>
+          </div>
+          <input 
+            type="time" 
+            class="form-control" 
+            id="CheckOutTime" 
+            formControlName="CheckOutTime"
+            step="60"
+            pattern="[0-9]{2}:[0-9]{2}"
+            (input)="validateTimeFormat('CheckOutTime')"
+          />
+        </div>
+        <small class="text-muted">Optional - Leave blank if not checked out yet</small>
       </div>
 
       <!-- Description Field -->
@@ -88,8 +121,8 @@
 
     <div class="sidebar-footer">
       <button type="submit" class="btn btn-primary" [disabled]="attendanceForm.invalid">
-        <i class="mdi" [class.mdi-login]="!isCheckedIn" [class.mdi-logout]="isCheckedIn"></i>
-        {{ isCheckedIn ? 'Confirm Check-Out' : 'Confirm Check-In' }}
+        <i class="mdi" [class.mdi-login]="!attendence?.AttendenceId" [class.mdi-logout]="attendence?.AttendenceId"></i>
+        {{ attendence?.AttendenceId ? 'Confirm Check-Out' : 'Confirm Check-In' }}
       </button>
       <button *ngIf="!isMobile" type="button" class="btn btn-secondary ml-2" (click)="close()">Cancel</button>
     </div>
