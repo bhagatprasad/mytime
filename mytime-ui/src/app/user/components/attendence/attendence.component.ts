@@ -8,9 +8,10 @@ import { AgGridAngular, } from 'ag-grid-angular';
 import { RouterModule } from '@angular/router';
 import { CreateAttendance } from './create-attendance';
 import { AuditFieldsService } from '../../../common/services/auditfields.service';
-import { UserActionComponent } from '../common/user-action-component';
 import { Attendence } from '../../../admin/models/attendence';
 import { AttendenceService } from '../../../admin/services/attendence.service';
+import { AttendancectionsRendererComponent } from '../common/attendence-action-componen';
+import { AttendanceActionsRendererComponent } from '../common/attendence-mobile-action-componen';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -54,20 +55,86 @@ export class AttendenceComponent implements OnInit, OnDestroy {
   };
 
   desktopColumnDefs: ColDef[] = [
-    { field: 'AttendenceDate', headerName: 'Date', width: 140, filter: 'agTextColumnFilter', sortable: true, cellClass: 'text-center', valueGetter: (p) => p.data.AttendenceDate ? new Date(p.data.AttendenceDate).toLocaleDateString('en-IN') : '' },
-    { field: 'WorkType', headerName: 'Work Type', width: 130, filter: 'agTextColumnFilter', sortable: true, cellClass: 'text-center' },
-    { field: 'CheckInTime', headerName: 'Check-In', width: 180, filter: 'agTextColumnFilter', sortable: true, cellClass: 'text-center', valueGetter: (p) => `${p.data.CheckInTime} / ${p.data.CheckOutTime}` },
-    { field: 'CheckOutTime', headerName: 'Check-Out', width: 180, filter: 'agTextColumnFilter', sortable: true, cellClass: 'text-center', valueGetter: (p) => `${p.data.CheckInTime} / ${p.data.CheckOutTime}` },
-    { field: 'WorkHours', headerName: 'Work Hours', width: 130, filter: 'agTextColumnFilter', sortable: true, cellClass: 'text-center', valueGetter: (p) => p.data.WorkHours != null ? `${p.data.WorkHours}h` : '0h' },
-    { field: 'Description', headerName: 'Description', width: 200, filter: 'agTextColumnFilter', sortable: false, cellClass: 'text-left' },
-    { field: 'Status', headerName: 'Status', width: 120, filter: 'agTextColumnFilter', sortable: true, cellClass: 'text-center' },
-    { field: 'Actions', headerName: 'Actions', width: 160, sortable: false, filter: false, cellRenderer: UserActionComponent, cellRendererParams: { onViewClick: (d: any) => this.onViewClick(d), onEditClick: (d: any) => this.openEditForm(d) }, cellClass: 'text-left' }
+    {
+      field: 'AttendenceDate',
+      headerName: 'Date',
+      width: 140,
+      filter: 'agTextColumnFilter',
+      sortable: true,
+      cellClass: 'text-center',
+      valueGetter: (p) => p.data.AttendenceDate ? new Date(p.data.AttendenceDate).toLocaleDateString('en-IN') : ''
+    },
+    {
+      field: 'WorkType',
+      headerName: 'Work Type',
+      width: 130,
+      filter: 'agTextColumnFilter',
+      sortable: true,
+      cellClass: 'text-center'
+    },
+    {
+      field: 'CheckInTime',
+      headerName: 'Check-In',
+      width: 120,
+      filter: 'agTextColumnFilter',
+      sortable: true,
+      cellClass: 'text-center',
+      valueGetter: (p) => p.data.CheckInTime || '--'
+    },
+    {
+      field: 'CheckOutTime',
+      headerName: 'Check-Out',
+      width: 120,
+      filter: 'agTextColumnFilter',
+      sortable: true,
+      cellClass: 'text-center',
+      valueGetter: (p) => p.data.CheckOutTime || '--'
+    },
+    {
+      field: 'WorkHours',
+      headerName: 'Work Hours',
+      width: 130,
+      filter: 'agTextColumnFilter',
+      sortable: true,
+      cellClass: 'text-center',
+      valueGetter: (p) => p.data.WorkHours != null ? `${p.data.WorkHours}h` : '0h'
+    },
+    {
+      field: 'Description',
+      headerName: 'Description',
+      width: 200,
+      filter: 'agTextColumnFilter',
+      sortable: false,
+      cellClass: 'text-left'
+    },
+    {
+      field: 'Status',
+      headerName: 'Status',
+      width: 120,
+      filter: 'agTextColumnFilter',
+      sortable: true,
+      cellClass: 'text-center'
+    },
+    {
+      field: 'Actions',
+      headerName: 'Actions',
+      width: 100,
+      sortable: false,
+      filter: false,
+      cellRenderer: AttendanceActionsRendererComponent,
+      cellRendererParams: {
+        onDeleteClick: (d: any) => this.onDeleteClick(d),
+        onEditClick: (d: any) => this.openEditForm(d)
+      },
+      cellClass: 'text-center'
+    }
   ];
+
   mobileColumnDefs: ColDef[] = [
     { field: 'AttendenceDate', headerName: 'Date', flex: 1, cellClass: 'text-center', valueGetter: (p) => p.data.AttendenceDate ? new Date(p.data.AttendenceDate).toLocaleDateString('en-IN') : '' },
     { field: 'CheckInTime', headerName: 'In/Out', flex: 1.2, cellClass: 'text-center', valueGetter: (p) => `${p.data.CheckInTime} / ${p.data.CheckOutTime}` },
     { field: 'WorkHours', headerName: 'Hours', flex: 1, cellClass: 'text-center', valueGetter: (p) => p.data.WorkHours != null ? `${p.data.WorkHours}h` : '0h' },
-    { field: 'Actions', headerName: '', flex: 0.8, sortable: false, filter: false, cellRenderer: UserActionComponent, cellRendererParams: { onViewClick: (d: any) => this.onViewClick(d), onEditClick: (d: any) => this.openEditForm(d) }, cellClass: 'text-left' }
+    { field: 'Actions', headerName: '', flex: 0.8, sortable: false, filter: false, cellRenderer: AttendanceActionsRendererComponent, cellRendererParams: { onDeleteClick: (d: any) => this.onDeleteClick(d), onEditClick: (d: any) => this.openEditForm(d) }, cellClass: 'text-left' }
 
   ];
   constructor(
@@ -157,14 +224,15 @@ export class AttendenceComponent implements OnInit, OnDestroy {
   }
 
 
-  onViewClick(attendence: Attendence): void {
+  onDeleteClick(attendence: Attendence): void {
     this.selectedAttendence = attendence;   // selected data store
     this.showAttendenceView = true;         // view popup open
 
     console.log('View attendence:', attendence);
   }
-  openEditForm(data: any): void {
-
+  openEditForm(attendence: Attendence): void {
+    this.selectedAttendence = attendence;
+    this.showAttendenceView = true;
   }
   getAttendenceCount(): number {
     return new Set(this.employeeAttendence.map(s => s.EmployeeId)).size;
