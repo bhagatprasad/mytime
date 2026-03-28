@@ -1,47 +1,275 @@
-  <div class="row mt-3">
-          <div class="col-xl-3 flex-column d-flex grid-margin stretch-card">
-            <div class="row flex-grow">
-              <div class="col-sm-12 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Customers</h4>
-                    <p>23% increase in conversion</p>
-                    <h4 class="text-dark font-weight-bold mb-2">43,981</h4>
-                    <canvas id="customers"></canvas>
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-12 stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Orders</h4>
-                    <p>6% decrease in earnings</p>
-                    <h4 class="text-dark font-weight-bold mb-2">55,543</h4>
-                    <canvas id="orders"></canvas>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-xl-9 d-flex grid-margin stretch-card">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title">Website Audience Metrics</h4>
-                <div class="row">
-                  <div class="col-lg-5">
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit amet cumque cupiditate</p>
-                  </div>
-                  <div class="col-lg-7">
-                    <div class="chart-legends d-lg-block d-none" id="chart-legends"></div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-sm-12">
-                    <canvas id="web-audience-metrics-satacked" class="mt-3"></canvas>
-                  </div>
-                </div>
+<!-- admin-dashboard.component.html -->
+<div class="admin-dashboard">
+  <!-- Header Section -->
+  <div class="dashboard-header">
+    <div class="header-title">
+      <h2>Admin Dashboard</h2>
+      <p>Welcome back! Here's what's happening with your payroll today.</p>
+    </div>
+    <div class="header-actions">
+      <button class="action-btn" (click)="navigateTo('payroll')">
+        <i class="bi bi-calculator-fill"></i> Process Payroll
+      </button>
+      <button class="action-btn" (click)="navigateTo('reports')">
+        <i class="bi bi-graph-up"></i> Generate Report
+      </button>
+    </div>
+  </div>
 
+  <!-- Quick Stats Row -->
+  <div class="row g-4 mb-4">
+    <div class="col-xl-3 col-md-6" *ngFor="let stat of quickStats">
+      <div class="stat-card" (click)="navigateTo(stat.route)">
+        <div class="stat-icon" [style.background]="stat.color + '20'">
+          <i [class]="'bi bi-' + stat.icon" [style.color]="stat.color"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ stat.value }}</h3>
+          <p>{{ stat.title }}</p>
+          <span class="stat-change" [class.increase]="stat.changeType === 'increase'">
+            {{ stat.change }} <i class="bi bi-arrow-up-short"></i>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Dashboard Content -->
+  <div class="row g-4">
+    <!-- Left Column - Module Cards -->
+    <div class="col-xl-8">
+      <div class="row g-4">
+        <!-- Module Cards Grid -->
+        <div class="col-12">
+          <div class="section-header">
+            <h3>Quick Modules</h3>
+            <p>Access all payroll management modules</p>
+          </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-4 col-sm-6" *ngFor="let module of moduleCards">
+          <div class="module-card" (click)="navigateTo(module.route)">
+            <div class="module-icon" [style.background]="module.color + '20'">
+              <i [class]="'bi bi-' + module.icon" [style.color]="module.color"></i>
+            </div>
+            <div class="module-content">
+              <h4>{{ module.title }}</h4>
+              <p>{{ module.description }}</p>
+              <div class="module-footer">
+                <span class="module-count">{{ module.count }}</span>
+                <button class="module-btn">{{ module.action }}</button>
               </div>
             </div>
           </div>
         </div>
+        
+        <!-- Department Distribution -->
+        <div class="col-12">
+          <div class="card distribution-card">
+            <div class="card-header">
+              <h4>Department Distribution</h4>
+              <button class="view-btn" (click)="navigateTo('departments')">
+                View All <i class="bi bi-arrow-right"></i>
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="department-list">
+                <div class="department-item" *ngFor="let dept of departments">
+                  <div class="dept-info">
+                    <span class="dept-name">{{ dept.name }}</span>
+                    <span class="dept-count">{{ dept.count }} employees</span>
+                  </div>
+                  <div class="dept-progress">
+                    <div class="progress-bar" [style.width.%]="dept.percentage" [style.background]="dept.color"></div>
+                  </div>
+                  <span class="dept-percentage">{{ dept.percentage }}%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Timesheet Summary -->
+        <div class="col-12">
+          <div class="card timesheet-card">
+            <div class="card-header">
+              <h4>Timesheet Summary</h4>
+              <button class="view-btn" (click)="navigateTo('timesheets')">
+                Manage <i class="bi bi-arrow-right"></i>
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="timesheet-summary">
+                <div class="summary-stats">
+                  <div class="stat">
+                    <span class="stat-label">Submitted</span>
+                    <span class="stat-value">{{ submittedTimesheets }}</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-label">Pending</span>
+                    <span class="stat-value pending">{{ pendingTimesheets }}</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-label">Completion</span>
+                    <span class="stat-value">{{ timesheetCompletion }}%</span>
+                  </div>
+                </div>
+                <div class="department-timesheet">
+                  <div class="timesheet-item" *ngFor="let dept of timesheetSummary">
+                    <div class="dept-name">{{ dept.department }}</div>
+                    <div class="dept-progress">
+                      <div class="progress-fill" [style.width.%]="(dept.submitted / dept.total) * 100"></div>
+                    </div>
+                    <div class="dept-stats">
+                      <span class="submitted">{{ dept.submitted }}</span>
+                      <span class="pending">{{ dept.pending }}</span>
+                      <span class="total">{{ dept.total }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Right Column - Activity & Alerts -->
+    <div class="col-xl-4">
+      <div class="row g-4">
+        <!-- Recent Activities -->
+        <div class="col-12">
+          <div class="card activity-card">
+            <div class="card-header">
+              <h4>Recent Activities</h4>
+              <button class="view-btn" (click)="navigateTo('activities')">
+                View All <i class="bi bi-arrow-right"></i>
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="activity-list">
+                <div class="activity-item" *ngFor="let activity of recentActivities">
+                  <div class="activity-icon" [class]="'activity-' + activity.type">
+                    <i [class]="'bi bi-' + getActivityIcon(activity.type)"></i>
+                  </div>
+                  <div class="activity-content">
+                    <p class="activity-text">
+                      <strong>{{ activity.user }}</strong> {{ activity.action }}
+                    </p>
+                    <span class="activity-time">{{ activity.time }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Upcoming Events -->
+        <div class="col-12">
+          <div class="card events-card">
+            <div class="card-header">
+              <h4>Upcoming Events</h4>
+              <button class="view-btn" (click)="navigateTo('calendar')">
+                Calendar <i class="bi bi-arrow-right"></i>
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="events-list">
+                <div class="event-item" *ngFor="let event of upcomingEvents">
+                  <div class="event-priority" [class]="getPriorityClass(event.priority)"></div>
+                  <div class="event-content">
+                    <p class="event-title">{{ event.title }}</p>
+                    <span class="event-date">{{ event.date }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Pending Leave Requests -->
+        <div class="col-12">
+          <div class="card leave-requests-card">
+            <div class="card-header">
+              <h4>Pending Leave Requests</h4>
+              <button class="view-btn" (click)="navigateTo('leave-management')">
+                Approve <i class="bi bi-arrow-right"></i>
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="leave-requests-list">
+                <div class="leave-item" *ngFor="let request of pendingLeaveRequests">
+                  <div class="leave-info">
+                    <strong>{{ request.employee }}</strong>
+                    <span>{{ request.type }} • {{ request.days }} days</span>
+                    <small>{{ request.date }}</small>
+                  </div>
+                  <div class="leave-actions">
+                    <button class="approve-btn" (click)="navigateTo('leave-management')">
+                      <i class="bi bi-check-lg"></i>
+                    </button>
+                    <button class="reject-btn" (click)="navigateTo('leave-management')">
+                      <i class="bi bi-x-lg"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Recent Payslips -->
+        <div class="col-12">
+          <div class="card payslips-card">
+            <div class="card-header">
+              <h4>Recent Payslips</h4>
+              <button class="view-btn" (click)="navigateTo('payslips')">
+                View All <i class="bi bi-arrow-right"></i>
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="payslips-list">
+                <div class="payslip-item" *ngFor="let slip of recentPayslips">
+                  <div class="payslip-info">
+                    <strong>{{ slip.employee }}</strong>
+                    <span>{{ slip.month }}</span>
+                  </div>
+                  <div class="payslip-details">
+                    <span class="amount">{{ slip.amount }}</span>
+                    <span class="status-badge" [class]="getStatusClass(slip.status)">{{ slip.status }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Help Desk Tickets -->
+        <div class="col-12">
+          <div class="card helpdesk-card">
+            <div class="card-header">
+              <h4>Open Support Tickets</h4>
+              <button class="view-btn" (click)="navigateTo('helpdesk')">
+                View All <i class="bi bi-arrow-right"></i>
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="tickets-list">
+                <div class="ticket-item" *ngFor="let ticket of helpDeskTickets">
+                  <div class="ticket-priority" [class]="getPriorityClass(ticket.priority)"></div>
+                  <div class="ticket-info">
+                    <p class="ticket-subject">{{ ticket.subject }}</p>
+                    <span class="ticket-id">{{ ticket.id }} • {{ ticket.assignedTo }}</span>
+                  </div>
+                  <div class="ticket-status" [class]="getStatusClass(ticket.status)">
+                    {{ ticket.status }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

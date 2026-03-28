@@ -1,105 +1,322 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { LeaveService } from '../../../admin/services/leave.service';
 import { LeaveType } from '../../../admin/models/leave-type.model';
 import { LeaveRequest } from '../../../admin/models/leave-request.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AuditFieldsService } from '../../../common/services/auditfields.service';
 import { LoaderService } from '../../../common/services/loader.service';
 import { AccountService } from '../../../common/services/account.service';
-import { ToastrService } from 'ngx-toastr';
+import { AgGridModule } from 'ag-grid-angular';
+import { AllCommunityModule, ColDef, GridOptions, ICellRendererParams, ModuleRegistry } from 'ag-grid-community';
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-leaveapply',
-  imports: [CommonModule, FormsModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule, AgGridModule],
   templateUrl: './leaveapply.component.html',
-  styleUrls: ['./leaveapply.component.css'],
-  standalone: true
-
+  styleUrls: ['./leaveapply.component.css']
 })
 export class LeaveapplyComponent implements OnInit {
 
   leaveTypes: LeaveType[] = [];
   leaves: LeaveRequest[] = [];
 
-  showForm = false;
-  selectedFile: any;
-  errorMessage: string = '';
-  successMessage: any = '';
+  columnDefs: ColDef[] = [];
+  gridOptions!: GridOptions;
 
-  // userId = 20;
+  isMobile = false;
+  showForm = false;
 
   approvedCount = 0;
   rejectedCount = 0;
   pendingCount = 0;
   cancelledCount = 0;
 
-  leave: {
-    LeaveTypeId?: number | null;
-    FromDate?: string | Date;
-    ToDate?: string | Date;
-    TotalDays?: number;
-    Reason?: string;
-    Description?: string;
-  } = {
-      LeaveTypeId: null,
-      FromDate: '',
-      ToDate: '',
-      TotalDays: 0,
-      Reason: '',
-      Description: ''
-    };
   userId: number | undefined;
-  snackBar: any;
 
-  constructor(private leaveService: LeaveService,
-    private auditservice: AuditFieldsService,
+  leave: any = {
+    LeaveTypeId: '',
+    FromDate: '',
+    ToDate: '',
+    TotalDays: 0,
+    Reason: '',
+    Description: ''
+  };
+  errorMessage: string = '';
+  successMessage: string = '';
+
+  constructor(
+    private leaveService: LeaveService,
     private loader: LoaderService,
-    private accountService: AccountService,
-    private toastr: ToastrService) { }
+    private accountService: AccountService
+  ) { }
 
   ngOnInit() {
+
+    this.checkScreen();
+
+    this.gridOptions = {
+      pagination: true,
+      paginationPageSize: 20,
+      animateRows: true
+    };
+
+    this.setupColumns();
     this.getLeaveTypes();
     this.loadLoggedInUserLeaves();
   }
 
-  toggleForm() {
-    this.showForm = true;
+  @HostListener('window:resize')
+  checkScreen() {
+    this.isMobile = window.innerWidth < 768;
+    this.setupColumns();
   }
 
-  closeForm() {
-    this.showForm = false;
-    this.resetForm();
+  setupColumns() {
+
+    if (this.isMobile) {
+      this.columnDefs = [
+        {
+          field: 'LeaveTypeId',
+          headerName: 'Type',
+          width: 120,
+          valueGetter: (p) => this.getLeaveTypeName(p.data.LeaveTypeId),
+          filter: 'agTextColumnFilter',
+          sortable: true
+        },
+        {
+          field: 'FromDate',
+          headerName: 'From',
+          width: 120,
+          valueFormatter: (p) => new Date(p.value).toLocaleDateString(),
+          filter: 'agTextColumnFilter'
+        },
+        {
+          field: 'ToDate',
+          headerName: 'To',
+          width: 120,
+          valueFormatter: (p) => new Date(p.value).toLocaleDateString(),
+          filter: 'agTextColumnFilter',
+          sortable: true
+        },
+        {
+          field: 'Status',
+          headerName: 'Status',
+          width: 120,
+          cellRenderer: this.statusRenderer
+        },{
+          headerName: 'Action',
+          width: 120,
+          cellRenderer: (params: any) => {
+
+            const btn = document.createElement('button');
+            btn.innerText = 'Cancel';
+            btn.className = 'cancel-btn-grid';
+
+            if (params.data.Status !== 'Pending') {
+              btn.disabled = true;
+            }
+
+            btn.addEventListener('click', () => {
+              this.cancelLeave(params.data.Id);
+            });
+
+            return btn;
+          }
+        }
+      ];
+
+    } else {
+
+      this.columnDefs = [
+
+        {
+          field: 'LeaveTypeId',
+          headerName: 'Leave Type',
+          width: 160,
+          valueGetter: (p) => this.getLeaveTypeName(p.data.LeaveTypeId),
+          filter: 'agTextColumnFilter',
+          sortable: true
+        },
+
+        {
+          field: 'FromDate',
+          headerName: 'From',
+          width: 120,
+          valueFormatter: (p) => new Date(p.value).toLocaleDateString(),
+          filter: 'agTextColumnFilter',
+          sortable: true
+        },
+
+        {
+          field: 'ToDate',
+          headerName: 'To',
+          width: 120,
+          valueFormatter: (p) => new Date(p.value).toLocaleDateString(),
+          filter: 'agTextColumnFilter',
+          sortable: true
+        },
+
+        {
+          field: 'TotalDays',
+          headerName: 'Total days',
+          width: 100,
+          filter: 'agNumberColumnFilter',
+          sortable: true
+        },
+
+        {
+          field: 'Reason',
+          headerName: 'Reason',
+          width: 160,
+          filter: 'agTextColumnFilter'
+        },
+
+        {
+          field: 'AdminComment',
+          headerName: 'Review',
+          width: 160,
+          filter: 'agTextColumnFilter',
+          sortable: true,
+
+          cellRenderer: (params: any) => {
+
+            const comment = params.value;
+
+            if (!comment || comment.trim() === '') {
+              return `<span class="waiting-review">Waiting for admin response</span>`;
+            }
+
+            return `<span class="review-text">${comment}</span>`;
+          },
+
+          tooltipValueGetter: (params: any) => {
+            const comment = params.value;
+            return comment && comment.trim() !== ''
+              ? comment
+              : 'Waiting for admin response';
+          }
+        },
+
+        {
+          field: 'Status',
+          headerName: 'Leave status',
+          width: 140,
+          filter: 'agTextColumnFilter',
+          sortable: true,
+          cellRenderer: (params: any) => {
+
+            const status = params.value;
+
+            let cssClass = '';
+
+            if (status === 'Approved') cssClass = 'status-approved';
+            else if (status === 'Rejected') cssClass = 'status-rejected';
+            else if (status === 'Pending') cssClass = 'status-pending';
+            else if (status === 'Cancelled') cssClass = 'status-cancelled';
+
+            return `<span class="status-pill ${cssClass}">${status}</span>`;
+          }
+        },
+
+        {
+          field: 'IsActive',
+          headerName: 'Status',
+          width: 120,
+          filter: 'agTextColumnFilter',
+          sortable: true,
+          cellRenderer: this.isactiveRenderer.bind(this),
+          cellClass: this.statusCellClass.bind(this)
+        },
+
+        {
+          headerName: 'Action',
+          width: 120,
+          cellRenderer: (params: any) => {
+
+            const btn = document.createElement('button');
+            btn.innerText = 'Cancel';
+            btn.className = 'cancel-btn-grid';
+
+            if (params.data.Status !== 'Pending') {
+              btn.disabled = true;
+            }
+
+            btn.addEventListener('click', () => {
+              this.cancelLeave(params.data.Id);
+            });
+
+            return btn;
+          }
+        }
+
+      ];
+    }
+  }
+
+  statusRenderer(params: any) {
+
+    const status = params.value;
+
+    let css = '';
+
+    if (status === 'Approved') css = 'status-approved';
+    else if (status === 'Rejected') css = 'status-rejected';
+    else if (status === 'Pending') css = 'status-pending';
+    else if (status === 'Cancelled') css = 'status-cancelled';
+
+    return `<span class="status-badge ${css}">${status}</span>`;
+  }
+
+  statusCellClass(params: any): string {
+    const isActive = params.value;
+    return isActive ? 'status-active' : 'status-inactive';
+  }
+
+  isactiveRenderer(params: ICellRendererParams): string {
+    const isActive = params.value;
+    const statusText = isActive ? 'Active' : 'Inactive';
+    const statusClass = isActive ? 'success' : 'danger';
+    const icon = isActive ? 'mdi-check-circle' : 'mdi-close-circle';
+
+    return `
+              <div class="d-flex align-items-center gap-2">
+                <i class="mdi ${icon} text-${statusClass}"></i>
+                <span class="badge bg-${statusClass}">${statusText}</span>
+              </div>
+            `;
+  }
+
+
+  activeRenderer(params: any) {
+
+    return params.value
+      ? `<span class="active-badge">Active</span>`
+      : `<span class="inactive-badge">Inactive</span>`;
   }
 
   getLeaveTypes() {
-    this.leaveService.GetleaveTypesAsync()
-      .subscribe(res => {
-        this.leaveTypes = res;
-      });
+    this.leaveService.GetleaveTypesAsync().subscribe(res => {
+      this.leaveTypes = res;
+    });
   }
 
-  loadLoggedInUserLeaves(): void {
+  loadLoggedInUserLeaves() {
+
     this.loader.show();
+
     const user = this.accountService.getCurrentUser();
     this.userId = user?.id;
-    if (!user?.id) {
-      console.warn('No logged-in user found');
+
+    this.leaveService.GetMyLeavesAsync(this.userId).subscribe(res => {
+
+      this.leaves = res;
+
+      this.calculateDashboard();
+
       this.loader.hide();
-      return;
-
-    }
-
-    this.leaveService.GetMyLeavesAsync(user.id).subscribe({
-      next: (res: any) => {
-        this.leaves = res;
-        this.calculateDashboard();
-        this.loader.hide();
-      },
-      error: (err) => {
-        console.error('Error fetching leaves', err);
-        this.loader.hide();
-      }
     });
   }
 
@@ -112,22 +329,38 @@ export class LeaveapplyComponent implements OnInit {
 
   }
 
-  calculateDays() {
-    if (this.leave.FromDate && this.leave.ToDate) {
-      const from = new Date(this.leave.FromDate);
-      const to = new Date(this.leave.ToDate);
-      const diff = to.getTime() - from.getTime();
-      this.leave.TotalDays = diff / (1000 * 3600 * 24) + 1;
-      if (this.leave.TotalDays < 0) this.leave.TotalDays = 0;
-    }
+  toggleForm() {
+    this.showForm = true;
   }
 
-  onFileSelected(event: any) {
+  closeForm() {
 
-    if (event.target.files.length > 0) {
-      this.selectedFile = event.target.files[0];
+    this.leave = {
+      LeaveTypeId: null,
+      FromDate: '',
+      ToDate: '',
+      Reason: '',
+      Description: ''
+    };
+
+    this.errorMessage = '';
+
+    this.showForm = false;   // your form visibility variable
+  }
+  calculateDays() {
+
+    if (this.leave.FromDate && this.leave.ToDate) {
+
+      const from = new Date(this.leave.FromDate);
+      const to = new Date(this.leave.ToDate);
+
+      const diff = to.getTime() - from.getTime();
+
+      this.leave.TotalDays = diff / (1000 * 3600 * 24) + 1;
+
+      if (this.leave.TotalDays < 0)
+        this.leave.TotalDays = 0;
     }
-
   }
 
   submitLeave() {
@@ -140,7 +373,7 @@ export class LeaveapplyComponent implements OnInit {
     }
 
     const today = new Date();
-    today.setHours(0, 0, 0, 0); 
+    today.setHours(0, 0, 0, 0);
 
     const From = new Date(this.leave.FromDate);
     const To = new Date(this.leave.ToDate);
@@ -153,6 +386,7 @@ export class LeaveapplyComponent implements OnInit {
 
     const from = new Date(this.leave.FromDate);
     const to = new Date(this.leave.ToDate);
+
     const totalDays = (to.getTime() - from.getTime()) / (1000 * 3600 * 24) + 1;
 
     if (totalDays <= 0) {
@@ -173,9 +407,13 @@ export class LeaveapplyComponent implements OnInit {
 
     this.leaveService.ApplyleaveAsync(payload).subscribe({
       next: () => {
-         this.showToast("Leave Applied Successfully", "success");
+
+        this.showToast("Leave Applied Successfully", "success");
+        this.refreshForm();
+
         this.closeForm();
         this.loadLoggedInUserLeaves();
+
         this.loader.hide();
       },
       error: err => {
@@ -183,6 +421,18 @@ export class LeaveapplyComponent implements OnInit {
         this.loader.hide();
       }
     });
+  }
+
+  refreshForm() {
+    this.leave = {
+      LeaveTypeId: null,
+      FromDate: '',
+      ToDate: '',
+      Reason: '',
+      Description: ''
+    };
+
+    this.errorMessage = '';
   }
 
   showToast(message: string, type: 'success' | 'error') {
@@ -199,44 +449,23 @@ export class LeaveapplyComponent implements OnInit {
   `;
 
     document.body.appendChild(toast);
+
     toast.querySelector('.close-btn')?.addEventListener('click', () => {
       toast.remove();
     });
   }
-
   cancelLeave(id: number) {
 
-    const reason = prompt("Enter cancel reason");
-
+    const reason = prompt("Cancel reason");
     if (!reason) return;
-
     this.leaveService.CancelLeaveAsync(id, { cancelReason: reason })
       .subscribe(() => {
-
-        alert("Leave Cancelled");
-
         this.loadLoggedInUserLeaves();
-
       });
   }
 
   getLeaveTypeName(id: number) {
-
     const type = this.leaveTypes.find(x => x.Id === id);
-
     return type ? type.Name : '';
-
   }
-
-  resetForm() {
-    this.leave = {
-      LeaveTypeId: null,
-      FromDate: '',
-      ToDate: '',
-      TotalDays: 0,
-      Reason: '',
-      Description: ''
-    };
-  }
-
 }

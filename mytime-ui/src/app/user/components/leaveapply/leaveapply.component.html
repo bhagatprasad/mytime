@@ -1,6 +1,7 @@
 <div class="leave-container">
-
-  <h3 class="page-title">Leave Management</h3>
+  <h3 class="page-title">
+    <i class="fa fa-calendar"></i> Leave Management
+  </h3>
 
   <!-- DASHBOARD -->
 
@@ -35,192 +36,99 @@
 
   <!-- APPLY BUTTON -->
 
-  <div class="apply-section" *ngIf="!showForm">
-    <button class="apply-button" (click)="toggleForm()">Apply Leave</button>
+  <div class="apply-section">
+    <button class="apply-button" (click)="toggleForm()">
+      Apply Leave
+    </button>
   </div>
 
-  <!-- TABLE -->
+  <!-- AG GRID -->
 
-  <div class="table-wrapper" *ngIf="!showForm">
+  <div *ngIf="leaves.length > 0" class="ag-grid-container" [class.grid-disabled]="showForm">
 
-    <div class="scroll-container">
-
-      <table class="table">
-
-        <thead>
-          <tr>
-            <th>Leave Type</th>
-            <th>From</th>
-            <th>To</th>
-            <th>Days</th>
-            <th>Reason</th>
-            <th>Review</th>
-            <th>Status</th>
-            <th>Active</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-
-        <tbody>
-
-          <tr *ngFor="let leave of leaves">
-
-            <td>{{getLeaveTypeName(leave.LeaveTypeId)}}</td>
-
-            <td>{{leave.FromDate | date}}</td>
-
-            <td>{{leave.ToDate | date}}</td>
-
-            <td>{{leave.TotalDays}}</td>
-
-            <td class="reason-cell">{{leave.Reason}}</td>
-
-            <td class="comment-cell" title="{{leave.AdminComment ? leave.AdminComment : 'Waiting for admin review'}}">
-
-              {{leave.AdminComment ? leave.AdminComment : 'Waiting...'}}
-
-            </td>
-
-            <td>
-
-              <span class="status pending" *ngIf="leave.Status=='Pending'">Pending</span>
-
-              <span class="status approved" *ngIf="leave.Status=='Approved'">Approved</span>
-
-              <span class="status rejected" *ngIf="leave.Status=='Rejected'">Rejected</span>
-
-              <span class="status cancelled" *ngIf="leave.Status=='Cancelled'">Cancelled</span>
-
-            </td>
-
-            <td>
-
-              <span class="active-badge" *ngIf="leave.IsActive">Active</span>
-
-              <span class="inactive-badge" *ngIf="!leave.IsActive">Inactive</span>
-
-            </td>
-
-            <td>
-
-              <button class="cancel-btn" [disabled]="leave.Status!='Pending'" (click)="cancelLeave(leave.Id)">
-
-                Cancel
-
-              </button>
-
-            </td>
-
-          </tr>
-
-        </tbody>
-
-      </table>
-
-    </div>
+    <ag-grid-angular style="width:100%;height:600px" class="ag-theme-alpine" [rowData]="leaves"
+      [columnDefs]="columnDefs" [gridOptions]="gridOptions" [pagination]="true" [paginationPageSize]="20"
+      [animateRows]="true" [domLayout]="isMobile ? 'autoHeight' : 'normal'">
+    </ag-grid-angular>
 
   </div>
 
-  <!-- APPLY FORM -->
+  <!-- FORM -->
 
-  <div class="form-card" *ngIf="showForm">
-    <div class="message-popup" *ngIf="errorMessage || successMessage">
-      <div class="popup-content" [ngClass]="{
-         'error': errorMessage,
-         'success': successMessage
-       }">
-        <span>{{ errorMessage || successMessage }}</span>
-        <button class="close-btn" (click)="errorMessage=''; successMessage=''">✖</button>
-      </div>
-    </div>
+  <div class="form-overlay" *ngIf="showForm">
 
-  <h5 class="form-title">Apply Leave</h5>
+    <div class="form-panel">
 
-  <form (ngSubmit)="submitLeave()" #leaveForm="ngForm">
-
-    <div class="row">
-
-      <div class="col-md-6 form-group">
-
-        <label>Leave Type</label>
-
-        <select class="form-control" [(ngModel)]="leave.LeaveTypeId" name="LeaveTypeId" required>
-
-          <option value="">Select</option>
-
-          <option *ngFor="let type of leaveTypes" [value]="type.Id">
-
-            {{type.Name}}
-
-          </option>
-
-        </select>
-
+      <div class="form-header">
+        <h4>Apply Leave</h4>
+        <span class="form-close" (click)="closeForm()">✖</span>
       </div>
 
-      <div class="col-md-6 form-group">
+      <form (ngSubmit)="submitLeave()" #leaveForm="ngForm">
 
-        <label>Total Days</label>
+        <div class="form-group">
+          <label>Leave Type</label>
+          <select [(ngModel)]="leave.LeaveTypeId" name="LeaveTypeId" required>
+            <option value="">Select leave type</option>
+            <option *ngFor="let type of leaveTypes" [value]="type.Id">
+              {{type.Name}}
+            </option>
+          </select>
+        </div>
 
-        <input class="form-control" [value]="leave.TotalDays" readonly>
+        <div class="date-row">
 
-      </div>
+          <div class="form-group">
+            <label>From Date</label>
+            <input type="date" [(ngModel)]="leave.FromDate" name="FromDate" (change)="calculateDays()" required>
+          </div>
 
-      <div class="col-md-6 form-group">
+          <div class="form-group">
+            <label>To Date</label>
+            <input type="date" [(ngModel)]="leave.ToDate" name="ToDate" (change)="calculateDays()" required>
+          </div>
 
-        <label>From Date</label>
+        </div>
 
-        <input type="date" class="form-control" [(ngModel)]="leave.FromDate" name="FromDate" (change)="calculateDays()"
-          required>
+        <div class="form-group total-days" *ngIf="leave.TotalDays">
+          <label>Total Days</label>
+          <input [value]="leave.TotalDays" readonly>
+        </div>
 
-      </div>
+        <div class="form-group">
+          <label>Reason</label>
+          <input [(ngModel)]="leave.Reason" name="Reason" required>
+        </div>
 
-      <div class="col-md-6 form-group">
+        <div class="form-group">
+          <label>Description</label>
+          <textarea rows="3" [(ngModel)]="leave.Description" name="Description"></textarea>
+        </div>
 
-        <label>To Date</label>
+        <div class="form-buttons">
+          <button class="save-btn" type="submit" [disabled]="!leaveForm.form.valid">Apply</button>
+          <button type="button" class="cancel-form-btn" (click)="closeForm()">Close</button>
+        </div>
 
-        <input type="date" class="form-control" [(ngModel)]="leave.ToDate" name="ToDate" (change)="calculateDays()"
-          required>
+        <div class="message-popup" *ngIf="errorMessage || successMessage">
+          <div class="popup-content" [ngClass]="{
+     'error': errorMessage,
+     'success': successMessage
+   }">
 
-      </div>
+            <span>{{ errorMessage || successMessage }}</span>
 
-      <div class="col-md-12 form-group">
+            <button class="close-btn" (click)="errorMessage=''; successMessage=''">
+              ✖
+            </button>
 
-        <label>Reason</label>
+          </div>
+        </div>
 
-        <input class="form-control" [(ngModel)]="leave.Reason" name="Reason" required>
-
-      </div>
-
-      <div class="col-md-12 form-group">
-
-        <label>Description</label>
-
-        <textarea class="form-control" rows="3" [(ngModel)]="leave.Description" name="Description">
-</textarea>
-
-      </div>
+      </form>
 
     </div>
 
-    <div class="form-buttons">
-
-      <button class="save-btn" type="submit" [disabled]="leaveForm.invalid">
-
-        Save
-
-      </button>
-
-      <button type="button" class="cancel-form-btn" (click)="closeForm()">
-
-        Cancel
-
-      </button>
-
-    </div>
-
-  </form>
-
-</div>
+  </div>
 
 </div>

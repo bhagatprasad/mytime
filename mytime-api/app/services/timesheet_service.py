@@ -86,18 +86,41 @@ class TimesheetService:
 
     @staticmethod
     def insert_or_update_timesheet(db: Session, timesheet_data: dict) -> Dict[str, Any]:
-        timesheet_id = timesheet_data.get('Id')
+        """Insert or update timesheet with proper field filtering"""
+        
+        # Define valid fields for Timesheet model
+        valid_timesheet_fields = {
+            'Id', 'FromDate', 'ToDate', 'Description', 'EmployeeId', 
+            'UserId', 'Status', 'AssignedOn', 'AssignedTo', 'ApprovedOn', 
+            'ApprovedBy', 'ApprovedComments', 'CancelledOn', 'CancelledBy', 
+            'CancelledComments', 'RejectedOn', 'RejectedBy', 'RejectedComments',
+            'CreatedBy', 'CreatedOn', 'ModifiedBy', 'ModifiedOn', 'IsActive', 'TotalHrs'
+        }
+        
+        # Extract tasks data before filtering
         tasks_data = timesheet_data.pop('tasks', [])
-
+        timesheet_id = timesheet_data.get('Id')
+        
+        # Filter timesheet_data to only include valid fields
+        filtered_data = {k: v for k, v in timesheet_data.items() if k in valid_timesheet_fields}
+        
+        # Handle empty string values - convert to None for proper database handling
+        for key, value in filtered_data.items():
+            if value == "":
+                filtered_data[key] = None
+        
         if timesheet_id:
+            # Update existing timesheet
             db_timesheet = db.query(Timesheet).filter(Timesheet.Id == timesheet_id).first()
             if not db_timesheet:
                 return {"success": False, "message": "Timesheet not found", "timesheet": None}
 
-            for key, value in timesheet_data.items():
+            # Update only the fields that are present
+            for key, value in filtered_data.items():
                 if key != 'Id' and value is not None:
                     setattr(db_timesheet, key, value)
 
+            # Handle tasks if provided
             if tasks_data:
                 for task_data in tasks_data:
                     task_id = task_data.get('Id')
@@ -105,24 +128,37 @@ class TimesheetService:
                         db_task = db.query(TimesheetTask).filter(TimesheetTask.Id == task_id).first()
                         if db_task and db_task.TimesheetId == timesheet_id:
                             for key, value in task_data.items():
-                                if key != 'Id' and value is not None:
+                                if key != 'Id' and value is not None and value != "":
                                     setattr(db_task, key, value)
                     else:
-                        new_task = TimesheetTask(**task_data, TimesheetId=timesheet_id)
+                        # Clean task data before creating
+                        task_data.pop('Id', None)
+                        clean_task_data = {k: v for k, v in task_data.items() if v is not None and v != ""}
+                        new_task = TimesheetTask(**clean_task_data, TimesheetId=timesheet_id)
                         db.add(new_task)
 
             db.commit()
             db.refresh(db_timesheet)
             return {"success": True, "message": "Timesheet updated successfully", "timesheet": db_timesheet}
         else:
-            timesheet_data.pop('Id', None)
-            db_timesheet = Timesheet(**timesheet_data)
+            # Create new timesheet
+            filtered_data.pop('Id', None)
+            
+            # Set default values if needed
+            if 'CreatedOn' not in filtered_data or filtered_data['CreatedOn'] is None:
+                filtered_data['CreatedOn'] = datetime.utcnow()
+            if 'IsActive' not in filtered_data:
+                filtered_data['IsActive'] = True
+            
+            db_timesheet = Timesheet(**filtered_data)
             db.add(db_timesheet)
             db.flush()
 
+            # Handle tasks for new timesheet
             for task_data in tasks_data:
                 task_data.pop('Id', None)
-                new_task = TimesheetTask(**task_data, TimesheetId=db_timesheet.Id)
+                clean_task_data = {k: v for k, v in task_data.items() if v is not None and v != ""}
+                new_task = TimesheetTask(**clean_task_data, TimesheetId=db_timesheet.Id)
                 db.add(new_task)
 
             db.commit()
@@ -179,7 +215,7 @@ class TimesheetService:
         db_task = db.query(TimesheetTask).filter(TimesheetTask.Id == task_id).first()
         if db_task:
             for key, value in task_data.items():
-                if value is not None:
+                if value is not None and value != "":
                     setattr(db_task, key, value)
             db.commit()
             db.refresh(db_task)
@@ -191,7 +227,8 @@ class TimesheetService:
         if not db_timesheet:
             return None
 
-        new_task = TimesheetTask(**task_data, TimesheetId=timesheet_id)
+        clean_task_data = {k: v for k, v in task_data.items() if v is not None and v != ""}
+        new_task = TimesheetTask(**clean_task_data, TimesheetId=timesheet_id)
         db.add(new_task)
         db.commit()
         db.refresh(new_task)

@@ -1,86 +1,149 @@
 import { Component, HostListener, OnInit, OnDestroy } from '@angular/core';
+import { LoaderService } from '../../../common/services/loader.service';
 import { CommonModule } from '@angular/common';
-import { AgGridAngular } from 'ag-grid-angular';
+import { AccountService } from '../../../common/services/account.service';
 import { AllCommunityModule, ColDef, GridApi, GridOptions, GridReadyEvent, ModuleRegistry } from 'ag-grid-community';
 import { ToastrService } from 'ngx-toastr';
-
-import { AttendenceService } from '../../../admin/services/attendence.service';
+import { AgGridAngular, } from 'ag-grid-angular';
+import { RouterModule } from '@angular/router';
+import { CreateAttendance } from './create-attendance';
+import { AuditFieldsService } from '../../../common/services/auditfields.service';
 import { Attendence } from '../../../admin/models/attendence';
+import { AttendenceService } from '../../../admin/services/attendence.service';
+import { AttendancectionsRendererComponent } from '../common/attendence-action-componen';
+import { AttendanceActionsRendererComponent } from '../common/attendence-mobile-action-componen';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-attendence',
   standalone: true,
-  imports: [CommonModule, AgGridAngular],
+  imports: [CommonModule, AgGridAngular, RouterModule, CreateAttendance],
   templateUrl: './attendence.component.html',
   styleUrl: './attendence.component.css'
 })
 export class AttendenceComponent implements OnInit, OnDestroy {
 
-  today = new Date().toISOString().split('T')[0];
-  attendenceList: Attendence[] = [];
+  employeeId: any = 0;
   isMobile: boolean = false;
-
   private gridApi!: GridApi;
   columnDefs: ColDef[] = [];
 
+  employeeAttendence: Attendence[] = [];
+  selectedAttendence: Attendence | null = null;
+  showAttendenceView: boolean = false;
+  selectedAttendenceId: number | null = null;
+
   defaultColDef: ColDef = {
     flex: 1,
-    minWidth: 120,
+    minWidth: 100,
     filter: true,
+    resizable: true,
     sortable: true,
-    resizable: true
+    floatingFilter: false
   };
 
   gridOptions: GridOptions = {
     pagination: true,
-    paginationPageSize: 10,
+    paginationPageSize: 20,
+    paginationPageSizeSelector: [20, 40, 60, 100],
     rowSelection: 'single',
     animateRows: true,
+    enableCellTextSelection: true,
+    suppressRowClickSelection: false,
     domLayout: 'autoHeight'
   };
 
-  // 🖥️ Desktop Columns
   desktopColumnDefs: ColDef[] = [
-    { field: 'EmployeeId', headerName: 'Employee', width: 150 },
-    { field: 'AttendenceDate', headerName: 'Date', width: 150 },
-    { field: 'CheckInTime', headerName: 'Check In', width: 150 },
-    { field: 'CheckOutTime', headerName: 'Check Out', width: 150 },
-    { field: 'WorkHours', headerName: 'Hours', width: 120 },
-    { 
-      field: 'Status', 
-      headerName: 'Status', 
-      width: 120,
-      cellRenderer: (params: any) => {
-        const status = params.value;
-        const color = status === 'Present' ? '#2ecc71' : '#e74c3c';
-        return `<span style="color:${color};font-weight:600">${status}</span>`;
-      }
+    {
+      field: 'AttendenceDate',
+      headerName: 'Date',
+      width: 140,
+      filter: 'agTextColumnFilter',
+      sortable: true,
+      cellClass: 'text-center',
+      valueGetter: (p) => p.data.AttendenceDate ? new Date(p.data.AttendenceDate).toLocaleDateString('en-IN') : ''
     },
-    { field: 'ApprovalStatus', headerName: 'Approval', width: 140 },
-    { field: 'Description', headerName: 'Description', width: 200 }
+    {
+      field: 'WorkType',
+      headerName: 'Work Type',
+      width: 130,
+      filter: 'agTextColumnFilter',
+      sortable: true,
+      cellClass: 'text-center'
+    },
+    {
+      field: 'CheckInTime',
+      headerName: 'Check-In',
+      width: 120,
+      filter: 'agTextColumnFilter',
+      sortable: true,
+      cellClass: 'text-center',
+      valueGetter: (p) => p.data.CheckInTime || '--'
+    },
+    {
+      field: 'CheckOutTime',
+      headerName: 'Check-Out',
+      width: 120,
+      filter: 'agTextColumnFilter',
+      sortable: true,
+      cellClass: 'text-center',
+      valueGetter: (p) => p.data.CheckOutTime || '--'
+    },
+    {
+      field: 'WorkHours',
+      headerName: 'Work Hours',
+      width: 130,
+      filter: 'agTextColumnFilter',
+      sortable: true,
+      cellClass: 'text-center',
+      valueGetter: (p) => p.data.WorkHours != null ? `${p.data.WorkHours}h` : '0h'
+    },
+    {
+      field: 'Description',
+      headerName: 'Description',
+      width: 200,
+      filter: 'agTextColumnFilter',
+      sortable: false,
+      cellClass: 'text-left'
+    },
+    {
+      field: 'Status',
+      headerName: 'Status',
+      width: 120,
+      filter: 'agTextColumnFilter',
+      sortable: true,
+      cellClass: 'text-center'
+    },
+    {
+      field: 'Actions',
+      headerName: 'Actions',
+      width: 100,
+      sortable: false,
+      filter: false,
+      cellRenderer: AttendanceActionsRendererComponent,
+      cellRendererParams: {
+        onDeleteClick: (d: any) => this.onDeleteClick(d),
+        onEditClick: (d: any) => this.openEditForm(d)
+      },
+      cellClass: 'text-center'
+    }
   ];
 
-  // 📱 Mobile Columns
   mobileColumnDefs: ColDef[] = [
-    { field: 'AttendenceDate', headerName: 'Date', width: 120 },
-    { 
-      field: 'Status', 
-      headerName: 'Status', 
-      width: 120,
-      cellRenderer: (params: any) => {
-        return `<span>${params.value}</span>`;
-      }
-    },
-    { field: 'WorkHours', headerName: 'Hours', width: 100 }
+    { field: 'AttendenceDate', headerName: 'Date', flex: 1, cellClass: 'text-center', valueGetter: (p) => p.data.AttendenceDate ? new Date(p.data.AttendenceDate).toLocaleDateString('en-IN') : '' },
+    { field: 'CheckInTime', headerName: 'In/Out', flex: 1.2, cellClass: 'text-center', valueGetter: (p) => `${p.data.CheckInTime} / ${p.data.CheckOutTime}` },
+    { field: 'WorkHours', headerName: 'Hours', flex: 1, cellClass: 'text-center', valueGetter: (p) => p.data.WorkHours != null ? `${p.data.WorkHours}h` : '0h' },
+    { field: 'Actions', headerName: '', flex: 0.8, sortable: false, filter: false, cellRenderer: AttendanceActionsRendererComponent, cellRendererParams: { onDeleteClick: (d: any) => this.onDeleteClick(d), onEditClick: (d: any) => this.openEditForm(d) }, cellClass: 'text-left' }
+
   ];
-
   constructor(
+    private accountService: AccountService,
     private attendenceService: AttendenceService,
-    private toastr: ToastrService
-  ) {}
-
+    private loader: LoaderService,
+    private toster: ToastrService,
+    private audit: AuditFieldsService,
+  ) { }
   ngOnInit(): void {
     this.checkScreenSize();
     this.setupResponsiveColumns();
@@ -92,42 +155,34 @@ export class AttendenceComponent implements OnInit, OnDestroy {
     window.removeEventListener('resize', this.onResize.bind(this));
   }
 
-  // 📊 Load Data
-  loadAttendence(): void {
-    this.attendenceService.getAttendenceListAsync().subscribe({
-      next: (res) => {
-        this.attendenceList = res;
+  private loadAttendence(): void {
+    this.loader.show();
+    const user = this.accountService.getCurrentUser();
+    if (!user) {
+      this.loader.hide();
+      return;
+    }
+    this.employeeId = user.employeeId;
+    this.loadEmployeeAttendence(user.employeeId);
+  }
+
+  loadEmployeeAttendence(employeeId: any): void {
+    this.attendenceService.getAttendenceListByEmployeeAsync(employeeId).subscribe({
+      next: (res: any) => {
+        this.employeeAttendence = res;
+        this.loader.hide();
       },
-      error: () => {
-        this.toastr.error('Error loading attendence');
+      error: (err) => {
+        this.toster.error('Error loading employee details', err);
+        this.loader.hide();
       }
     });
   }
-  checkIn() {
-  const payload = {
-    employeeId: this.employeeId,
-    attendenceDate: new Date().toISOString().split('T')[0],
-    checkInTime: new Date().toISOString()
-  };
 
-  this.attendenceService.checkIn(payload).subscribe({
-    next: (res: any) => {
-      console.log('Check-in successful', res);
-      alert('Checked in successfully');
-      this.loadAttendence(); // refresh list
-    },
-    error: (err: any) => {
-      console.error(err);
-      alert('Check-in failed');
-    }
-  });
-}
-
-  // 📱 Responsive
- @HostListener('window:resize', ['$event'])
-  onResize(event: Event): void {
-  this.checkScreenSize();
-}
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any): void {
+    this.checkScreenSize();
+  }
 
   private checkScreenSize(): void {
     const wasMobile = this.isMobile;
@@ -139,20 +194,20 @@ export class AttendenceComponent implements OnInit, OnDestroy {
   }
 
   private setupResponsiveColumns(): void {
-    this.columnDefs = this.isMobile
-      ? [...this.mobileColumnDefs]
-      : [...this.desktopColumnDefs];
-
+    if (this.isMobile) {
+      this.columnDefs = [...this.mobileColumnDefs];
+      this.gridOptions.domLayout = 'autoHeight';
+    } else {
+      this.columnDefs = [...this.desktopColumnDefs];
+      this.gridOptions.domLayout = 'normal';
+    }
     if (this.gridApi) {
       this.refreshGridColumns();
     }
   }
-
   private refreshGridColumns(): void {
     if (!this.gridApi) return;
-
-    this.gridApi.setGridOption('columnDefs', this.columnDefs);
-
+    const newColumnDefs = JSON.parse(JSON.stringify(this.columnDefs));
     setTimeout(() => {
       this.gridApi.refreshHeader();
       this.gridApi.sizeColumnsToFit();
@@ -164,20 +219,52 @@ export class AttendenceComponent implements OnInit, OnDestroy {
     setTimeout(() => this.gridApi.sizeColumnsToFit(), 300);
   }
 
-  // 📊 Dashboard Counts
-  getTotal(): number {
-    return this.attendenceList.length;
+  getTotalRowsCount(): number {
+    return this.employeeAttendence ? this.employeeAttendence.length : 0;
   }
 
-  getPresent(): number {
-    return this.attendenceList.filter(x => x.Status === 'Present').length;
+
+  onDeleteClick(attendence: Attendence): void {
+    this.selectedAttendence = attendence;   // selected data store
+    this.showAttendenceView = true;         // view popup open
+
+    console.log('View attendence:', attendence);
+  }
+  openEditForm(attendence: Attendence): void {
+    this.selectedAttendence = attendence;
+    this.showAttendenceView = true;
+  }
+  getAttendenceCount(): number {
+    return new Set(this.employeeAttendence.map(s => s.EmployeeId)).size;
+  }
+  openAddAttendenceSideBar(): void {
+    this.showAttendenceView = true;
+    this.selectedAttendence = null;
+  }
+  onSaveAttendance(att: Attendence): void {
+    this.loader.show();
+
+    console.log("Received attendance data:", att);
+    this.attendenceService.insertOrUpdateAttendence(att).subscribe(
+      response => {
+        this.loader.hide();
+
+        if (response) {
+          this.toster.success("Attendance processed successfully");
+          this.showAttendenceView = false;   // close sidebar after save
+          this.refreshData();
+        }
+      },
+      error => {
+        this.loader.hide();
+        console.error(error);
+        this.toster.error("Something went wrong, please check and resubmit");
+        this.showAttendenceView = true;
+      }
+    );
+  }
+  refreshData(): void {
+    this.loadAttendence();
   }
 
-  getAbsent(): number {
-    return this.attendenceList.filter(x => x.Status === 'Absent').length;
-  }
-
-  getPending(): number {
-    return this.attendenceList.filter(x => x.ApprovalStatus === 'Pending').length;
-  }
 }

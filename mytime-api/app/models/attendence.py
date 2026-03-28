@@ -12,7 +12,7 @@ class Attendence(Base):
     CheckOutTime   = Column(Time, nullable=True)
 
     Status         = Column(String(20), nullable=False)
-    WorkHours      = Column(DECIMAL(5, 2), nullable=True)
+    WorkHours      = Column(Time, nullable=True)
     Description    = Column(String(255), nullable=True)
 
     ApprovalStatus = Column(String(20), nullable=True, default="Pending")
@@ -33,7 +33,7 @@ class Attendence(Base):
             f"<Attendence("
             f"AttendenceId={self.AttendenceId}, "
             f"EmployeeId={self.EmployeeId}, "
-            f"Date={self.AttendenceDate}, "
+            f"AttendenceDate={self.AttendenceDate}, "
             f"Status='{self.Status}', "
             f"WorkHours={self.WorkHours}"
             f")>"
