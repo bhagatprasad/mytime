@@ -1,0 +1,30 @@
+export interface EmployeeDTO {
+  EmployeeId?: number;
+  EmployeeCode?: string | null;
+  FirstName?: string | null;
+  LastName?: string | null;
+  FatherName?: string | null;
+  MotherName?: string | null;
+  Gender?: string | null;
+  DateOfBirth?: Date | null;
+  Email?: string | null;
+  Phone?: string | null;
+  UserId?: number | null;
+  RoleId?: number | null;
+  DepartmentId?: number | null;
+  DesignationId?: number | null;
+  StartedOn?: Date | null;
+  EndedOn?: Date | null;
+  ResignedOn?: Date | null;
+  LastWorkingDay?: Date | null;
+  OfferRelesedOn?: Date | null;
+  OfferAcceptedOn?: Date | null;
+  OfferPrice?: number | null;
+  CurrentPrice?: number | null;
+  JoiningBonus?: number | null;
+  CreatedBy?: number | null;
+  CreatedOn?: Date | null;
+  ModifiedBy?: number | null;
+  ModifiedOn?: Date | null;
+  IsActive?: boolean | null;
+}
