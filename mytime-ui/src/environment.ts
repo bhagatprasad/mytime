@@ -1,6 +1,8 @@
 export const environment = {
   production: false,
   baseUrl: 'https://mytime-docker.onrender.com/api/v1',
+  //baseUrl: 'http://localhost:8000/api/v1',
+
   UrlConstants: {
     // Authentication endpoints
     Authenticate: 'auth/AuthenticateUser',
@@ -410,7 +412,8 @@ export const environment = {
       FetchProfileImage: 'userprofileimage/fetchProfileImage',
       FetchProfileImageByUser: 'userprofileimage/fetchProfileImageByUser',
       FetchAllProfileImages: 'userprofileimage/fetchAllProfileImages',
-      GetProfileImagesWithPagination: 'userprofileimage/getProfileImagesWithPagination',
+      GetProfileImagesWithPagination:
+        'userprofileimage/getProfileImagesWithPagination',
       InsertOrUpdateProfileImage: 'userprofileimage/InsertOrUpdateProfileImage',
       UploadProfileImage: 'userprofileimage/uploadProfileImage',
       DeleteProfileImage: 'userprofileimage/DeleteProfileImage',
@@ -431,7 +434,7 @@ export const environment = {
       GetMyLeavesAsync: 'leaves/fetchleavesbyuser',
       ApproveLeaveAsync: 'leaves/approveleave',
       RejectLeaveAsync: 'leaves/rejectleave',
-      CancelLeaveAsync: 'leaves/cancelleave'
+      CancelLeaveAsync: 'leaves/cancelleave',
     },
     LeaveType: {
       GetLeaveTypeAsync: 'leavetype/fetchLeaveType',
@@ -465,10 +468,10 @@ export const environment = {
       ApproveAttendence: 'attendence/approve_attendence',
       RejectAttendence: 'attendence/reject_attendence',
       GetAttendenceByEmployee: 'attendence/check_attendence_exists',
-      GetAttendenceByDate: 'attendence/get_attendence_by_date_range'
+      GetAttendenceByDate: 'attendence/get_attendence_by_date_range',
     },
     Timesheet: {
-      GetAllTimesheets: 'timesheet/fetch_all_timesheets',
+      GetAllTimesheets: 'timesheet/fetchAllTimesheets',
       GetTimesheetById: 'timesheet/fetch_timesheet',
       GetTimesheetWithTasks: 'timesheet/fetch_timesheet_with_tasks',
       GetTimesheetsByEmployee: 'timesheet/get_timesheets_by_employee',
@@ -486,7 +489,7 @@ export const environment = {
       GetTimesheetTasks: 'timesheet/get_timesheet_tasks',
       GetTaskById: 'timesheet/fetch_timesheet_task',
       GetTimesheetReport: 'timesheet/get_timesheet_report',
-      GetTimesheetSummary: 'timesheet/get_timesheet_summary'
-    }
-  }
+      GetTimesheetSummary: 'timesheet/get_timesheet_summary',
+    },
+  },
 };
