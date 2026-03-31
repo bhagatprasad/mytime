@@ -59,6 +59,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'timesheet',
+        loadComponent: () =>
+          import('./user/components/timesheet/list-timesheet.component').then(
+            (m) => m.ListTimesheetComponent,
+          ),
+      },
+      {
         path: 'leavebalance',
         loadComponent: () =>
           import('./user/components/leavebalance/leavebalance.component').then(

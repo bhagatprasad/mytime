@@ -1,10 +1,12 @@
 <ul class="nav">
   <!-- Home -->
   <li class="nav-item">
-    <a class="nav-link" 
-       routerLink="/home" 
-       routerLinkActive="active"
-       (click)="onLinkClick()">
+    <a
+      class="nav-link"
+      routerLink="/home"
+      routerLinkActive="active"
+      (click)="onLinkClick()"
+    >
       <i class="mdi mdi-home menu-icon"></i>
       <span class="menu-title">Home</span>
     </a>
@@ -12,10 +14,12 @@
 
   <!-- Engage -->
   <li class="nav-item">
-    <a class="nav-link" 
-       routerLink="/engage" 
-       routerLinkActive="active"
-       (click)="onLinkClick()">
+    <a
+      class="nav-link"
+      routerLink="/engage"
+      routerLinkActive="active"
+      (click)="onLinkClick()"
+    >
       <i class="mdi mdi-account-group menu-icon"></i>
       <span class="menu-title">Engage</span>
     </a>
@@ -23,11 +27,13 @@
 
   <!-- MyWorkLife (Dropdown) -->
   <li class="nav-item">
-    <a class="nav-link" 
-       (click)="onDropdownToggle($event, 'my-work-life')" 
-       href="javascript:void(0)" 
-       aria-expanded="false" 
-       aria-controls="my-work-life">
+    <a
+      class="nav-link"
+      (click)="onDropdownToggle($event, 'my-work-life')"
+      href="javascript:void(0)"
+      aria-expanded="false"
+      aria-controls="my-work-life"
+    >
       <i class="mdi mdi-briefcase menu-icon"></i>
       <span class="menu-title">MyWorkLife</span>
       <i class="menu-arrow"></i>
@@ -35,16 +41,22 @@
     <div class="collapse" id="my-work-life">
       <ul class="nav flex-column sub-menu">
         <li class="nav-item">
-          <a class="nav-link" 
-             routerLink="/my-work-life/kudos" 
-             routerLinkActive="active"
-             (click)="onLinkClick()">Kudos</a>
+          <a
+            class="nav-link"
+            routerLink="/my-work-life/kudos"
+            routerLinkActive="active"
+            (click)="onLinkClick()"
+            >Kudos</a
+          >
         </li>
         <li class="nav-item">
-          <a class="nav-link" 
-             routerLink="/my-work-life/feedback" 
-             routerLinkActive="active"
-             (click)="onLinkClick()">Feedback</a>
+          <a
+            class="nav-link"
+            routerLink="/my-work-life/feedback"
+            routerLinkActive="active"
+            (click)="onLinkClick()"
+            >Feedback</a
+          >
         </li>
       </ul>
     </div>
@@ -52,11 +64,13 @@
 
   <!-- Todo (Dropdown) -->
   <li class="nav-item">
-    <a class="nav-link" 
-       (click)="onDropdownToggle($event, 'todo')" 
-       href="javascript:void(0)" 
-       aria-expanded="false" 
-       aria-controls="todo">
+    <a
+      class="nav-link"
+      (click)="onDropdownToggle($event, 'todo')"
+      href="javascript:void(0)"
+      aria-expanded="false"
+      aria-controls="todo"
+    >
       <i class="mdi mdi-checkbox-marked-circle-outline menu-icon"></i>
       <span class="menu-title">Todo</span>
       <i class="menu-arrow"></i>
@@ -64,16 +78,22 @@
     <div class="collapse" id="todo">
       <ul class="nav flex-column sub-menu">
         <li class="nav-item">
-          <a class="nav-link" 
-             routerLink="/todo/tasks" 
-             routerLinkActive="active"
-             (click)="onLinkClick()">Tasks</a>
+          <a
+            class="nav-link"
+            routerLink="/todo/tasks"
+            routerLinkActive="active"
+            (click)="onLinkClick()"
+            >Tasks</a
+          >
         </li>
         <li class="nav-item">
-          <a class="nav-link" 
-             routerLink="/todo/review" 
-             routerLinkActive="active"
-             (click)="onLinkClick()">Review</a>
+          <a
+            class="nav-link"
+            routerLink="/todo/review"
+            routerLinkActive="active"
+            (click)="onLinkClick()"
+            >Review</a
+          >
         </li>
       </ul>
     </div>
@@ -81,71 +101,172 @@
 
   <!-- Salary (Dropdown) -->
   <li class="nav-item">
-    <a class="nav-link" 
-       (click)="onDropdownToggle($event, 'salary')" 
-       href="javascript:void(0)" 
-       aria-expanded="false" 
-       aria-controls="salary">
+    <a
+      class="nav-link"
+      (click)="onDropdownToggle($event, 'salary')"
+      href="javascript:void(0)"
+      aria-expanded="false"
+      aria-controls="salary"
+    >
       <i class="mdi mdi-currency-inr menu-icon"></i>
       <span class="menu-title">Salary</span>
       <i class="menu-arrow"></i>
     </a>
     <div class="collapse" id="salary">
       <ul class="nav flex-column sub-menu">
-        <li class="nav-item"><a class="nav-link" routerLink="/user/payslips" routerLinkActive="active" (click)="onLinkClick()">Payslips</a></li>
-        <li class="nav-item"><a class="nav-link" routerLink="/user/ytdreports" routerLinkActive="active" (click)="onLinkClick()">YTD Reports</a></li>
-        <li class="nav-item"><a class="nav-link" routerLink="/user/it-statement" routerLinkActive="active" (click)="onLinkClick()">IT Statement</a></li>
-        <li class="nav-item"><a class="nav-link" routerLink="/user/it-declaration" routerLinkActive="active" (click)="onLinkClick()">IT Declaration</a></li>
-        <li class="nav-item"><a class="nav-link" routerLink="/user/loans-advances" routerLinkActive="active" (click)="onLinkClick()">Loans & Advances</a></li>
-        <li class="nav-item"><a class="nav-link" routerLink="/user/reimbursements" routerLinkActive="active" (click)="onLinkClick()">Reimbursements</a></li>
-        <li class="nav-item"><a class="nav-link" routerLink="/user/proof-of-investments" routerLinkActive="active" (click)="onLinkClick()">Proof of Investments</a></li>
-        <li class="nav-item"><a class="nav-link" routerLink="/user/salary-revision" routerLinkActive="active" (click)="onLinkClick()">Salary Revision</a></li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/user/payslips"
+            routerLinkActive="active"
+            (click)="onLinkClick()"
+            >Payslips</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/user/ytdreports"
+            routerLinkActive="active"
+            (click)="onLinkClick()"
+            >YTD Reports</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/user/it-statement"
+            routerLinkActive="active"
+            (click)="onLinkClick()"
+            >IT Statement</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/user/it-declaration"
+            routerLinkActive="active"
+            (click)="onLinkClick()"
+            >IT Declaration</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/user/loans-advances"
+            routerLinkActive="active"
+            (click)="onLinkClick()"
+            >Loans & Advances</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/user/reimbursements"
+            routerLinkActive="active"
+            (click)="onLinkClick()"
+            >Reimbursements</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/user/proof-of-investments"
+            routerLinkActive="active"
+            (click)="onLinkClick()"
+            >Proof of Investments</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/user/salary-revision"
+            routerLinkActive="active"
+            (click)="onLinkClick()"
+            >Salary Revision</a
+          >
+        </li>
       </ul>
     </div>
   </li>
 
   <!-- Leave (Dropdown) -->
   <li class="nav-item">
-    <a class="nav-link" 
-       (click)="onDropdownToggle($event, 'leave')" 
-       href="javascript:void(0)" 
-       aria-expanded="false" 
-       aria-controls="leave">
+    <a
+      class="nav-link"
+      (click)="onDropdownToggle($event, 'leave')"
+      href="javascript:void(0)"
+      aria-expanded="false"
+      aria-controls="leave"
+    >
       <i class="mdi mdi-calendar-clock menu-icon"></i>
       <span class="menu-title">Leave</span>
       <i class="menu-arrow"></i>
     </a>
     <div class="collapse" id="leave">
       <ul class="nav flex-column sub-menu">
-        <li class="nav-item"><a class="nav-link" routerLink="/user/leaveapply" routerLinkActive="active">Leave Apply</a>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/user/leaveapply"
+            routerLinkActive="active"
+            >Leave Apply</a
+          >
         </li>
-        <li class="nav-item"><a class="nav-link" routerLink="/user/leavebalance" routerLinkActive="active">Leave Balance</a>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/user/leavebalance"
+            routerLinkActive="active"
+            >Leave Balance</a
+          >
         </li>
-        <li class="nav-item"><a class="nav-link" routerLink="/user/calendar" routerLinkActive="active">Leave
-            Calendar</a></li>
-        <li class="nav-item"><a class="nav-link" routerLink="/user/holidaycalendar" routerLinkActive="active">Holiday
-            Calendar</a></li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/user/calendar"
+            routerLinkActive="active"
+            >Leave Calendar</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/user/holidaycalendar"
+            routerLinkActive="active"
+            >Holiday Calendar</a
+          >
+        </li>
       </ul>
     </div>
   </li>
 
   <!-- Attendance -->
   <li class="nav-item">
-    <a class="nav-link" 
-       routerLink="/user/attendence" 
-       routerLinkActive="active"
-       (click)="onLinkClick()">
+    <a
+      class="nav-link"
+      routerLink="/attendance"
+      routerLinkActive="active"
+      (click)="onLinkClick()"
+    >
       <i class="mdi mdi-fingerprint menu-icon"></i>
       <span class="menu-title">Attendance</span>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" routerLink="/user/timesheet" (click)="onLinkClick()">
+      <i class="mdi mdi-calendar-clock mr-2"></i> Time Sheet
     </a>
   </li>
 
   <!-- Document Center -->
   <li class="nav-item">
-    <a class="nav-link" 
-       routerLink="/user/documentcenter" 
-       routerLinkActive="active"
-       (click)="onLinkClick()">
+    <a
+      class="nav-link"
+      routerLink="/user/documentcenter"
+      routerLinkActive="active"
+      (click)="onLinkClick()"
+    >
       <i class="mdi mdi-folder-multiple-outline menu-icon"></i>
       <span class="menu-title">Document Center</span>
     </a>
@@ -153,10 +274,12 @@
 
   <!-- People -->
   <li class="nav-item">
-    <a class="nav-link" 
-       routerLink="/people" 
-       routerLinkActive="active"
-       (click)="onLinkClick()">
+    <a
+      class="nav-link"
+      routerLink="/people"
+      routerLinkActive="active"
+      (click)="onLinkClick()"
+    >
       <i class="mdi mdi-account-multiple menu-icon"></i>
       <span class="menu-title">People</span>
     </a>
@@ -164,10 +287,12 @@
 
   <!-- Helpdesk -->
   <li class="nav-item">
-    <a class="nav-link" 
-       routerLink="/helpdesk" 
-       routerLinkActive="active"
-       (click)="onLinkClick()">
+    <a
+      class="nav-link"
+      routerLink="/helpdesk"
+      routerLinkActive="active"
+      (click)="onLinkClick()"
+    >
       <i class="mdi mdi-headset menu-icon"></i>
       <span class="menu-title">Helpdesk</span>
     </a>
@@ -175,10 +300,12 @@
 
   <!-- RequestHub -->
   <li class="nav-item">
-    <a class="nav-link" 
-       routerLink="/request-hub" 
-       routerLinkActive="active"
-       (click)="onLinkClick()">
+    <a
+      class="nav-link"
+      routerLink="/request-hub"
+      routerLinkActive="active"
+      (click)="onLinkClick()"
+    >
       <i class="mdi mdi-inbox-multiple menu-icon"></i>
       <span class="menu-title">RequestHub</span>
     </a>
@@ -186,10 +313,12 @@
 
   <!-- Workflow Delegates -->
   <li class="nav-item">
-    <a class="nav-link" 
-       routerLink="/workflow-delegates" 
-       routerLinkActive="active"
-       (click)="onLinkClick()">
+    <a
+      class="nav-link"
+      routerLink="/workflow-delegates"
+      routerLinkActive="active"
+      (click)="onLinkClick()"
+    >
       <i class="mdi mdi-swap-horizontal menu-icon"></i>
       <span class="menu-title">Workflow Delegates</span>
     </a>

@@ -14,11 +14,15 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './leavebalance.component.html',
-  styleUrl: './leavebalance.component.css'
+  styleUrl: './leavebalance.component.css',
 })
 export class LeavebalanceComponent implements OnInit {
-
-  constructor(private leaveBalanceService: leavebalanceservice, private accountService: AccountService, private loader: LoaderService, private leaveService: LeaveService) { }
+  constructor(
+    private leaveBalanceService: leavebalanceservice,
+    private accountService: AccountService,
+    private loader: LoaderService,
+    private leaveService: LeaveService,
+  ) {}
 
   leaveTypes: LeaveType[] = [];
   leavebalance: LeaveBalance[] = [];
@@ -37,7 +41,6 @@ export class LeavebalanceComponent implements OnInit {
       console.warn('No logged-in user found');
       this.loader.hide();
       return;
-
     }
 
     this.leaveBalanceService.getleavebalancebyuserAsync(user.id).subscribe({
@@ -48,15 +51,14 @@ export class LeavebalanceComponent implements OnInit {
       error: (err) => {
         console.error('Error fetching leaves', err);
         this.loader.hide();
-      }
+      },
     });
   }
 
   getLeaveTypes() {
-    this.leaveService.GetleaveTypesAsync()
-      .subscribe(res => {
-        this.leaveTypes = res;
-      });
+    this.leaveService.GetleaveTypesAsync().subscribe((res) => {
+      this.leaveTypes = res;
+    });
   }
 
   getLeaveTypeName(id: number): string {
@@ -65,35 +67,32 @@ export class LeavebalanceComponent implements OnInit {
   }
 
   getAllLeaveCards() {
-
-    return this.leaveTypes.map(type => {
-
-      const balance = this.leavebalance.find(
-        b => b.LeaveTypeId === type.Id
-      );
+    return this.leaveTypes.map((type) => {
+      const balance = this.leavebalance.find((b) => b.LeaveTypeId === type.Id);
 
       return {
         LeaveTypeId: type.Id,
         Name: type.Name,
         TotalLeaves: balance ? balance.TotalLeaves : type.MaxDaysPerYear,
         UsedLeaves: balance ? balance.UsedLeaves : 0,
-        RemainingLeaves: balance ? balance.RemainingLeaves : type.MaxDaysPerYear
+        RemainingLeaves: balance
+          ? balance.RemainingLeaves
+          : type.MaxDaysPerYear,
       };
     });
   }
 
   getCircleColor(leave: any): string {
+    const percent = (leave.UsedLeaves / leave.TotalLeaves) * 100;
 
-  const percent = (leave.UsedLeaves / leave.TotalLeaves) * 100;
+    if (percent < 40) {
+      return '#6fcf97'; // soft green
+    }
 
-  if (percent < 40) {
-    return '#6fcf97'; // soft green
+    if (percent < 75) {
+      return '#f2c94c'; // soft yellow
+    }
+
+    return '#eb5757'; // soft red
   }
-
-  if (percent < 75) {
-    return '#f2c94c'; // soft yellow
-  }
-
-  return '#eb5757'; // soft red
-}
 }

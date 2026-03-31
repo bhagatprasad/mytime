@@ -1,0 +1,111 @@
+/* Size Variations */
+.size-small .spinner {
+  width: 60px;
+  height: 60px;
+}
+
+.size-small .spinner-text {
+  font-size: 14px;
+}
+
+.size-medium .spinner {
+  width: 120px;
+  height: 120px;
+}
+
+.size-large .spinner {
+  width: 180px;
+  height: 180px;
+}
+
+.size-large .spinner-text {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Spinner Types */
+.ring-spinner .spinner-inner {
+  border: 8px solid rgba(0, 123, 255, 0.1);
+  border-top: 8px solid #007bff;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  animation: spin 1.5s linear infinite;
+  margin: 0 auto;
+}
+
+.size-large .ring-spinner .spinner-inner {
+  border-width: 12px;
+  width: 120px;
+  height: 120px;
+}
+
+.size-small .ring-spinner .spinner-inner {
+  border-width: 4px;
+  width: 40px;
+  height: 40px;
+}
+
+.dots-spinner .spinner-inner {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.dots-spinner .dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #007bff, #00d4ff);
+  animation: dot-bounce 1.4s infinite ease-in-out both;
+}
+
+.dots-spinner .dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.dots-spinner .dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes dot-bounce {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* No backdrop variant */
+.no-backdrop .global-spinner-overlay {
+  background: transparent;
+  backdrop-filter: none;
+}
+
+/* Progress bar variant (optional) */
+.progress-spinner .progress-bar {
+  width: 200px;
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 20px auto;
+}
+
+.progress-spinner .progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #007bff, #6610f2);
+  animation: progress-animation 2s ease-in-out infinite;
+  width: 30%;
+}
+
+@keyframes progress-animation {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
+}
