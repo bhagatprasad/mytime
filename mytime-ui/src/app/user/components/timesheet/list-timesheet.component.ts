@@ -8,6 +8,7 @@ import {
   GridApi,
   GridOptions,
   GridReadyEvent,
+  ICellRendererParams,
   ModuleRegistry,
   ValueFormatterParams,
 } from 'ag-grid-community';
@@ -15,6 +16,11 @@ import { AgGridModule } from 'ag-grid-angular';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from '../../../common/services/loader.service';
 import { AddTimesheetComponent } from './add-timesheet.component';
+import { ActionsRendererComponent } from '../../../common/components/actions-renderer.component';
+import { MobileActionsRendererComponent } from '../../../common/components/mobile-actions-renderer.component';
+import { TaskitemService } from '../../../admin/services/taskitem.service';
+import { TaskItem } from '../../../admin/models/taskitem';
+import { forkJoin } from 'rxjs';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -26,14 +32,19 @@ ModuleRegistry.registerModules([AllCommunityModule]);
   styleUrl: './list-timesheet.component.css',
 })
 export class ListTimesheetComponent implements OnInit, OnDestroy {
-  timesheets: Timesheet[] = [];
   today = new Date();
+
+  timesheets: Timesheet[] = [];
+
+  taskitems: TaskItem[] = [];
+
   private gridApi!: GridApi;
   isMobile: boolean = false;
 
   showForm: boolean = false;
 
   constructor(
+    private taskitemService: TaskitemService,
     private timesheetService: TimesheetService,
     private toastr: ToastrService,
     private loader: LoaderService,
@@ -96,9 +107,13 @@ export class ListTimesheetComponent implements OnInit, OnDestroy {
 
   LoadTimesheetDetails(): void {
     this.loader.show();
-    this.timesheetService.getTimesheetsListAsync().subscribe({
-      next: (timesheet: Timesheet[]) => {
-        this.timesheets = timesheet;
+    forkJoin({
+      timesheets: this.timesheetService.getTimesheetsListAsync(),
+      taskitems: this.taskitemService.GetTaskitemListAsync(),
+    }).subscribe({
+      next: ({ timesheets, taskitems }) => {
+        this.timesheets = timesheets;
+        this.taskitems = taskitems;
         this.loader.hide();
 
         if (this.gridApi) {
@@ -158,11 +173,11 @@ export class ListTimesheetComponent implements OnInit, OnDestroy {
 
   desktopColumnDefs: ColDef[] = [
     {
-      headerName: 'Timesheet_Date Range',
+      headerName: 'Date Range',
       width: 180,
       sortable: true,
       filter: 'agTextColumnFilter',
-      cellClass: 'text-left',
+      cellClass: 'text-center',
       valueGetter: (params) => {
         const from = params.data?.FromDate
           ? new Date(params.data.FromDate).toLocaleDateString('en-GB')
@@ -175,27 +190,49 @@ export class ListTimesheetComponent implements OnInit, OnDestroy {
     },
     {
       field: 'Description',
-      headerName: 'Timesheet_Description',
+      headerName: 'Description',
       width: 120,
       filter: 'agTextColumnFilter',
       sortable: true,
-      cellClass: 'text-left',
+      cellClass: 'text-center',
     },
     {
       field: 'Status',
-      headerName: 'Timesheet_Status',
+      headerName: 'Status',
       width: 120,
       filter: 'agTextColumnFilter',
       sortable: true,
-      cellClass: 'text-left',
+      cellClass: 'text-center',
     },
     {
       field: 'TotalHrs',
-      headerName: 'Timesheet_TotalHours',
+      headerName: 'Total(Hrs)',
       width: 120,
       filter: 'agNumberColumnFilter',
       sortable: true,
-      cellClass: 'text-left',
+      cellClass: 'text-center',
+    },
+    {
+      field: 'IsActive',
+      headerName: 'Status',
+      width: 120,
+      filter: 'agTextColumnFilter',
+      sortable: true,
+      cellRenderer: this.statusRenderer.bind(this),
+      cellClass: this.statusCellClass.bind(this),
+    },
+    {
+      field: 'Actions',
+      headerName: 'Actions',
+      width: 150,
+      sortable: false,
+      filter: false,
+      cellRenderer: ActionsRendererComponent,
+      cellRendererParams: {
+        onEditClick: (data: any) => this.requestTimesheetProcess(data),
+        onDeleteClick: (data: any) => this.deleteTimesheet(data),
+      },
+      cellClass: 'text-center',
     },
   ];
 
@@ -222,6 +259,18 @@ export class ListTimesheetComponent implements OnInit, OnDestroy {
       width: 80,
       cellClass: 'text-center',
     },
+    {
+      field: 'Actions',
+      headerName: 'Actions',
+      width: 80,
+      sortable: false,
+      filter: false,
+      cellRenderer: MobileActionsRendererComponent,
+      cellRendererParams: {
+        onEditClick: (data: any) => this.requestTimesheetProcess(data),
+      },
+      cellClass: 'text-center',
+    },
   ];
 
   dateFormatter(params: ValueFormatterParams): string {
@@ -235,5 +284,25 @@ export class ListTimesheetComponent implements OnInit, OnDestroy {
       month: 'short',
       day: 'numeric',
     });
+  }
+  requestTimesheetProcess(data: any) {}
+
+  deleteTimesheet(data: any) {}
+  statusRenderer(params: ICellRendererParams): string {
+    const isActive = params.value;
+    const statusText = isActive ? 'Active' : 'Inactive';
+    const statusClass = isActive ? 'success' : 'danger';
+    const icon = isActive ? 'mdi-check-circle' : 'mdi-close-circle';
+
+    return `
+              <div class="d-flex align-items-center gap-2">
+                <i class="mdi ${icon} text-${statusClass}"></i>
+                <span class="badge bg-${statusClass}">${statusText}</span>
+              </div>
+            `;
+  }
+  statusCellClass(params: any): string {
+    const isActive = params.value;
+    return isActive ? 'status-active' : 'status-inactive';
   }
 }
