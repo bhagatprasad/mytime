@@ -106,7 +106,8 @@ export class LeaveapplyComponent implements OnInit {
           headerName: 'Status',
           width: 120,
           cellRenderer: this.statusRenderer
-        },{
+        },
+        {
           headerName: 'Action',
           width: 120,
           cellRenderer: (params: any) => {
@@ -135,7 +136,7 @@ export class LeaveapplyComponent implements OnInit {
         {
           field: 'LeaveTypeId',
           headerName: 'Leave Type',
-          width: 160,
+          width: 180,
           valueGetter: (p) => this.getLeaveTypeName(p.data.LeaveTypeId),
           filter: 'agTextColumnFilter',
           sortable: true
@@ -143,8 +144,8 @@ export class LeaveapplyComponent implements OnInit {
 
         {
           field: 'FromDate',
-          headerName: 'From',
-          width: 120,
+          headerName: 'From Date',
+          width: 130,
           valueFormatter: (p) => new Date(p.value).toLocaleDateString(),
           filter: 'agTextColumnFilter',
           sortable: true
@@ -152,8 +153,8 @@ export class LeaveapplyComponent implements OnInit {
 
         {
           field: 'ToDate',
-          headerName: 'To',
-          width: 120,
+          headerName: 'To Date',
+          width: 130,
           valueFormatter: (p) => new Date(p.value).toLocaleDateString(),
           filter: 'agTextColumnFilter',
           sortable: true
@@ -162,7 +163,8 @@ export class LeaveapplyComponent implements OnInit {
         {
           field: 'TotalDays',
           headerName: 'Total days',
-          width: 100,
+          width: 140,
+          cellClass: 'text-center',
           filter: 'agNumberColumnFilter',
           sortable: true
         },
@@ -220,20 +222,9 @@ export class LeaveapplyComponent implements OnInit {
             return `<span class="status-pill ${cssClass}">${status}</span>`;
           }
         },
-
-        {
-          field: 'IsActive',
-          headerName: 'Status',
-          width: 120,
-          filter: 'agTextColumnFilter',
-          sortable: true,
-          cellRenderer: this.isactiveRenderer.bind(this),
-          cellClass: this.statusCellClass.bind(this)
-        },
-
         {
           headerName: 'Action',
-          width: 120,
+          width: 140,
           cellRenderer: (params: any) => {
 
             const btn = document.createElement('button');
@@ -269,26 +260,6 @@ export class LeaveapplyComponent implements OnInit {
 
     return `<span class="status-badge ${css}">${status}</span>`;
   }
-
-  statusCellClass(params: any): string {
-    const isActive = params.value;
-    return isActive ? 'status-active' : 'status-inactive';
-  }
-
-  isactiveRenderer(params: ICellRendererParams): string {
-    const isActive = params.value;
-    const statusText = isActive ? 'Active' : 'Inactive';
-    const statusClass = isActive ? 'success' : 'danger';
-    const icon = isActive ? 'mdi-check-circle' : 'mdi-close-circle';
-
-    return `
-              <div class="d-flex align-items-center gap-2">
-                <i class="mdi ${icon} text-${statusClass}"></i>
-                <span class="badge bg-${statusClass}">${statusText}</span>
-              </div>
-            `;
-  }
-
 
   activeRenderer(params: any) {
 

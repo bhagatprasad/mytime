@@ -1,19 +1,14 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { OnIdentifyEffects } from '@ngrx/effects';
 import { AgGridAngular } from 'ag-grid-angular';
 import { AllCommunityModule, ColDef, GridApi, GridOptions, GridReadyEvent, ICellRendererParams, ModuleRegistry, ValueFormatterParams } from 'ag-grid-community';
-import { ActionsRendererComponent } from '../../../common/components/actions-renderer.component';
-import { MobileActionsRendererComponent } from '../../../common/components/mobile-actions-renderer.component';
 import { LeaveRequest } from '../../models/leave-request.model';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from '../../../common/services/loader.service';
 import { AuditFieldsService } from '../../../common/services/auditfields.service';
 import { LeaveService } from '../../services/leave.service';
-import { Designation } from '../../models/designation';
 import { Employee } from '../../models/employee';
-import { User } from '../../models/user';
 import { EmployeeService } from '../../services/employee.service';
 import { LeaveType } from '../../models/leave-type.model';
 
@@ -44,14 +39,6 @@ export class ApplyLeaveComponent implements OnInit {
   // Desktop Columns (7-8 columns)
   desktopColumnDefs: ColDef[] = [
     {
-      field: 'Id',
-      headerName: 'ID',
-      width: 80,
-      filter: 'agNumberColumnFilter',
-      sortable: true,
-      cellClass: 'text-center',
-    },
-    {
       field: 'UserId',
       headerName: 'Employee',
       width: 180,
@@ -68,8 +55,9 @@ export class ApplyLeaveComponent implements OnInit {
 
         const firstName = this.capitalize(emp.FirstName);
         const lastName = this.capitalize(emp.LastName);
+        const empCode = emp.EmployeeCode;
 
-        return `${firstName} ${lastName}`.trim();
+        return `${firstName} ${lastName} (${empCode})`.trim();
       }
     },
     {
@@ -78,7 +66,7 @@ export class ApplyLeaveComponent implements OnInit {
       width: 160,
       sortable: true,
       filter: 'agTextColumnFilter',
-      cellClass: 'text-center',
+      cellClass: 'text-left',
 
       valueGetter: (params: any) => {
 
@@ -91,24 +79,20 @@ export class ApplyLeaveComponent implements OnInit {
       }
     },
     {
-      field: 'Reason',
-      headerName: 'Reason',
-      width: 120,
+      headerName: 'Notes',
+      width: 200,
       filter: 'agTextColumnFilter',
       sortable: true,
-      cellClass: 'text-center'
-    },
-    {
-      field: 'Description',
-      headerName: 'Description',
-      width: 120,
-      filter: 'agTextColumnFilter',
-      sortable: true,
-      cellClass: 'text-center'
+      cellClass: 'text-left',
+      valueGetter: (params: any) => {
+        const reason = params.data.Reason || '';
+        const description = params.data.Description || '';
+        return `${reason} - ${description}`.trim();
+      }
     },
     {
       field: 'FromDate',
-      headerName: 'FromDate',
+      headerName: 'From Date',
       width: 120,
       filter: 'agTextColumnFilter',
       sortable: true,
@@ -116,7 +100,7 @@ export class ApplyLeaveComponent implements OnInit {
     },
     {
       field: 'ToDate',
-      headerName: 'ToDate',
+      headerName: 'To Date',
       width: 120,
       filter: 'agTextColumnFilter',
       sortable: true,
@@ -124,20 +108,11 @@ export class ApplyLeaveComponent implements OnInit {
     },
     {
       field: 'TotalDays',
-      headerName: 'TotalDays',
+      headerName: 'No of Days',
       width: 120,
       filter: 'agTextColumnFilter',
       sortable: true,
       cellClass: 'text-center'
-    },
-    {
-      field: 'IsActive',
-      headerName: 'Status',
-      width: 120,
-      filter: 'agTextColumnFilter',
-      sortable: true,
-      cellRenderer: this.statusRenderer.bind(this),
-      cellClass: this.statusCellClass.bind(this)
     },
     {
       field: 'Status',
@@ -202,16 +177,51 @@ export class ApplyLeaveComponent implements OnInit {
 
         const firstName = this.capitalize(emp.FirstName);
         const lastName = this.capitalize(emp.LastName);
+        const empCode = emp.EmployeeCode;
 
-        return `${firstName} ${lastName}`.trim();
+        return `${firstName} ${lastName} (${empCode})`.trim();
       }
     },
     {
-      field: 'Reason',
-      headerName: 'Reason',
-      width: 100,
-      cellClass: 'text-center'
+      field: 'LeaveTypeId',
+      headerName: 'Leave Type',
+      width: 160,
+      sortable: true,
+      filter: 'agTextColumnFilter',
+      cellClass: 'text-left',
+
+      valueGetter: (params: any) => {
+
+        const type = this.leaveTypes.find(
+          t => Number(t.Id) === Number(params.data.LeaveTypeId)
+        );
+
+        return type ? type.Name : params.data.LeaveTypeId;
+
+      }
     },
+    {
+  headerName: 'Leave Period',
+  width: 260,
+  sortable: true,
+  cellRenderer: (params: any) => {
+
+    const from = params.data.FromDate;
+    const to = params.data.ToDate;
+    const days = params.data.TotalDays;
+
+    return `
+      <div class="leave-period">
+        <div class="leave-dates">
+          ${from} → ${to}
+        </div>
+        <div class="leave-days">
+          ${days} Days
+        </div>
+      </div>
+    `;
+  }
+},
     {
       headerName: 'Actions',
       field: 'actions',
@@ -401,31 +411,12 @@ export class ApplyLeaveComponent implements OnInit {
       `;
   }
 
-  statusRenderer(params: ICellRendererParams): string {
-    const isActive = params.value;
-    const statusText = isActive ? 'Active' : 'Inactive';
-    const statusClass = isActive ? 'success' : 'danger';
-    const icon = isActive ? 'mdi-check-circle' : 'mdi-close-circle';
-
-    return `
-        <div class="d-flex align-items-center gap-2">
-          <i class="mdi ${icon} text-${statusClass}"></i>
-          <span class="badge bg-${statusClass}">${statusText}</span>
-        </div>
-      `;
-  }
-
   mobileStatusRenderer(params: ICellRendererParams): string {
     const isActive = params.value;
     const statusText = isActive ? 'Active' : 'Inactive';
     const statusClass = isActive ? 'success' : 'danger';
 
     return `<span class="badge bg-${statusClass}">${statusText}</span>`;
-  }
-
-  statusCellClass(params: any): string {
-    const isActive = params.value;
-    return isActive ? 'status-active' : 'status-inactive';
   }
 
   dateFormatter(params: ValueFormatterParams): string {
@@ -460,16 +451,16 @@ export class ApplyLeaveComponent implements OnInit {
   }
 
   getLeaveTypes() {
-  this.leaveService.GetleaveTypesAsync().subscribe(res => {
+    this.leaveService.GetleaveTypesAsync().subscribe(res => {
 
-    this.leaveTypes = res;
+      this.leaveTypes = res;
 
-    if (this.gridApi) {
-      this.gridApi.refreshCells();
-    }
+      if (this.gridApi) {
+        this.gridApi.refreshCells();
+      }
 
-  });
-}
+    });
+  }
 
   submitAction() {
 
