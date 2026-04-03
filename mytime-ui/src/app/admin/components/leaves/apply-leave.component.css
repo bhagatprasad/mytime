@@ -449,3 +449,18 @@ color:#b28704;
 background:#f2f2f2;
 color:#6c757d;
 }
+
+::ng-deep .leave-period {
+  line-height: 1.4;
+  padding: 2px 0;
+}
+
+::ng-deep .leave-dates {
+  font-weight: 500;
+  font-size: 13px;
+}
+
+::ng-deep .leave-days {
+  font-size: 12px;
+  color: #666;
+}
