@@ -35,18 +35,6 @@
         </div>
 
         <div class="card-body p-0">
-          <!--  SHOW FORM -->
-          <div *ngIf="showForm" class="p-3">
-            <app-add-timesheet></app-add-timesheet>
-
-            <!-- optional close button -->
-            <div class="mt-3 text-end">
-              <button class="btn btn-secondary" (click)="closeForm()">
-                Close Form
-              </button>
-            </div>
-          </div>
-
           <!--  SHOW GRID ONLY WHEN FORM IS HIDDEN -->
           <div
             *ngIf="!showForm && timesheets.length > 0"
@@ -104,6 +92,17 @@
                 {{ isMobile ? "Mobile" : "Desktop" }}
               </small>
             </div>
+          </div>
+        </div>
+        <!--  SHOW FORM -->
+        <div *ngIf="showForm" class="p-3">
+          <app-add-timesheet [taskitems]="taskitems"></app-add-timesheet>
+
+          <!-- optional close button -->
+          <div class="mt-3 text-end">
+            <button class="btn btn-secondary" (click)="closeForm()">
+              Close Form
+            </button>
           </div>
         </div>
       </div>

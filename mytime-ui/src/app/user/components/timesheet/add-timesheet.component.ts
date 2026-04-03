@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,6 +7,7 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { TaskItem } from '../../../admin/models/taskitem';
 
 @Component({
   selector: 'app-add-timesheet',
@@ -18,16 +19,13 @@ import {
 export class AddTimesheetComponent implements OnInit {
   timesheetForm!: FormGroup;
 
-  // Company rules
+  @Input() taskitems: TaskItem[] = [];
+
   dailyMin = 8;
   dailyMax = 9;
   weeklyMin = 40;
   weeklyMax = 45;
 
-  // Task Items
-  taskItems: string[] = ['work', 'leave'];
-
-  // Task Codes
   taskCodeMap: { [key: string]: { label: string; value: string }[] } = {
     work: [
       { label: 'API-1', value: 'API-1' },
@@ -51,11 +49,9 @@ export class AddTimesheetComponent implements OnInit {
     ],
   };
 
-  // Date range properties
   selectedDate: Date = new Date();
   weekStart: Date = new Date();
   weekEnd: Date = new Date();
-
   weekDates = {
     monday: '',
     tuesday: '',
@@ -66,16 +62,10 @@ export class AddTimesheetComponent implements OnInit {
     sunday: '',
   };
 
-  // Calendar view properties
   currentMonth: Date = new Date();
   currentYear: number = new Date().getFullYear();
   calendarDays: Date[] = [];
   showCalendar: boolean = false;
-
-  // View modes
-  viewMode: 'week' | 'month' | 'year' = 'week';
-
-  // Month names
   monthNames = [
     'January',
     'February',
@@ -91,12 +81,10 @@ export class AddTimesheetComponent implements OnInit {
     'December',
   ];
 
-  // Multi-week storage
   weeks: Map<string, any[]> = new Map();
   currentWeekKey: string = '';
   availableWeeks: { key: string; label: string }[] = [];
 
-  // Toast message properties
   toastMessage: string = '';
   toastType: 'error' | 'warning' | 'success' = 'error';
   showToast: boolean = false;
@@ -109,12 +97,13 @@ export class AddTimesheetComponent implements OnInit {
     this.timesheetForm = this.fb.group({
       rows: this.fb.array([]),
     });
+
     this.currentWeekKey = this.getWeekKey(this.weekStart);
     this.updateAvailableWeeks();
     this.addRow();
   }
 
-  // Toast notification methods
+  // Toast
   showToastMessage(
     message: string,
     type: 'error' | 'warning' | 'success',
@@ -122,10 +111,7 @@ export class AddTimesheetComponent implements OnInit {
     this.toastMessage = message;
     this.toastType = type;
     this.showToast = true;
-
-    setTimeout(() => {
-      this.hideToast();
-    }, 3000);
+    setTimeout(() => this.hideToast(), 3000);
   }
 
   hideToast(): void {
@@ -133,7 +119,7 @@ export class AddTimesheetComponent implements OnInit {
     this.toastMessage = '';
   }
 
-  // Date methods
+  // Date Helpers
   initializeWeekDates(): void {
     const today = new Date();
     const dayOfWeek = today.getDay();
@@ -171,43 +157,32 @@ export class AddTimesheetComponent implements OnInit {
   formatDate(date: Date): string {
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+    return `${day}/${month}/${date.getFullYear()}`;
   }
 
   formatDateForDisplay(date: Date): string {
-    const day = date.getDate();
-    const month = this.monthNames[date.getMonth()];
-    const year = date.getFullYear();
-    return `${month} ${day}, ${year}`;
+    return `${this.monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
   }
 
-  // Week management methods
+  // Week Management
   getWeekKey(date: Date): string {
     const year = date.getFullYear();
-    const weekNumber = this.getWeekNumber(date);
+    const firstDayOfYear = new Date(year, 0, 1);
+    const pastDays = (date.getTime() - firstDayOfYear.getTime()) / 86400000;
+    const weekNumber = Math.ceil((pastDays + firstDayOfYear.getDay() + 1) / 7);
     return `${year}-W${weekNumber}`;
   }
 
-  getWeekNumber(date: Date): number {
-    const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-    const pastDaysOfYear =
-      (date.getTime() - firstDayOfYear.getTime()) / 86400000;
-    return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
-  }
-
   saveCurrentWeekData(): void {
-    const currentData = this.timesheetForm.getRawValue();
-    this.weeks.set(this.currentWeekKey, currentData.rows);
+    this.weeks.set(this.currentWeekKey, this.timesheetForm.getRawValue().rows);
     this.updateAvailableWeeks();
   }
 
   loadWeekData(event: any): void {
-    const weekKey = event.target.value;
     this.saveCurrentWeekData();
+    this.currentWeekKey = event.target.value;
 
-    this.currentWeekKey = weekKey;
-    const weekData = this.weeks.get(weekKey);
+    const weekData = this.weeks.get(this.currentWeekKey);
 
     while (this.rows.length) {
       this.rows.removeAt(0);
@@ -223,20 +198,20 @@ export class AddTimesheetComponent implements OnInit {
       this.addRow();
     }
 
-    this.updateWeekDatesFromKey(weekKey);
+    this.updateWeekDatesFromKey(this.currentWeekKey);
   }
 
   updateWeekDatesFromKey(weekKey: string): void {
     const [year, week] = weekKey.split('-W');
-    const weekNumber = parseInt(week);
+    const weekNumber = parseInt(week, 10);
 
-    const firstDayOfYear = new Date(parseInt(year), 0, 1);
-    const daysOffset = (weekNumber - 1) * 7;
+    const firstDayOfYear = new Date(parseInt(year, 10), 0, 1);
     const startDate = new Date(firstDayOfYear);
-    startDate.setDate(firstDayOfYear.getDate() + daysOffset);
+    startDate.setDate(firstDayOfYear.getDate() + (weekNumber - 1) * 7);
 
     const dayOfWeek = startDate.getDay();
     const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+
     this.weekStart = new Date(startDate);
     this.weekStart.setDate(startDate.getDate() - diffToMonday);
 
@@ -246,33 +221,28 @@ export class AddTimesheetComponent implements OnInit {
   updateAvailableWeeks(): void {
     const allWeeks = new Set<string>();
 
-    this.weeks.forEach((_, key) => {
-      allWeeks.add(key);
-    });
-
-    if (this.currentWeekKey) {
-      allWeeks.add(this.currentWeekKey);
-    }
+    this.weeks.forEach((_, key) => allWeeks.add(key));
+    if (this.currentWeekKey) allWeeks.add(this.currentWeekKey);
 
     this.availableWeeks = Array.from(allWeeks)
-      .sort((a, b) => a.localeCompare(b))
+      .sort()
       .map((key) => ({
-        key: key,
+        key,
         label: this.formatWeekLabel(key),
       }));
   }
 
   formatWeekLabel(weekKey: string): string {
     const [year, week] = weekKey.split('-W');
-    const weekNumber = parseInt(week);
+    const weekNumber = parseInt(week, 10);
 
-    const firstDayOfYear = new Date(parseInt(year), 0, 1);
-    const daysOffset = (weekNumber - 1) * 7;
+    const firstDayOfYear = new Date(parseInt(year, 10), 0, 1);
     const startDate = new Date(firstDayOfYear);
-    startDate.setDate(firstDayOfYear.getDate() + daysOffset);
+    startDate.setDate(firstDayOfYear.getDate() + (weekNumber - 1) * 7);
 
     const dayOfWeek = startDate.getDay();
     const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+
     const weekStart = new Date(startDate);
     weekStart.setDate(startDate.getDate() - diffToMonday);
 
@@ -282,60 +252,27 @@ export class AddTimesheetComponent implements OnInit {
     return `${this.formatDateForDisplay(weekStart)} - ${this.formatDateForDisplay(weekEnd)}`;
   }
 
-  goToPreviousWeek(): void {
-    this.saveCurrentWeekData();
-    const prevWeek = new Date(this.weekStart);
-    prevWeek.setDate(this.weekStart.getDate() - 7);
-    this.weekStart = prevWeek;
-    this.updateWeekDates();
-    this.currentWeekKey = this.getWeekKey(this.weekStart);
-    this.loadWeekData({ target: { value: this.currentWeekKey } });
-  }
-
-  goToNextWeek(): void {
-    this.saveCurrentWeekData();
-    const nextWeek = new Date(this.weekStart);
-    nextWeek.setDate(this.weekStart.getDate() + 7);
-    this.weekStart = nextWeek;
-    this.updateWeekDates();
-    this.currentWeekKey = this.getWeekKey(this.weekStart);
-
-    const weekData = this.weeks.get(this.currentWeekKey);
-    if (weekData) {
-      this.loadWeekData({ target: { value: this.currentWeekKey } });
-    } else {
-      while (this.rows.length) {
-        this.rows.removeAt(0);
-      }
-      this.addRow();
-    }
-  }
-
-  goToToday(): void {
-    this.saveCurrentWeekData();
-    this.initializeWeekDates();
-    this.currentWeekKey = this.getWeekKey(this.weekStart);
-    this.loadWeekData({ target: { value: this.currentWeekKey } });
-  }
-
-  // Calendar methods
+  // Calendar
   toggleCalendar(): void {
     this.showCalendar = !this.showCalendar;
     if (this.showCalendar) {
+      this.currentMonth = new Date(this.weekStart);
+      this.currentYear = this.currentMonth.getFullYear();
       this.generateCalendarDays();
     }
   }
 
   generateCalendarDays(): void {
     this.calendarDays = [];
+
     const firstDayOfMonth = new Date(
       this.currentYear,
       this.currentMonth.getMonth(),
       1,
     );
+
     const startDate = new Date(firstDayOfMonth);
-    const startDayOfWeek = startDate.getDay();
-    startDate.setDate(startDate.getDate() - startDayOfWeek);
+    startDate.setDate(startDate.getDate() - startDate.getDay());
 
     for (let i = 0; i < 42; i++) {
       const date = new Date(startDate);
@@ -350,6 +287,7 @@ export class AddTimesheetComponent implements OnInit {
       this.currentMonth.getMonth() - 1,
       1,
     );
+    this.currentYear = this.currentMonth.getFullYear();
     this.generateCalendarDays();
   }
 
@@ -359,6 +297,7 @@ export class AddTimesheetComponent implements OnInit {
       this.currentMonth.getMonth() + 1,
       1,
     );
+    this.currentYear = this.currentMonth.getFullYear();
     this.generateCalendarDays();
   }
 
@@ -377,20 +316,26 @@ export class AddTimesheetComponent implements OnInit {
   }
 
   isCurrentMonth(date: Date): boolean {
-    return date.getMonth() === this.currentMonth.getMonth();
+    return (
+      date.getMonth() === this.currentMonth.getMonth() &&
+      date.getFullYear() === this.currentMonth.getFullYear()
+    );
   }
 
   isSelectedWeek(date: Date): boolean {
-    const weekStartCopy = new Date(this.weekStart);
-    const weekEndCopy = new Date(this.weekEnd);
-    return date >= weekStartCopy && date <= weekEndCopy;
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+
+    const start = new Date(this.weekStart);
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date(this.weekEnd);
+    end.setHours(23, 59, 59, 999);
+
+    return d >= start && d <= end;
   }
 
-  setViewMode(mode: 'week' | 'month' | 'year'): void {
-    this.viewMode = mode;
-  }
-
-  // Form methods
+  // Form Array
   get rows(): FormArray {
     return this.timesheetForm.get('rows') as FormArray;
   }
@@ -411,146 +356,62 @@ export class AddTimesheetComponent implements OnInit {
 
   addRow(): void {
     this.rows.push(this.createRow());
+    this.showToastMessage('New row added', 'success');
   }
 
   removeRow(index: number): void {
     if (this.rows.length > 1) {
-      const rowToRemove = this.rows.at(index);
-      const rowData = rowToRemove.getRawValue();
-
-      const affectedDays = [
-        'monday',
-        'tuesday',
-        'wednesday',
-        'thursday',
-        'friday',
-      ].filter((day) => Number(rowData[day] || 0) > 0);
-
-      if (affectedDays.length > 0) {
-        const confirmDelete = confirm(
-          `This row has ${affectedDays.length} day(s) with hours. Removing it may make those days incomplete. Continue?`,
-        );
-        if (!confirmDelete) {
-          return;
-        }
-      }
-
       this.rows.removeAt(index);
-      affectedDays.forEach((day) => {
-        this.validateDayAfterChange(day);
-      });
-
       this.showToastMessage('Row deleted successfully', 'success');
     }
   }
 
-  getTaskCodes(taskItem: string): { label: string; value: string }[] {
+  getTaskCodes(taskItem: string) {
     return this.taskCodeMap[taskItem] || [];
   }
 
-  onTaskItemChange(index: number): void {
-    const row = this.rows.at(index);
-    row.get('taskCode')?.setValue('');
+  onTaskItemChange(index: number) {
+    this.rows.at(index).get('taskCode')?.setValue('');
   }
 
   getRowTotal(row: any): number {
-    return (
-      Number(row.monday || 0) +
-      Number(row.tuesday || 0) +
-      Number(row.wednesday || 0) +
-      Number(row.thursday || 0) +
-      Number(row.friday || 0) +
-      Number(row.saturday || 0) +
-      Number(row.sunday || 0)
-    );
+    return [
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday',
+      'sunday',
+    ].reduce((sum, d) => sum + (Number(row[d]) || 0), 0);
   }
 
   getDayTotal(day: string): number {
-    return this.rows.controls.reduce((total, row) => {
-      const rowValue = row.getRawValue();
-      return total + Number(rowValue[day] || 0);
-    }, 0);
+    return this.rows.controls.reduce(
+      (total, row) => total + (Number(row.getRawValue()[day]) || 0),
+      0,
+    );
   }
 
   getWorkedDayTotal(day: string): number {
     return this.rows.controls.reduce((total, row) => {
-      const rowValue = row.getRawValue();
-      if (rowValue.taskItem === 'work') {
-        return total + Number(rowValue[day] || 0);
-      }
-      return total;
+      const r = row.getRawValue();
+      return total + (r.taskItem === 'work' ? Number(r[day]) || 0 : 0);
     }, 0);
   }
 
   getLeaveDayTotal(day: string): number {
     return this.rows.controls.reduce((total, row) => {
-      const rowValue = row.getRawValue();
-      if (rowValue.taskItem === 'leave') {
-        return total + Number(rowValue[day] || 0);
-      }
-      return total;
-    }, 0);
-  }
-
-  getWorkedWeekTotal(): number {
-    return this.rows.controls.reduce((total, row) => {
-      const rowValue = row.getRawValue();
-      if (rowValue.taskItem === 'work') {
-        return total + this.getRowTotal(rowValue);
-      }
-      return total;
-    }, 0);
-  }
-
-  getLeaveWeekTotal(): number {
-    return this.rows.controls.reduce((total, row) => {
-      const rowValue = row.getRawValue();
-      if (rowValue.taskItem === 'leave') {
-        return total + this.getRowTotal(rowValue);
-      }
-      return total;
+      const r = row.getRawValue();
+      return total + (r.taskItem === 'leave' ? Number(r[day]) || 0 : 0);
     }, 0);
   }
 
   getWeekTotal(): number {
-    return this.rows.controls.reduce((total, row) => {
-      return total + this.getRowTotal(row.getRawValue());
-    }, 0);
-  }
-
-  // Validation methods
-  validateDayAfterChange(day: string): void {
-    const total = this.getDayTotal(day);
-    const worked = this.getWorkedDayTotal(day);
-    const leave = this.getLeaveDayTotal(day);
-
-    if (total > this.dailyMax) {
-      this.showToastMessage(
-        `${this.capitalize(day)} has exceeded ${this.dailyMax} hours! Current: ${total} hrs`,
-        'error',
-      );
-    } else if (
-      worked > 0 &&
-      leave > 0 &&
-      total >= this.dailyMin &&
-      total <= this.dailyMax
-    ) {
-      this.showToastMessage(
-        `${this.capitalize(day)}: ${worked}h work + ${leave}h leave = ${total}h (Half Day Work + Half Day Leave)`,
-        'success',
-      );
-    } else if (total >= this.dailyMin && total <= this.dailyMax) {
-      this.showToastMessage(
-        `${this.capitalize(day)} completed with ${total} hours!`,
-        'success',
-      );
-    } else if (total > 0 && total < this.dailyMin) {
-      const remaining = this.dailyMin - total;
-      this.showToastMessage(
-        `${this.capitalize(day)} needs ${remaining} more hour(s) to reach minimum ${this.dailyMin} hrs`,
-        'warning',
-      );
-    }
+    return this.rows.controls.reduce(
+      (total, row) => total + this.getRowTotal(row.getRawValue()),
+      0,
+    );
   }
 
   validateHourEntry(rowIndex: number, day: string, event: any): void {
@@ -572,59 +433,12 @@ export class AddTimesheetComponent implements OnInit {
       return;
     }
 
-    const existingWork = this.getWorkedDayTotal(day);
-    const existingLeave = this.getLeaveDayTotal(day);
-    const oldValue = Number(row.get(day)?.value || 0);
-
-    let newWorkValue = 0;
-    let newLeaveValue = 0;
-
-    if (taskItem === 'work') {
-      newWorkValue = value;
-      newLeaveValue = existingLeave;
-    } else if (taskItem === 'leave') {
-      newLeaveValue = value;
-      newWorkValue = existingWork;
-    }
-
-    const totalAfterChange = newWorkValue + newLeaveValue;
-
-    if (taskItem === 'work' && existingLeave > 0) {
-      this.showToastMessage(
-        `Cannot add work on ${this.capitalize(day)} because it already has ${existingLeave}h of leave.`,
-        'error',
-      );
-      row.get(day)?.setValue(oldValue);
-      event.target.value = oldValue;
-      return;
-    }
-
-    if (taskItem === 'leave' && existingWork > 0) {
-      this.showToastMessage(
-        `Cannot add leave on ${this.capitalize(day)} because it already has ${existingWork}h of work.`,
-        'error',
-      );
-      row.get(day)?.setValue(oldValue);
-      event.target.value = oldValue;
-      return;
-    }
-
-    if (totalAfterChange > this.dailyMax) {
-      this.showToastMessage(
-        `${this.capitalize(day)} cannot exceed ${this.dailyMax} hours. Current: ${existingWork + existingLeave}h`,
-        'error',
-      );
-      row.get(day)?.setValue(oldValue);
-      event.target.value = oldValue;
-      return;
-    }
-
-    this.validateDayAfterChange(day);
+    row.get(day)?.setValue(value);
   }
 
   isDayComplete(day: string): boolean {
-    const total = this.getDayTotal(day);
-    return total >= this.dailyMin && total <= this.dailyMax;
+    const t = this.getDayTotal(day);
+    return t >= this.dailyMin && t <= this.dailyMax;
   }
 
   isDayExceeded(day: string): boolean {
@@ -632,79 +446,25 @@ export class AddTimesheetComponent implements OnInit {
   }
 
   isDayEditable(day: string): boolean {
-    if (day === 'saturday' || day === 'sunday') {
-      return false;
-    }
-
-    if (this.isDayComplete(day)) {
-      return false;
-    }
-
-    switch (day) {
-      case 'monday':
-        return true;
-      case 'tuesday':
-        return this.isDayComplete('monday');
-      case 'wednesday':
-        return this.isDayComplete('tuesday');
-      case 'thursday':
-        return this.isDayComplete('wednesday');
-      case 'friday':
-        return this.isDayComplete('thursday');
-      default:
-        return false;
-    }
-  }
-
-  onDayFocus(day: string): void {
-    if (!this.isDayEditable(day) && day !== 'saturday' && day !== 'sunday') {
-      let message = '';
-      if (this.isDayComplete(day)) {
-        message = `${this.capitalize(day)} is already completed. You cannot edit it.`;
-      } else if (day === 'tuesday' && !this.isDayComplete('monday')) {
-        message = `Please complete Monday first before entering Tuesday.`;
-      } else if (day === 'wednesday' && !this.isDayComplete('tuesday')) {
-        message = `Please complete Tuesday first before entering Wednesday.`;
-      } else if (day === 'thursday' && !this.isDayComplete('wednesday')) {
-        message = `Please complete Wednesday first before entering Thursday.`;
-      } else if (day === 'friday' && !this.isDayComplete('thursday')) {
-        message = `Please complete Thursday first before entering Friday.`;
-      }
-
-      if (message) {
-        this.showToastMessage(message, 'warning');
-      }
-    }
+    return !(day === 'saturday' || day === 'sunday');
   }
 
   getDayWarning(day: string): string {
     const total = this.getDayTotal(day);
-    const worked = this.getWorkedDayTotal(day);
-    const leave = this.getLeaveDayTotal(day);
-
-    if (total > this.dailyMax) {
-      return `⚠️ Exceeds ${this.dailyMax}h limit!`;
-    }
-    if (total > 0 && total < this.dailyMin) {
-      return `⚠️ Needs ${this.dailyMin - total}h more`;
-    }
-    if (worked > 0 && leave > 0) {
-      return `✓ ${worked}h work + ${leave}h leave`;
-    }
+    if (total > this.dailyMax) return `Exceeds ${this.dailyMax}h!`;
+    if (total > 0 && total < this.dailyMin)
+      return `Needs ${this.dailyMin - total}h more`;
     return '';
   }
 
   getDayCellClass(day: string): string {
-    const total = this.getDayTotal(day);
-    if (total > this.dailyMax) return 'cell-exceeded';
-    if (total >= this.dailyMin && total <= this.dailyMax)
-      return 'cell-completed';
-    if (total > 0 && total < this.dailyMin) return 'cell-incomplete';
-    return '';
-  }
+    const t = this.getDayTotal(day);
 
-  capitalize(day: string): string {
-    return day.charAt(0).toUpperCase() + day.slice(1);
+    if (t > this.dailyMax) return 'cell-exceeded';
+    if (t >= this.dailyMin && t <= this.dailyMax) return 'cell-completed';
+    if (t > 0 && t < this.dailyMin) return 'cell-incomplete';
+
+    return '';
   }
 
   isWeekValid(): boolean {
@@ -712,137 +472,16 @@ export class AddTimesheetComponent implements OnInit {
     return total >= this.weeklyMin && total <= this.weeklyMax;
   }
 
-  getDayStatus(day: string): string {
-    if (day === 'saturday' || day === 'sunday') {
-      return 'Holiday';
-    }
-
-    const total = this.getDayTotal(day);
-    const worked = this.getWorkedDayTotal(day);
-    const leave = this.getLeaveDayTotal(day);
-
-    if (total > this.dailyMax) {
-      return 'Exceeded';
-    }
-
-    if (worked > 0 && leave > 0) {
-      if (total >= this.dailyMin && total <= this.dailyMax) {
-        return 'Half Leave + Work';
-      }
-      if (total < this.dailyMin) {
-        return 'Incomplete';
-      }
-    }
-
-    if (worked === 0 && leave >= this.dailyMin) {
-      return 'Full Leave';
-    }
-
-    if (leave === 0 && worked >= this.dailyMin) {
-      return 'Full Work';
-    }
-
-    if (total < this.dailyMin && total > 0) {
-      return 'Incomplete';
-    }
-
-    if (total === 0) {
-      return 'Incomplete';
-    }
-
-    return 'Valid';
-  }
-
-  getDayStatusShort(day: string): string {
-    const status = this.getDayStatus(day);
-    const worked = this.getWorkedDayTotal(day);
-    const leave = this.getLeaveDayTotal(day);
-
-    switch (status) {
-      case 'Full Work':
-        return '✓ Work';
-      case 'Half Leave + Work':
-        return `${worked}h + ${leave}h`;
-      case 'Full Leave':
-        return '✗ Leave';
-      case 'Incomplete':
-        return '⚠️ Inc';
-      case 'Exceeded':
-        return '⚠️ Exc';
-      case 'Holiday':
-        return 'Holiday';
-      default:
-        return '—';
-    }
-  }
-
-  getDayBreakdown(day: string): string {
-    const worked = this.getWorkedDayTotal(day);
-    const leave = this.getLeaveDayTotal(day);
-    const total = worked + leave;
-
-    if (worked > 0 && leave > 0) {
-      return `${worked}h + ${leave}h = ${total}h`;
-    }
-    if (worked > 0) {
-      return `${worked}h Work`;
-    }
-    if (leave > 0) {
-      return `${leave}h Leave`;
-    }
-    return '0h';
-  }
-
-  getDayStatusClass(day: string): string {
-    const status = this.getDayStatus(day);
-    switch (status) {
-      case 'Full Work':
-        return 'status-work';
-      case 'Half Leave + Work':
-        return 'status-half';
-      case 'Full Leave':
-        return 'status-leave';
-      case 'Incomplete':
-        return 'status-incomplete';
-      case 'Exceeded':
-        return 'status-exceeded';
-      case 'Holiday':
-        return 'status-holiday';
-      default:
-        return '';
-    }
-  }
-
   hasSubmitErrors(): boolean {
-    return (
-      this.isDayExceeded('monday') ||
-      this.isDayExceeded('tuesday') ||
-      this.isDayExceeded('wednesday') ||
-      this.isDayExceeded('thursday') ||
-      this.isDayExceeded('friday')
+    return ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].some(
+      (day) => this.isDayExceeded(day),
     );
   }
 
   submitTimesheet(): void {
-    const exceededDays = [
-      'monday',
-      'tuesday',
-      'wednesday',
-      'thursday',
-      'friday',
-    ].filter((day) => this.isDayExceeded(day));
-
-    if (exceededDays.length > 0) {
-      this.showToastMessage(
-        `Please correct exceeded hours for: ${exceededDays.map((d) => this.capitalize(d)).join(', ')}`,
-        'error',
-      );
-      return;
-    }
-
     if (!this.isWeekValid()) {
       this.showToastMessage(
-        `Weekly total (${this.getWeekTotal()} hrs) should be between ${this.weeklyMin} and ${this.weeklyMax} hours.`,
+        `Weekly total (${this.getWeekTotal()}h) must be ${this.weeklyMin}-${this.weeklyMax}h.`,
         'error',
       );
       return;
@@ -850,13 +489,11 @@ export class AddTimesheetComponent implements OnInit {
 
     if (this.timesheetForm.valid) {
       this.saveCurrentWeekData();
-      this.showToastMessage(
-        `Timesheet for week ${this.formatWeekLabel(this.currentWeekKey)} submitted successfully!`,
-        'success',
-      );
+      this.showToastMessage(`Timesheet submitted!`, 'success');
+      console.log('Submitted Data:', this.timesheetForm.getRawValue());
     } else {
       this.showToastMessage(
-        'Please fill all required fields (Task Item and Task Code)',
+        'Fill all required fields (Task Item & Task Code)',
         'error',
       );
     }
