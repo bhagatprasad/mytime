@@ -149,14 +149,14 @@
 }
 
 /* MOBILE */
-@media (max-width:768px) {
+/* @media (max-width:768px) {
 
   .form-panel {
     width: 100%;
     border-radius: 0;
   }
 
-}
+} */
 
 /* SLIDE ANIMATION */
 @keyframes slide {
