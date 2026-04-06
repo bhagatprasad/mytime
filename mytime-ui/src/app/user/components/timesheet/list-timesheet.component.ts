@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Timesheet } from '../../../common/models/timesheet';
 import { TimesheetService } from '../../../common/services/timesheet.service';
 import {
@@ -10,7 +10,6 @@ import {
   GridReadyEvent,
   ICellRendererParams,
   ModuleRegistry,
-  ValueFormatterParams,
 } from 'ag-grid-community';
 import { AgGridModule } from 'ag-grid-angular';
 import { ToastrService } from 'ngx-toastr';
@@ -21,113 +20,189 @@ import { MobileActionsRendererComponent } from '../../../common/components/mobil
 import { TaskitemService } from '../../../admin/services/taskitem.service';
 import { TaskItem } from '../../../admin/models/taskitem';
 import { forkJoin } from 'rxjs';
+import { Taskcode } from '../../../admin/models/taskcode';
+import { TaskcodeService } from '../../../admin/services/taskcode.service';
+import { AuditFieldsService } from '../../../common/services/auditfields.service';
+import { DeleteConfirmationComponent } from '../../../common/components/delete.compunent';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-list-timesheet',
   standalone: true,
-  imports: [CommonModule, AgGridModule, AddTimesheetComponent],
+  imports: [
+    CommonModule,
+    AgGridModule,
+    AddTimesheetComponent,
+    DeleteConfirmationComponent,
+  ],
   templateUrl: './list-timesheet.component.html',
   styleUrl: './list-timesheet.component.css',
 })
-export class ListTimesheetComponent implements OnInit, OnDestroy {
-  today = new Date();
-
+export class ListTimesheetComponent implements OnInit {
   timesheets: Timesheet[] = [];
-
   taskitems: TaskItem[] = [];
+  taskcodes: Taskcode[] = [];
+
+  showSidebar = false;
+  selectedTimesheet: Timesheet | null = null;
+  mode: 'create' | 'edit' = 'create';
+
+  showDeletePopup = false;
+  selectedDeleteItem: Timesheet | null = null;
 
   private gridApi!: GridApi;
-  isMobile: boolean = false;
-
-  showForm: boolean = false;
+  isMobile = false;
 
   constructor(
+    private taskcodeService: TaskcodeService,
     private taskitemService: TaskitemService,
     private timesheetService: TimesheetService,
     private toastr: ToastrService,
     private loader: LoaderService,
+    private audit: AuditFieldsService,
   ) {}
 
   ngOnInit(): void {
+    this.checkScreenSize();
     this.setupResponsiveColumns();
-    this.LoadTimesheetDetails();
+    this.loadTimesheetDetails();
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
     this.checkScreenSize();
-    window.addEventListener('resize', this.onResize.bind(this));
-  }
-
-  ngOnDestroy(): void {
-    window.removeEventListener('resize', this.onResize.bind(this));
-  }
-
-  @HostListener('window:resize', ['$event'])
-  onResize(event: any): void {
-    this.checkScreenSize();
-  }
-
-  toggleForm() {
-    this.showForm = true;
-  }
-
-  closeForm() {
-    this.showForm = false;
   }
 
   private checkScreenSize(): void {
-    const wasMobile = this.isMobile;
+    const prev = this.isMobile;
     this.isMobile = window.innerWidth < 768;
 
-    if (wasMobile !== this.isMobile) {
+    if (prev !== this.isMobile) {
       this.setupResponsiveColumns();
     }
   }
 
   private setupResponsiveColumns(): void {
-    if (this.isMobile) {
-      this.columnDefs = [...this.mobileColumnDefs];
-      this.gridOptions.domLayout = 'autoHeight';
-    } else {
-      this.columnDefs = [...this.desktopColumnDefs];
-      this.gridOptions.domLayout = 'normal';
-    }
+    this.columnDefs = this.isMobile
+      ? [...this.mobileColumnDefs]
+      : [...this.desktopColumnDefs];
+
+    this.gridOptions.domLayout = this.isMobile ? 'autoHeight' : 'normal';
 
     if (this.gridApi) {
-      this.refreshGridColumns();
+      setTimeout(() => this.gridApi.sizeColumnsToFit(), 100);
     }
   }
 
-  private refreshGridColumns(): void {
-    if (!this.gridApi) return;
-    setTimeout(() => {
-      this.gridApi.refreshHeader();
-      this.gridApi.sizeColumnsToFit();
-    }, 100);
-  }
-
-  LoadTimesheetDetails(): void {
+  loadTimesheetDetails(): void {
     this.loader.show();
+
     forkJoin({
       timesheets: this.timesheetService.getTimesheetsListAsync(),
       taskitems: this.taskitemService.GetTaskitemListAsync(),
+      taskcodes: this.taskcodeService.getTaskcodeListAsync(),
     }).subscribe({
-      next: ({ timesheets, taskitems }) => {
-        this.timesheets = timesheets;
-        this.taskitems = taskitems;
+      next: ({ timesheets, taskitems, taskcodes }) => {
+        this.timesheets = timesheets || [];
+        this.taskitems = taskitems || [];
+        this.taskcodes = taskcodes || [];
         this.loader.hide();
 
         if (this.gridApi) {
-          setTimeout(() => {
-            this.gridApi.sizeColumnsToFit();
-          }, 100);
+          setTimeout(() => this.gridApi.sizeColumnsToFit(), 100);
         }
       },
       error: (error) => {
-        console.log('error fetching timesheet details', error);
+        console.error(error);
         this.loader.hide();
-        this.toastr.error('failed to load timesheet', 'Error');
+        this.toastr.error('Failed to load timesheets', 'Error');
       },
     });
+  }
+
+  openAddEditTimesheet(): void {
+    this.mode = 'create';
+    this.selectedTimesheet = null;
+    this.showSidebar = true;
+  }
+
+  requestTimesheetProcess(timesheet: any): void {
+    console.log('✏️ Edit clicked row:', timesheet);
+
+    this.mode = 'edit';
+
+    this.selectedTimesheet = {
+      Id: timesheet.Id,
+      FromDate: timesheet.FromDate,
+      ToDate: timesheet.ToDate,
+      TotalHrs: timesheet.TotalHrs,
+      IsActive: timesheet.IsActive,
+    };
+
+    console.log('✅ Selected Timesheet for sidebar:', this.selectedTimesheet);
+
+    this.showSidebar = true;
+  }
+
+  onCloseSidebar(): void {
+    this.showSidebar = false;
+    this.selectedTimesheet = null;
+  }
+
+  onSaveTimesheet(data: any): void {
+    this.loader.show();
+
+    const payload = this.audit.appendAuditFields(data);
+
+    this.timesheetService.insertOrUpdateTimesheet(payload).subscribe({
+      next: () => {
+        this.toastr.success(
+          this.mode === 'create'
+            ? 'Timesheet created successfully'
+            : 'Timesheet updated successfully',
+        );
+        this.showSidebar = false;
+        this.selectedTimesheet = null;
+        this.loadTimesheetDetails();
+      },
+      error: (error) => {
+        console.error(error);
+        this.loader.hide();
+        this.toastr.error('Something went wrong, please try again');
+      },
+    });
+  }
+
+  deleteTimesheet(timesheet: Timesheet): void {
+    this.selectedDeleteItem = timesheet;
+    this.showDeletePopup = true;
+  }
+
+  closePopup(): void {
+    this.showDeletePopup = false;
+    this.selectedDeleteItem = null;
+  }
+
+  confirmDelete(): void {
+    if (!this.selectedDeleteItem?.Id) return;
+
+    this.loader.show();
+
+    this.timesheetService
+      .deleteTimesheet(this.selectedDeleteItem.Id)
+      .subscribe({
+        next: () => {
+          this.toastr.success('Timesheet deleted successfully');
+          this.closePopup();
+          this.loadTimesheetDetails();
+        },
+        error: (err) => {
+          console.error(err);
+          this.loader.hide();
+          this.toastr.error('Delete failed');
+        },
+      });
   }
 
   getTotalRowsCount(): number {
@@ -135,18 +210,16 @@ export class ListTimesheetComponent implements OnInit, OnDestroy {
   }
 
   getActiveTimesheetCount(): number {
-    return this.timesheets.filter((timesheet) => timesheet.IsActive).length;
+    return this.timesheets.filter((x) => x.IsActive).length;
   }
 
   getInactiveTimesheetCount(): number {
-    return this.timesheets.filter((timesheet) => !timesheet.IsActive).length;
+    return this.timesheets.filter((x) => !x.IsActive).length;
   }
 
   onGridReady(params: GridReadyEvent): void {
     this.gridApi = params.api;
-    setTimeout(() => {
-      this.gridApi.sizeColumnsToFit();
-    }, 300);
+    setTimeout(() => this.gridApi.sizeColumnsToFit(), 200);
   }
 
   columnDefs: ColDef[] = [];
@@ -157,27 +230,22 @@ export class ListTimesheetComponent implements OnInit, OnDestroy {
     filter: true,
     resizable: true,
     sortable: true,
-    floatingFilter: false,
   };
 
   gridOptions: GridOptions = {
     pagination: true,
     paginationPageSize: 10,
-    paginationPageSizeSelector: [10, 20, 40, 100],
+    paginationPageSizeSelector: [10, 20, 50, 100],
     rowSelection: 'single',
     animateRows: true,
-    enableCellTextSelection: true,
-    suppressRowClickSelection: false,
-    domLayout: 'autoHeight',
+    domLayout: 'normal',
   };
 
   desktopColumnDefs: ColDef[] = [
+    { field: 'Id', headerName: 'ID', width: 90, cellClass: 'text-center' },
     {
       headerName: 'Date Range',
       width: 180,
-      sortable: true,
-      filter: 'agTextColumnFilter',
-      cellClass: 'text-center',
       valueGetter: (params) => {
         const from = params.data?.FromDate
           ? new Date(params.data.FromDate).toLocaleDateString('en-GB')
@@ -185,41 +253,16 @@ export class ListTimesheetComponent implements OnInit, OnDestroy {
         const to = params.data?.ToDate
           ? new Date(params.data.ToDate).toLocaleDateString('en-GB')
           : '';
-        return `${from}  -  ${to}`;
+        return `${from} - ${to}`;
       },
     },
-    {
-      field: 'Description',
-      headerName: 'Description',
-      width: 120,
-      filter: 'agTextColumnFilter',
-      sortable: true,
-      cellClass: 'text-center',
-    },
-    {
-      field: 'Status',
-      headerName: 'Status',
-      width: 120,
-      filter: 'agTextColumnFilter',
-      sortable: true,
-      cellClass: 'text-center',
-    },
-    {
-      field: 'TotalHrs',
-      headerName: 'Total(Hrs)',
-      width: 120,
-      filter: 'agNumberColumnFilter',
-      sortable: true,
-      cellClass: 'text-center',
-    },
+
+    { field: 'TotalHrs', headerName: 'Total Hrs', width: 120 },
     {
       field: 'IsActive',
       headerName: 'Status',
       width: 120,
-      filter: 'agTextColumnFilter',
-      sortable: true,
       cellRenderer: this.statusRenderer.bind(this),
-      cellClass: this.statusCellClass.bind(this),
     },
     {
       field: 'Actions',
@@ -229,20 +272,18 @@ export class ListTimesheetComponent implements OnInit, OnDestroy {
       filter: false,
       cellRenderer: ActionsRendererComponent,
       cellRendererParams: {
-        onEditClick: (data: any) => this.requestTimesheetProcess(data),
-        onDeleteClick: (data: any) => this.deleteTimesheet(data),
+        onEditClick: (data: Timesheet) => this.requestTimesheetProcess(data),
+        onDeleteClick: (data: Timesheet) => this.deleteTimesheet(data),
       },
       cellClass: 'text-center',
     },
   ];
 
   mobileColumnDefs: ColDef[] = [
+    { field: 'Id', headerName: 'ID', width: 40 },
     {
       headerName: 'Date Range',
-      width: 160,
-      sortable: true,
-      filter: 'agTextColumnFilter',
-      cellClass: 'text-left',
+      width: 100,
       valueGetter: (params) => {
         const from = params.data?.FromDate
           ? new Date(params.data.FromDate).toLocaleDateString('en-GB')
@@ -250,59 +291,26 @@ export class ListTimesheetComponent implements OnInit, OnDestroy {
         const to = params.data?.ToDate
           ? new Date(params.data.ToDate).toLocaleDateString('en-GB')
           : '';
-        return `${from}  -  ${to}`;
+        return `${from} - ${to}`;
       },
     },
-    {
-      field: 'TotalHrs',
-      headerName: 'TotalHrs',
-      width: 80,
-      cellClass: 'text-center',
-    },
-    {
-      field: 'Actions',
-      headerName: 'Actions',
-      width: 80,
-      sortable: false,
-      filter: false,
-      cellRenderer: MobileActionsRendererComponent,
-      cellRendererParams: {
-        onEditClick: (data: any) => this.requestTimesheetProcess(data),
-      },
-      cellClass: 'text-center',
-    },
+    { field: 'TotalHrs', headerName: 'Hours', width: 40 },
+    // {
+    //   field: 'Actions',
+    //   headerName: 'Actions',
+    //   width: 100,
+    //   sortable: false,
+    //   filter: false,
+    //   cellRenderer: MobileActionsRendererComponent,
+    //   cellRendererParams: {
+    //     onEditClick: (data: Timesheet) => this.requestTimesheetProcess(data),
+    //   },
+    // },
   ];
 
-  dateFormatter(params: ValueFormatterParams): string {
-    if (!params.value) return 'N/A';
-
-    const date = new Date(params.value);
-    if (isNaN(date.getTime())) return 'Invalid Date';
-
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  }
-  requestTimesheetProcess(data: any) {}
-
-  deleteTimesheet(data: any) {}
   statusRenderer(params: ICellRendererParams): string {
-    const isActive = params.value;
-    const statusText = isActive ? 'Active' : 'Inactive';
-    const statusClass = isActive ? 'success' : 'danger';
-    const icon = isActive ? 'mdi-check-circle' : 'mdi-close-circle';
-
-    return `
-              <div class="d-flex align-items-center gap-2">
-                <i class="mdi ${icon} text-${statusClass}"></i>
-                <span class="badge bg-${statusClass}">${statusText}</span>
-              </div>
-            `;
-  }
-  statusCellClass(params: any): string {
-    const isActive = params.value;
-    return isActive ? 'status-active' : 'status-inactive';
+    return params.value
+      ? `<span class="badge bg-success">Active</span>`
+      : `<span class="badge bg-danger">Inactive</span>`;
   }
 }

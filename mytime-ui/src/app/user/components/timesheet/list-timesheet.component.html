@@ -2,14 +2,15 @@
   <div class="row">
     <div class="col">
       <div class="card">
+        <!-- Header -->
         <div class="card-header bg-white border-bottom">
           <div class="d-flex justify-content-between align-items-center py-1">
-            <!-- Left: Title -->
             <div class="d-flex align-items-center">
               <h5 class="mb-0">
                 <i class="mdi mdi-account-group text-primary me-2"></i>
                 Timesheets
               </h5>
+
               <span class="badge bg-light text-dark ms-3">
                 <span class="text-primary fw-bold">{{
                   getTotalRowsCount()
@@ -18,28 +19,21 @@
               </span>
             </div>
 
-            <!-- Right Button -->
             <div class="d-flex align-items-center gap-2">
-              <div class="d-flex gap-2 ms-3">
-                <div class="apply-section" *ngIf="!showForm">
-                  <button
-                    class="create-btn btn-gradient"
-                    (click)="toggleForm()"
-                  >
-                    CREATE TIMESHEET
-                  </button>
-                </div>
-              </div>
+              <a
+                class="btn btn-primary btn-sm d-flex align-items-center"
+                (click)="openAddEditTimesheet()"
+                title="Create new timesheet"
+              >
+                CREATE TIMESHEET
+              </a>
             </div>
           </div>
         </div>
 
+        <!-- Grid -->
         <div class="card-body p-0">
-          <!--  SHOW GRID ONLY WHEN FORM IS HIDDEN -->
-          <div
-            *ngIf="!showForm && timesheets.length > 0"
-            class="ag-grid-container"
-          >
+          <div *ngIf="timesheets.length > 0" class="ag-grid-container">
             <ag-grid-angular
               style="width: 100%; height: 640px"
               class="ag-theme-alpine"
@@ -47,27 +41,33 @@
               [columnDefs]="columnDefs"
               [defaultColDef]="defaultColDef"
               [gridOptions]="gridOptions"
-              (gridReady)="onGridReady($event)"
               [pagination]="true"
               [paginationPageSize]="20"
               [suppressCellFocus]="true"
               [animateRows]="true"
               [rowSelection]="'single'"
               [domLayout]="isMobile ? 'autoHeight' : 'normal'"
+              (gridReady)="onGridReady($event)"
             >
             </ag-grid-angular>
           </div>
 
+          <div
+            *ngIf="timesheets.length === 0"
+            class="p-4 text-center text-muted"
+          >
+            No timesheets found
+          </div>
+
           <!-- Footer -->
           <div
-            *ngIf="!showForm && timesheets.length > 0"
+            *ngIf="timesheets.length > 0"
             class="card-footer bg-white border-top"
           >
             <div class="d-flex justify-content-between align-items-center">
               <div class="d-flex gap-3">
                 <small class="text-muted">
-                  <span class="fw-medium">{{ getTotalRowsCount() }}</span>
-                  total
+                  <span class="fw-medium">{{ getTotalRowsCount() }}</span> total
                 </small>
                 <small class="text-muted">
                   <i class="mdi mdi-check-circle-outline text-success me-1"></i>
@@ -94,17 +94,27 @@
             </div>
           </div>
         </div>
-        <!--  SHOW FORM -->
-        <div *ngIf="showForm" class="p-3">
-          <app-add-timesheet [taskitems]="taskitems"></app-add-timesheet>
 
-          <!-- optional close button -->
-          <div class="mt-3 text-end">
-            <button class="btn btn-secondary" (click)="closeForm()">
-              Close Form
-            </button>
-          </div>
-        </div>
+        <!-- Child -->
+        <app-add-timesheet
+          *ngIf="showSidebar"
+          [isVisible]="showSidebar"
+          [mode]="mode"
+          [timesheet]="selectedTimesheet"
+          [taskitems]="taskitems"
+          [taskcodes]="taskcodes"
+          (closeSidebar)="onCloseSidebar()"
+          (saveTimesheet)="onSaveTimesheet($event)"
+        ></app-add-timesheet>
+
+        <!-- Delete -->
+        <app-delete-confirmation
+          *ngIf="showDeletePopup"
+          title="Delete Timesheet"
+          message="Do you really want to delete this Timesheet?"
+          (confirm)="confirmDelete()"
+          (cancel)="closePopup()"
+        ></app-delete-confirmation>
       </div>
     </div>
   </div>

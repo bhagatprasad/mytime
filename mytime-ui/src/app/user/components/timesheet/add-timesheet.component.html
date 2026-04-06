@@ -1,280 +1,323 @@
-<div class="timesheet-container">
+<!-- Overlay -->
+<div class="sidebar-overlay" *ngIf="isVisible" (click)="close()"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" [class.visible]="isVisible">
   <form [formGroup]="timesheetForm" (ngSubmit)="submitTimesheet()">
     <!-- Header -->
-    <div class="form-header">
-      <div class="header-layout">
-        <!-- Left -->
-        <div class="header-left">
-          <h2>Weekly Timesheet</h2>
-        </div>
+    <div class="sidebar-header">
+      <h5 class="sidebar-title">
+        {{ mode === "create" ? "Create Weekly Timesheet" : "Edit Timesheet" }}
+      </h5>
+      <button type="button" class="close" (click)="close()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
 
-        <!-- Right -->
-        <div class="header-right">
-          <div class="week-selector-wrapper">
-            <select
-              class="week-selector"
-              (change)="loadWeekData($event)"
-              [value]="currentWeekKey"
-            >
-              <option *ngFor="let week of availableWeeks" [value]="week.key">
-                {{ week.label }}
-              </option>
-            </select>
+    <div class="sidebar-body">
+      <!-- CREATE MODE -->
+      <div *ngIf="mode === 'create'">
+        <div class="form-header">
+          <h5>Weekly Timesheet</h5>
 
-            <button
-              type="button"
-              class="calendar-icon-btn"
-              (click)="toggleCalendar()"
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg>
-            </button>
-          </div>
-
-          <div class="current-week-range">
+          <div class="date-range" (click)="toggleCalendar()">
             {{ formatDateForDisplay(weekStart) }} -
             {{ formatDateForDisplay(weekEnd) }}
           </div>
-        </div>
-      </div>
 
-      <!-- Calendar -->
-      <div class="calendar-dropdown" *ngIf="showCalendar">
-        <div class="calendar-header">
-          <button type="button" (click)="previousMonth()">‹</button>
-          <span
-            >{{ monthNames[currentMonth.getMonth()] }} {{ currentYear }}</span
-          >
-          <button type="button" (click)="nextMonth()">›</button>
-        </div>
+          <!-- Calendar -->
+          <div class="calendar-dropdown" *ngIf="showCalendar">
+            <div class="calendar-header">
+              <button type="button" (click)="previousMonth()">‹</button>
+              <span>
+                {{ monthNames[currentMonth.getMonth()] }} {{ currentYear }}
+              </span>
+              <button type="button" (click)="nextMonth()">›</button>
+            </div>
 
-        <div class="calendar-weekdays">
-          <span>Su</span>
-          <span>Mo</span>
-          <span>Tu</span>
-          <span>We</span>
-          <span>Th</span>
-          <span>Fr</span>
-          <span>Sa</span>
-        </div>
+            <div class="calendar-weekdays">
+              <span>Su</span><span>Mo</span><span>Tu</span><span>We</span>
+              <span>Th</span><span>Fr</span><span>Sa</span>
+            </div>
 
-        <div class="calendar-days">
-          <div
-            *ngFor="let date of calendarDays"
-            class="calendar-day"
-            [class.other-month]="!isCurrentMonth(date)"
-            [class.selected-week]="isSelectedWeek(date)"
-            (click)="selectWeekFromCalendar(date)"
-          >
-            {{ date.getDate() }}
+            <div class="calendar-days">
+              <div
+                *ngFor="let date of calendarDays"
+                class="calendar-day"
+                [class.other-month]="!isCurrentMonth(date)"
+                [class.selected-week]="isSelectedWeek(date)"
+                (click)="selectWeekFromCalendar(date)"
+              >
+                {{ date.getDate() }}
+              </div>
+            </div>
           </div>
         </div>
+
+        <!-- Table -->
+        <div class="table-responsive">
+          <table class="timesheet-table">
+            <thead>
+              <tr>
+                <th>Task Item</th>
+                <th>Task Code</th>
+
+                <th [ngClass]="getDayHeaderClass('monday')">
+                  Mon
+                  <span class="date">{{ weekDates.monday }}</span>
+                  <div class="day-warning" *ngIf="getDayWarning('monday')">
+                    {{ getDayWarning("monday") }}
+                  </div>
+                </th>
+
+                <th [ngClass]="getDayHeaderClass('tuesday')">
+                  Tue
+                  <span class="date">{{ weekDates.tuesday }}</span>
+                  <div class="day-warning" *ngIf="getDayWarning('tuesday')">
+                    {{ getDayWarning("tuesday") }}
+                  </div>
+                </th>
+
+                <th [ngClass]="getDayHeaderClass('wednesday')">
+                  Wed
+                  <span class="date">{{ weekDates.wednesday }}</span>
+                  <div class="day-warning" *ngIf="getDayWarning('wednesday')">
+                    {{ getDayWarning("wednesday") }}
+                  </div>
+                </th>
+
+                <th [ngClass]="getDayHeaderClass('thursday')">
+                  Thu
+                  <span class="date">{{ weekDates.thursday }}</span>
+                  <div class="day-warning" *ngIf="getDayWarning('thursday')">
+                    {{ getDayWarning("thursday") }}
+                  </div>
+                </th>
+
+                <th [ngClass]="getDayHeaderClass('friday')">
+                  Fri
+                  <span class="date">{{ weekDates.friday }}</span>
+                  <div class="day-warning" *ngIf="getDayWarning('friday')">
+                    {{ getDayWarning("friday") }}
+                  </div>
+                </th>
+
+                <th class="holiday-header">
+                  Sat
+                  <span class="date">{{ weekDates.saturday }}</span>
+                </th>
+
+                <th class="holiday-header">
+                  Sun
+                  <span class="date">{{ weekDates.sunday }}</span>
+                </th>
+
+                <th>Total</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody formArrayName="rows">
+              <tr
+                *ngFor="let row of rows.controls; let i = index"
+                [formGroupName]="i"
+              >
+                <td>
+                  <select
+                    formControlName="taskItem"
+                    (change)="onTaskItemChange(i)"
+                    class="form-control"
+                  >
+                    <option value="">Select</option>
+                    <option
+                      *ngFor="let item of taskitems"
+                      [value]="item.TaskItemId"
+                    >
+                      {{ item.Name }}
+                    </option>
+                  </select>
+                </td>
+
+                <td>
+                  <select formControlName="taskCode" class="form-control">
+                    <option value="">Select</option>
+                    <option
+                      *ngFor="
+                        let code of getTaskCodes(row.get('taskItem')?.value)
+                      "
+                      [value]="code.TaskCodeId"
+                    >
+                      {{ code.Name }}
+                    </option>
+                  </select>
+                </td>
+
+                <td>
+                  <input
+                    type="number"
+                    min="0"
+                    max="9"
+                    step="0.5"
+                    formControlName="monday"
+                    (change)="validateHourEntry(i, 'monday', $event)"
+                    class="hour-input"
+                  />
+                </td>
+
+                <td>
+                  <input
+                    type="number"
+                    min="0"
+                    max="9"
+                    step="0.5"
+                    formControlName="tuesday"
+                    (change)="validateHourEntry(i, 'tuesday', $event)"
+                    class="hour-input"
+                  />
+                </td>
+
+                <td>
+                  <input
+                    type="number"
+                    min="0"
+                    max="9"
+                    step="0.5"
+                    formControlName="wednesday"
+                    (change)="validateHourEntry(i, 'wednesday', $event)"
+                    class="hour-input"
+                  />
+                </td>
+
+                <td>
+                  <input
+                    type="number"
+                    min="0"
+                    max="9"
+                    step="0.5"
+                    formControlName="thursday"
+                    (change)="validateHourEntry(i, 'thursday', $event)"
+                    class="hour-input"
+                  />
+                </td>
+
+                <td>
+                  <input
+                    type="number"
+                    min="0"
+                    max="9"
+                    step="0.5"
+                    formControlName="friday"
+                    (change)="validateHourEntry(i, 'friday', $event)"
+                    class="hour-input"
+                  />
+                </td>
+
+                <td>
+                  <input
+                    type="number"
+                    formControlName="saturday"
+                    [disabled]="true"
+                    class="hour-input holiday-input"
+                  />
+                </td>
+
+                <td>
+                  <input
+                    type="number"
+                    formControlName="sunday"
+                    [disabled]="true"
+                    class="hour-input holiday-input"
+                  />
+                </td>
+
+                <td class="total-cell">
+                  <span class="row-total">{{
+                    getRowTotal(row.getRawValue())
+                  }}</span>
+                </td>
+
+                <td>
+                  <button
+                    type="button"
+                    class="delete-btn"
+                    (click)="removeRow(i)"
+                    *ngIf="rows.length > 1"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="action-buttons">
+          <button
+            type="button"
+            (click)="addRow()"
+            class="btn btn-outline-primary"
+          >
+            + Add Row
+          </button>
+        </div>
+      </div>
+
+      <!-- EDIT MODE -->
+      <div *ngIf="mode === 'edit'">
+        <div class="form-group mb-3">
+          <label>From Date</label>
+          <input class="form-control" formControlName="FromDate" readonly />
+        </div>
+
+        <div class="form-group mb-3">
+          <label>To Date</label>
+          <input class="form-control" formControlName="ToDate" readonly />
+        </div>
+
+        <div class="form-group mb-3">
+          <label>Total Hours *</label>
+          <input
+            type="number"
+            class="form-control"
+            formControlName="TotalHrs"
+          />
+        </div>
+
+        <div class="form-check mt-3">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            formControlName="IsActive"
+            id="isActiveEdit"
+          />
+          <label class="form-check-label ms-2" for="isActiveEdit">Active</label>
+        </div>
       </div>
     </div>
 
-    <!-- Table -->
-    <div class="table-responsive">
-      <table class="timesheet-table">
-        <thead>
-          <tr>
-            <th width="12%">Task Item</th>
-            <th width="12%">Task Code</th>
-            <th width="10%">
-              Mon<br /><span class="date">{{ weekDates.monday }}</span>
-            </th>
-            <th width="10%">
-              Tue<br /><span class="date">{{ weekDates.tuesday }}</span>
-            </th>
-            <th width="10%">
-              Wed<br /><span class="date">{{ weekDates.wednesday }}</span>
-            </th>
-            <th width="10%">
-              Thu<br /><span class="date">{{ weekDates.thursday }}</span>
-            </th>
-            <th width="10%">
-              Fri<br /><span class="date">{{ weekDates.friday }}</span>
-            </th>
-            <th width="9%" class="holiday-header">
-              Sat<br /><span class="date">{{ weekDates.saturday }}</span>
-            </th>
-            <th width="9%" class="holiday-header">
-              Sun<br /><span class="date">{{ weekDates.sunday }}</span>
-            </th>
-            <th width="6%">Total</th>
-            <th width="5%">Action</th>
-          </tr>
-        </thead>
-
-        <tbody formArrayName="rows">
-          <tr
-            *ngFor="let row of rows.controls; let i = index"
-            [formGroupName]="i"
-            class="timesheet-row"
-          >
-            <td>
-              <select formControlName="taskItem" class="form-control">
-                <option [ngValue]="null">Select</option>
-                <option
-                  *ngFor="let item of taskitems"
-                  [value]="item.TaskItemId"
-                >
-                  {{ item.Name }}
-                </option>
-              </select>
-            </td>
-
-            <td>
-              <select formControlName="taskCode" class="form-control">
-                <option [ngValue]="null">Select</option>
-                <option
-                  *ngFor="let code of getTaskCodes(row.get('taskItem')?.value)"
-                  [value]="code.value"
-                >
-                  {{ code.label }}
-                </option>
-              </select>
-            </td>
-
-            <td [class]="getDayCellClass('monday')">
-              <input
-                type="number"
-                min="0"
-                max="24"
-                step="0.5"
-                formControlName="monday"
-                (change)="validateHourEntry(i, 'monday', $event)"
-                class="hour-input"
-              />
-              <div class="day-warning" *ngIf="getDayWarning('monday')">
-                {{ getDayWarning("monday") }}
-              </div>
-            </td>
-
-            <td [class]="getDayCellClass('tuesday')">
-              <input
-                type="number"
-                min="0"
-                max="24"
-                step="0.5"
-                formControlName="tuesday"
-                (change)="validateHourEntry(i, 'tuesday', $event)"
-                class="hour-input"
-              />
-              <div class="day-warning" *ngIf="getDayWarning('tuesday')">
-                {{ getDayWarning("tuesday") }}
-              </div>
-            </td>
-
-            <td [class]="getDayCellClass('wednesday')">
-              <input
-                type="number"
-                min="0"
-                max="24"
-                step="0.5"
-                formControlName="wednesday"
-                (change)="validateHourEntry(i, 'wednesday', $event)"
-                class="hour-input"
-              />
-              <div class="day-warning" *ngIf="getDayWarning('wednesday')">
-                {{ getDayWarning("wednesday") }}
-              </div>
-            </td>
-
-            <td [class]="getDayCellClass('thursday')">
-              <input
-                type="number"
-                min="0"
-                max="24"
-                step="0.5"
-                formControlName="thursday"
-                (change)="validateHourEntry(i, 'thursday', $event)"
-                class="hour-input"
-              />
-              <div class="day-warning" *ngIf="getDayWarning('thursday')">
-                {{ getDayWarning("thursday") }}
-              </div>
-            </td>
-
-            <td [class]="getDayCellClass('friday')">
-              <input
-                type="number"
-                min="0"
-                max="24"
-                step="0.5"
-                formControlName="friday"
-                (change)="validateHourEntry(i, 'friday', $event)"
-                class="hour-input"
-              />
-              <div class="day-warning" *ngIf="getDayWarning('friday')">
-                {{ getDayWarning("friday") }}
-              </div>
-            </td>
-
-            <td class="holiday-cell">
-              <input
-                type="number"
-                formControlName="saturday"
-                [disabled]="true"
-                class="hour-input holiday-input"
-              />
-              <div class="day-warning holiday-text">Weekend</div>
-            </td>
-
-            <td class="holiday-cell">
-              <input
-                type="number"
-                formControlName="sunday"
-                [disabled]="true"
-                class="hour-input holiday-input"
-              />
-              <div class="day-warning holiday-text">Weekend</div>
-            </td>
-
-            <td class="total-cell">
-              <span class="row-total">{{
-                getRowTotal(row.getRawValue())
-              }}</span>
-            </td>
-
-            <td class="action-cell">
-              <button
-                type="button"
-                (click)="removeRow(i)"
-                class="delete-btn"
-                *ngIf="rows.length > 1"
-              >
-                Delete
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Buttons -->
-    <div class="action-buttons">
-      <button type="button" (click)="addRow()" class="btn btn-primary">
-        + Add Row
+    <!-- Footer -->
+    <div class="sidebar-footer">
+      <button type="submit" class="btn btn-primary">
+        {{ mode === "create" ? "Submit Timesheet" : "Update Timesheet" }}
       </button>
 
-      <button
-        type="submit"
-        class="btn btn-success"
-        [disabled]="hasSubmitErrors()"
-      >
-        Submit Timesheet
+      <button type="button" class="btn btn-secondary ms-2" (click)="close()">
+        Cancel
       </button>
     </div>
   </form>
+
+  <!-- Toast -->
+  <div
+    class="toast-notification"
+    *ngIf="showToast"
+    [class.toast-error]="toastType === 'error'"
+    [class.toast-warning]="toastType === 'warning'"
+    [class.toast-success]="toastType === 'success'"
+  >
+    <div class="toast-content">
+      <span class="toast-message">{{ toastMessage }}</span>
+      <button class="toast-close" (click)="hideToast()">×</button>
+    </div>
+  </div>
 </div>
