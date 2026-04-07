@@ -32,6 +32,7 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
   @Input() timesheet: Timesheet | null = null;
   @Input() taskitems: TaskItem[] = [];
   @Input() taskcodes: Taskcode[] = [];
+  @Input() existingTimesheets: Timesheet[] = [];
 
   @Output() closeSidebar = new EventEmitter<void>();
   @Output() saveTimesheet = new EventEmitter<any>();
@@ -61,6 +62,10 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
   calendarDays: Date[] = [];
   showCalendar = false;
 
+  showDuplicateWeekPopup = false;
+  duplicateWeekMessage = '';
+  duplicateTimesheet: Timesheet | null = null;
+
   monthNames = [
     'January',
     'February',
@@ -89,72 +94,124 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['mode'] || changes['timesheet']) {
-      this.initializeForm();
+    if (changes['mode'] || changes['timesheet'] || changes['isVisible']) {
+      if (this.isVisible) {
+        console.log('📥 Child received timesheet:', this.timesheet);
+        this.initializeForm();
+      }
     }
   }
 
   initializeForm(): void {
-    if (this.mode === 'edit') {
+    if (this.mode === 'edit' && this.timesheet) {
       this.initializeEditForm();
     } else {
       this.initializeCreateForm();
     }
   }
 
-  initializeEditForm(): void {
-    this.timesheetForm = this.fb.group({
-      FromDate: [
-        this.formatDateInput(this.timesheet?.FromDate),
-        Validators.required,
-      ],
-      ToDate: [
-        this.formatDateInput(this.timesheet?.ToDate),
-        Validators.required,
-      ],
-      TotalHrs: [this.timesheet?.TotalHrs ?? 0, Validators.required],
-      IsActive: [this.timesheet?.IsActive ?? true],
-    });
-  }
-
   initializeCreateForm(): void {
+    this.initializeWeekDates();
+
     this.timesheetForm = this.fb.group({
       rows: this.fb.array([]),
     });
 
-    if (this.rows.length === 0) {
-      this.addRow();
-    }
+    this.rows.clear();
+    this.addRow();
   }
 
-  formatDateInput(date: any): string {
-    if (!date) return '';
-    const d = new Date(date);
-    if (isNaN(d.getTime())) return '';
+  initializeEditForm(): void {
+    if (!this.timesheet) return;
 
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
+    console.log('✏️ initializeEditForm timesheet:', this.timesheet);
 
-    return `${day}-${month}-${year}`;
+    this.weekStart = new Date(this.timesheet.FromDate!);
+    this.weekEnd = new Date(this.timesheet.ToDate!);
+    this.updateWeekDates();
+
+    this.timesheetForm = this.fb.group({
+      rows: this.fb.array([]),
+    });
+
+    this.rows.clear();
+
+    const tasks =
+      (this.timesheet as any)?.Tasks || (this.timesheet as any)?.tasks || [];
+
+    console.log('📋 Edit mode tasks:', tasks);
+
+    if (tasks && tasks.length > 0) {
+      tasks.forEach((task: any) => {
+        const row = this.createRow(task);
+        this.rows.push(row);
+      });
+    } else {
+      console.warn('⚠️ No task rows found for edit, adding blank row');
+      this.addRow();
+    }
   }
 
   get rows(): FormArray {
     return this.timesheetForm.get('rows') as FormArray;
   }
 
-  createRow(): FormGroup {
-    return this.fb.group({
-      taskItem: ['', Validators.required],
-      taskCode: ['', Validators.required],
-      monday: [0, [Validators.min(0), Validators.max(9)]],
-      tuesday: [0, [Validators.min(0), Validators.max(9)]],
-      wednesday: [0, [Validators.min(0), Validators.max(9)]],
-      thursday: [0, [Validators.min(0), Validators.max(9)]],
-      friday: [0, [Validators.min(0), Validators.max(9)]],
-      saturday: [{ value: 0, disabled: true }],
-      sunday: [{ value: 0, disabled: true }],
+  createRow(task?: any): FormGroup {
+    const row = this.fb.group({
+      Id: [task?.Id || 0],
+      TimesheetId: [task?.TimesheetId || this.timesheet?.Id || 0],
+      taskItem: [task?.TaskItemId ?? null, Validators.required],
+      taskCode: [task?.TaskCodeId ?? null, Validators.required],
+      monday: [task?.MondayHours ?? 0, [Validators.min(0), Validators.max(9)]],
+      tuesday: [
+        task?.TuesdayHours ?? 0,
+        [Validators.min(0), Validators.max(9)],
+      ],
+      wednesday: [
+        task?.WednesdayHours ?? 0,
+        [Validators.min(0), Validators.max(9)],
+      ],
+      thursday: [
+        task?.ThursdayHours ?? 0,
+        [Validators.min(0), Validators.max(9)],
+      ],
+      friday: [task?.FridayHours ?? 0, [Validators.min(0), Validators.max(9)]],
+      saturday: [{ value: task?.SaturdayHours ?? 0, disabled: true }],
+      sunday: [{ value: task?.SundayHours ?? 0, disabled: true }],
+      total: [task?.TotalHrs ?? 0],
+      IsActive: [task?.IsActive ?? true],
     });
+
+    this.watchRowTotal(row);
+
+    // ensure total recalculates even if backend total missing
+    setTimeout(() => {
+      this.recalculateSingleRow(row);
+    });
+
+    return row;
+  }
+
+  watchRowTotal(row: FormGroup): void {
+    ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach((day) => {
+      row.get(day)?.valueChanges.subscribe(() => {
+        this.recalculateSingleRow(row);
+      });
+    });
+  }
+
+  recalculateSingleRow(row: FormGroup): void {
+    const raw = row.getRawValue();
+    const total =
+      Number(raw.monday || 0) +
+      Number(raw.tuesday || 0) +
+      Number(raw.wednesday || 0) +
+      Number(raw.thursday || 0) +
+      Number(raw.friday || 0) +
+      Number(raw.saturday || 0) +
+      Number(raw.sunday || 0);
+
+    row.get('total')?.setValue(total, { emitEvent: false });
   }
 
   addRow(): void {
@@ -168,7 +225,7 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
   }
 
   onTaskItemChange(index: number): void {
-    this.rows.at(index).get('taskCode')?.setValue('');
+    this.rows.at(index).get('taskCode')?.setValue(null);
   }
 
   getTaskCodes(taskItemId: number): Taskcode[] {
@@ -220,6 +277,8 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
   }
 
   toggleCalendar(): void {
+    if (this.mode === 'edit') return;
+
     this.showCalendar = !this.showCalendar;
     if (this.showCalendar) {
       this.currentMonth = new Date(this.weekStart);
@@ -266,12 +325,32 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
   }
 
   selectWeekFromCalendar(date: Date): void {
+    if (this.mode === 'edit') return;
+
     const dayOfWeek = date.getDay();
     const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
 
-    this.weekStart = new Date(date);
-    this.weekStart.setDate(date.getDate() - diffToMonday);
-    this.weekStart.setHours(0, 0, 0, 0);
+    const selectedWeekStart = new Date(date);
+    selectedWeekStart.setDate(date.getDate() - diffToMonday);
+    selectedWeekStart.setHours(0, 0, 0, 0);
+
+    const selectedWeekEnd = new Date(selectedWeekStart);
+    selectedWeekEnd.setDate(selectedWeekStart.getDate() + 6);
+
+    const existing = this.getExistingWeekTimesheet(
+      selectedWeekStart,
+      selectedWeekEnd,
+    );
+
+    if (existing) {
+      this.duplicateTimesheet = existing;
+      this.duplicateWeekMessage = `Timesheet already exists for ${this.formatDateForDisplay(selectedWeekStart)} - ${this.formatDateForDisplay(selectedWeekEnd)}`;
+      this.showDuplicateWeekPopup = true;
+      return;
+    }
+
+    this.weekStart = selectedWeekStart;
+    this.weekEnd = selectedWeekEnd;
 
     this.updateWeekDates();
     this.showCalendar = false;
@@ -291,7 +370,9 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
       Number(row.tuesday || 0) +
       Number(row.wednesday || 0) +
       Number(row.thursday || 0) +
-      Number(row.friday || 0)
+      Number(row.friday || 0) +
+      Number(row.saturday || 0) +
+      Number(row.sunday || 0)
     );
   }
 
@@ -388,23 +469,9 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
   }
 
   submitTimesheet(): void {
-    if (this.mode === 'edit') {
-      if (this.timesheetForm.invalid) {
-        this.timesheetForm.markAllAsTouched();
-        return;
-      }
-
-      const payload = {
-        ...this.timesheet,
-        ...this.timesheetForm.value,
-      };
-
-      this.saveTimesheet.emit(payload);
-      return;
-    }
-
     if (this.timesheetForm.invalid) {
       this.showToastMessage('Please fill all required fields', 'error');
+      this.timesheetForm.markAllAsTouched();
       return;
     }
 
@@ -425,16 +492,31 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
     }
 
     const payload = {
-      Id: 0,
-      Name: `Week ${this.formatDate(this.weekStart)} - ${this.formatDate(this.weekEnd)}`,
-      Code: 'WEEKLY',
+      Id: this.mode === 'edit' ? this.timesheet?.Id || 0 : 0,
       FromDate: this.weekStart,
       ToDate: this.weekEnd,
+      Description: 'Timesheet Entry',
+      Status: 'Submitted',
       TotalHrs: this.getWeekTotal(),
       IsActive: true,
-      Rows: this.timesheetForm.getRawValue().rows,
+      Tasks: this.timesheetForm.getRawValue().rows.map((row: any) => ({
+        Id: row.Id || 0,
+        TimesheetId: row.TimesheetId || this.timesheet?.Id || 0,
+        TaskItemId: row.taskItem,
+        TaskCodeId: row.taskCode,
+        MondayHours: Number(row.monday || 0),
+        TuesdayHours: Number(row.tuesday || 0),
+        WednesdayHours: Number(row.wednesday || 0),
+        ThursdayHours: Number(row.thursday || 0),
+        FridayHours: Number(row.friday || 0),
+        SaturdayHours: Number(row.saturday || 0),
+        SundayHours: Number(row.sunday || 0),
+        TotalHrs: Number(row.total || 0),
+        IsActive: row.IsActive ?? true,
+      })),
     };
 
+    console.log('📤 Submitting payload:', payload);
     this.saveTimesheet.emit(payload);
   }
 
@@ -459,5 +541,57 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
 
   capitalize(day: string): string {
     return day.charAt(0).toUpperCase() + day.slice(1);
+  }
+
+  normalizeDate(date: Date): Date {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+
+  isWeekAlreadyExists(startDate: Date, endDate: Date): boolean {
+    const selectedFrom = this.normalizeDate(startDate);
+    const selectedTo = this.normalizeDate(endDate);
+
+    return this.existingTimesheets.some((t) => {
+      if (!t.FromDate || !t.ToDate) return false;
+
+      const existingFrom = this.normalizeDate(new Date(t.FromDate));
+      const existingTo = this.normalizeDate(new Date(t.ToDate));
+
+      return (
+        existingFrom.getTime() === selectedFrom.getTime() &&
+        existingTo.getTime() === selectedTo.getTime()
+      );
+    });
+  }
+
+  getExistingWeekTimesheet(startDate: Date, endDate: Date): Timesheet | null {
+    const selectedFrom = this.normalizeDate(startDate);
+    const selectedTo = this.normalizeDate(endDate);
+
+    return (
+      this.existingTimesheets.find((t) => {
+        if (!t.FromDate || !t.ToDate) return false;
+
+        const existingFrom = this.normalizeDate(new Date(t.FromDate));
+        const existingTo = this.normalizeDate(new Date(t.ToDate));
+
+        return (
+          existingFrom.getTime() === selectedFrom.getTime() &&
+          existingTo.getTime() === selectedTo.getTime()
+        );
+      }) || null
+    );
+  }
+
+  closeDuplicatePopup(): void {
+    this.showDuplicateWeekPopup = false;
+    this.duplicateWeekMessage = '';
+    this.duplicateTimesheet = null;
+  }
+
+  chooseAnotherWeek(): void {
+    this.closeDuplicatePopup();
   }
 }

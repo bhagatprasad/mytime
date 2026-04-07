@@ -16,11 +16,14 @@
 
     <div class="sidebar-body">
       <!-- CREATE MODE -->
-      <div *ngIf="mode === 'create'">
+      <div>
         <div class="form-header">
           <h5>Weekly Timesheet</h5>
-
-          <div class="date-range" (click)="toggleCalendar()">
+          <div
+            class="date-range"
+            [class.disabled-date]="mode === 'edit'"
+            (click)="mode === 'create' && toggleCalendar()"
+          >
             {{ formatDateForDisplay(weekStart) }} -
             {{ formatDateForDisplay(weekEnd) }}
           </div>
@@ -216,7 +219,6 @@
                   <input
                     type="number"
                     formControlName="saturday"
-                    [disabled]="true"
                     class="hour-input holiday-input"
                   />
                 </td>
@@ -225,7 +227,6 @@
                   <input
                     type="number"
                     formControlName="sunday"
-                    [disabled]="true"
                     class="hour-input holiday-input"
                   />
                 </td>
@@ -261,38 +262,6 @@
           </button>
         </div>
       </div>
-
-      <!-- EDIT MODE -->
-      <div *ngIf="mode === 'edit'">
-        <div class="form-group mb-3">
-          <label>From Date</label>
-          <input class="form-control" formControlName="FromDate" readonly />
-        </div>
-
-        <div class="form-group mb-3">
-          <label>To Date</label>
-          <input class="form-control" formControlName="ToDate" readonly />
-        </div>
-
-        <div class="form-group mb-3">
-          <label>Total Hours *</label>
-          <input
-            type="number"
-            class="form-control"
-            formControlName="TotalHrs"
-          />
-        </div>
-
-        <div class="form-check mt-3">
-          <input
-            type="checkbox"
-            class="form-check-input"
-            formControlName="IsActive"
-            id="isActiveEdit"
-          />
-          <label class="form-check-label ms-2" for="isActiveEdit">Active</label>
-        </div>
-      </div>
     </div>
 
     <!-- Footer -->
@@ -318,6 +287,33 @@
     <div class="toast-content">
       <span class="toast-message">{{ toastMessage }}</span>
       <button class="toast-close" (click)="hideToast()">×</button>
+    </div>
+  </div>
+  <!-- Duplicate Week Popup -->
+  <div class="sidebar-overlay" *ngIf="showDuplicateWeekPopup"></div>
+
+  <div class="duplicate-popup" *ngIf="showDuplicateWeekPopup">
+    <div class="duplicate-popup-content">
+      <h5>Timesheet Already Exists</h5>
+      <p>{{ duplicateWeekMessage }}</p>
+
+      <div class="popup-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="chooseAnotherWeek()"
+        >
+          Choose Another Week
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="closeDuplicatePopup()"
+        >
+          OK
+        </button>
+      </div>
     </div>
   </div>
 </div>

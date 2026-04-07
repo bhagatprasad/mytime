@@ -131,18 +131,35 @@ export class ListTimesheetComponent implements OnInit {
     console.log('✏️ Edit clicked row:', timesheet);
 
     this.mode = 'edit';
+    this.loader.show();
 
-    this.selectedTimesheet = {
-      Id: timesheet.Id,
-      FromDate: timesheet.FromDate,
-      ToDate: timesheet.ToDate,
-      TotalHrs: timesheet.TotalHrs,
-      IsActive: timesheet.IsActive,
-    };
+    this.timesheetService.getTimesheetWithTasksAsync(timesheet.Id).subscribe({
+      next: (res: any) => {
+        console.log('✅ Full Timesheet with Tasks:', res);
 
-    console.log('✅ Selected Timesheet for sidebar:', this.selectedTimesheet);
+        this.selectedTimesheet = {
+          Id: res.Id,
+          FromDate: res.FromDate,
+          ToDate: res.ToDate,
+          TotalHrs: res.TotalHrs,
+          IsActive: res.IsActive,
+          Tasks: res.Tasks || res.tasks || [],
+        };
 
-    this.showSidebar = true;
+        console.log(
+          '✅ Selected Timesheet for sidebar:',
+          this.selectedTimesheet,
+        );
+
+        this.loader.hide();
+        this.showSidebar = true;
+      },
+      error: (err) => {
+        console.error('❌ Error fetching timesheet with tasks:', err);
+        this.loader.hide();
+        this.toastr.error('Failed to load timesheet details');
+      },
+    });
   }
 
   onCloseSidebar(): void {
@@ -150,18 +167,147 @@ export class ListTimesheetComponent implements OnInit {
     this.selectedTimesheet = null;
   }
 
-  onSaveTimesheet(data: any): void {
+  onSaveTimesheet(payload: any): void {
+    console.log('📤 Final payload from child:', payload);
+
     this.loader.show();
 
-    const payload = this.audit.appendAuditFields(data);
+    const parentPayload = {
+      Id: payload.Id || 0,
+      FromDate: payload.FromDate,
+      ToDate: payload.ToDate,
+      Description: payload.Description || 'Timesheet Entry',
+      EmployeeId: undefined, // ✅ fixed
+      UserId: undefined, // ✅ fixed
+      Status: payload.Status || 'Submitted',
+      IsActive: payload.IsActive ?? true,
+      TotalHrs: payload.TotalHrs,
+      CreatedBy: 21,
+      CreatedOn: new Date(),
+      ModifiedBy: 21,
+      ModifiedOn: new Date(),
+    };
 
-    this.timesheetService.insertOrUpdateTimesheet(payload).subscribe({
+    console.log('🟦 Saving parent Timesheet:', parentPayload);
+
+    this.timesheetService.insertOrUpdateTimesheet(parentPayload).subscribe({
+      next: (res: any) => {
+        console.log('✅ Parent Timesheet saved:', res);
+
+        const savedTimesheetId =
+          res?.Id || res?.id || payload.Id || this.selectedTimesheet?.Id;
+
+        if (!savedTimesheetId) {
+          console.error('❌ Timesheet ID missing after save');
+          this.loader.hide();
+          this.toastr.error('Timesheet saved but ID not found');
+          return;
+        }
+
+        const tasks = payload.Tasks || [];
+
+        if (!tasks.length) {
+          this.loader.hide();
+          this.toastr.success('Timesheet saved successfully');
+          this.onCloseSidebar();
+          this.loadTimesheetDetails();
+          return;
+        }
+
+        console.log('🟨 Saving child tasks:', tasks);
+
+        let completed = 0;
+        let hasError = false;
+
+        tasks.forEach((task: any) => {
+          const taskPayload = {
+            Id: task.Id || 0,
+            TimesheetId: savedTimesheetId,
+            TaskItemId: task.TaskItemId,
+            TaskCodeId: task.TaskCodeId,
+            MondayHours: Number(task.MondayHours || 0),
+            TuesdayHours: Number(task.TuesdayHours || 0),
+            WednesdayHours: Number(task.WednesdayHours || 0),
+            ThursdayHours: Number(task.ThursdayHours || 0),
+            FridayHours: Number(task.FridayHours || 0),
+            SaturdayHours: Number(task.SaturdayHours || 0),
+            SundayHours: Number(task.SundayHours || 0),
+            TotalHrs: Number(task.TotalHrs || 0),
+            IsActive: task.IsActive ?? true,
+            CreatedBy: 21,
+            CreatedOn: new Date(),
+            ModifiedBy: 21,
+            ModifiedOn: new Date(),
+          };
+
+          console.log('🟧 Saving task row:', taskPayload);
+
+          this.timesheetService
+            .addTimesheetTask(savedTimesheetId, taskPayload)
+            .subscribe({
+              next: (taskRes: any) => {
+                console.log('✅ Task row saved:', taskRes);
+
+                completed++;
+
+                if (completed === tasks.length && !hasError) {
+                  this.loader.hide();
+                  this.toastr.success(
+                    this.mode === 'edit'
+                      ? 'Timesheet updated successfully'
+                      : 'Timesheet created successfully',
+                  );
+                  this.onCloseSidebar();
+                  this.loadTimesheetDetails();
+                }
+              },
+              error: (taskErr: any) => {
+                console.error('❌ Error saving task row:', taskErr);
+                hasError = true;
+                this.loader.hide();
+                this.toastr.error('Timesheet saved, but task rows failed');
+              },
+            });
+        });
+      },
+      error: (err: any) => {
+        console.error('❌ Error saving parent timesheet:', err);
+        this.loader.hide();
+        this.toastr.error('Failed to save timesheet');
+      },
+    });
+  }
+  saveTaskRows(timesheetId: number, tasks: any[]): void {
+    const requests = tasks.map((task) => {
+      const taskPayload = {
+        TimesheetId: timesheetId,
+        TaskItemId: Number(task.taskItem),
+        TaskCodeId: Number(task.taskCode),
+        MondayHours: Number(task.monday || 0),
+        TuesdayHours: Number(task.tuesday || 0),
+        WednesdayHours: Number(task.wednesday || 0),
+        ThursdayHours: Number(task.thursday || 0),
+        FridayHours: Number(task.friday || 0),
+        SaturdayHours: Number(task.saturday || 0),
+        SundayHours: Number(task.sunday || 0),
+        TotalHrs:
+          Number(task.monday || 0) +
+          Number(task.tuesday || 0) +
+          Number(task.wednesday || 0) +
+          Number(task.thursday || 0) +
+          Number(task.friday || 0) +
+          Number(task.saturday || 0) +
+          Number(task.sunday || 0),
+        IsActive: true,
+      };
+
+      return this.timesheetService.addTimesheetTask(timesheetId, taskPayload);
+    });
+
+    forkJoin(requests).subscribe({
       next: () => {
-        this.toastr.success(
-          this.mode === 'create'
-            ? 'Timesheet created successfully'
-            : 'Timesheet updated successfully',
-        );
+        this.loader.hide();
+        this.toastr.success('Timesheet and tasks saved successfully');
         this.showSidebar = false;
         this.selectedTimesheet = null;
         this.loadTimesheetDetails();
@@ -169,7 +315,7 @@ export class ListTimesheetComponent implements OnInit {
       error: (error) => {
         console.error(error);
         this.loader.hide();
-        this.toastr.error('Something went wrong, please try again');
+        this.toastr.error('Parent saved, but task rows failed');
       },
     });
   }
@@ -257,7 +403,13 @@ export class ListTimesheetComponent implements OnInit {
       },
     },
 
-    { field: 'TotalHrs', headerName: 'Total Hrs', width: 120 },
+    {
+      field: 'TotalHrs',
+      headerName: 'Total(Hrs)',
+      width: 90,
+      cellClass: 'text-center',
+    },
+    { field: 'Description', headerName: 'Description', width: 160 },
     {
       field: 'IsActive',
       headerName: 'Status',
@@ -280,10 +432,10 @@ export class ListTimesheetComponent implements OnInit {
   ];
 
   mobileColumnDefs: ColDef[] = [
-    { field: 'Id', headerName: 'ID', width: 40 },
+    { field: 'Id', headerName: 'ID', width: 20 },
     {
       headerName: 'Date Range',
-      width: 100,
+      width: 70,
       valueGetter: (params) => {
         const from = params.data?.FromDate
           ? new Date(params.data.FromDate).toLocaleDateString('en-GB')
@@ -294,18 +446,20 @@ export class ListTimesheetComponent implements OnInit {
         return `${from} - ${to}`;
       },
     },
-    { field: 'TotalHrs', headerName: 'Hours', width: 40 },
-    // {
-    //   field: 'Actions',
-    //   headerName: 'Actions',
-    //   width: 100,
-    //   sortable: false,
-    //   filter: false,
-    //   cellRenderer: MobileActionsRendererComponent,
-    //   cellRendererParams: {
-    //     onEditClick: (data: Timesheet) => this.requestTimesheetProcess(data),
-    //   },
-    // },
+    { field: 'TotalHrs', headerName: 'Hours', width: 20 },
+    {
+      field: 'Actions',
+      headerName: 'Actions',
+      width: 120,
+      sortable: false,
+      filter: false,
+      cellRenderer: MobileActionsRendererComponent,
+      cellRendererParams: {
+        onEditClick: (data: Timesheet) => this.requestTimesheetProcess(data),
+        onDeleteClick: (data: Timesheet) => this.deleteTimesheet(data),
+      },
+      cellClass: 'text-center',
+    },
   ];
 
   statusRenderer(params: ICellRendererParams): string {
