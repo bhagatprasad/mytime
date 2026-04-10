@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy.orm import joinedload
 from sqlalchemy import or_, asc, desc, func
 from typing import Optional, List, Tuple, Dict, Any
 from datetime import datetime
@@ -12,9 +13,23 @@ class TimesheetService:
     def fetch_timesheet(db: Session, timesheet_id: int) -> Optional[Timesheet]:
         return db.query(Timesheet).filter(Timesheet.Id == timesheet_id).first()
 
+    # @staticmethod
+    # def fetch_timesheet_with_tasks(db: Session, timesheet_id: int) -> Optional[Timesheet]:
+    #     return db.query(Timesheet).options(joinedload(Timesheet.timesheet_tasks)).filter(Timesheet.Id == timesheet_id).first()
+                  
     @staticmethod
-    def fetch_timesheet_with_tasks(db: Session, timesheet_id: int) -> Optional[Timesheet]:
-        return db.query(Timesheet).filter(Timesheet.Id == timesheet_id).first()
+    def fetch_timesheet_with_tasks(db: Session, timesheet_id: int):
+
+        db_timesheet = (
+        db.query(Timesheet)
+        .options(joinedload(Timesheet.timesheet_tasks))
+        .filter(Timesheet.Id == timesheet_id)
+        .first()) 
+        if not db_timesheet: 
+            return None
+
+        return db_timesheet          
+
 
     @staticmethod
     def fetch_all_timesheets(db: Session) -> List[Timesheet]:
@@ -221,15 +236,40 @@ class TimesheetService:
             db.refresh(db_task)
         return db_task
 
+    # @staticmethod
+    # def add_timesheet_task(db: Session, timesheet_id: int, task_data: dict) -> Optional[TimesheetTask]:
+    #     db_timesheet = db.query(Timesheet).filter(Timesheet.Id == timesheet_id).first()
+    #     if not db_timesheet:
+    #         return None
+
+    #     clean_task_data = {k: v for k, v in task_data.items() if v is not None and v != ""}
+    #     new_task = TimesheetTask(**clean_task_data, TimesheetId=timesheet_id)
+    #     db.add(new_task)
+    #     db.commit()
+    #     db.refresh(new_task)
+    #     return new_task
+
+
+
     @staticmethod
-    def add_timesheet_task(db: Session, timesheet_id: int, task_data: dict) -> Optional[TimesheetTask]:
+    def add_timesheet_task(db, timesheet_id, task_data):
+        
         db_timesheet = db.query(Timesheet).filter(Timesheet.Id == timesheet_id).first()
         if not db_timesheet:
             return None
 
-        clean_task_data = {k: v for k, v in task_data.items() if v is not None and v != ""}
-        new_task = TimesheetTask(**clean_task_data, TimesheetId=timesheet_id)
+        clean_task_data = {
+            k: v for k, v in task_data.items()
+            if v is not None and v != "" and k != "Id"
+        }
+
+        new_task = TimesheetTask(**clean_task_data)
+        new_task.TimesheetId = timesheet_id
+
         db.add(new_task)
         db.commit()
         db.refresh(new_task)
+
         return new_task
+
+  

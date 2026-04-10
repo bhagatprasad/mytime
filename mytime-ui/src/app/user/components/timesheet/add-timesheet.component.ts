@@ -28,7 +28,6 @@ import { Timesheet } from '../../../common/models/timesheet';
 })
 export class AddTimesheetComponent implements OnInit, OnChanges {
   @Input() isVisible = false;
-  @Input() mode: 'create' | 'edit' = 'create';
   @Input() timesheet: Timesheet | null = null;
   @Input() taskitems: TaskItem[] = [];
   @Input() taskcodes: Taskcode[] = [];
@@ -94,7 +93,7 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['mode'] || changes['timesheet'] || changes['isVisible']) {
+    if (changes['timesheet'] || changes['isVisible']) {
       if (this.isVisible) {
         console.log('📥 Child received timesheet:', this.timesheet);
         this.initializeForm();
@@ -103,7 +102,7 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
   }
 
   initializeForm(): void {
-    if (this.mode === 'edit' && this.timesheet) {
+    if (this.timesheet?.Id) {
       this.initializeEditForm();
     } else {
       this.initializeCreateForm();
@@ -277,7 +276,7 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
   }
 
   toggleCalendar(): void {
-    if (this.mode === 'edit') return;
+    if (this.timesheet?.Id) return;
 
     this.showCalendar = !this.showCalendar;
     if (this.showCalendar) {
@@ -325,7 +324,7 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
   }
 
   selectWeekFromCalendar(date: Date): void {
-    if (this.mode === 'edit') return;
+    if (this.timesheet?.Id) return;
 
     const dayOfWeek = date.getDay();
     const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
@@ -491,15 +490,34 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
       return;
     }
 
+    // Get rows
+    const rawRows = this.timesheetForm.getRawValue().rows;
+    console.log('🟦 Raw Rows:', rawRows);
+
+    //  Filter valid rows only
+    const validRows = rawRows.filter(
+      (row: any) => row.taskItem && row.taskCode,
+    );
+
+    console.log('🟩 Valid Rows:', validRows);
+
+    //  If no valid rows → stop
+    if (!validRows.length) {
+      this.showToastMessage('Please select Task Item and Task Code', 'error');
+      return;
+    }
+
+    //  Build payload
     const payload = {
-      Id: this.mode === 'edit' ? this.timesheet?.Id || 0 : 0,
+      Id: this.timesheet?.Id || 0,
       FromDate: this.weekStart,
       ToDate: this.weekEnd,
       Description: 'Timesheet Entry',
       Status: 'Submitted',
       TotalHrs: this.getWeekTotal(),
       IsActive: true,
-      Tasks: this.timesheetForm.getRawValue().rows.map((row: any) => ({
+
+      Tasks: validRows.map((row: any) => ({
         Id: row.Id || 0,
         TimesheetId: row.TimesheetId || this.timesheet?.Id || 0,
         TaskItemId: row.taskItem,
@@ -516,7 +534,9 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
       })),
     };
 
-    console.log('📤 Submitting payload:', payload);
+    console.log('📤 FINAL Payload:', payload);
+
+    // Emit
     this.saveTimesheet.emit(payload);
   }
 

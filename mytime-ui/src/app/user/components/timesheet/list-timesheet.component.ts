@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { Timesheet } from '../../../common/models/timesheet';
 import { TimesheetService } from '../../../common/services/timesheet.service';
 import {
@@ -39,14 +39,13 @@ ModuleRegistry.registerModules([AllCommunityModule]);
   templateUrl: './list-timesheet.component.html',
   styleUrl: './list-timesheet.component.css',
 })
-export class ListTimesheetComponent implements OnInit {
+export class ListTimesheetComponent implements OnInit, OnDestroy {
   timesheets: Timesheet[] = [];
   taskitems: TaskItem[] = [];
   taskcodes: Taskcode[] = [];
 
   showSidebar = false;
   selectedTimesheet: Timesheet | null = null;
-  mode: 'create' | 'edit' = 'create';
 
   showDeletePopup = false;
   selectedDeleteItem: Timesheet | null = null;
@@ -62,15 +61,19 @@ export class ListTimesheetComponent implements OnInit {
     private loader: LoaderService,
     private audit: AuditFieldsService,
   ) {}
+  ngOnDestroy(): void {
+    window.removeEventListener('resize', this.onResize.bind(this));
+  }
 
   ngOnInit(): void {
     this.checkScreenSize();
     this.setupResponsiveColumns();
     this.loadTimesheetDetails();
+    window.addEventListener('resize', this.onResize.bind(this));
   }
 
-  @HostListener('window:resize')
-  onResize(): void {
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any): void {
     this.checkScreenSize();
   }
 
@@ -84,15 +87,24 @@ export class ListTimesheetComponent implements OnInit {
   }
 
   private setupResponsiveColumns(): void {
-    this.columnDefs = this.isMobile
-      ? [...this.mobileColumnDefs]
-      : [...this.desktopColumnDefs];
-
-    this.gridOptions.domLayout = this.isMobile ? 'autoHeight' : 'normal';
-
-    if (this.gridApi) {
-      setTimeout(() => this.gridApi.sizeColumnsToFit(), 100);
+    if (this.isMobile) {
+      this.columnDefs = [...this.mobileColumnDefs];
+      this.gridOptions.domLayout = 'autoHeight';
+    } else {
+      this.columnDefs = [...this.desktopColumnDefs];
+      this.gridOptions.domLayout = 'normal';
     }
+    if (this.gridApi) {
+      this.refreshGridColumns();
+    }
+  }
+  private refreshGridColumns(): void {
+    if (!this.gridApi) return;
+    const newColumnDefs = JSON.parse(JSON.stringify(this.columnDefs));
+    setTimeout(() => {
+      this.gridApi.refreshHeader();
+      this.gridApi.sizeColumnsToFit();
+    }, 100);
   }
 
   loadTimesheetDetails(): void {
@@ -104,9 +116,9 @@ export class ListTimesheetComponent implements OnInit {
       taskcodes: this.taskcodeService.getTaskcodeListAsync(),
     }).subscribe({
       next: ({ timesheets, taskitems, taskcodes }) => {
-        this.timesheets = timesheets || [];
-        this.taskitems = taskitems || [];
-        this.taskcodes = taskcodes || [];
+        this.timesheets = timesheets;
+        this.taskitems = taskitems;
+        this.taskcodes = taskcodes;
         this.loader.hide();
 
         if (this.gridApi) {
@@ -114,7 +126,7 @@ export class ListTimesheetComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error(error);
+        console.error('Error Loading Data: ', error);
         this.loader.hide();
         this.toastr.error('Failed to load timesheets', 'Error');
       },
@@ -122,21 +134,16 @@ export class ListTimesheetComponent implements OnInit {
   }
 
   openAddEditTimesheet(): void {
-    this.mode = 'create';
-    this.selectedTimesheet = null;
     this.showSidebar = true;
+    this.selectedTimesheet = null;
   }
 
   requestTimesheetProcess(timesheet: any): void {
     console.log('✏️ Edit clicked row:', timesheet);
-
-    this.mode = 'edit';
     this.loader.show();
 
     this.timesheetService.getTimesheetWithTasksAsync(timesheet.Id).subscribe({
       next: (res: any) => {
-        console.log('✅ Full Timesheet with Tasks:', res);
-
         this.selectedTimesheet = {
           Id: res.Id,
           FromDate: res.FromDate,
@@ -145,11 +152,6 @@ export class ListTimesheetComponent implements OnInit {
           IsActive: res.IsActive,
           Tasks: res.Tasks || res.tasks || [],
         };
-
-        console.log(
-          '✅ Selected Timesheet for sidebar:',
-          this.selectedTimesheet,
-        );
 
         this.loader.hide();
         this.showSidebar = true;
@@ -162,23 +164,27 @@ export class ListTimesheetComponent implements OnInit {
     });
   }
 
+  // requestTimesheetProcess(timesheet: Timesheet): void {
+  //   this.showSidebar = true;
+  //   this.selectedTimesheet = timesheet;
+  // }
+
   onCloseSidebar(): void {
     this.showSidebar = false;
     this.selectedTimesheet = null;
   }
 
   onSaveTimesheet(payload: any): void {
-    console.log('📤 Final payload from child:', payload);
-
     this.loader.show();
+    console.log('📤 Final payload from child:', payload);
 
     const parentPayload = {
       Id: payload.Id || 0,
       FromDate: payload.FromDate,
       ToDate: payload.ToDate,
       Description: payload.Description || 'Timesheet Entry',
-      EmployeeId: undefined, // ✅ fixed
-      UserId: undefined, // ✅ fixed
+      EmployeeId: undefined,
+      UserId: undefined,
       Status: payload.Status || 'Submitted',
       IsActive: payload.IsActive ?? true,
       TotalHrs: payload.TotalHrs,
@@ -188,24 +194,30 @@ export class ListTimesheetComponent implements OnInit {
       ModifiedOn: new Date(),
     };
 
-    console.log('🟦 Saving parent Timesheet:', parentPayload);
-
+    // Save parent
     this.timesheetService.insertOrUpdateTimesheet(parentPayload).subscribe({
       next: (res: any) => {
-        console.log('✅ Parent Timesheet saved:', res);
+        console.log('✅ Parent saved:', res);
 
         const savedTimesheetId =
-          res?.Id || res?.id || payload.Id || this.selectedTimesheet?.Id;
+          res?.timesheet?.Id || // ⭐ MAIN FIX
+          res?.Id ||
+          res?.id ||
+          payload.Id ||
+          this.selectedTimesheet?.Id;
+
+        console.log('Saved Timesheet ID:', savedTimesheetId);
 
         if (!savedTimesheetId) {
-          console.error('❌ Timesheet ID missing after save');
           this.loader.hide();
-          this.toastr.error('Timesheet saved but ID not found');
+          this.toastr.error('Timesheet ID not found');
           return;
         }
 
         const tasks = payload.Tasks || [];
+        console.log('🟨 Tasks:', tasks);
 
+        // If no tasks
         if (!tasks.length) {
           this.loader.hide();
           this.toastr.success('Timesheet saved successfully');
@@ -214,8 +226,7 @@ export class ListTimesheetComponent implements OnInit {
           return;
         }
 
-        console.log('🟨 Saving child tasks:', tasks);
-
+        // Save tasks
         let completed = 0;
         let hasError = false;
 
@@ -223,8 +234,8 @@ export class ListTimesheetComponent implements OnInit {
           const taskPayload = {
             Id: task.Id || 0,
             TimesheetId: savedTimesheetId,
-            TaskItemId: task.TaskItemId,
-            TaskCodeId: task.TaskCodeId,
+            TaskItemId: Number(task.TaskItemId),
+            TaskCodeId: Number(task.TaskCodeId),
             MondayHours: Number(task.MondayHours || 0),
             TuesdayHours: Number(task.TuesdayHours || 0),
             WednesdayHours: Number(task.WednesdayHours || 0),
@@ -240,89 +251,46 @@ export class ListTimesheetComponent implements OnInit {
             ModifiedOn: new Date(),
           };
 
-          console.log('🟧 Saving task row:', taskPayload);
+          console.log('🟧 Saving task:', taskPayload);
 
           this.timesheetService
             .addTimesheetTask(savedTimesheetId, taskPayload)
             .subscribe({
-              next: (taskRes: any) => {
-                console.log('✅ Task row saved:', taskRes);
-
+              next: () => {
                 completed++;
 
                 if (completed === tasks.length && !hasError) {
                   this.loader.hide();
-                  this.toastr.success(
-                    this.mode === 'edit'
-                      ? 'Timesheet updated successfully'
-                      : 'Timesheet created successfully',
-                  );
+                  this.toastr.success('Timesheet saved successfully');
                   this.onCloseSidebar();
                   this.loadTimesheetDetails();
                 }
               },
-              error: (taskErr: any) => {
-                console.error('❌ Error saving task row:', taskErr);
+              error: (err) => {
+                console.error('❌ Task save error:', err);
                 hasError = true;
                 this.loader.hide();
-                this.toastr.error('Timesheet saved, but task rows failed');
+                this.toastr.error('Task save failed');
               },
             });
         });
       },
+
       error: (err: any) => {
-        console.error('❌ Error saving parent timesheet:', err);
+        console.error('❌ Parent save error:', err);
         this.loader.hide();
         this.toastr.error('Failed to save timesheet');
       },
     });
   }
-  saveTaskRows(timesheetId: number, tasks: any[]): void {
-    const requests = tasks.map((task) => {
-      const taskPayload = {
-        TimesheetId: timesheetId,
-        TaskItemId: Number(task.taskItem),
-        TaskCodeId: Number(task.taskCode),
-        MondayHours: Number(task.monday || 0),
-        TuesdayHours: Number(task.tuesday || 0),
-        WednesdayHours: Number(task.wednesday || 0),
-        ThursdayHours: Number(task.thursday || 0),
-        FridayHours: Number(task.friday || 0),
-        SaturdayHours: Number(task.saturday || 0),
-        SundayHours: Number(task.sunday || 0),
-        TotalHrs:
-          Number(task.monday || 0) +
-          Number(task.tuesday || 0) +
-          Number(task.wednesday || 0) +
-          Number(task.thursday || 0) +
-          Number(task.friday || 0) +
-          Number(task.saturday || 0) +
-          Number(task.sunday || 0),
-        IsActive: true,
-      };
 
-      return this.timesheetService.addTimesheetTask(timesheetId, taskPayload);
-    });
-
-    forkJoin(requests).subscribe({
-      next: () => {
-        this.loader.hide();
-        this.toastr.success('Timesheet and tasks saved successfully');
-        this.showSidebar = false;
-        this.selectedTimesheet = null;
-        this.loadTimesheetDetails();
-      },
-      error: (error) => {
-        console.error(error);
-        this.loader.hide();
-        this.toastr.error('Parent saved, but task rows failed');
-      },
-    });
+  refreshData() {
+    (this, this.loadTimesheetDetails());
   }
 
   deleteTimesheet(timesheet: Timesheet): void {
-    this.selectedDeleteItem = timesheet;
     this.showDeletePopup = true;
+    this.selectedDeleteItem = timesheet;
   }
 
   closePopup(): void {
@@ -331,7 +299,10 @@ export class ListTimesheetComponent implements OnInit {
   }
 
   confirmDelete(): void {
-    if (!this.selectedDeleteItem?.Id) return;
+    if (!this.selectedDeleteItem?.Id) {
+      console.error('No valid item selected for delete');
+      return;
+    }
 
     this.loader.show();
 
@@ -339,12 +310,14 @@ export class ListTimesheetComponent implements OnInit {
       .deleteTimesheet(this.selectedDeleteItem.Id)
       .subscribe({
         next: () => {
-          this.toastr.success('Timesheet deleted successfully');
+          this.loader.hide();
+          this.toastr.success('Deleted successfully');
           this.closePopup();
+          this.selectedDeleteItem = null;
           this.loadTimesheetDetails();
         },
         error: (err) => {
-          console.error(err);
+          console.error('Delete failed:', err);
           this.loader.hide();
           this.toastr.error('Delete failed');
         },
@@ -415,6 +388,7 @@ export class ListTimesheetComponent implements OnInit {
       headerName: 'Status',
       width: 120,
       cellRenderer: this.statusRenderer.bind(this),
+      cellClass: this.statusCellClass.bind(this),
     },
     {
       field: 'Actions',
@@ -463,8 +437,20 @@ export class ListTimesheetComponent implements OnInit {
   ];
 
   statusRenderer(params: ICellRendererParams): string {
-    return params.value
-      ? `<span class="badge bg-success">Active</span>`
-      : `<span class="badge bg-danger">Inactive</span>`;
+    const isActive = params.value;
+    const statusText = isActive ? 'Active' : 'Inactive';
+    const statusClass = isActive ? 'success' : 'danger';
+    const icon = isActive ? 'mdi-check-circle' : 'mdi-close-circle';
+
+    return `
+            <div class="d-flex align-items-center gap-2">
+              <i class="mdi ${icon} text-${statusClass}"></i>
+              <span class="badge bg-${statusClass}">${statusText}</span>
+            </div>
+          `;
+  }
+  statusCellClass(params: any): string {
+    const isActive = params.value;
+    return isActive ? 'status-active' : 'status-inactive';
   }
 }

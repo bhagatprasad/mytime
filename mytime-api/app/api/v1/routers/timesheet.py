@@ -74,15 +74,37 @@ async def delete_timesheet_task(task_id: int, db: Session = Depends(get_db)):
         )
     return response
 
+# @router.post("/AddTimesheetTask/{timesheet_id}", response_model=TimesheetTaskResponse)
+# async def add_timesheet_task(timesheet_id: int, task_data: dict, db: Session = Depends(get_db)):
+#     task = TimesheetService.add_timesheet_task(db, timesheet_id, task_data)
+#     if not task:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail=f"Timesheet with ID {timesheet_id} not found"
+#         )
+#     return task
+
+from fastapi import HTTPException, status
+
 @router.post("/AddTimesheetTask/{timesheet_id}", response_model=TimesheetTaskResponse)
 async def add_timesheet_task(timesheet_id: int, task_data: dict, db: Session = Depends(get_db)):
-    task = TimesheetService.add_timesheet_task(db, timesheet_id, task_data)
-    if not task:
+    try:
+        task = TimesheetService.add_timesheet_task(db, timesheet_id, task_data)
+
+        if not task:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Timesheet with ID {timesheet_id} not found"
+            )
+
+        return task
+
+    except Exception as e:
+        print("🔥 BACKEND ERROR:", str(e))   # 👈 VERY IMPORTANT
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Timesheet with ID {timesheet_id} not found"
+            status_code=500,
+            detail=str(e)
         )
-    return task
 
 @router.put("/UpdateTimesheetTask/{task_id}", response_model=TimesheetTaskResponse)
 async def update_timesheet_task(task_id: int, task_data: dict, db: Session = Depends(get_db)):

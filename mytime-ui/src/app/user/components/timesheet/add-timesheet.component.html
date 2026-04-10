@@ -7,7 +7,7 @@
     <!-- Header -->
     <div class="sidebar-header">
       <h5 class="sidebar-title">
-        {{ mode === "create" ? "Create Weekly Timesheet" : "Edit Timesheet" }}
+        {{ timesheet?.Id ? "Edit Timesheet" : "Create Weekly Timesheet" }}
       </h5>
       <button type="button" class="close" (click)="close()" aria-label="Close">
         <span aria-hidden="true">&times;</span>
@@ -19,10 +19,11 @@
       <div>
         <div class="form-header">
           <h5>Weekly Timesheet</h5>
+
           <div
             class="date-range"
-            [class.disabled-date]="mode === 'edit'"
-            (click)="mode === 'create' && toggleCalendar()"
+            [class.disabled-date]="timesheet?.Id"
+            (click)="!timesheet?.Id && toggleCalendar()"
           >
             {{ formatDateForDisplay(weekStart) }} -
             {{ formatDateForDisplay(weekEnd) }}
@@ -267,7 +268,7 @@
     <!-- Footer -->
     <div class="sidebar-footer">
       <button type="submit" class="btn btn-primary">
-        {{ mode === "create" ? "Submit Timesheet" : "Update Timesheet" }}
+        {{ timesheet?.Id ? "Update Timesheet" : "Submit Timesheet" }}
       </button>
 
       <button type="button" class="btn btn-secondary ms-2" (click)="close()">
