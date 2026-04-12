@@ -1,5 +1,5 @@
 export interface EmployeeSalary {
-  EmployeeSalaryId: number;
+  EmployeeSalaryId?: number;
   EmployeeId?: number | null;
   MonthlySalaryId?: number | null;
   

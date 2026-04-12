@@ -16,13 +16,14 @@ import { RouterModule } from '@angular/router';
 import { Employee } from '../../models/employee';
 import { forkJoin } from 'rxjs';
 import { EmployeeService } from '../../services/employee.service';
+import { PublishEmployeeSalaryComponent } from './publish-employee-salary.component';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-monthly-salary-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, MonthlySalaryAddComponent, RouterModule],
+  imports: [CommonModule, AgGridAngular, MonthlySalaryAddComponent, RouterModule, PublishEmployeeSalaryComponent],
   templateUrl: './monthly-salary-list.component.html',
   styleUrl: './monthly-salary-list.component.css'
 })
@@ -33,6 +34,9 @@ export class MonthlySalaryListComponent implements OnInit, OnDestroy {
   monthlySalaryDetails: MonthlySalaryDetails[] = [];
 
   employees: Employee[] = [];
+
+  sidebarVisible = false;
+
 
   employeeSalaries: EmployeeSalary[] = [];
 
@@ -293,11 +297,14 @@ export class MonthlySalaryListComponent implements OnInit, OnDestroy {
     this.selectedMonthlySalary = null;
     this.showSidebar = true;
   }
+
   onCloseSidebar(): void {
     this.showSidebar = false;
     this.selectedMonthlySalary = null;
   }
+  onPublishSalary(): void {
 
+  }
   onSaveMonthlySalary(monthlySalary: MonthlySalary): void {
     this.loader.show();
 
@@ -318,6 +325,19 @@ export class MonthlySalaryListComponent implements OnInit, OnDestroy {
 
   deleteMonthlySalary(monthlySalary: MonthlySalary): void {
 
+  }
+
+  openSidebar() {
+    this.sidebarVisible = true;
+  }
+
+  closeSidebar() {
+    this.sidebarVisible = false;
+  }
+
+  saveSalary(data: any) {
+    console.log(data);
+    this.sidebarVisible = false;
   }
 
   openEmployees(id: number) {
