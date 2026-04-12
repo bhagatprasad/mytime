@@ -2,14 +2,6 @@ export const environment = {
     production: false,
     baseUrl: 'https://mytime-docker-prod.onrender.com/api/v1',
     UrlConstants: {
-        // Authentication endpoints
-        Authenticate: 'auth/AuthenticateUser',
-        GenerateUserClaims: 'auth/GenarateUserClaims',
-        ForgotPasswordAsync: 'auth/ForgotPasswordAsync',
-        ResetPasswordAsync: 'auth/ResetPasswordAsync',
-        ChangePasswordAsync: 'auth/ChangePasswordAsync',
-
-  UrlConstants: {
     // Authentication endpoints
     Authenticate: 'auth/AuthenticateUser',
     GenerateUserClaims: 'auth/GenarateUserClaims',
