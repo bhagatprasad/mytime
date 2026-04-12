@@ -17,6 +17,7 @@ import { Employee } from '../../models/employee';
 import { forkJoin } from 'rxjs';
 import { EmployeeService } from '../../services/employee.service';
 import { PublishEmployeeSalaryComponent } from './publish-employee-salary.component';
+import { MultipleEmployeesMonthlySalaries } from '../../models/multiple_employees_monthly_salaries';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -335,9 +336,22 @@ export class MonthlySalaryListComponent implements OnInit, OnDestroy {
     this.sidebarVisible = false;
   }
 
-  saveSalary(data: any) {
-    console.log(data);
-    this.sidebarVisible = false;
+  saveSalary(monthlySalaryData: MultipleEmployeesMonthlySalaries) {
+    console.log(monthlySalaryData);
+   
+    this.loader.show();
+    this.monthlySalaryService.publishMultipleMonthlySalaryAsync(monthlySalaryData).subscribe({
+      next: (response) => {
+        this.toster.success('Monthly salary published successfully.', 'Success');
+         this.sidebarVisible = false;
+        this.refreshData();
+      },
+      error: (error) => {
+        this.toster.error('Failed to publish monthly salary. Please try again later.', 'Error');
+        this.loader.hide();
+      }
+    });
+
   }
 
   openEmployees(id: number) {
