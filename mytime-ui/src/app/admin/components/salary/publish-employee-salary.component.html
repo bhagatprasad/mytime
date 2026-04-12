@@ -1,0 +1,146 @@
+<div class="sidebar-overlay" *ngIf="isVisible" (click)="close()"></div>
+
+<div class="sidebar" [class.visible]="isVisible">
+
+    <form [formGroup]="salaryForm" (ngSubmit)="submit()">
+
+        <div class="sidebar-header">
+            <h5 class="sidebar-title">Publish Salary</h5>
+
+            <button type="button" class="close" (click)="close()">
+                <span>&times;</span>
+            </button>
+        </div>
+
+
+        <div class="sidebar-body">
+
+            <!-- EMPLOYEE DROPDOWN -->
+
+            <div class="form-group">
+
+                <label>Employee *</label>
+
+                <div class="input-group">
+
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-account"></i>
+                        </span>
+                    </div>
+
+                    <div class="form-control dropdown-toggle" (click)="toggleEmployeeDropdown()">
+                        {{getEmployeeLabel()}}
+                    </div>
+
+                </div>
+
+                <div class="dropdown-menu show checkbox-dropdown" *ngIf="employeeDropdownOpen">
+
+                    <div *ngFor="let emp of employees" class="dropdown-item">
+
+                        <input type="checkbox" [checked]="emp.EmployeeId && selectedEmployees.includes(emp.EmployeeId)"
+                            (change)="toggleEmployee(emp.EmployeeId)">
+
+                        {{emp.FirstName}} {{emp.LastName}}
+
+                    </div>
+
+                </div>
+
+                <small class="text-danger"
+                    *ngIf="salaryForm.get('EmployeeId')?.invalid && salaryForm.get('EmployeeId')?.touched">
+
+                    Employee is required
+
+                </small>
+
+            </div>
+
+
+            <!-- YEAR -->
+
+            <div class="form-group">
+
+                <label>Salary Year *</label>
+
+                <div class="input-group">
+
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-calendar"></i>
+                        </span>
+                    </div>
+
+                    <select [(ngModel)]="selectedYear" class="form-control" formControlName="SalaryYear">
+
+                        <option [ngValue]="null">Select Year</option>
+
+                        <option *ngFor="let y of years" [ngValue]="y">
+                            {{y}}
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- MONTH DROPDOWN -->
+
+            <div class="form-group">
+
+                <label>Salary Month *</label>
+
+                <div class="input-group">
+
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="mdi mdi-calendar-month"></i>
+                        </span>
+                    </div>
+
+                    <div class="form-control dropdown-toggle" (click)="toggleMonthDropdown()">
+                        {{getMonthLabel()}}
+                    </div>
+
+                </div>
+
+                <div class="dropdown-menu show checkbox-dropdown" *ngIf="monthDropdownOpen">
+
+                    <div *ngFor="let m of months" class="dropdown-item">
+
+                        <input type="checkbox" [checked]="selectedMonths.includes(m.id)" (change)="toggleMonth(m.id)">
+
+                        {{m.name}}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="sidebar-footer">
+
+            <button type="submit" class="btn btn-primary" [disabled]="salaryForm.invalid">
+
+                <i class="mdi mdi-content-save"></i>
+                Save
+
+            </button>
+
+            <button type="button" class="btn btn-secondary ml-2" (click)="close()">
+
+                Cancel
+
+            </button>
+
+        </div>
+
+    </form>
+
+</div>

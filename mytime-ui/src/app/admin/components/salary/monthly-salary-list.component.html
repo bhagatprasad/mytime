@@ -83,11 +83,27 @@
             <!-- Right: Search and Actions -->
             <div class="d-flex align-items-center gap-2">
               <!-- Action Buttons -->
-              <div class="d-flex gap-2 ms-3">
-                <!-- Add Button -->
-                <a class="d-flex align-items-center" (click)="openAddMonthlySalary()" title="Add new monthly salary">
+              <div class="salary-dropdown">
+
+                <!-- + ICON -->
+                <a class="add-btn d-flex align-items-center" title="Publish Salary">
                   <i class="mdi mdi-plus-circle-outline me-1"></i>
                 </a>
+
+                <!-- DROPDOWN -->
+                <div class="dropdown-menu">
+
+                  <div class="dropdown-item" (click)="openAddMonthlySalary()">
+                    <i class="mdi mdi-account-multiple me-2"></i>
+                    Publish All Employees
+                  </div>
+
+                  <div class="dropdown-item" (click)="openSidebar()">
+                    👤 Publish Employee
+                  </div>
+
+                </div>
+
               </div>
             </div>
           </div>
@@ -122,6 +138,9 @@
           <app-monthly-salary-add [isVisible]="showSidebar" [monthlySalary]="selectedMonthlySalary"
             (closeSidebar)="onCloseSidebar()"
             (saveMonthlySalary)="onSaveMonthlySalary($event)"></app-monthly-salary-add>
+
+          <app-publish-employee-salary [isVisible]="sidebarVisible" [employees]="employees"
+            (closeSidebar)="closeSidebar()" (saveSalary)="saveSalary($event)"></app-publish-employee-salary>
         </div>
       </div>
     </div>
