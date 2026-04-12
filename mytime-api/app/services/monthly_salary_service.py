@@ -9,7 +9,8 @@ from app.models.employee import Employee
 from app.models.employee_salary_structure import EmployeeSalaryStructure
 from app.models.employee_salary import EmployeeSalary
 from app.schemas.monthly_salary_schemas import (
-    MonthlySalaryCreate, 
+    MonthlySalaryCreate,
+    MonthlySalaryMultiCreate, 
     MonthlySalaryUpdate
 )
 from app.utils.month_converter import MonthToYearConverter
@@ -361,6 +362,250 @@ class MonthlySalaryService:
         
         return True, total_processed
     
+
+    @staticmethod
+    def publish_monthly_multiple_salary(
+        db: Session, 
+        payload: MonthlySalaryMultiCreate
+    ) -> Tuple[bool, int]:
+        """
+        Publish monthly salary for selected employees across multiple months.
+        Returns: (success, number_of_employee_salaries_processed)
+        """
+
+        # ── 1. Parse inputs ──────────────────────────────────────────────
+        employee_ids: List[int] = [
+            int(eid.strip()) for eid in payload.EmployeeIds.split(",") if eid.strip()
+        ]
+        salary_months: List[str] = [
+            m.strip() for m in payload.SalaryMonths.split(",") if m.strip()
+        ]
+
+        if not employee_ids:
+            logger.warning("No employee IDs provided.")
+            return False, 0
+
+        if not salary_months:
+            logger.warning("No salary months provided.")
+            return False, 0
+
+        salary_year = payload.SalaryYear  # e.g. "2025"
+
+        # ── 2. Validate employees ─────────────────────────────────────────
+        active_employees = db.query(Employee).filter(
+            Employee.EmployeeId.in_(employee_ids),
+            Employee.IsActive == True
+        ).all()
+
+        active_employee_ids = [emp.EmployeeId for emp in active_employees]
+
+        if not active_employee_ids:
+            logger.warning("None of the provided employee IDs are active.")
+            return False, 0
+
+        # ── 3. Load salary structures for those employees ─────────────────
+        salary_structures = db.query(EmployeeSalaryStructure).filter(
+            EmployeeSalaryStructure.EmployeeId.in_(active_employee_ids),
+            EmployeeSalaryStructure.IsActive == True
+        ).all()
+
+        structure_map: Dict[int, EmployeeSalaryStructure] = {
+            s.EmployeeId: s for s in salary_structures
+        }
+
+        if not structure_map:
+            logger.warning("No active salary structures found for provided employees.")
+            return False, 0
+
+        now = datetime.utcnow()
+        total_processed = 0
+
+        # ── 4. Iterate over each month ────────────────────────────────────
+        for salary_month in salary_months:
+
+            # 4a. Build dynamic title
+            title = f"Pay Slip for the month of {salary_month} {salary_year}"
+
+            # 4b. Calculate std/wrk days for this month (lop is always 0 here)
+            standard_days = MonthToYearConverter.get_days_in_month(
+                salary_month, int(salary_year)
+            )
+            lop_days = 0
+
+            # 4c. Check/create the MonthlySalary header record for this month
+            monthly_salary = db.query(MonthlySalary).filter(
+                MonthlySalary.SalaryMonth == salary_month,
+                MonthlySalary.SalaryYear == salary_year,
+                MonthlySalary.Location == payload.Location,
+            ).first()
+
+            is_new_monthly_salary = monthly_salary is None
+
+            if is_new_monthly_salary:
+                monthly_salary = MonthlySalary()
+                monthly_salary.Title       = title
+                monthly_salary.SalaryMonth = salary_month
+                monthly_salary.SalaryYear  = salary_year
+                monthly_salary.Location    = payload.Location
+                monthly_salary.StdDays     = standard_days
+                monthly_salary.WrkDays     = standard_days
+                monthly_salary.LopDays     = lop_days
+                monthly_salary.IsActive    = True
+                monthly_salary.CreatedBy   = payload.CreatedBy
+                monthly_salary.ModifiedBy  = payload.CreatedBy
+                monthly_salary.CreatedOn   = now
+                monthly_salary.ModifiedOn  = now
+                db.add(monthly_salary)
+                db.flush()  # get MonthlySalaryId before using it below
+                logger.info(
+                    f"Created MonthlySalary header: '{title}' "
+                    f"(ID={monthly_salary.MonthlySalaryId})"
+                )
+            else:
+                logger.info(
+                    f"Using existing MonthlySalary header: '{title}' "
+                    f"(ID={monthly_salary.MonthlySalaryId})"
+                )
+
+            # 4d. Load any existing EmployeeSalary rows for this month
+            existing_employee_salaries = db.query(EmployeeSalary).filter(
+                EmployeeSalary.MonthlySalaryId == monthly_salary.MonthlySalaryId,
+                EmployeeSalary.EmployeeId.in_(active_employee_ids)
+            ).all()
+
+            existing_map: Dict[int, EmployeeSalary] = {
+                es.EmployeeId: es for es in existing_employee_salaries
+            }
+
+            is_april = MonthlySalaryService.is_april_month(salary_month)
+            if is_april:
+                logger.info(f"Processing April salary — starting new financial year")
+
+            employee_salaries_to_add    = []
+            employee_salaries_to_update = []
+
+            # 4e. Process each employee for this month
+            for emp_id in active_employee_ids:
+
+                structure = structure_map.get(emp_id)
+                if not structure:
+                    logger.warning(
+                        f"No salary structure for employee {emp_id}, skipping."
+                    )
+                    continue
+
+                existing_es = existing_map.get(emp_id)
+
+                if existing_es:
+                    # ── UPDATE path ──────────────────────────────────────
+                    MonthlySalaryService._update_employee_salary_from_monthly(
+                        existing_es, monthly_salary, standard_days, lop_days
+                    )
+                    employee_salaries_to_update.append(existing_es)
+                    logger.info(
+                        f"[{salary_month} {salary_year}] "
+                        f"Updating existing salary for employee {emp_id}"
+                    )
+
+                else:
+                    # ── CREATE path ──────────────────────────────────────
+                    employee_salary = EmployeeSalary()
+                    employee_salary.MonthlySalaryId = monthly_salary.MonthlySalaryId
+                    employee_salary.EmployeeId      = emp_id
+                    employee_salary.Title           = title
+                    employee_salary.SalaryMonth     = salary_month
+                    employee_salary.SalaryYear      = salary_year
+                    employee_salary.LOCATION        = payload.Location
+                    employee_salary.STDDAYS         = standard_days
+                    employee_salary.LOPDAYS         = lop_days
+                    employee_salary.WRKDAYS         = standard_days
+                    employee_salary.CreatedBy       = payload.CreatedBy
+                    employee_salary.ModifiedBy      = payload.CreatedBy
+                    employee_salary.CreatedOn       = now
+                    employee_salary.ModifiedOn      = now
+                    employee_salary.IsActive        = True
+
+                    if is_april:
+                        logger.info(
+                            f"[{salary_month} {salary_year}] "
+                            f"April reset YTD for employee {emp_id}"
+                        )
+                        MonthlySalaryService._set_first_month_of_financial_year(
+                            employee_salary, structure
+                        )
+                    else:
+                        previous_salaries = (
+                            MonthlySalaryService
+                            .get_previous_salaries_in_current_financial_year(
+                                db,
+                                emp_id,
+                                salary_month,
+                                salary_year,
+                                monthly_salary.MonthlySalaryId,
+                            )
+                        )
+
+                        if not previous_salaries:
+                            logger.info(
+                                f"[{salary_month} {salary_year}] "
+                                f"First salary in FY for employee {emp_id} — starting fresh"
+                            )
+                            MonthlySalaryService._set_first_month_of_financial_year(
+                                employee_salary, structure
+                            )
+                        else:
+                            latest_previous = previous_salaries[-1]
+                            logger.info(
+                                f"[{salary_month} {salary_year}] "
+                                f"Found {len(previous_salaries)} prior salaries for "
+                                f"employee {emp_id}. Latest: "
+                                f"{latest_previous.SalaryMonth} {latest_previous.SalaryYear}"
+                            )
+                            MonthlySalaryService._set_subsequent_salaries(
+                                employee_salary, structure, latest_previous
+                            )
+
+                    net_salary = (
+                        (structure.GROSSEARNINGS or 0) -
+                        (structure.GROSSDEDUCTIONS or 0)
+                    )
+                    employee_salary.INWords = IndianSalaryConverter.convert_to_words(
+                        net_salary
+                    )
+
+                    employee_salaries_to_add.append(employee_salary)
+                    logger.info(
+                        f"[{salary_month} {salary_year}] Employee {emp_id} — "
+                        f"Monthly Basic: {employee_salary.Earning_Monthly_Basic}, "
+                        f"YTD Basic: {employee_salary.Earning_YTD_Basic}"
+                    )
+
+            # 4f. Bulk persist for this month
+            if employee_salaries_to_add:
+                db.add_all(employee_salaries_to_add)
+                logger.info(
+                    f"[{salary_month} {salary_year}] "
+                    f"Added {len(employee_salaries_to_add)} new employee salary records"
+                )
+
+            if employee_salaries_to_update:
+                logger.info(
+                    f"[{salary_month} {salary_year}] "
+                    f"Updated {len(employee_salaries_to_update)} employee salary records"
+                )
+
+            month_count = len(employee_salaries_to_add) + len(employee_salaries_to_update)
+            total_processed += month_count
+
+        # ── 5. Single commit for everything ──────────────────────────────
+        db.commit()
+        logger.info(
+            f"Successfully published salaries for "
+            f"{len(salary_months)} month(s), {total_processed} total records."
+        )
+
+        return True, total_processed
+        
     @staticmethod
     def _update_employee_salary_from_monthly(
         employee_salary: EmployeeSalary,

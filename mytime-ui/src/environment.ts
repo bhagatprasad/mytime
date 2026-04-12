@@ -407,6 +407,7 @@ export const environment = {
         'monthlysalary/InsertOrUpdateMonthlySalary',
       DeleteMonthlySalaryAsync: 'monthlysalary/deleteMonthlySalary',
       PublishMonthlySalaryAsync: 'monthlysalary/publish',
+      PublishMultipleMonthlySalariesAsync: 'monthlysalary/publish-multiple',
     },
     UserProfileImage: {
       FetchProfileImage: 'userprofileimage/fetchProfileImage',

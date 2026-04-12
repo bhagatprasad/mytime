@@ -24,6 +24,12 @@ class MonthlySalaryCreate(MonthlySalaryBase):
     SalaryMonth: str = Field(..., max_length=20, min_length=1)
     SalaryYear: str = Field(..., max_length=4, min_length=4)
 
+class MonthlySalaryMultiCreate(MonthlySalaryBase):
+    """Schema for creating multiple monthly salaries"""
+    CreatedBy: Optional[int] = Field(None, ge=1)
+    EmployeeIds: str = Field(..., max_length=200, min_length=1)
+    SalaryMonths: str = Field(..., max_length=20, min_length=1)
+    SalaryYear: str = Field(..., max_length=4, min_length=4)
 
 class MonthlySalaryUpdate(BaseModel):
     """Schema for updating an existing monthly salary"""
