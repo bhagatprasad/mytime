@@ -4,6 +4,7 @@ import { Observable } from "rxjs";
 import { MonthlySalary } from "../models/monlty_salary";
 import { environment } from "../../../environment";
 import { MonthlySalaryDetails } from "../models/monlty_salary.details";
+import { MultipleEmployeesMonthlySalaries } from "../models/multiple_employees_monthly_salaries";
 
 @Injectable({
     providedIn: 'root'
@@ -28,5 +29,9 @@ export class MonthlySalaryService {
     }
     publishMonthlySalaryAsync(monthlySalary: MonthlySalary): Observable<any> {
         return this.apiService.send<any>("POST", `${environment.UrlConstants.MonthlySalary.PublishMonthlySalaryAsync}`, monthlySalary);
+    }
+
+    publishMultipleMonthlySalaryAsync(monthlySalary: MultipleEmployeesMonthlySalaries): Observable<any> {
+        return this.apiService.send<any>("POST", `${environment.UrlConstants.MonthlySalary.PublishMultipleMonthlySalariesAsync}`, monthlySalary);
     }
 }

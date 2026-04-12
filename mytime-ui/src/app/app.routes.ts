@@ -8,7 +8,7 @@ export const routes: Routes = [
     path: 'login',
     loadComponent: () =>
       import('./common/components/login.component').then(
-        (m) => m.LoginComponent
+        (m) => m.LoginComponent,
       ),
   },
 
@@ -22,21 +22,21 @@ export const routes: Routes = [
         path: 'dashboard',
         loadComponent: () =>
           import('./dashbaord/user-dashbaord.component').then(
-            (m) => m.UserDashbaordComponent
+            (m) => m.UserDashboardComponent,
           ),
       },
       {
         path: 'payslips',
         loadComponent: () =>
           import('./user/components/payslips/payslips.component').then(
-            (m) => m.PayslipsComponent
+            (m) => m.PayslipsComponent,
           ),
       },
       {
         path: 'ytdreports',
         loadComponent: () =>
           import('./user/components/ytdreports/ytdreports.component').then(
-            (m) => m.YtdreportsComponent
+            (m) => m.YtdreportsComponent,
           ),
       },
       {
@@ -55,7 +55,21 @@ export const routes: Routes = [
         path: 'leaveapply',
         loadComponent: () =>
           import('./user/components/leaveapply/leaveapply.component').then(
-            (m) => m.LeaveapplyComponent
+            (m) => m.LeaveapplyComponent,
+          ),
+      },
+      {
+        path: 'timesheet',
+        loadComponent: () =>
+          import('./user/components/timesheet/list-timesheet.component').then(
+            (m) => m.ListTimesheetComponent,
+          ),
+      },
+      {
+        path: 'leavebalance',
+        loadComponent: () =>
+          import('./user/components/leavebalance/leavebalance.component').then(
+            (m) => m.LeavebalanceComponent,
           ),
       },
       {
@@ -63,6 +77,20 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./user/components/payslips/payslips.component').then(
             (m) => m.PayslipsComponent,
+          ),
+      },
+      {
+        path: 'documentcenter',
+        loadComponent: () =>
+          import('./user/components/documents/list-document.component').then(
+            (m) => m.ListDocumentComponent,
+          ),
+      },
+       {
+        path: 'attendence',
+        loadComponent: () =>
+          import('./user/components/attendence/attendence.component').then(
+            (m) => m.AttendenceComponent,
           ),
       },
     ],
@@ -78,77 +106,84 @@ export const routes: Routes = [
         path: 'dashboard',
         loadComponent: () =>
           import('./dashbaord/admin-dashbaord.component').then(
-            (m) => m.AdminDashbaordComponent
+            (m) => m.AdminDashbaordComponent,
           ),
       },
       {
         path: 'cities',
         loadComponent: () =>
           import('./admin/components/core/city/city-list.component').then(
-            (m) => m.CityListComponent
+            (m) => m.CityListComponent,
           ),
       },
       {
         path: 'countries',
         loadComponent: () =>
           import('./admin/components/core/country/country-list.component').then(
-            (m) => m.CountryListComponent
+            (m) => m.CountryListComponent,
           ),
       },
       {
         path: 'departments',
         loadComponent: () =>
           import('./admin/components/core/department/department-list.component').then(
-            (m) => m.DepartmentListComponent
+            (m) => m.DepartmentListComponent,
           ),
       },
       {
         path: 'designations',
         loadComponent: () =>
           import('./admin/components/core/designation/designation-list.component').then(
-            (m) => m.DesignationListComponent
+            (m) => m.DesignationListComponent,
           ),
       },
       {
         path: 'documenttypes',
         loadComponent: () =>
           import('./admin/components/core/documenttype/documenttype-list.component').then(
-            (m) => m.DocumenttypeListComponent
+            (m) => m.DocumenttypeListComponent,
           ),
       },
       {
         path: 'taskitem',
         loadComponent: () =>
           import('./admin/components/core/taskitem/taskitem-list.component').then(
-            (m) => m.TaskItemListComponent
+            (m) => m.TaskItemListComponent,
           ),
       },
       {
         path: 'holydaycallenders',
         loadComponent: () =>
           import('./admin/components/core/holydaycallender/holydaycallender-list.component').then(
-            (m) => m.HolydaycallenderListComponent
+            (m) => m.HolydaycallenderListComponent,
+          ),
+      },
+      {
+        path: 'leavetype',
+        loadComponent: () =>
+          import('./admin/components/leavetype/leavetype-list.component').then(
+            (m) => m.LeavetypeListComponent,
           ),
       },
       {
         path: 'roles',
         loadComponent: () =>
           import('./admin/components/core/role/role.component').then(
-            (m) => m.RoleComponent
+            (m) => m.RoleComponent,
           ),
       },
       {
         path: 'states',
         loadComponent: () =>
           import('./admin/components/core/state/state-list.component').then(
-            (m) => m.StateListComponent
+            (m) => m.StateListComponent,
           ),
       },
       {
         path: 'users',
         loadComponent: () =>
           import('./admin/components/user/user-list.component').then(
-            (m) => m.UserListComponent
+            (m) => m.UserListComponent,
           ),
       },
       {
@@ -158,21 +193,21 @@ export const routes: Routes = [
             path: '',
             loadComponent: () =>
               import('./admin/components/employees/employee/employees-list.component').then(
-                (m) => m.EmployeesListComponent
+                (m) => m.EmployeesListComponent,
               ),
           },
           {
             path: 'documents',
             loadComponent: () =>
               import('./admin/components/employees/documents/employee-documents-list.component').then(
-                (m) => m.EmployeeDocumentsListComponent
+                (m) => m.EmployeeDocumentsListComponent,
               ),
           },
           {
             path: ':employeeId',
             loadComponent: () =>
               import('./admin/components/employees/employee/employees-details.component').then(
-                (m) => m.EmployeesDetailsComponent
+                (m) => m.EmployeesDetailsComponent,
               ),
           },
         ],
@@ -181,49 +216,49 @@ export const routes: Routes = [
         path: 'salary',
         loadComponent: () =>
           import('./admin/components/salary/salary-list.component').then(
-            (m) => m.SalaryListComponent
+            (m) => m.SalaryListComponent,
           ),
       },
       {
         path: 'project',
         loadComponent: () =>
           import('./admin/components/project/project-list.component').then(
-            (m) => m.ProjectListComponent
+            (m) => m.ProjectListComponent,
           ),
       },
       {
         path: 'salary-structure',
         loadComponent: () =>
           import('./admin/components/salary/salary-structure-list.component').then(
-            (m) => m.SalaryStructureListComponent
+            (m) => m.SalaryStructureListComponent,
           ),
       },
       {
         path: 'monthly-salary',
         loadComponent: () =>
           import('./admin/components/salary/monthly-salary-list.component').then(
-            (m) => m.MonthlySalaryListComponent
+            (m) => m.MonthlySalaryListComponent,
           ),
       },
       {
         path: 'taskcode',
         loadComponent: () =>
           import('./admin/components/time/taskcode/taskcode.component').then(
-            (m) => m.TaskcodeComponent
+            (m) => m.TaskcodeComponent,
           ),
       },
       {
         path: 'leaves',
         loadComponent: () =>
           import('./admin/components/leaves/apply-leave.component').then(
-            (m) => m.ApplyLeaveComponent
+            (m) => m.ApplyLeaveComponent,
           ),
       },
       {
         path: 'taskitem',
         loadComponent: () =>
           import('./admin/components/core/taskitem/taskitem-list.component').then(
-            (m) => m.TaskItemListComponent
+            (m) => m.TaskItemListComponent,
           ),
       },
       {

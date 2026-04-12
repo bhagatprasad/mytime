@@ -31,6 +31,24 @@ async def fetch_employee(employee_id: int, db: Session = Depends(get_db)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error fetching employee: {str(e)}"
         )
+@router.get("/fetchEmployeeByUserId/{user_id}", response_model=EmployeeResponse)
+async def fetch_employee(user_id: int, db: Session = Depends(get_db)):
+    """Get employee by ID"""
+    try:
+        employee = EmployeeService.fetch_employee_by_user_id(db, user_id)
+        if not employee:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Employee with ID {user_id} not found"
+            )
+        return employee
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error fetching employee: {str(e)}"
+        )
 
 @router.get("/fetchAllEmployees", response_model=List[EmployeeResponse])
 async def fetch_all_employees(db: Session = Depends(get_db)):

@@ -36,7 +36,7 @@ export class LeaveService {
         );
     }
 
-    GetMyLeavesAsync(userId: number): Observable<any> {
+    GetMyLeavesAsync(userId: any): Observable<any> {
         return this.apiService.send<any>(
             "GET",
             `${environment.UrlConstants.ApplyLeave.GetMyLeavesAsync}/${userId}`
