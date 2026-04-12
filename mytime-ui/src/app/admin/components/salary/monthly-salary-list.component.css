@@ -426,3 +426,49 @@ h5 {
 .total-count .label {
   margin-left: 3px; /* control exact spacing */
 }
+.salary-dropdown{
+  position: relative;
+  display: inline-block;
+}
+
+/* + icon */
+.salary-dropdown .add-btn{
+  cursor: pointer;
+  font-size: 18px;   /* smaller icon */
+  padding: 4px;
+}
+
+/* dropdown */
+.salary-dropdown .dropdown-menu{
+  position: absolute;
+  top: 30px;       /* under icon */
+  left: -150px;    /* shift to left side */
+
+  min-width: 200px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+
+  display: none;   /* hidden initially */
+  z-index: 1000;
+}
+
+/* show dropdown */
+.salary-dropdown:hover .dropdown-menu{
+  display: block;
+}
+
+/* items */
+.salary-dropdown .dropdown-item{
+  padding: 10px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* hover effect */
+.salary-dropdown .dropdown-item:hover{
+  background: #f5f5f5;
+}
