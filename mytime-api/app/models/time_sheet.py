@@ -1,4 +1,4 @@
-from sqlalchemy import Column, BigInteger, Text, Boolean, DateTime, ForeignKey
+from sqlalchemy import Column, BigInteger, Numeric, Text, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from typing import List, Optional
@@ -39,6 +39,7 @@ class Timesheet(Base):
     ModifiedOn = Column(DateTime,   nullable=True)
 
     IsActive = Column(Boolean, nullable=True)
+    TotalHrs = Column(Numeric(18, 0), nullable=True)
 
     # One-to-many relationship to TimesheetTask
     timesheet_tasks = relationship("TimesheetTask", back_populates="timesheet")

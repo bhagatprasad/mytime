@@ -1,0 +1,65 @@
+body {
+  background: #f0f0f0;
+}
+
+.payslip-content {
+  font-family: Calibri, sans-serif;
+  width: 800px;
+  margin: 0 auto;
+  background: white;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+}
+
+td {
+  border: 1px solid #808080;
+  vertical-align: middle;
+  padding: 4px 6px;
+}
+
+p {
+  margin: 0;
+  color: black;
+  font-size: 9.5pt;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.right {
+  text-align: right;
+}
+
+.inner-table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.inner-table td {
+  border: none;
+  padding: 4px 6px;
+  vertical-align: middle;
+}
+
+:host {
+  display: block;
+}
+
+#payslipContent {
+  position: fixed;
+  top: -99999px;
+  left: -99999px;
+  opacity: 0;
+  visibility: hidden;
+  width: 800px;
+  background: white;
+  font-family: Calibri, sans-serif;
+  z-index: -1;
+  pointer-events: none;
+}

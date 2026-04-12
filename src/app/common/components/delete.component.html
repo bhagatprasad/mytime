@@ -1,0 +1,22 @@
+<div class="overlay">
+  <div class="popup">
+
+    <!-- Close Button -->
+    <button class="close-btn" (click)="onCancel()">✕</button>
+
+    <div class="icon-wrap">
+      ⚠️
+    </div>
+
+    <h3 class="title">{{title}}</h3>
+    <p class="message">{{message}}</p>
+
+    <div class="divider"></div>
+
+    <div class="buttons">
+      <button class="btn cancel" (click)="onCancel()">Cancel</button>
+      <button class="btn yes" (click)="onConfirm()">Yes, Delete</button>
+    </div>
+
+  </div>
+</div>

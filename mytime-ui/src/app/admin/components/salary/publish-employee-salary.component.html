@@ -1,0 +1,138 @@
+<div class="sidebar-overlay" *ngIf="isVisible" (click)="close()"></div>
+
+<div class="sidebar" [class.visible]="isVisible">
+
+  <form [formGroup]="salaryForm" (ngSubmit)="submit()">
+
+    <!-- HEADER -->
+    <div class="sidebar-header">
+      <h5 class="sidebar-title">Publish Salary</h5>
+      <button type="button" class="close" (click)="close()">
+        <span>&times;</span>
+      </button>
+    </div>
+
+    <div class="sidebar-body">
+
+      <!-- EMPLOYEE DROPDOWN -->
+      <div class="form-group">
+        <label>Employee <span class="text-danger">*</span></label>
+
+        <div class="input-group" (click)="toggleEmployeeDropdown()">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <i class="mdi mdi-account"></i>
+            </span>
+          </div>
+          <div class="form-control dropdown-toggle" 
+               [class.text-muted]="selectedEmployees.length === 0">
+            {{ getEmployeeLabel() }}
+          </div>
+        </div>
+
+        <div class="dropdown-menu show checkbox-dropdown" *ngIf="employeeDropdownOpen">
+          <div
+            *ngFor="let emp of employees"
+            class="dropdown-item"
+            (click)="$event.stopPropagation(); toggleEmployee(emp.EmployeeId!)">
+
+            <input
+              type="checkbox"
+              [checked]="isEmployeeSelected(emp.EmployeeId!)"
+              (click)="$event.stopPropagation()"
+              (change)="toggleEmployee(emp.EmployeeId!)"
+              class="mr-2">
+
+            {{ emp.FirstName }} {{ emp.LastName }}
+          </div>
+
+          <div *ngIf="employees.length === 0" class="dropdown-item text-muted">
+            No employees found
+          </div>
+        </div>
+
+        <small class="text-danger"
+          *ngIf="salaryForm.get('EmployeeId')?.invalid && salaryForm.get('EmployeeId')?.touched">
+          Please select at least one employee
+        </small>
+      </div>
+
+      <!-- SALARY YEAR -->
+      <div class="form-group">
+        <label>Salary Year <span class="text-danger">*</span></label>
+
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <i class="mdi mdi-calendar"></i>
+            </span>
+          </div>
+          <select class="form-control" formControlName="SalaryYear">
+            <option [ngValue]="null" disabled>Select Year</option>
+            <option *ngFor="let y of years" [ngValue]="y">{{ y }}</option>
+          </select>
+        </div>
+
+        <small class="text-danger"
+          *ngIf="salaryForm.get('SalaryYear')?.invalid && salaryForm.get('SalaryYear')?.touched">
+          Please select a year
+        </small>
+      </div>
+
+      <!-- MONTH DROPDOWN -->
+      <div class="form-group">
+        <label>Salary Month <span class="text-danger">*</span></label>
+
+        <div class="input-group" (click)="toggleMonthDropdown()">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <i class="mdi mdi-calendar-month"></i>
+            </span>
+          </div>
+          <div class="form-control dropdown-toggle"
+               [class.text-muted]="selectedMonths.length === 0">
+            {{ getMonthLabel() }}
+          </div>
+        </div>
+
+        <div class="dropdown-menu show checkbox-dropdown" *ngIf="monthDropdownOpen">
+          <div
+            *ngFor="let m of months"
+            class="dropdown-item"
+            (click)="$event.stopPropagation(); toggleMonth(m.id)">
+
+            <input
+              type="checkbox"
+              [checked]="isMonthSelected(m.id)"
+              (click)="$event.stopPropagation()"
+              (change)="toggleMonth(m.id)"
+              class="mr-2">
+
+            {{ m.name }}
+          </div>
+        </div>
+
+        <small class="text-danger"
+          *ngIf="salaryForm.get('SalaryMonth')?.invalid && salaryForm.get('SalaryMonth')?.touched">
+          Please select at least one month
+        </small>
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="sidebar-footer">
+
+      <button type="submit" class="btn btn-primary" [disabled]="salaryForm.invalid">
+        <i class="mdi mdi-content-save"></i> Save
+      </button>
+
+      <button type="button" class="btn btn-secondary ml-2" (click)="close()">
+        Cancel
+      </button>
+
+    </div>
+
+  </form>
+
+</div>

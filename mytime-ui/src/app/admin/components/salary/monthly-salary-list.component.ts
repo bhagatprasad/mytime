@@ -16,13 +16,15 @@ import { RouterModule } from '@angular/router';
 import { Employee } from '../../models/employee';
 import { forkJoin } from 'rxjs';
 import { EmployeeService } from '../../services/employee.service';
+import { PublishEmployeeSalaryComponent } from './publish-employee-salary.component';
+import { MultipleEmployeesMonthlySalaries } from '../../models/multiple_employees_monthly_salaries';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-monthly-salary-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, MonthlySalaryAddComponent, RouterModule],
+  imports: [CommonModule, AgGridAngular, MonthlySalaryAddComponent, RouterModule, PublishEmployeeSalaryComponent],
   templateUrl: './monthly-salary-list.component.html',
   styleUrl: './monthly-salary-list.component.css'
 })
@@ -33,6 +35,9 @@ export class MonthlySalaryListComponent implements OnInit, OnDestroy {
   monthlySalaryDetails: MonthlySalaryDetails[] = [];
 
   employees: Employee[] = [];
+
+  sidebarVisible = false;
+
 
   employeeSalaries: EmployeeSalary[] = [];
 
@@ -293,11 +298,14 @@ export class MonthlySalaryListComponent implements OnInit, OnDestroy {
     this.selectedMonthlySalary = null;
     this.showSidebar = true;
   }
+
   onCloseSidebar(): void {
     this.showSidebar = false;
     this.selectedMonthlySalary = null;
   }
+  onPublishSalary(): void {
 
+  }
   onSaveMonthlySalary(monthlySalary: MonthlySalary): void {
     this.loader.show();
 
@@ -317,6 +325,32 @@ export class MonthlySalaryListComponent implements OnInit, OnDestroy {
   }
 
   deleteMonthlySalary(monthlySalary: MonthlySalary): void {
+
+  }
+
+  openSidebar() {
+    this.sidebarVisible = true;
+  }
+
+  closeSidebar() {
+    this.sidebarVisible = false;
+  }
+
+  saveSalary(monthlySalaryData: MultipleEmployeesMonthlySalaries) {
+    console.log(monthlySalaryData);
+   
+    this.loader.show();
+    this.monthlySalaryService.publishMultipleMonthlySalaryAsync(monthlySalaryData).subscribe({
+      next: (response) => {
+        this.toster.success('Monthly salary published successfully.', 'Success');
+         this.sidebarVisible = false;
+        this.refreshData();
+      },
+      error: (error) => {
+        this.toster.error('Failed to publish monthly salary. Please try again later.', 'Error');
+        this.loader.hide();
+      }
+    });
 
   }
 

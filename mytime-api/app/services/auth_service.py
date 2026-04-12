@@ -299,6 +299,7 @@ class AuthService:
                 email=get_col_value(['Email', 'email']),
                 phone=get_col_value(['Phone', 'phone', 'PhoneNumber', 'phonenumber', 'Phone_Number', 'phone_number']),
                 role_id=get_col_value(['RoleId', 'roleid', 'Role_Id', 'role_id', 'RoleID', 'roleid']),
+                employee_id=get_col_value(['EmployeeId', 'employeeid', 'Employee_Id', 'employee_id', 'EmployeeID', 'employeeid']),
                 department_id=get_col_value(['DepartmentId', 'departmentid', 'Department_Id', 'department_id', 'DeptID', 'deptid']),
                 is_active=get_col_value(['IsActive', 'isactive', 'Is_Active', 'is_active', 'Active', 'active']) or True,
                 created_by=get_col_value(['CreatedBy', 'createdby', 'Created_By', 'created_by']),

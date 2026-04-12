@@ -1,0 +1,33 @@
+.btn-edit,
+.btn-view {
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.875rem !important;
+    line-height: 1.5 !important;
+    margin-top: 5px !important;
+
+}
+
+.btn-edit .mdi,
+.btn-view .mdi {
+    margin-right: 4px !important;
+    font-size: 20px !important;
+}
+
+.btn-view {
+  color: #1ccdec;
+  cursor: pointer;
+  font-size: 18px;
+  transition: 0.2s;
+}
+
+.btn-edit {
+  color: #0a82d3;
+  cursor: pointer;
+  font-size: 18px;
+  transition: 0.2s;
+}
+.btn-view:hover ,
+.btn-edit:hover{
+  color: #703ef8;
+  transform: scale(1.1);
+}

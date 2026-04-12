@@ -1,0 +1,293 @@
+<div #payslipContent>
+  <table style="border-collapse:collapse; width:800px; table-layout:fixed; background:white;">
+    <colgroup>
+      <col style="width:200px;" />
+      <col style="width:200px;" />
+      <col style="width:180px;" />
+      <col style="width:220px;" />
+    </colgroup>
+
+    <tr style="height:68px;">
+      <td style="padding:0; width:200px; border:1px solid #808080; border-right:none;">
+        <img [src]="logoUrl" width="200" height="68" alt="Logo" style="display:block;" />
+      </td>
+      <td colspan="3" style="text-align:right; padding-right:12px; border:1px solid #808080; border-left:none; vertical-align:middle;">
+        <p style="font-weight:bold; font-size:13.5pt; margin:0;">Betalen Technology India Private Limited</p>
+        <p style="font-size:11.5pt; margin:6px 0 0;">{{payslipData?.employeeSalary?.Title}}</p>
+      </td>
+    </tr>
+
+    <tr style="height:27pt;">
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">EMPCODE</p></td>
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employee?.EmployeeCode}}</p></td>
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">LOCATION</p></td>
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.LOCATION}}</p></td>
+    </tr>
+    
+    <tr style="height:22pt;">
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">EMPNAME</p></td>
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employee?.FirstName}} {{payslipData?.employee?.LastName}}</p></td>
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">STDDAYS</p></td>
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.STDDAYS}}</p></td>
+    </tr>
+    
+    <tr style="height:21pt;">
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">DESIGNATION</p></td>
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.designation?.Name}}</p></td>
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">WRKDAYS</p></td>
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.WRKDAYS}}</p></td>
+    </tr>
+    
+    <tr style="height:22pt;">
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">DOJ</p></td>
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{formatDate(payslipData?.employee?.StartedOn)}}</p></td>
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">LOP DAYS</p></td>
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.LOPDAYS}}</p></td>
+    </tr>
+    
+    <tr style="height:22pt;">
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">DEPARTMENT</p></td>
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.department?.Name}}</p></td>
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">BANK NAME</p></td>
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalaryStructure?.BankName}}</p></td>
+    </tr>
+    
+    <tr style="height:22pt;">
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">UAN</p></td>
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalaryStructure?.UAN}}</p></td>
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">PF NO</p></td>
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalaryStructure?.PFNO}}</p></td>
+    </tr>
+    
+    <tr style="height:23pt;">
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">PAN</p></td>
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalaryStructure?.PAN}}</p></td>
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">ACCOUNT NO</p></td>
+      <td style="border:1px solid #808080; padding:4px 6px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalaryStructure?.BankAccount}}</p></td>
+    </tr>
+
+    <tr style="height:31pt;">
+      <td colspan="2" style="padding:0; border:1px solid #808080; border-right:none;">
+        <table style="border-collapse:collapse; width:100%; table-layout:fixed;">
+          <colgroup><col style="width:50%;"/><col style="width:25%;"/><col style="width:25%;"/></colgroup>
+          <tr>
+            <td style="border:none; padding:4px 8px; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">EARNINGS</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">AMOUNT</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">YTD</p></td>
+          </tr>
+        </table>
+      </td>
+      <td colspan="2" style="padding:0; border:1px solid #808080;">
+        <table style="border-collapse:collapse; width:100%; table-layout:fixed;">
+          <colgroup><col style="width:50%;"/><col style="width:25%;"/><col style="width:25%;"/></colgroup>
+          <tr>
+            <td style="border:none; padding:4px 8px; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">DEDUCTIONS</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">AMOUNT</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">YTD</p></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr style="height:26pt;">
+      <td colspan="2" style="padding:0; border:1px solid #808080; border-right:none;">
+        <table style="border-collapse:collapse; width:100%; table-layout:fixed;">
+          <colgroup><col style="width:50%;"/><col style="width:25%;"/><col style="width:25%;"/></colgroup>
+          <tr>
+            <td style="border:none; padding:4px 8px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">BASIC</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.Earning_Monthly_Basic}}</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.Earning_YTD_Basic}}</p></td>
+          </tr>
+        </table>
+      </td>
+      <td colspan="2" style="padding:0; border:1px solid #808080;">
+        <table style="border-collapse:collapse; width:100%; table-layout:fixed;">
+          <colgroup><col style="width:50%;"/><col style="width:25%;"/><col style="width:25%;"/></colgroup>
+          <tr>
+            <td style="border:none; padding:4px 8px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">Provident Fund (PF)</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.Deduction_Montly_ProvidentFund}}</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.Deduction_YTD_ProvidentFund}}</p></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr style="height:25pt;">
+      <td colspan="2" style="padding:0; border:1px solid #808080; border-right:none;">
+        <table style="border-collapse:collapse; width:100%; table-layout:fixed;">
+          <colgroup><col style="width:50%;"/><col style="width:25%;"/><col style="width:25%;"/></colgroup>
+          <tr>
+            <td style="border:none; padding:4px 8px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">HRA</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.Earning_Montly_HRA}}</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.Earning_YTD_HRA}}</p></td>
+          </tr>
+        </table>
+      </td>
+      <td colspan="2" style="padding:0; border:1px solid #808080;">
+        <table style="border-collapse:collapse; width:100%; table-layout:fixed;">
+          <colgroup><col style="width:50%;"/><col style="width:25%;"/><col style="width:25%;"/></colgroup>
+          <tr>
+            <td style="border:none; padding:4px 8px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">Professional Tax</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.Deduction_Montly_PROFESSIONALTAX}}</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.Deduction_YTD_PROFESSIONALTAX}}</p></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr style="height:24pt;">
+      <td colspan="2" style="padding:0; border:1px solid #808080; border-right:none;">
+        <table style="border-collapse:collapse; width:100%; table-layout:fixed;">
+          <colgroup><col style="width:50%;"/><col style="width:25%;"/><col style="width:25%;"/></colgroup>
+          <tr>
+            <td style="border:none; padding:4px 8px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">CONVEYANCE</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">0.00</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">0.00</p></td>
+          </tr>
+        </table>
+      </td>
+      <td colspan="2" style="padding:0; border:1px solid #808080;">
+        <table style="border-collapse:collapse; width:100%; table-layout:fixed;">
+          <colgroup><col style="width:50%;"/><col style="width:25%;"/><col style="width:25%;"/></colgroup>
+          <tr>
+            <td style="border:none; padding:4px 8px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">Group Health Insurance</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.Deduction_Montly_GroupHealthInsurance}}</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.Deduction_YTD_GroupHealthInsurance}}</p></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr style="height:25pt;">
+      <td colspan="2" style="padding:0; border:1px solid #808080; border-right:none;">
+        <table style="border-collapse:collapse; width:100%; table-layout:fixed;">
+          <colgroup><col style="width:50%;"/><col style="width:25%;"/><col style="width:25%;"/></colgroup>
+          <tr>
+            <td style="border:none; padding:4px 8px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">MEDICAL ALLOWANCE</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">0.00</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">0.00</p></td>
+          </tr>
+        </table>
+      </td>
+      <td colspan="2" style="padding:0; border:1px solid #808080;">
+        <table style="border-collapse:collapse; width:100%; table-layout:fixed;">
+          <colgroup><col style="width:50%;"/><col style="width:25%;"/><col style="width:25%;"/></colgroup>
+          <tr>
+            <td style="border:none; padding:4px 8px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">OTHERS</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.Deduction_Montly_OTHERS}}</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.Deduction_YTD_OTHERS}}</p></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr style="height:26pt;">
+      <td colspan="2" style="padding:0; border:1px solid #808080; border-right:none;">
+        <table style="border-collapse:collapse; width:100%; table-layout:fixed;">
+          <colgroup><col style="width:50%;"/><col style="width:25%;"/><col style="width:25%;"/></colgroup>
+          <tr>
+            <td style="border:none; padding:4px 8px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">SPECIAL ALLOWANCE</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.Earning_Montly_SPECIALALLOWANCE}}</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.Earning_YTD_SPECIALALLOWANCE}}</p></td>
+          </tr>
+        </table>
+      </td>
+      <td colspan="2" style="border:1px solid #808080;"></td>
+    </tr>
+
+    <tr style="height:26pt;">
+      <td colspan="2" style="padding:0; border:1px solid #808080; border-right:none;">
+        <table style="border-collapse:collapse; width:100%; table-layout:fixed;">
+          <colgroup><col style="width:50%;"/><col style="width:25%;"/><col style="width:25%;"/></colgroup>
+          <tr>
+            <td style="border:none; padding:4px 8px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">SPECIAL BONUS</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">0.00</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">0.00</p></td>
+          </tr>
+        </table>
+      </td>
+      <td colspan="2" style="border:1px solid #808080;"></td>
+    </tr>
+
+    <tr style="height:24pt;">
+      <td colspan="2" style="padding:0; border:1px solid #808080; border-right:none;">
+        <table style="border-collapse:collapse; width:100%; table-layout:fixed;">
+          <colgroup><col style="width:50%;"/><col style="width:25%;"/><col style="width:25%;"/></colgroup>
+          <tr>
+            <td style="border:none; padding:4px 8px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">STATUTORY BONUS</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.Earning_Montly_STATUTORYBONUS}}</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.Earning_YTD_STATUTORYBONUS}}</p></td>
+          </tr>
+        </table>
+      </td>
+      <td colspan="2" style="border:1px solid #808080;"></td>
+    </tr>
+
+    <tr style="height:24pt;">
+      <td colspan="2" style="padding:0; border:1px solid #808080; border-right:none;">
+        <table style="border-collapse:collapse; width:100%; table-layout:fixed;">
+          <colgroup><col style="width:50%;"/><col style="width:25%;"/><col style="width:25%;"/></colgroup>
+          <tr>
+            <td style="border:none; padding:4px 8px; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">OTHERS</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.Earning_Montly_OTHERS}}</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.Earning_YTD_OTHERS}}</p></td>
+          </tr>
+        </table>
+      </td>
+      <td colspan="2" style="border:1px solid #808080;"></td>
+    </tr>
+
+    <tr style="height:28pt;">
+      <td colspan="2" style="padding:0; border:1px solid #808080; border-right:none;">
+        <table style="border-collapse:collapse; width:100%; table-layout:fixed;">
+          <colgroup><col style="width:50%;"/><col style="width:25%;"/><col style="width:25%;"/></colgroup>
+          <tr>
+            <td style="border:none; padding:4px 8px; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">GROSS EARNINGS</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">{{payslipData?.employeeSalary?.Earning_Montly_GROSSEARNINGS}}</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">{{payslipData?.employeeSalary?.Earning_YTD_GROSSEARNINGS}}</p></td>
+          </tr>
+        </table>
+      </td>
+      <td colspan="2" style="padding:0; border:1px solid #808080;">
+        <table style="border-collapse:collapse; width:100%; table-layout:fixed;">
+          <colgroup><col style="width:50%;"/><col style="width:25%;"/><col style="width:25%;"/></colgroup>
+          <tr>
+            <td style="border:none; padding:4px 8px; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">GROSS DEDUCTIONS</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">{{payslipData?.employeeSalary?.Deduction_Montly_GROSSSDeduction}}</p></td>
+            <td style="border:none; padding:4px 6px; text-align:right; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">{{payslipData?.employeeSalary?.Deduction_YTD_GROSSSDeduction}}</p></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr style="height:32pt;">
+      <td style="border:1px solid #808080; padding:4px 8px; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">NET PAY</p></td>
+      <td colspan="3" style="border:1px solid #808080; text-align:right; padding:4px 8px; vertical-align:middle;">
+        <p style="margin:0; font-weight:bold; font-size:9.5pt;">{{payslipData?.employeeSalary?.NETPAY}}/-</p>
+      </td>
+    </tr>
+
+    <tr style="height:30pt;">
+      <td style="border:1px solid #808080; padding:4px 8px; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">NET TRANSFER</p></td>
+      <td colspan="3" style="border:1px solid #808080; text-align:right; padding:4px 8px; vertical-align:middle;">
+        <p style="margin:0; font-weight:bold; font-size:9.5pt;">{{payslipData?.employeeSalary?.NETTRANSFER}}/-</p>
+      </td>
+    </tr>
+
+    <tr style="height:32pt;">
+      <td style="border:1px solid #808080; padding:4px 8px; vertical-align:middle;"><p style="margin:0; font-weight:bold; font-size:9.5pt;">IN Words</p></td>
+      <td colspan="3" style="border:1px solid #808080; padding:4px 10px; vertical-align:middle;">
+        <p style="margin:0; font-size:9.5pt;">{{payslipData?.employeeSalary?.INWords}}</p>
+      </td>
+    </tr>
+
+    <tr style="height:120pt;">
+      <td colspan="4" style="border:1px solid #808080;"></td>
+    </tr>
+  </table>
+
+  <p style="padding-top:6pt; padding-left:59pt; font-size:9.5pt; font-family:Calibri, sans-serif; color:black; margin:0;">
+    *** this is system generated document, hence signature not required, any queries please contact
+    <a href="mailto:{{officeEmail}}">{{officeEmail}}</a>
+  </p>
+</div>

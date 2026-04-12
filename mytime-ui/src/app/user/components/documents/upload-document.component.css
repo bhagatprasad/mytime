@@ -1,0 +1,216 @@
+/* Upload Area Styles - Add to your existing CSS */
+.upload-area {
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.upload-area:hover {
+    border-color: #007bff;
+    background-color: #f0f7ff;
+}
+
+.upload-area.has-error {
+    border-color: #dc3545;
+    background-color: #fff5f5;
+}
+
+.upload-area.has-file {
+    border-color: #28a745;
+    background-color: #f0fff4;
+    padding: 1rem;
+}
+
+.upload-placeholder .upload-icon {
+    font-size: 2.5rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.upload-placeholder p {
+    margin-bottom: 0.25rem;
+    color: #495057;
+}
+
+.upload-placeholder .text-primary {
+    cursor: pointer;
+    font-weight: 500;
+}
+
+/* File Preview */
+.file-preview {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.file-info i {
+    font-size: 2rem;
+}
+
+.file-info i.pdf {
+    color: #dc3545;
+}
+
+.file-info i.image {
+    color: #007bff;
+}
+
+.file-info i.word {
+    color: #007bff;
+}
+
+.file-info i.excel {
+    color: #28a745;
+}
+
+.file-details {
+    text-align: left;
+    min-width: 0;
+}
+
+.file-name {
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: #333;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-size {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+/* Mobile optimizations for upload area */
+@media (max-width: 767px) {
+    .upload-area {
+        padding: 1rem;
+        min-height: 100px;
+    }
+    
+    .upload-placeholder .upload-icon {
+        font-size: 2rem;
+    }
+    
+    .upload-placeholder p {
+        font-size: 0.875rem;
+    }
+    
+    .upload-placeholder small {
+        font-size: 0.75rem;
+    }
+    
+    .file-info i {
+        font-size: 1.5rem;
+    }
+    
+    .file-name {
+        font-size: 0.8rem;
+    }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 480px) {
+    .upload-area {
+        padding: 0.75rem;
+        min-height: 90px;
+    }
+    
+    .upload-placeholder .upload-icon {
+        font-size: 1.75rem;
+    }
+}
+
+/* Form switch styling */
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-check-input {
+    width: 2rem;
+    height: 1rem;
+    cursor: pointer;
+}
+
+.form-check-input:checked {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.form-check-label {
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+/* Desktop grid layout override for document upload */
+@media (min-width: 768px) {
+    /* Override the 2-column grid for document upload to be single column */
+    .sidebar .form-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+}
+
+/* Spinner styling */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 2px;
+}
+
+/* Text color utilities */
+.text-success {
+    color: #28a745 !important;
+}
+
+/* Small text */
+.small {
+    font-size: 0.875rem;
+    line-height: 1.2;
+}
+
+.mt-2 {
+    margin-top: 0.5rem;
+}
+
+.me-1 {
+    margin-right: 0.25rem;
+}
+
+.me-2 {
+    margin-right: 0.5rem;
+}
+
+.ms-2 {
+    margin-left: 0.5rem;
+}
+
+.mb-1 {
+    margin-bottom: 0.25rem;
+}

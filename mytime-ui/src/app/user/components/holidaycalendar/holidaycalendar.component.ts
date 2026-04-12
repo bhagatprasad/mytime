@@ -64,7 +64,7 @@ export class HolidaycalendarComponent implements OnInit {
   @ViewChild('calendar') calendarComponent!: FullCalendarComponent;
 
   loadHolidaycalender(): void {
-  //  this.loader.show();
+    this.loader.show();
     this.holidayservice.getHolydaysListAsync()
       .subscribe(data => {
 
@@ -73,7 +73,7 @@ export class HolidaycalendarComponent implements OnInit {
           date: x.HolidayDate.split('T')[0]
 
         }));
-// this.loader.hide();
+        this.loader.hide();
       });
   }
 
