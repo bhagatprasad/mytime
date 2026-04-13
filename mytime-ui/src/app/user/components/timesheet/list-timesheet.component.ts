@@ -142,65 +142,30 @@ export class ListTimesheetComponent implements OnInit, OnDestroy {
     console.log('✏️ Edit clicked row:', timesheet);
     this.loader.show();
 
-    // First try to get timesheet with tasks
+    // Only use fetchTimesheetWithTasks
     this.timesheetService.getTimesheetWithTasksAsync(timesheet.Id).subscribe({
       next: (res: any) => {
-        console.log('📦 API Response:', res);
+        console.log('API Response:', res);
 
         let tasks = res.Tasks || res.tasks || [];
 
-        // If no tasks, try separate endpoint
-        if (tasks.length === 0) {
-          this.timesheetService.getTimesheetTasksAsync(timesheet.Id).subscribe({
-            next: (taskRes: any) => {
-              tasks = taskRes.Tasks || taskRes.tasks || taskRes || [];
-              console.log('📋 Tasks from separate endpoint:', tasks);
+        this.selectedTimesheet = {
+          Id: res.Id,
+          FromDate: res.FromDate,
+          ToDate: res.ToDate,
+          TotalHrs: res.TotalHrs,
+          IsActive: res.IsActive,
+          Description: res.Description,
+          Tasks: tasks,
+        };
 
-              this.selectedTimesheet = {
-                Id: res.Id,
-                FromDate: res.FromDate,
-                ToDate: res.ToDate,
-                TotalHrs: res.TotalHrs,
-                IsActive: res.IsActive,
-                Description: res.Description,
-                Tasks: tasks,
-              };
-              this.loader.hide();
-              this.showSidebar = true;
-            },
-            error: (err) => {
-              console.error('Error fetching tasks:', err);
-              this.selectedTimesheet = {
-                Id: res.Id,
-                FromDate: res.FromDate,
-                ToDate: res.ToDate,
-                TotalHrs: res.TotalHrs,
-                IsActive: res.IsActive,
-                Description: res.Description,
-                Tasks: [],
-              };
-              this.loader.hide();
-              this.showSidebar = true;
-            },
-          });
-        } else {
-          this.selectedTimesheet = {
-            Id: res.Id,
-            FromDate: res.FromDate,
-            ToDate: res.ToDate,
-            TotalHrs: res.TotalHrs,
-            IsActive: res.IsActive,
-            Description: res.Description,
-            Tasks: tasks,
-          };
-          this.loader.hide();
-          this.showSidebar = true;
-        }
+        this.loader.hide();
+        this.showSidebar = true;
       },
       error: (err) => {
-        console.error('Error fetching timesheet:', err);
+        console.error('Error:', err);
         this.loader.hide();
-        this.toastr.error('Failed to load timesheet details');
+        this.toastr.error('Failed to load timesheet');
       },
     });
   }

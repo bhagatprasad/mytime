@@ -123,7 +123,9 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
   initializeEditForm(): void {
     if (!this.timesheet) return;
 
-    console.log('✏️ initializeEditForm timesheet:', this.timesheet);
+    console.log('✏️ FULL TIMESHEET DATA:', this.timesheet);
+    console.log('✏️ TASKS ARRAY:', this.timesheet.Tasks);
+    console.log('✏️ FIRST TASK HOURS:', this.timesheet.Tasks?.[0]);
 
     this.weekStart = new Date(this.timesheet.FromDate!);
     this.weekEnd = new Date(this.timesheet.ToDate!);
@@ -156,6 +158,8 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
   }
 
   createRow(task?: any): FormGroup {
+    console.log('🏗️ Creating row with task:', task);
+    console.log('🏗️ MondayHours:', task?.MondayHours);
     const row = this.fb.group({
       Id: [task?.Id || 0],
       TimesheetId: [task?.TimesheetId || this.timesheet?.Id || 0],
