@@ -15,7 +15,36 @@
     </div>
 
     <div class="sidebar-body">
-      <!-- CREATE MODE -->
+      <!-- SHOW EXISTING TIMESHEET INFO WHEN EDITING -->
+      <!-- SHOW EXISTING TIMESHEET INFO WHEN EDITING -->
+      <div class="existing-info" *ngIf="timesheet?.Id">
+        <div class="info-card">
+          <div class="info-grid">
+            <div class="info-grid-item">
+              <span class="info-label">Timesheet ID</span>
+              <span class="info-value">#{{ timesheet?.Id }}</span>
+            </div>
+            <div class="info-grid-item">
+              <span class="info-label">Status</span>
+              <span class="status-badge" [class.active]="timesheet?.IsActive">
+                {{ timesheet?.IsActive ? "Active" : "Inactive" }}
+              </span>
+            </div>
+            <div class="info-grid-item">
+              <span class="info-label">Total Hours</span>
+              <span class="info-value total-hours"
+                >{{ timesheet?.TotalHrs || getWeekTotal() }} hrs</span
+              >
+            </div>
+            <div class="info-grid-item" *ngIf="timesheet?.Description">
+              <span class="info-label">Description</span>
+              <span class="info-value">{{ timesheet?.Description }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CREATE MODE / EDIT MODE -->
       <div>
         <div class="form-header">
           <h5>Weekly Timesheet</h5>
@@ -29,13 +58,14 @@
             {{ formatDateForDisplay(weekEnd) }}
           </div>
 
-          <!-- Calendar -->
-          <div class="calendar-dropdown" *ngIf="showCalendar">
+          <!-- Calendar (only for create mode) -->
+          <div class="calendar-dropdown" *ngIf="showCalendar && !timesheet?.Id">
             <div class="calendar-header">
               <button type="button" (click)="previousMonth()">‹</button>
-              <span>
-                {{ monthNames[currentMonth.getMonth()] }} {{ currentYear }}
-              </span>
+              <span
+                >{{ monthNames[currentMonth.getMonth()] }}
+                {{ currentYear }}</span
+              >
               <button type="button" (click)="nextMonth()">›</button>
             </div>
 
@@ -58,6 +88,15 @@
           </div>
         </div>
 
+        <!-- Show warning if no tasks found -->
+        <div
+          class="alert alert-warning"
+          *ngIf="timesheet?.Id && rows.length === 0"
+        >
+          <i class="mdi mdi-alert"></i>
+          No tasks found for this timesheet. Click "Add Row" to add tasks.
+        </div>
+
         <!-- Table -->
         <div class="table-responsive">
           <table class="timesheet-table">
@@ -65,7 +104,6 @@
               <tr>
                 <th>Task Item</th>
                 <th>Task Code</th>
-
                 <th [ngClass]="getDayHeaderClass('monday')">
                   Mon
                   <span class="date">{{ weekDates.monday }}</span>
@@ -73,7 +111,6 @@
                     {{ getDayWarning("monday") }}
                   </div>
                 </th>
-
                 <th [ngClass]="getDayHeaderClass('tuesday')">
                   Tue
                   <span class="date">{{ weekDates.tuesday }}</span>
@@ -81,7 +118,6 @@
                     {{ getDayWarning("tuesday") }}
                   </div>
                 </th>
-
                 <th [ngClass]="getDayHeaderClass('wednesday')">
                   Wed
                   <span class="date">{{ weekDates.wednesday }}</span>
@@ -89,7 +125,6 @@
                     {{ getDayWarning("wednesday") }}
                   </div>
                 </th>
-
                 <th [ngClass]="getDayHeaderClass('thursday')">
                   Thu
                   <span class="date">{{ weekDates.thursday }}</span>
@@ -97,7 +132,6 @@
                     {{ getDayWarning("thursday") }}
                   </div>
                 </th>
-
                 <th [ngClass]="getDayHeaderClass('friday')">
                   Fri
                   <span class="date">{{ weekDates.friday }}</span>
@@ -105,17 +139,14 @@
                     {{ getDayWarning("friday") }}
                   </div>
                 </th>
-
                 <th class="holiday-header">
                   Sat
                   <span class="date">{{ weekDates.saturday }}</span>
                 </th>
-
                 <th class="holiday-header">
                   Sun
                   <span class="date">{{ weekDates.sunday }}</span>
                 </th>
-
                 <th>Total</th>
                 <th>Action</th>
               </tr>
@@ -123,7 +154,11 @@
 
             <tbody formArrayName="rows">
               <tr
-                *ngFor="let row of rows.controls; let i = index"
+                *ngFor="
+                  let row of rows.controls;
+                  let i = index;
+                  trackBy: trackByIndex
+                "
                 [formGroupName]="i"
               >
                 <td>
@@ -221,6 +256,7 @@
                     type="number"
                     formControlName="saturday"
                     class="hour-input holiday-input"
+                    readonly
                   />
                 </td>
 
@@ -229,6 +265,7 @@
                     type="number"
                     formControlName="sunday"
                     class="hour-input holiday-input"
+                    readonly
                   />
                 </td>
 
@@ -270,7 +307,6 @@
       <button type="submit" class="btn btn-primary">
         {{ timesheet?.Id ? "Update Timesheet" : "Submit Timesheet" }}
       </button>
-
       <button type="button" class="btn btn-secondary ms-2" (click)="close()">
         Cancel
       </button>
@@ -290,14 +326,13 @@
       <button class="toast-close" (click)="hideToast()">×</button>
     </div>
   </div>
+
   <!-- Duplicate Week Popup -->
   <div class="sidebar-overlay" *ngIf="showDuplicateWeekPopup"></div>
-
   <div class="duplicate-popup" *ngIf="showDuplicateWeekPopup">
     <div class="duplicate-popup-content">
       <h5>Timesheet Already Exists</h5>
       <p>{{ duplicateWeekMessage }}</p>
-
       <div class="popup-actions">
         <button
           type="button"
@@ -306,7 +341,6 @@
         >
           Choose Another Week
         </button>
-
         <button
           type="button"
           class="btn btn-primary"

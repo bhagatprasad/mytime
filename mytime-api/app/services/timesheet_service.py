@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import selectinload
 from sqlalchemy import or_, asc, desc, func
 from typing import Optional, List, Tuple, Dict, Any
 from datetime import datetime
@@ -17,27 +18,39 @@ class TimesheetService:
     # def fetch_timesheet_with_tasks(db: Session, timesheet_id: int) -> Optional[Timesheet]:
     #     return db.query(Timesheet).options(joinedload(Timesheet.timesheet_tasks)).filter(Timesheet.Id == timesheet_id).first()
                   
+  
     @staticmethod
     def fetch_timesheet_with_tasks(db: Session, timesheet_id: int):
-
+        # Use selectinload to eagerly load the timesheet_tasks relationship
         db_timesheet = (
-        db.query(Timesheet)
-        .options(joinedload(Timesheet.timesheet_tasks))
-        .filter(Timesheet.Id == timesheet_id)
-        .first()) 
-        if not db_timesheet: 
-            return None
-
-        return db_timesheet          
+            db.query(Timesheet)
+            .options(selectinload(Timesheet.timesheet_tasks))
+            .filter(Timesheet.Id == timesheet_id)
+            .first()
+        )
+        
+        # Debug print to verify
+        if db_timesheet:
+            print(f"✅ Found Timesheet ID: {db_timesheet.Id}")
+            print(f"✅ Number of tasks: {len(db_timesheet.timesheet_tasks)}")
+            for task in db_timesheet.timesheet_tasks:
+                print(f"   Task {task.Id}: Mon={task.MondayHours}, Tue={task.TuesdayHours}, Wed={task.WednesdayHours}, Thu={task.ThursdayHours}, Fri={task.FridayHours}")
+        
+        return db_timesheet     
 
 
     @staticmethod
     def fetch_all_timesheets(db: Session) -> List[Timesheet]:
         return db.query(Timesheet).order_by(Timesheet.CreatedOn.desc()).all()
 
+    # @staticmethod
+    # def fetch_all_timesheets_with_tasks(db: Session) -> List[Timesheet]:
+    #     return db.query(Timesheet).order_by(Timesheet.CreatedOn.desc()).all()
+
     @staticmethod
     def fetch_all_timesheets_with_tasks(db: Session) -> List[Timesheet]:
-        return db.query(Timesheet).order_by(Timesheet.CreatedOn.desc()).all()
+    
+     return db.query(Timesheet).options(selectinload(Timesheet.timesheet_tasks)).order_by(Timesheet.CreatedOn.desc()).all()
 
     @staticmethod
     def get_timesheets_by_employee(db: Session, employee_id: int) -> List[Timesheet]:

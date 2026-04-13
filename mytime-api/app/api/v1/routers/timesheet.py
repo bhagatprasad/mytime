@@ -115,3 +115,12 @@ async def update_timesheet_task(task_id: int, task_data: dict, db: Session = Dep
             detail=f"Task with ID {task_id} not found"
         )
     return task
+
+
+@router.get("/get_timesheet_tasks/{timesheet_id}")
+async def get_timesheet_tasks(timesheet_id: int, db: Session = Depends(get_db)):
+    from app.models.timesheet_task import TimesheetTask
+    
+    tasks = db.query(TimesheetTask).filter(TimesheetTask.TimesheetId == timesheet_id).all()
+    
+    return tasks

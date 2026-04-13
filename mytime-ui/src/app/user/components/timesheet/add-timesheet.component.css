@@ -361,3 +361,176 @@
   opacity: 0.7;
   cursor: not-allowed;
 }
+/* Professional Info Card Styles */
+.existing-info {
+  margin-bottom: 24px;
+}
+
+.info-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  padding: 20px 24px;
+  color: white;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.info-grid-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-label {
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.total-hours {
+  font-size: 24px;
+  font-weight: 700;
+  color: #fbbf24;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.status-badge.active {
+  background: #10b981;
+  color: white;
+}
+
+.status-badge.inactive {
+  background: #6b7280;
+  color: white;
+}
+
+/* Table styling */
+.timesheet-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.timesheet-table th {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 12px 8px;
+  font-weight: 600;
+}
+
+.timesheet-table td {
+  padding: 8px;
+  border: 1px solid #e5e7eb;
+  vertical-align: middle;
+}
+
+.hour-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.hour-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+.holiday-input {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.row-total {
+  display: inline-block;
+  padding: 4px 12px;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  color: white;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.delete-btn {
+  padding: 6px 12px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.delete-btn:hover {
+  background: #dc2626;
+}
+
+.action-buttons {
+  margin-top: 16px;
+}
+
+.btn-outline-primary {
+  padding: 8px 16px;
+  background: white;
+  border: 1px solid #667eea;
+  color: #667eea;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.btn-outline-primary:hover {
+  background: #667eea;
+  color: white;
+}
+
+.sidebar-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+  text-align: right;
+}
+
+.btn-primary {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.btn-secondary {
+  padding: 10px 20px;
+  background: #f3f4f6;
+  color: #374151;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 8px;
+}

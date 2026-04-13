@@ -614,4 +614,7 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
   chooseAnotherWeek(): void {
     this.closeDuplicatePopup();
   }
+  trackByIndex(index: number, item: any): number {
+    return index;
+  }
 }

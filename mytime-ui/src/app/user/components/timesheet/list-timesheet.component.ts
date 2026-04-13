@@ -142,22 +142,63 @@ export class ListTimesheetComponent implements OnInit, OnDestroy {
     console.log('✏️ Edit clicked row:', timesheet);
     this.loader.show();
 
+    // First try to get timesheet with tasks
     this.timesheetService.getTimesheetWithTasksAsync(timesheet.Id).subscribe({
       next: (res: any) => {
-        this.selectedTimesheet = {
-          Id: res.Id,
-          FromDate: res.FromDate,
-          ToDate: res.ToDate,
-          TotalHrs: res.TotalHrs,
-          IsActive: res.IsActive,
-          Tasks: res.Tasks || res.tasks || [],
-        };
+        console.log('📦 API Response:', res);
 
-        this.loader.hide();
-        this.showSidebar = true;
+        let tasks = res.Tasks || res.tasks || [];
+
+        // If no tasks, try separate endpoint
+        if (tasks.length === 0) {
+          this.timesheetService.getTimesheetTasksAsync(timesheet.Id).subscribe({
+            next: (taskRes: any) => {
+              tasks = taskRes.Tasks || taskRes.tasks || taskRes || [];
+              console.log('📋 Tasks from separate endpoint:', tasks);
+
+              this.selectedTimesheet = {
+                Id: res.Id,
+                FromDate: res.FromDate,
+                ToDate: res.ToDate,
+                TotalHrs: res.TotalHrs,
+                IsActive: res.IsActive,
+                Description: res.Description,
+                Tasks: tasks,
+              };
+              this.loader.hide();
+              this.showSidebar = true;
+            },
+            error: (err) => {
+              console.error('Error fetching tasks:', err);
+              this.selectedTimesheet = {
+                Id: res.Id,
+                FromDate: res.FromDate,
+                ToDate: res.ToDate,
+                TotalHrs: res.TotalHrs,
+                IsActive: res.IsActive,
+                Description: res.Description,
+                Tasks: [],
+              };
+              this.loader.hide();
+              this.showSidebar = true;
+            },
+          });
+        } else {
+          this.selectedTimesheet = {
+            Id: res.Id,
+            FromDate: res.FromDate,
+            ToDate: res.ToDate,
+            TotalHrs: res.TotalHrs,
+            IsActive: res.IsActive,
+            Description: res.Description,
+            Tasks: tasks,
+          };
+          this.loader.hide();
+          this.showSidebar = true;
+        }
       },
       error: (err) => {
-        console.error('❌ Error fetching timesheet with tasks:', err);
+        console.error('Error fetching timesheet:', err);
         this.loader.hide();
         this.toastr.error('Failed to load timesheet details');
       },
@@ -178,34 +219,23 @@ export class ListTimesheetComponent implements OnInit, OnDestroy {
     this.loader.show();
     console.log('📤 Final payload from child:', payload);
 
+    // Prepare parent timesheet payload
     const parentPayload = {
       Id: payload.Id || 0,
       FromDate: payload.FromDate,
       ToDate: payload.ToDate,
       Description: payload.Description || 'Timesheet Entry',
-      EmployeeId: undefined,
-      UserId: undefined,
       Status: payload.Status || 'Submitted',
       IsActive: payload.IsActive ?? true,
       TotalHrs: payload.TotalHrs,
-      CreatedBy: 21,
-      CreatedOn: new Date(),
-      ModifiedBy: 21,
-      ModifiedOn: new Date(),
     };
 
-    // Save parent
+    // First, save/update the timesheet parent
     this.timesheetService.insertOrUpdateTimesheet(parentPayload).subscribe({
       next: (res: any) => {
         console.log('✅ Parent saved:', res);
 
-        const savedTimesheetId =
-          res?.timesheet?.Id || // ⭐ MAIN FIX
-          res?.Id ||
-          res?.id ||
-          payload.Id ||
-          this.selectedTimesheet?.Id;
-
+        const savedTimesheetId = res?.Id || res?.timesheet?.Id || payload.Id;
         console.log('Saved Timesheet ID:', savedTimesheetId);
 
         if (!savedTimesheetId) {
@@ -215,10 +245,9 @@ export class ListTimesheetComponent implements OnInit, OnDestroy {
         }
 
         const tasks = payload.Tasks || [];
-        console.log('🟨 Tasks:', tasks);
+        console.log('Tasks to save:', tasks);
 
-        // If no tasks
-        if (!tasks.length) {
+        if (tasks.length === 0) {
           this.loader.hide();
           this.toastr.success('Timesheet saved successfully');
           this.onCloseSidebar();
@@ -226,58 +255,101 @@ export class ListTimesheetComponent implements OnInit, OnDestroy {
           return;
         }
 
-        // Save tasks
         let completed = 0;
         let hasError = false;
+        const totalTasks = tasks.length;
 
         tasks.forEach((task: any) => {
-          const taskPayload = {
-            Id: task.Id || 0,
-            TimesheetId: savedTimesheetId,
-            TaskItemId: Number(task.TaskItemId),
-            TaskCodeId: Number(task.TaskCodeId),
-            MondayHours: Number(task.MondayHours || 0),
-            TuesdayHours: Number(task.TuesdayHours || 0),
-            WednesdayHours: Number(task.WednesdayHours || 0),
-            ThursdayHours: Number(task.ThursdayHours || 0),
-            FridayHours: Number(task.FridayHours || 0),
-            SaturdayHours: Number(task.SaturdayHours || 0),
-            SundayHours: Number(task.SundayHours || 0),
-            TotalHrs: Number(task.TotalHrs || 0),
-            IsActive: task.IsActive ?? true,
-            CreatedBy: 21,
-            CreatedOn: new Date(),
-            ModifiedBy: 21,
-            ModifiedOn: new Date(),
-          };
+          // Check if task already exists (has an Id and Id > 0)
+          if (task.Id && task.Id > 0) {
+            // Update existing task - create separate payload for update
+            const updatePayload = {
+              Id: task.Id,
+              TimesheetId: savedTimesheetId,
+              TaskItemId: Number(task.TaskItemId),
+              TaskCodeId: Number(task.TaskCodeId),
+              MondayHours: Number(task.MondayHours || 0),
+              TuesdayHours: Number(task.TuesdayHours || 0),
+              WednesdayHours: Number(task.WednesdayHours || 0),
+              ThursdayHours: Number(task.ThursdayHours || 0),
+              FridayHours: Number(task.FridayHours || 0),
+              SaturdayHours: Number(task.SaturdayHours || 0),
+              SundayHours: Number(task.SundayHours || 0),
+              TotalHrs: Number(task.TotalHrs || 0),
+              IsActive: task.IsActive ?? true,
+            };
 
-          console.log('🟧 Saving task:', taskPayload);
-
-          this.timesheetService
-            .addTimesheetTask(savedTimesheetId, taskPayload)
-            .subscribe({
-              next: () => {
-                completed++;
-
-                if (completed === tasks.length && !hasError) {
+            console.log(`Updating task ${task.Id}`, updatePayload);
+            this.timesheetService
+              .updateTimesheetTask(task.Id, updatePayload)
+              .subscribe({
+                next: () => {
+                  completed++;
+                  console.log(
+                    `Task ${task.Id} updated, progress: ${completed}/${totalTasks}`,
+                  );
+                  if (completed === totalTasks && !hasError) {
+                    this.loader.hide();
+                    this.toastr.success('Timesheet updated successfully');
+                    this.onCloseSidebar();
+                    this.loadTimesheetDetails();
+                  }
+                },
+                error: (err) => {
+                  console.error(`Task update error for task ${task.Id}:`, err);
+                  hasError = true;
                   this.loader.hide();
-                  this.toastr.success('Timesheet saved successfully');
-                  this.onCloseSidebar();
-                  this.loadTimesheetDetails();
-                }
-              },
-              error: (err) => {
-                console.error('❌ Task save error:', err);
-                hasError = true;
-                this.loader.hide();
-                this.toastr.error('Task save failed');
-              },
-            });
+                  this.toastr.error('Failed to update task');
+                },
+              });
+          } else {
+            // Create new task - don't include Id
+            const createPayload = {
+              TimesheetId: savedTimesheetId,
+              TaskItemId: Number(task.TaskItemId),
+              TaskCodeId: Number(task.TaskCodeId),
+              MondayHours: Number(task.MondayHours || 0),
+              TuesdayHours: Number(task.TuesdayHours || 0),
+              WednesdayHours: Number(task.WednesdayHours || 0),
+              ThursdayHours: Number(task.ThursdayHours || 0),
+              FridayHours: Number(task.FridayHours || 0),
+              SaturdayHours: Number(task.SaturdayHours || 0),
+              SundayHours: Number(task.SundayHours || 0),
+              TotalHrs: Number(task.TotalHrs || 0),
+              IsActive: task.IsActive ?? true,
+            };
+
+            console.log(
+              `Creating new task for timesheet ${savedTimesheetId}`,
+              createPayload,
+            );
+            this.timesheetService
+              .addTimesheetTask(savedTimesheetId, createPayload)
+              .subscribe({
+                next: () => {
+                  completed++;
+                  console.log(
+                    `New task created, progress: ${completed}/${totalTasks}`,
+                  );
+                  if (completed === totalTasks && !hasError) {
+                    this.loader.hide();
+                    this.toastr.success('Timesheet saved successfully');
+                    this.onCloseSidebar();
+                    this.loadTimesheetDetails();
+                  }
+                },
+                error: (err) => {
+                  console.error('Task creation error:', err);
+                  hasError = true;
+                  this.loader.hide();
+                  this.toastr.error('Failed to create task');
+                },
+              });
+          }
         });
       },
-
       error: (err: any) => {
-        console.error('❌ Parent save error:', err);
+        console.error('Parent save error:', err);
         this.loader.hide();
         this.toastr.error('Failed to save timesheet');
       },
