@@ -1,9 +1,7 @@
 export const environment = {
-  production: false,
-  baseUrl: 'https://mytime-docker.onrender.com/api/v1',
-  //baseUrl: 'http://localhost:8000/api/v1',
-
-  UrlConstants: {
+    production: false,
+    baseUrl: 'https://mytime-docker-prod.onrender.com/api/v1',
+    UrlConstants: {
     // Authentication endpoints
     Authenticate: 'auth/AuthenticateUser',
     GenerateUserClaims: 'auth/GenarateUserClaims',
