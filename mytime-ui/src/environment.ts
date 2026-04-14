@@ -474,7 +474,7 @@ export const environment = {
     },
     Timesheet: {
       GetAllTimesheets: 'timesheet/fetchAllTimesheets',
-      GetTimesheetById: 'timesheet/fetch_timesheet',
+      GetTimesheetById: 'timesheet/fetchTimesheet',
       //GetTimesheetWithTasks: 'timesheet/fetch_timesheet_with_tasks',
       GetTimesheetWithTasks: 'timesheet/fetchTimesheetWithTasks',
       GetTimesheetsByEmployee: 'timesheet/get_timesheets_by_employee',

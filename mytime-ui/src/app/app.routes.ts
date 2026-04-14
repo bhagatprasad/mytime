@@ -60,10 +60,20 @@ export const routes: Routes = [
       },
       {
         path: 'timesheet',
-        loadComponent: () =>
-          import('./user/components/timesheet/list-timesheet.component').then(
-            (m) => m.ListTimesheetComponent,
-          ),
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./user/components/timesheet/list-timesheet.component')
+                .then(m => m.ListTimesheetComponent),
+          },
+          {
+            path: ':timsheetId',
+            loadComponent: () =>
+              import('./user/components/timesheet/add-edit-timesheet.component')
+                .then(m => m.AddEditTimesheetComponent),
+          }
+        ]
       },
       {
         path: 'leavebalance',
@@ -86,7 +96,7 @@ export const routes: Routes = [
             (m) => m.ListDocumentComponent,
           ),
       },
-       {
+      {
         path: 'attendence',
         loadComponent: () =>
           import('./user/components/attendence/attendence.component').then(
