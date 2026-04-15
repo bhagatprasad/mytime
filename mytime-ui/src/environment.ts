@@ -475,36 +475,23 @@ export const environment = {
     Timesheet: {
       GetAllTimesheets: 'timesheet/fetchAllTimesheets',
       GetTimesheetById: 'timesheet/fetchTimesheet',
-      //GetTimesheetWithTasks: 'timesheet/fetch_timesheet_with_tasks',
       GetTimesheetWithTasks: 'timesheet/fetchTimesheetWithTasks',
-      GetTimesheetsByEmployee: 'timesheet/get_timesheets_by_employee',
-      GetTimesheetsWithPagination: 'timesheet/get_timesheets_with_pagination',
-      InsertOrUpdateTimesheetTask: 'timesheet/insert_or_update_timesheet_task',
-
-      //InsertOrUpdateTimesheet: 'timesheet/insert_or_update_timesheet',
+      GetTimesheetsByEmployee: 'timesheet/getTimesheetsByEmployee',
+      GetTimesheetsWithPagination: 'timesheet/getTimesheetsWithPagination',
+      InsertOrUpdateTimesheetTask: 'timesheet/insertOrUpdateTimesheetTask',
       InsertOrUpdateTimesheet: 'timesheet/InsertOrUpdateTimesheet',
-
       AddTimesheetTask: 'timesheet/AddTimesheetTask',
-      // AddTimesheetTask: 'timesheet/add_timesheet_task',
-
       DeleteTimesheet: 'timesheet/DeleteTimesheet',
-      //DeleteTimesheet: 'timesheet/delete_timesheet',
-
-      //DeleteTimesheetTask: 'timesheet/delete_timesheet_task',
       DeleteTimesheetTask: 'timesheet/DeleteTimesheetTask',
-
       UpdateTimesheetTask: 'timesheet/UpdateTimesheetTask',
-      //UpdateTimesheetTask: 'timesheet/update_timesheet_task',
-
-      ApproveTimesheet: 'timesheet/approve_timesheet',
-      RejectTimesheet: 'timesheet/reject_timesheet',
-      CancelTimesheet: 'timesheet/cancel_timesheet',
-      SubmitTimesheet: 'timesheet/submit_timesheet',
-
-      GetTimesheetTasks: 'timesheet/get_timesheet_tasks',
-      GetTaskById: 'timesheet/fetch_timesheet_task',
-      GetTimesheetReport: 'timesheet/get_timesheet_report',
-      GetTimesheetSummary: 'timesheet/get_timesheet_summary',
+      ApproveTimesheet: 'timesheet/approveTimesheet',
+      RejectTimesheet: 'timesheet/rejectTimesheet',
+      CancelTimesheet: 'timesheet/cancelTimesheet',
+      SubmitTimesheet: 'timesheet/submitTimesheet',
+      GetTimesheetTasks: 'timesheet/getTimesheetTasks',
+      GetTaskById: 'timesheet/fetchTimesheetTask',
+      GetTimesheetReport: 'timesheet/getTimesheetReport',
+      GetTimesheetSummary: 'timesheet/getTimesheetSummary',
     },
   },
 };
