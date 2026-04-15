@@ -1,26 +1,114 @@
 <div class="container-fluid py-3">
-    <div class="row">
-        <div class="col">
-            <div class="card">
-                <!-- Header -->
-                <div class="card-header bg-white border-bottom">
-                    <div class="d-flex justify-content-between align-items-center py-1">
-                        <div class="d-flex align-items-center">
-                            <h5 class="mb-0">
-                                <i class="mdi mdi-account-group text-primary me-2"></i>
-                                Add/Edit Timesheet
-                            </h5>
-                        </div>
-
-                        <div class="d-flex align-items-center gap-2">
-                            <a class="btn btn-primary btn-sm d-flex align-items-center" routerLink="/user/timesheet"
-                                title="Back to Timesheets">
-                                Back to Timesheets
-                            </a>
-                        </div>
-                    </div>
-                </div>
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <!-- Header -->
+        <div class="card-header bg-white border-bottom">
+          <div class="d-flex justify-content-between align-items-center py-1">
+            <div class="d-flex align-items-center">
+              <h5 class="mb-0">
+                <i class="mdi mdi-account-group text-primary me-2"></i>
+                Add/Edit Timesheet
+              </h5>
             </div>
+
+            <div class="d-flex align-items-center gap-2">
+              <a class="btn btn-primary btn-sm" routerLink="/user/timesheet">
+                Back to Timesheets
+              </a>
+            </div>
+          </div>
         </div>
+
+        <!-- FORM -->
+        <div *ngIf="timehseet" class="card-body">
+          <div class="row">
+            <div class="col-md-3 mb-3">
+              <label class="form-label">From Date</label>
+              <input
+                type="date"
+                class="form-control"
+                [(ngModel)]="timehseet.FromDate"
+              />
+            </div>
+
+            <div class="col-md-3 mb-3">
+              <label class="form-label">To Date</label>
+              <input
+                type="date"
+                class="form-control"
+                [(ngModel)]="timehseet.ToDate"
+              />
+            </div>
+
+            <div class="col-md-3 mb-3">
+              <label class="form-label">Total Hours</label>
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="timehseet.TotalHrs"
+              />
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Description</label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="timehseet.Description"
+              />
+            </div>
+
+            <div class="col-md-3 mb-3">
+              <label class="form-label">Status</label>
+              <input class="form-control" [(ngModel)]="timehseet.Status" />
+            </div>
+
+            <div class="col-md-3 mb-3">
+              <label class="form-label">Employee Id</label>
+              <input class="form-control" [(ngModel)]="timehseet.EmployeeId" />
+            </div>
+
+            <div class="col-md-3 mb-3">
+              <label class="form-label">User Id</label>
+              <input class="form-control" [(ngModel)]="timehseet.UserId" />
+            </div>
+          </div>
+        </div>
+
+        <!-- TASKS TABLE -->
+        <div class="card-body border-top">
+          <h6 class="mb-3">Timesheet Tasks</h6>
+
+          <table class="table table-bordered table-striped">
+            <thead class="table-light">
+              <tr>
+                <th>Task Item</th>
+                <th>Task Code</th>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th>Wed</th>
+                <th>Thu</th>
+                <th>Fri</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let task of timehseetTasks || []">
+                <td>{{ taskItemMap.get(task.TaskItemId ?? 0) || "N/A" }}</td>
+                <td>{{ taskCodeMap.get(task.TaskCodeId ?? 0) || "N/A" }}</td>
+                <td>{{ task.MondayHours }}</td>
+                <td>{{ task.TuesdayHours }}</td>
+                <td>{{ task.WednesdayHours }}</td>
+                <td>{{ task.ThursdayHours }}</td>
+                <td>{{ task.FridayHours }}</td>
+                <td>{{ task.TotalHrs }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
