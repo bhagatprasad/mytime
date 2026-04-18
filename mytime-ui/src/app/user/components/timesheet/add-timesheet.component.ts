@@ -114,6 +114,7 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
     this.initializeWeekDates();
 
     this.timesheetForm = this.fb.group({
+      description: ['', Validators.required],
       rows: this.fb.array([]),
     });
 
@@ -130,7 +131,9 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
     this.weekEnd = new Date(this.timesheet.ToDate!);
     this.updateWeekDates();
 
+    // ✅ FIX: Include description in edit form
     this.timesheetForm = this.fb.group({
+      description: [this.timesheet.Description || '', Validators.required],
       rows: this.fb.array([]),
     });
 
@@ -184,7 +187,6 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
 
     this.watchRowTotal(row);
 
-    // ensure total recalculates even if backend total missing
     setTimeout(() => {
       this.recalculateSingleRow(row);
     });
@@ -351,7 +353,6 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
 
     this.weekStart = selectedWeekStart;
     this.weekEnd = selectedWeekEnd;
-
     this.updateWeekDates();
     this.showCalendar = false;
   }
@@ -431,35 +432,29 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
 
   getDayWarning(day: string): string {
     const total = this.getDayTotal(day);
-
     if (total === 0) return '';
     if (total === 8 || total === 9) return '';
     if (total > 0 && total < 8) return `Needs ${8 - total}h more`;
     if (total > 9) return 'Exceeded';
-
     return '';
   }
 
   getDayHeaderClass(day: string): string {
     const total = this.getDayTotal(day);
-
     if (total > this.dailyMax) return 'cell-exceeded';
     if (total >= this.dailyMin && total <= this.dailyMax)
       return 'cell-completed';
     if (total > 0 && total < this.dailyMin) return 'cell-incomplete';
-
     return '';
   }
 
   hasSubmitErrors(): boolean {
     const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
-
     for (const day of days) {
       const total = this.getDayTotal(day);
       if (total > 0 && total < this.dailyMin) return true;
       if (total > this.dailyMax) return true;
     }
-
     return false;
   }
 
@@ -469,6 +464,13 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
   }
 
   submitTimesheet(): void {
+    // Check description first
+    const description = this.timesheetForm.get('description')?.value;
+    if (!description || description.trim() === '') {
+      this.showToastMessage('Description is required', 'error');
+      return;
+    }
+
     if (this.timesheetForm.invalid) {
       this.showToastMessage('Please fill all required fields', 'error');
       this.timesheetForm.markAllAsTouched();
@@ -491,17 +493,17 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
       return;
     }
 
+    // ✅ FIX: Complete task mapping
     const payload = {
       Id: this.mode === 'edit' ? this.timesheet?.Id || 0 : 0,
       FromDate: this.weekStart,
       ToDate: this.weekEnd,
-      Description: 'Timesheet Entry',
+      Description: description,
       Status: 'Submitted',
       TotalHrs: this.getWeekTotal(),
       IsActive: true,
       Tasks: this.timesheetForm.getRawValue().rows.map((row: any) => ({
         Id: row.Id || 0,
-        TimesheetId: row.TimesheetId || this.timesheet?.Id || 0,
         TaskItemId: row.taskItem,
         TaskCodeId: row.taskCode,
         MondayHours: Number(row.monday || 0),
@@ -555,10 +557,8 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
 
     return this.existingTimesheets.some((t) => {
       if (!t.FromDate || !t.ToDate) return false;
-
       const existingFrom = this.normalizeDate(new Date(t.FromDate));
       const existingTo = this.normalizeDate(new Date(t.ToDate));
-
       return (
         existingFrom.getTime() === selectedFrom.getTime() &&
         existingTo.getTime() === selectedTo.getTime()
@@ -573,10 +573,8 @@ export class AddTimesheetComponent implements OnInit, OnChanges {
     return (
       this.existingTimesheets.find((t) => {
         if (!t.FromDate || !t.ToDate) return false;
-
         const existingFrom = this.normalizeDate(new Date(t.FromDate));
         const existingTo = this.normalizeDate(new Date(t.ToDate));
-
         return (
           existingFrom.getTime() === selectedFrom.getTime() &&
           existingTo.getTime() === selectedTo.getTime()

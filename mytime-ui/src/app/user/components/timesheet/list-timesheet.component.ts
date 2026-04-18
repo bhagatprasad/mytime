@@ -63,7 +63,7 @@ export class ListTimesheetComponent implements OnInit {
     private loader: LoaderService,
     private audit: AuditFieldsService,
     private router: Router,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.checkScreenSize();
@@ -130,7 +130,8 @@ export class ListTimesheetComponent implements OnInit {
   }
 
   requestTimesheetProcess(timesheet: any): void {
-     this.router.navigate(['/user/timesheet', timesheet.Id]);
+    console.log('🟢 Navigating to edit timesheet ID:', timesheet.Id);
+    this.router.navigate(['/user/timesheet', timesheet.Id]);
   }
 
   onCloseSidebar(): void {

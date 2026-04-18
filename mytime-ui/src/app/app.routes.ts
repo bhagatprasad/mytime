@@ -64,16 +64,18 @@ export const routes: Routes = [
           {
             path: '',
             loadComponent: () =>
-              import('./user/components/timesheet/list-timesheet.component')
-                .then(m => m.ListTimesheetComponent),
+              import('./user/components/timesheet/list-timesheet.component').then(
+                (m) => m.ListTimesheetComponent,
+              ),
           },
           {
-            path: ':timsheetId',
+            path: ':timesheetId',
             loadComponent: () =>
-              import('./user/components/timesheet/add-edit-timesheet.component')
-                .then(m => m.AddEditTimesheetComponent),
-          }
-        ]
+              import('./user/components/timesheet/add-edit-timesheet.component').then(
+                (m) => m.AddEditTimesheetComponent,
+              ),
+          },
+        ],
       },
       {
         path: 'leavebalance',
