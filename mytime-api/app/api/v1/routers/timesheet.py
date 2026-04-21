@@ -27,27 +27,33 @@ async def fetch_timesheet(timesheet_id: int, db: Session = Depends(get_db)):
     return timesheet
 
 
-# ✅ 2. GET TIMESHEET TASKS (TABLE DATA)
-@router.get("/fetchTimesheetWithTasks/{timesheet_id}", response_model=List[TimesheetTaskResponse])
-async def fetch_timesheet_with_tasks(timesheet_id: int, db: Session = Depends(get_db)):
+# ✅ 2. GET TIMESHEET TASKS (TABLE DATA) - FOR FRONTEND COMPATIBILITY
+@router.get("/getTimesheetTasks/{timesheet_id}", response_model=List[TimesheetTaskResponse])
+async def get_timesheet_tasks(timesheet_id: int, db: Session = Depends(get_db)):
     tasks = TimesheetService.fetch_timesheet_tasks(db, timesheet_id)
-
     return tasks if tasks else []
 
 
-# ✅ 3. GET ALL TIMESHEETS
+# ✅ 3. GET TIMESHEET WITH TASKS (ALTERNATIVE ENDPOINT)
+@router.get("/fetchTimesheetWithTasks/{timesheet_id}", response_model=List[TimesheetTaskResponse])
+async def fetch_timesheet_with_tasks(timesheet_id: int, db: Session = Depends(get_db)):
+    tasks = TimesheetService.fetch_timesheet_tasks(db, timesheet_id)
+    return tasks if tasks else []
+
+
+# ✅ 4. GET ALL TIMESHEETS
 @router.get("/fetchAllTimesheets", response_model=List[TimesheetResponse])
 async def fetch_all_timesheets(db: Session = Depends(get_db)):
     return TimesheetService.fetch_all_timesheets_with_tasks(db)
 
 
-# ✅ 4. GET BY EMPLOYEE
+# ✅ 5. GET BY EMPLOYEE
 @router.get("/getTimesheetsByEmployee/{employee_id}", response_model=List[TimesheetResponse])
 async def get_timesheets_by_employee(employee_id: int, db: Session = Depends(get_db)):
     return TimesheetService.get_timesheets_by_employee(db, employee_id)
 
 
-# ✅ 5. INSERT / UPDATE TIMESHEET
+# ✅ 6. INSERT / UPDATE TIMESHEET
 @router.post("/InsertOrUpdateTimesheet")
 async def insert_or_update_timesheet(timesheet: dict, db: Session = Depends(get_db)):
     response = TimesheetService.insert_or_update_timesheet(db, timesheet)
@@ -61,7 +67,7 @@ async def insert_or_update_timesheet(timesheet: dict, db: Session = Depends(get_
     return response
 
 
-# ✅ 6. DELETE TIMESHEET
+# ✅ 7. DELETE TIMESHEET
 @router.delete("/DeleteTimesheet/{timesheet_id}", response_model=TimesheetDeleteResponse)
 async def delete_timesheet(timesheet_id: int, db: Session = Depends(get_db)):
     response = TimesheetService.delete_timesheet(db, timesheet_id)
@@ -75,7 +81,7 @@ async def delete_timesheet(timesheet_id: int, db: Session = Depends(get_db)):
     return response
 
 
-# ✅ 7. DELETE TASK
+# ✅ 8. DELETE TASK
 @router.delete("/DeleteTimesheetTask/{task_id}")
 async def delete_timesheet_task(task_id: int, db: Session = Depends(get_db)):
     response = TimesheetService.delete_timesheet_task(db, task_id)
@@ -89,7 +95,7 @@ async def delete_timesheet_task(task_id: int, db: Session = Depends(get_db)):
     return response
 
 
-# ✅ 8. ADD TASK
+# ✅ 9. ADD TASK
 @router.post("/AddTimesheetTask/{timesheet_id}", response_model=TimesheetTaskResponse)
 async def add_timesheet_task(timesheet_id: int, task_data: dict, db: Session = Depends(get_db)):
     task = TimesheetService.add_timesheet_task(db, timesheet_id, task_data)
@@ -103,7 +109,7 @@ async def add_timesheet_task(timesheet_id: int, task_data: dict, db: Session = D
     return task
 
 
-# ✅ 9. UPDATE TASK
+# ✅ 10. UPDATE TASK
 @router.put("/UpdateTimesheetTask/{task_id}", response_model=TimesheetTaskResponse)
 async def update_timesheet_task(task_id: int, task_data: dict, db: Session = Depends(get_db)):
     task = TimesheetService.update_timesheet_task(db, task_id, task_data)

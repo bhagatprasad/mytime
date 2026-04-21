@@ -286,3 +286,8 @@
     width: 55px;
   }
 }
+/* add-edit-timesheet.component.css */
+.not-found-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}

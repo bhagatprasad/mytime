@@ -21,7 +21,6 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./add-edit-timesheet.component.css'],
 })
 export class AddEditTimesheetComponent implements OnInit {
-  // ========== PROPERTIES ==========
   timsheetId: number = 0;
   timehseet: Timesheet | null = null;
   timehseetTasks: TimesheetTask[] = [];
@@ -33,6 +32,10 @@ export class AddEditTimesheetComponent implements OnInit {
   dailyMin = 8;
   dailyMax = 9;
 
+  isLoading = true;
+  showNotFound = false;
+  errorMessage = '';
+
   weekDays = [
     { name: 'Mon', key: 'monday' },
     { name: 'Tue', key: 'tuesday' },
@@ -43,7 +46,6 @@ export class AddEditTimesheetComponent implements OnInit {
     { name: 'Sun', key: 'sunday' },
   ];
 
-  // ========== CONSTRUCTOR ==========
   constructor(
     private timesheetService: TimesheetService,
     private taskItemService: TaskitemService,
@@ -54,64 +56,127 @@ export class AddEditTimesheetComponent implements OnInit {
     private toastr: ToastrService,
   ) {}
 
-  // ========== LIFE CYCLE HOOKS ==========
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('timesheetId');
     this.timsheetId = id ? Number(id) : 0;
 
-    if (!this.timsheetId) {
-      this.toastr.error('Invalid timesheet ID');
-      this.goBack();
+    if (!this.timsheetId || isNaN(this.timsheetId) || this.timsheetId <= 0) {
+      this.showNotFound = true;
+      this.isLoading = false;
+      this.errorMessage = 'Invalid timesheet ID. Please check the URL.';
       return;
     }
 
     this.loadData();
   }
 
-  // ========== DATA LOADING ==========
   loadData(): void {
+    this.isLoading = true;
+    this.showNotFound = false;
     this.loader.show();
 
-    forkJoin({
-      timesheet: this.timesheetService.getTimesheetByIdAsync(this.timsheetId),
-      tasks: this.timesheetService.getTimesheetWithTasksAsync(this.timsheetId),
-      taskItems: this.taskItemService.GetTaskitemListAsync(),
-      taskCodes: this.taskCodeService.getTaskcodeListAsync(),
-    }).subscribe({
-      next: ({ timesheet, tasks, taskItems, taskCodes }) => {
-        console.log('📋 Loaded timesheet:', timesheet);
-        console.log('📋 Loaded tasks:', tasks);
-
+    // ✅ STEP 1: Get Timesheet data (calendar, description)
+    this.timesheetService.getTimesheetByIdAsync(this.timsheetId).subscribe({
+      next: (timesheet: any) => {
+        console.log('📋 Timesheet data:', timesheet);
         this.timehseet = timesheet;
-        this.taskItems = taskItems || [];
-        this.taskCodes = taskCodes || [];
 
-        // Handle tasks - ensure it's an array
-        if (Array.isArray(tasks)) {
-          this.timehseetTasks = tasks;
-        } else if (tasks && (tasks as any).Tasks) {
-          this.timehseetTasks = (tasks as any).Tasks;
-        } else {
-          this.timehseetTasks = [];
-        }
+        // ✅ STEP 2: Get Tasks data separately
+        this.timesheetService
+          .getTimesheetTasksAsync(this.timsheetId)
+          .subscribe({
+            next: (tasks: any[]) => {
+              console.log('📋 Tasks data:', tasks);
 
-        // If no tasks, add an empty row
-        if (this.timehseetTasks.length === 0) {
-          this.addNewTask();
-        }
+              // ✅ STEP 3: Load Task Items and Task Codes
+              forkJoin({
+                taskItems: this.taskItemService.GetTaskitemListAsync(),
+                taskCodes: this.taskCodeService.getTaskcodeListAsync(),
+              }).subscribe({
+                next: ({ taskItems, taskCodes }) => {
+                  this.taskItems = taskItems || [];
+                  this.taskCodes = taskCodes || [];
 
-        this.loader.hide();
+                  // ✅ STEP 4: Process tasks
+                  if (tasks && tasks.length > 0) {
+                    this.timehseetTasks = tasks.map((task: any) => ({
+                      Id: task.Id || 0,
+                      TimesheetId: task.TimesheetId || this.timsheetId,
+                      TaskItemId: task.TaskItemId
+                        ? Number(task.TaskItemId)
+                        : undefined,
+                      TaskCodeId: task.TaskCodeId
+                        ? Number(task.TaskCodeId)
+                        : undefined,
+                      MondayHours: Number(task.MondayHours) || 0,
+                      TuesdayHours: Number(task.TuesdayHours) || 0,
+                      WednesdayHours: Number(task.WednesdayHours) || 0,
+                      ThursdayHours: Number(task.ThursdayHours) || 0,
+                      FridayHours: Number(task.FridayHours) || 0,
+                      SaturdayHours: Number(task.SaturdayHours) || 0,
+                      SundayHours: Number(task.SundayHours) || 0,
+                      TotalHrs: Number(task.TotalHrs) || 0,
+                      IsActive: task.IsActive ?? true,
+                    }));
+                  } else {
+                    this.timehseetTasks = [];
+                  }
+
+                  console.log('✅ Final tasks:', this.timehseetTasks);
+
+                  if (this.timehseetTasks.length === 0) {
+                    this.addNewTask();
+                  }
+
+                  this.isLoading = false;
+                  this.loader.hide();
+                },
+                error: (err) => {
+                  console.error('Error loading master data:', err);
+                  this.isLoading = false;
+                  this.loader.hide();
+                  this.addNewTask();
+                },
+              });
+            },
+            error: (err) => {
+              console.error('Error fetching tasks:', err);
+              this.timehseetTasks = [];
+              this.addNewTask();
+              this.isLoading = false;
+              this.loader.hide();
+            },
+          });
       },
       error: (error) => {
-        console.error('Error loading data:', error);
+        console.error('Error loading timesheet:', error);
+        this.isLoading = false;
         this.loader.hide();
-        this.toastr.error('Failed to load timesheet data');
-        this.goBack();
+        this.showNotFound = true;
+        this.errorMessage = `Timesheet with ID ${this.timsheetId} was not found.`;
       },
     });
   }
 
-  // ========== TASK CODE FILTERING ==========
+  addNewTask(): void {
+    const newTask: TimesheetTask = {
+      Id: 0,
+      TimesheetId: this.timsheetId,
+      TaskItemId: undefined,
+      TaskCodeId: undefined,
+      MondayHours: 0,
+      TuesdayHours: 0,
+      WednesdayHours: 0,
+      ThursdayHours: 0,
+      FridayHours: 0,
+      SaturdayHours: 0,
+      SundayHours: 0,
+      TotalHrs: 0,
+      IsActive: true,
+    };
+    this.timehseetTasks.push(newTask);
+  }
+
   getFilteredTaskCodes(taskItemId: number | undefined): Taskcode[] {
     if (!taskItemId) return [];
     return this.taskCodes.filter((code) => code.TaskItemId === taskItemId);
@@ -123,7 +188,6 @@ export class AddEditTimesheetComponent implements OnInit {
     }
   }
 
-  // ========== CALCULATIONS ==========
   calculateTaskTotal(task: TimesheetTask): number {
     const total =
       (task.MondayHours || 0) +
@@ -133,7 +197,6 @@ export class AddEditTimesheetComponent implements OnInit {
       (task.FridayHours || 0) +
       (task.SaturdayHours || 0) +
       (task.SundayHours || 0);
-
     task.TotalHrs = total;
     return total;
   }
@@ -158,7 +221,6 @@ export class AddEditTimesheetComponent implements OnInit {
     }, 0);
   }
 
-  // ========== VALIDATIONS ==========
   isWeekValid(): boolean {
     const total = this.getWeekTotal();
     return total >= this.weeklyMin && total <= this.weeklyMax;
@@ -167,11 +229,9 @@ export class AddEditTimesheetComponent implements OnInit {
   isFormValid(): boolean {
     if (!this.timehseet?.Description?.trim()) return false;
     if (!this.isWeekValid()) return false;
-
     for (const task of this.timehseetTasks) {
       if (!task.TaskItemId || !task.TaskCodeId) return false;
     }
-
     return true;
   }
 
@@ -184,33 +244,12 @@ export class AddEditTimesheetComponent implements OnInit {
     return '';
   }
 
-  // ========== TASK ROW MANAGEMENT ==========
-  addNewTask(): void {
-    const newTask: TimesheetTask = {
-      Id: 0,
-      TimesheetId: this.timsheetId,
-      TaskItemId: undefined,
-      TaskCodeId: undefined,
-      MondayHours: 0,
-      TuesdayHours: 0,
-      WednesdayHours: 0,
-      ThursdayHours: 0,
-      FridayHours: 0,
-      SaturdayHours: 0,
-      SundayHours: 0,
-      TotalHrs: 0,
-      IsActive: true,
-    };
-    this.timehseetTasks.push(newTask);
-  }
-
   removeTask(index: number): void {
     if (this.timehseetTasks.length > 1) {
       this.timehseetTasks.splice(index, 1);
     }
   }
 
-  // ========== DATE FORMATTING ==========
   formatDateForDisplay(date: any): string {
     if (!date) return '';
     const d = new Date(date);
@@ -238,7 +277,6 @@ export class AddEditTimesheetComponent implements OnInit {
     return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
   }
 
-  // ========== UPDATE TIMESHEET ==========
   updateTimesheet(): void {
     if (!this.isFormValid()) {
       this.toastr.warning(
@@ -249,6 +287,7 @@ export class AddEditTimesheetComponent implements OnInit {
 
     this.loader.show();
 
+    // ✅ Update parent timesheet
     const parentPayload = {
       Id: this.timehseet?.Id || 0,
       FromDate: this.timehseet?.FromDate,
@@ -269,6 +308,7 @@ export class AddEditTimesheetComponent implements OnInit {
           return;
         }
 
+        // ✅ Update/Create each task
         const taskRequests = this.timehseetTasks.map((task) => {
           const taskPayload = {
             Id: task.Id || 0,
@@ -285,7 +325,16 @@ export class AddEditTimesheetComponent implements OnInit {
             TotalHrs: this.calculateTaskTotal(task),
             IsActive: true,
           };
-          return this.timesheetService.addTimesheetTask(savedId, taskPayload);
+
+          // ✅ If task has Id, update it; otherwise create new
+          if (task.Id && task.Id > 0) {
+            return this.timesheetService.updateTimesheetTask(
+              task.Id,
+              taskPayload,
+            );
+          } else {
+            return this.timesheetService.addTimesheetTask(savedId, taskPayload);
+          }
         });
 
         forkJoin(taskRequests).subscribe({
@@ -309,7 +358,6 @@ export class AddEditTimesheetComponent implements OnInit {
     });
   }
 
-  // ========== NAVIGATION ==========
   goBack(): void {
     this.router.navigate(['/user/timesheet']);
   }
