@@ -63,7 +63,7 @@ export class ListTimesheetComponent implements OnInit {
     private loader: LoaderService,
     private audit: AuditFieldsService,
     private router: Router,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.checkScreenSize();
@@ -130,7 +130,8 @@ export class ListTimesheetComponent implements OnInit {
   }
 
   requestTimesheetProcess(timesheet: any): void {
-     this.router.navigate(['/user/timesheet', timesheet.Id]);
+    console.log('🟢 Navigating to edit timesheet ID:', timesheet.Id);
+    this.router.navigate(['/user/timesheet', timesheet.Id]);
   }
 
   onCloseSidebar(): void {
@@ -140,7 +141,6 @@ export class ListTimesheetComponent implements OnInit {
 
   onSaveTimesheet(payload: any): void {
     console.log('📤 Final payload from child:', payload);
-
     this.loader.show();
 
     const parentPayload = {
@@ -148,8 +148,8 @@ export class ListTimesheetComponent implements OnInit {
       FromDate: payload.FromDate,
       ToDate: payload.ToDate,
       Description: payload.Description || 'Timesheet Entry',
-      EmployeeId: undefined, // ✅ fixed
-      UserId: undefined, // ✅ fixed
+      EmployeeId: undefined,
+      UserId: undefined,
       Status: payload.Status || 'Submitted',
       IsActive: payload.IsActive ?? true,
       TotalHrs: payload.TotalHrs,
@@ -163,36 +163,39 @@ export class ListTimesheetComponent implements OnInit {
 
     this.timesheetService.insertOrUpdateTimesheet(parentPayload).subscribe({
       next: (res: any) => {
-        console.log('✅ Parent Timesheet saved:', res);
+        console.log('✅ Parent Timesheet response:', res);
 
+        // Get the saved Timesheet ID
         const savedTimesheetId =
-          res?.Id || res?.id || payload.Id || this.selectedTimesheet?.Id;
+          res?.Id || res?.timesheet?.Id || res?.id || payload.Id;
+        console.log('🔥 Saved Timesheet ID:', savedTimesheetId);
 
         if (!savedTimesheetId) {
-          console.error('❌ Timesheet ID missing after save');
           this.loader.hide();
           this.toastr.error('Timesheet saved but ID not found');
           return;
         }
 
         const tasks = payload.Tasks || [];
+        console.log('🟨 Tasks to save:', tasks);
+        console.log('🟨 Number of tasks:', tasks.length);
 
         if (!tasks.length) {
           this.loader.hide();
-          this.toastr.success('Timesheet saved successfully');
+          this.toastr.success('Timesheet saved successfully (no tasks)');
           this.onCloseSidebar();
           this.loadTimesheetDetails();
           return;
         }
 
-        console.log('🟨 Saving child tasks:', tasks);
-
         let completed = 0;
         let hasError = false;
 
-        tasks.forEach((task: any) => {
+        // Save each task to TimesheetTask table
+        tasks.forEach((task: any, index: number) => {
+          console.log(`🟧 Saving task ${index + 1}:`, task);
+
           const taskPayload = {
-            Id: task.Id || 0,
             TimesheetId: savedTimesheetId,
             TaskItemId: task.TaskItemId,
             TaskCodeId: task.TaskCodeId,
@@ -204,24 +207,28 @@ export class ListTimesheetComponent implements OnInit {
             SaturdayHours: Number(task.SaturdayHours || 0),
             SundayHours: Number(task.SundayHours || 0),
             TotalHrs: Number(task.TotalHrs || 0),
-            IsActive: task.IsActive ?? true,
+            IsActive: true,
             CreatedBy: 21,
             CreatedOn: new Date(),
             ModifiedBy: 21,
             ModifiedOn: new Date(),
           };
 
-          console.log('🟧 Saving task row:', taskPayload);
+          console.log('📤 Task Payload being sent:', taskPayload);
 
+          this.timesheetService.addTimesheetTask(savedTimesheetId, taskPayload);
           this.timesheetService
-            .addTimesheetTask(savedTimesheetId, taskPayload)
+            .insertOrUpdateTimesheetTask(taskPayload)
             .subscribe({
               next: (taskRes: any) => {
-                console.log('✅ Task row saved:', taskRes);
-
+                console.log(
+                  `✅ Task ${index + 1} saved successfully:`,
+                  taskRes,
+                );
                 completed++;
 
                 if (completed === tasks.length && !hasError) {
+                  console.log('🎉 All tasks saved successfully!');
                   this.loader.hide();
                   this.toastr.success(
                     this.mode === 'edit'
@@ -233,10 +240,10 @@ export class ListTimesheetComponent implements OnInit {
                 }
               },
               error: (taskErr: any) => {
-                console.error('❌ Error saving task row:', taskErr);
+                console.error(`❌ Error saving task ${index + 1}:`, taskErr);
                 hasError = true;
                 this.loader.hide();
-                this.toastr.error('Timesheet saved, but task rows failed');
+                this.toastr.error(`Task ${index + 1} failed to save`);
               },
             });
         });

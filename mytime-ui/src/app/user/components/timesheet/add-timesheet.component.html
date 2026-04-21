@@ -15,7 +15,6 @@
     </div>
 
     <div class="sidebar-body">
-      <!-- CREATE MODE -->
       <div>
         <div class="form-header">
           <h5>Weekly Timesheet</h5>
@@ -64,7 +63,6 @@
               <tr>
                 <th>Task Item</th>
                 <th>Task Code</th>
-
                 <th [ngClass]="getDayHeaderClass('monday')">
                   Mon
                   <span class="date">{{ weekDates.monday }}</span>
@@ -72,7 +70,6 @@
                     {{ getDayWarning("monday") }}
                   </div>
                 </th>
-
                 <th [ngClass]="getDayHeaderClass('tuesday')">
                   Tue
                   <span class="date">{{ weekDates.tuesday }}</span>
@@ -80,7 +77,6 @@
                     {{ getDayWarning("tuesday") }}
                   </div>
                 </th>
-
                 <th [ngClass]="getDayHeaderClass('wednesday')">
                   Wed
                   <span class="date">{{ weekDates.wednesday }}</span>
@@ -88,7 +84,6 @@
                     {{ getDayWarning("wednesday") }}
                   </div>
                 </th>
-
                 <th [ngClass]="getDayHeaderClass('thursday')">
                   Thu
                   <span class="date">{{ weekDates.thursday }}</span>
@@ -96,7 +91,6 @@
                     {{ getDayWarning("thursday") }}
                   </div>
                 </th>
-
                 <th [ngClass]="getDayHeaderClass('friday')">
                   Fri
                   <span class="date">{{ weekDates.friday }}</span>
@@ -104,17 +98,14 @@
                     {{ getDayWarning("friday") }}
                   </div>
                 </th>
-
                 <th class="holiday-header">
                   Sat
                   <span class="date">{{ weekDates.saturday }}</span>
                 </th>
-
                 <th class="holiday-header">
                   Sun
                   <span class="date">{{ weekDates.sunday }}</span>
                 </th>
-
                 <th>Total</th>
                 <th>Action</th>
               </tr>
@@ -140,7 +131,6 @@
                     </option>
                   </select>
                 </td>
-
                 <td>
                   <select formControlName="taskCode" class="form-control">
                     <option value="">Select</option>
@@ -154,7 +144,6 @@
                     </option>
                   </select>
                 </td>
-
                 <td>
                   <input
                     type="number"
@@ -166,7 +155,6 @@
                     class="hour-input"
                   />
                 </td>
-
                 <td>
                   <input
                     type="number"
@@ -178,7 +166,6 @@
                     class="hour-input"
                   />
                 </td>
-
                 <td>
                   <input
                     type="number"
@@ -190,7 +177,6 @@
                     class="hour-input"
                   />
                 </td>
-
                 <td>
                   <input
                     type="number"
@@ -202,7 +188,6 @@
                     class="hour-input"
                   />
                 </td>
-
                 <td>
                   <input
                     type="number"
@@ -214,29 +199,27 @@
                     class="hour-input"
                   />
                 </td>
-
                 <td>
                   <input
                     type="number"
                     formControlName="saturday"
                     class="hour-input holiday-input"
+                    readonly
                   />
                 </td>
-
                 <td>
                   <input
                     type="number"
                     formControlName="sunday"
                     class="hour-input holiday-input"
+                    readonly
                   />
                 </td>
-
                 <td class="total-cell">
                   <span class="row-total">{{
                     getRowTotal(row.getRawValue())
                   }}</span>
                 </td>
-
                 <td>
                   <button
                     type="button"
@@ -261,6 +244,27 @@
             + Add Row
           </button>
         </div>
+        <!-- DESCRIPTION FIELD -->
+        <div class="description-section">
+          <label class="description-label">
+            Description <span class="text-danger">*</span>
+          </label>
+          <textarea
+            formControlName="description"
+            class="description-textarea"
+            rows="3"
+            placeholder="Enter description for this timesheet (e.g., Development work, Bug fixes, Testing, etc.)"
+          ></textarea>
+          <div
+            class="error-message"
+            *ngIf="
+              timesheetForm.get('description')?.invalid &&
+              timesheetForm.get('description')?.touched
+            "
+          >
+            Description is required
+          </div>
+        </div>
       </div>
     </div>
 
@@ -275,45 +279,46 @@
       </button>
     </div>
   </form>
+</div>
 
-  <!-- Toast -->
-  <div
-    class="toast-notification"
-    *ngIf="showToast"
-    [class.toast-error]="toastType === 'error'"
-    [class.toast-warning]="toastType === 'warning'"
-    [class.toast-success]="toastType === 'success'"
-  >
-    <div class="toast-content">
-      <span class="toast-message">{{ toastMessage }}</span>
-      <button class="toast-close" (click)="hideToast()">×</button>
+<!-- Duplicate Week Popup -->
+<div class="duplicate-popup-overlay" *ngIf="showDuplicateWeekPopup"></div>
+
+<div class="duplicate-popup" *ngIf="showDuplicateWeekPopup">
+  <div class="duplicate-popup-content">
+    <h5>⚠️ Timesheet Already Exists</h5>
+    <p>{{ duplicateWeekMessage }}</p>
+
+    <div class="popup-actions">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="chooseAnotherWeek()"
+      >
+        Choose Another Week
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="closeDuplicatePopup()"
+      >
+        OK
+      </button>
     </div>
   </div>
-  <!-- Duplicate Week Popup -->
-  <div class="sidebar-overlay" *ngIf="showDuplicateWeekPopup"></div>
+</div>
 
-  <div class="duplicate-popup" *ngIf="showDuplicateWeekPopup">
-    <div class="duplicate-popup-content">
-      <h5>Timesheet Already Exists</h5>
-      <p>{{ duplicateWeekMessage }}</p>
-
-      <div class="popup-actions">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          (click)="chooseAnotherWeek()"
-        >
-          Choose Another Week
-        </button>
-
-        <button
-          type="button"
-          class="btn btn-primary"
-          (click)="closeDuplicatePopup()"
-        >
-          OK
-        </button>
-      </div>
-    </div>
+<!-- Toast Notification -->
+<div
+  class="toast-notification"
+  *ngIf="showToast"
+  [class.toast-error]="toastType === 'error'"
+  [class.toast-warning]="toastType === 'warning'"
+  [class.toast-success]="toastType === 'success'"
+>
+  <div class="toast-content">
+    <span class="toast-message">{{ toastMessage }}</span>
+    <button class="toast-close" (click)="hideToast()">×</button>
   </div>
 </div>
