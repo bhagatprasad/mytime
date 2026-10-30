@@ -1,9 +1,0 @@
-[build]
-  base = "mytime-ui"
-  command = "npm run build"
-  publish = "dist/mytime-ui/browser"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200

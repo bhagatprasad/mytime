@@ -24,6 +24,7 @@ import { Taskcode } from '../../../admin/models/taskcode';
 import { TaskcodeService } from '../../../admin/services/taskcode.service';
 import { AuditFieldsService } from '../../../common/services/auditfields.service';
 import { DeleteConfirmationComponent } from '../../../common/components/delete.compunent';
+import { Router } from '@angular/router';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -61,7 +62,8 @@ export class ListTimesheetComponent implements OnInit {
     private toastr: ToastrService,
     private loader: LoaderService,
     private audit: AuditFieldsService,
-  ) {}
+    private router: Router,
+  ) { }
 
   ngOnInit(): void {
     this.checkScreenSize();
@@ -128,38 +130,7 @@ export class ListTimesheetComponent implements OnInit {
   }
 
   requestTimesheetProcess(timesheet: any): void {
-    console.log('✏️ Edit clicked row:', timesheet);
-
-    this.mode = 'edit';
-    this.loader.show();
-
-    this.timesheetService.getTimesheetWithTasksAsync(timesheet.Id).subscribe({
-      next: (res: any) => {
-        console.log('✅ Full Timesheet with Tasks:', res);
-
-        this.selectedTimesheet = {
-          Id: res.Id,
-          FromDate: res.FromDate,
-          ToDate: res.ToDate,
-          TotalHrs: res.TotalHrs,
-          IsActive: res.IsActive,
-          Tasks: res.Tasks || res.tasks || [],
-        };
-
-        console.log(
-          '✅ Selected Timesheet for sidebar:',
-          this.selectedTimesheet,
-        );
-
-        this.loader.hide();
-        this.showSidebar = true;
-      },
-      error: (err) => {
-        console.error('❌ Error fetching timesheet with tasks:', err);
-        this.loader.hide();
-        this.toastr.error('Failed to load timesheet details');
-      },
-    });
+     this.router.navigate(['/user/timesheet', timesheet.Id]);
   }
 
   onCloseSidebar(): void {
